@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Layout from '../components/Layout';
 import { 
   FiSearch, 
   FiMapPin, 
@@ -10,7 +11,7 @@ import {
   FiBriefcase,
   FiCode,
   FiZap,
-  FiBuilding,
+  FiHome,
   FiFilter,
   FiX
 } from 'react-icons/fi';
@@ -42,7 +43,7 @@ const JobBoard = () => {
       type: 'Full-time',
       posted: '2 days ago',
       salary: 'Competitive Salary',
-      icon: FiBuilding,
+      icon: FiHome,
       color: 'green',
       postedByAlumnus: true
     },
@@ -75,7 +76,7 @@ const JobBoard = () => {
       location: 'Mazar-i-Sharif',
       type: 'Full-time',
       posted: '2 weeks ago',
-      icon: FiBuilding,
+      icon: FiHome,
       color: 'green',
       postedByAlumnus: false
     }
@@ -118,7 +119,8 @@ const JobBoard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Layout>
+      <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
       <section className="relative w-full h-64 sm:h-80 overflow-hidden">
         <div 
@@ -360,10 +362,11 @@ const JobBoard = () => {
                 <FiChevronRight />
               </button>
             </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
