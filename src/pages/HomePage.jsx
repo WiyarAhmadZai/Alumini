@@ -312,54 +312,55 @@ const HomePage = () => {
         </section>
 
         {/* Call to Action */}
-        <section className="w-full bg-gradient-to-br from-[#002759] via-[#0a519b] to-[#003d7a] text-white py-20 px-4 relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"></div>
-          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"></div>
-          <div className="relative z-10 max-w-4xl mx-auto text-center">
-            <div className="mb-6">
-              <span className="text-sm font-bold uppercase tracking-widest text-cyan-400 bg-cyan-400/10 backdrop-blur-sm px-6 py-3 rounded-full shadow-2xl border border-cyan-300/30">Join Our Community</span>
-            </div>
-            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Ready to Reconnect?</h2>
-            <p className="text-white/90 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
-              Join over 15,000 alumni worldwide and stay updated with the latest university developments and opportunities.
-            </p>
-            <div className="flex flex-wrap justify-center gap-6 mb-16">
-              <button className="group relative px-8 py-4 bg-white text-[#002759] text-base font-bold rounded-xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                <span className="relative z-10 flex items-center gap-2">
-                  <FiUser className="text-lg" />
-                  Sign Up Now
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0a519b] to-[#003d7a] transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
-              </button>
-              <button className="group relative px-8 py-4 bg-transparent border-2 border-white/50 text-white text-base font-bold rounded-xl hover:bg-white/10 hover:border-white transition-all duration-300 transform hover:-translate-y-1">
-                <span className="flex items-center gap-2">
-                  <FiMail className="text-lg" />
-                  Contact Us
-                </span>
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
-              <div className="text-center group">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300">
-                  <FiUser className="text-2xl text-cyan-400" />
+        <section className="w-full py-20 bg-gray-50">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="bg-white rounded-2xl shadow-xl p-12 text-center relative border border-gray-100">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#002759] to-[#0a519b]"></div>
+              <div className="relative z-10">
+                <div className="mb-8">
+                  <span className="text-sm font-bold uppercase tracking-widest text-[#002759] bg-blue-50 px-4 py-2 rounded-full inline-block">Join Our Community</span>
                 </div>
-                <div className="text-3xl font-bold text-white mb-2">15,000+</div>
-                <p className="text-white/70 text-sm">Alumni Worldwide</p>
-              </div>
-              <div className="text-center group">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300">
-                  <FiMapPin className="text-2xl text-cyan-400" />
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 leading-tight">Ready to Reconnect?</h2>
+                <p className="text-gray-600 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+                  Join over 15,000 alumni worldwide and stay updated with the latest university developments and opportunities.
+                </p>
+                <div className="flex flex-wrap justify-center gap-4 mb-12">
+                  <button className="px-8 py-3 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-base font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                    <span className="flex items-center gap-2">
+                      <FiUser className="text-lg" />
+                      Sign Up Now
+                    </span>
+                  </button>
+                  <button className="px-8 py-3 bg-white text-[#002759] border-2 border-[#002759] text-base font-semibold rounded-lg hover:bg-[#002759] hover:text-white transition-all duration-300 transform hover:-translate-y-1">
+                    <span className="flex items-center gap-2">
+                      <FiMail className="text-lg" />
+                      Contact Us
+                    </span>
+                  </button>
                 </div>
-                <div className="text-3xl font-bold text-white mb-2">50+</div>
-                <p className="text-white/70 text-sm">Countries</p>
-              </div>
-              <div className="text-center group">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300">
-                  <FiArrowRight className="text-2xl text-cyan-400" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl">
+                  <div className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#002759]/10 flex items-center justify-center">
+                      <FiUser className="text-2xl text-[#002759]" />
+                    </div>
+                    <div className="text-3xl font-bold text-gray-900 mb-2">15,000+</div>
+                    <p className="text-gray-600 text-sm">Alumni Worldwide</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#002759]/10 flex items-center justify-center">
+                      <FiMapPin className="text-2xl text-[#002759]" />
+                    </div>
+                    <div className="text-3xl font-bold text-gray-900 mb-2">50+</div>
+                    <p className="text-gray-600 text-sm">Countries</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#002759]/10 flex items-center justify-center">
+                      <FiArrowRight className="text-2xl text-[#002759]" />
+                    </div>
+                    <div className="text-3xl font-bold text-gray-900 mb-2">1000+</div>
+                    <p className="text-gray-600 text-sm">Success Stories</p>
+                  </div>
                 </div>
-                <div className="text-3xl font-bold text-white mb-2">1000+</div>
-                <p className="text-white/70 text-sm">Success Stories</p>
               </div>
             </div>
           </div>
