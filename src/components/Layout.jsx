@@ -36,7 +36,7 @@ const Layout = ({ children }) => {
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
           ? 'bg-[#1e40af] dark:bg-[#1e3a8a] backdrop-blur-md shadow-lg border-b border-[#1e3a8a]' 
-          : 'bg-transparent'
+          : 'bg-transparent !bg-transparent'
       }`}>
         <div className="w-full px-4 py-3">
           <div className="flex items-center justify-between w-full">
