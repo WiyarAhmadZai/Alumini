@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FiArrowRight, 
   FiMapPin, 
@@ -14,15 +14,36 @@ import {
 
 const Layout = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Handle scroll effect
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark text-[#111318] dark:text-white font-display">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-[#1e3a8a] dark:border-[#1e3a8a] bg-[#1e40af] dark:bg-[#1e3a8a] backdrop-blur-md animate-fade-in shadow-lg">
+      <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-[#1e40af] dark:bg-[#1e3a8a] backdrop-blur-md shadow-lg border-b border-[#1e3a8a]' 
+          : 'bg-transparent'
+      }`}>
         <div className="w-full px-4 py-3">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-8 px-4">
-              <div className="flex items-center gap-4 text-white">
+              <div className={`flex items-center gap-4 transition-colors duration-300 ${
+                isScrolled ? 'text-white' : 'text-white'
+              }`}>
                 <div className="w-8 h-8">
                   <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
@@ -32,22 +53,38 @@ const Layout = ({ children }) => {
               </div>
               
               <nav className="hidden md:flex items-center gap-9">
-                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Directory</a>
-                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Events</a>
-                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Jobs</a>
-                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Giving</a>
+                <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
+                  isScrolled ? 'text-white hover:text-blue-200' : 'text-white hover:text-blue-200'
+                }`}>Directory</a>
+                <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
+                  isScrolled ? 'text-white hover:text-blue-200' : 'text-white hover:text-blue-200'
+                }`}>Events</a>
+                <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
+                  isScrolled ? 'text-white hover:text-blue-200' : 'text-white hover:text-blue-200'
+                }`}>Jobs</a>
+                <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
+                  isScrolled ? 'text-white hover:text-blue-200' : 'text-white hover:text-blue-200'
+                }`}>Giving</a>
               </nav>
             </div>
 
             <div className="flex items-center gap-4 px-4">
-              <button className="min-w-[84px] h-10 px-4 bg-white text-[#1e40af] text-sm font-bold rounded-lg hover:bg-blue-50 transition-all">
+              <button className={`min-w-[84px] h-10 px-4 text-sm font-bold rounded-lg transition-all duration-300 ${
+                isScrolled 
+                  ? 'bg-white text-[#1e40af] hover:bg-blue-50' 
+                  : 'bg-transparent text-white border border-white hover:bg-white/10'
+              }`}>
                 Login
               </button>
-              <div className="w-10 h-10 rounded-full border-2 border-white/30 bg-cover bg-center" 
+              <div className={`w-10 h-10 rounded-full border-2 bg-cover bg-center transition-all duration-300 ${
+                isScrolled ? 'border-white/30' : 'border-white/50'
+              }`} 
                    style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAS9Vwo0qwV7Bxvqk4epDLllUitvUDO63E01kIgsIOquLEbaJkkdpaUsDA0zrN9GEAXw5Ic_ZsM_8NIDR-GKAtvzuTkmXZwod0RC49hxhfrMh4Kw9mKSpFK_yYYSu03f-yFQZPUJSkGY4p6nCOsavUG6DQga8tC8AvQBC6KIaUjgVmucujKJHKDRMbqxkM8moIQOiv8VpET-c9AnlRu3OcT62paaXKQdN4DilRJlH7Pn_p8ZoVoyrmPxH5iydfl4h70P8yrbc84pXEq")'}}>
               </div>
               <button 
-                className="md:hidden text-white ml-4"
+                className={`md:hidden transition-colors duration-300 ml-4 ${
+                  isScrolled ? 'text-white' : 'text-white'
+                }`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
                 {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
