@@ -4,7 +4,9 @@ import {
   FiMapPin, 
   FiVideo, 
   FiChevronLeft, 
-  FiChevronRight
+  FiChevronRight,
+  FiUser,
+  FiMail
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
 
@@ -310,19 +312,55 @@ const HomePage = () => {
         </section>
 
         {/* Call to Action */}
-        <section className="w-full bg-primary text-white py-16 px-4">
-          <div className="max-w-[800px] mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 animate-slide-up">Ready to Reconnect?</h2>
-            <p className="text-white/80 text-lg mb-10 animate-slide-up" style={{animationDelay: '0.2s'}}>
+        <section className="w-full bg-gradient-to-br from-[#002759] via-[#0a519b] to-[#003d7a] text-white py-20 px-4 relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"></div>
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"></div>
+          <div className="relative z-10 max-w-4xl mx-auto text-center">
+            <div className="mb-6">
+              <span className="text-sm font-bold uppercase tracking-widest text-cyan-400 bg-cyan-400/10 backdrop-blur-sm px-6 py-3 rounded-full shadow-2xl border border-cyan-300/30">Join Our Community</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-black mb-6 leading-tight">Ready to Reconnect?</h2>
+            <p className="text-white/90 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
               Join over 15,000 alumni worldwide and stay updated with the latest university developments and opportunities.
             </p>
-            <div className="flex flex-wrap justify-center gap-4 animate-slide-up" style={{animationDelay: '0.4s'}}>
-              <button className="h-12 px-8 bg-white text-primary font-bold rounded-lg hover:shadow-xl hover:-translate-y-1 transition-all">
-                Sign Up Now
+            <div className="flex flex-wrap justify-center gap-6 mb-16">
+              <button className="group relative px-8 py-4 bg-white text-[#002759] text-base font-bold rounded-xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                <span className="relative z-10 flex items-center gap-2">
+                  <FiUser className="text-lg" />
+                  Sign Up Now
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0a519b] to-[#003d7a] transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
               </button>
-              <button className="h-12 px-8 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-all">
-                Contact Us
+              <button className="group relative px-8 py-4 bg-transparent border-2 border-white/50 text-white text-base font-bold rounded-xl hover:bg-white/10 hover:border-white transition-all duration-300 transform hover:-translate-y-1">
+                <span className="flex items-center gap-2">
+                  <FiMail className="text-lg" />
+                  Contact Us
+                </span>
               </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+              <div className="text-center group">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300">
+                  <FiUser className="text-2xl text-cyan-400" />
+                </div>
+                <div className="text-3xl font-bold text-white mb-2">15,000+</div>
+                <p className="text-white/70 text-sm">Alumni Worldwide</p>
+              </div>
+              <div className="text-center group">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300">
+                  <FiMapPin className="text-2xl text-cyan-400" />
+                </div>
+                <div className="text-3xl font-bold text-white mb-2">50+</div>
+                <p className="text-white/70 text-sm">Countries</p>
+              </div>
+              <div className="text-center group">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300">
+                  <FiArrowRight className="text-2xl text-cyan-400" />
+                </div>
+                <div className="text-3xl font-bold text-white mb-2">1000+</div>
+                <p className="text-white/70 text-sm">Success Stories</p>
+              </div>
             </div>
           </div>
         </section>
