@@ -198,31 +198,35 @@ const HomePage = () => {
         </section>
 
         {/* Upcoming Events */}
-        <section className="w-full bg-white dark:bg-gray-900/50 py-16 flex justify-center">
-          <div className="w-full max-w-[1200px] px-4 md:px-10">
+        <section className="w-full py-16 flex justify-center relative overflow-hidden">
+          <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+               style={{
+                 backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6")'
+               }}></div>
+          <div className="w-full max-w-[1200px] px-4 md:px-10 relative z-10">
             <div className="flex flex-col md:flex-row gap-12">
-              <div className="md:w-1/3 animate-slide-up">
+              <div className="md:w-1/3">
                 <h2 className="text-primary text-sm font-bold uppercase tracking-widest mb-2">Save the Date</h2>
-                <h3 className="text-3xl font-bold leading-tight mb-4">Upcoming Events</h3>
-                <p className="text-[#636c88] dark:text-gray-400 mb-6">Never miss an opportunity to reconnect with your former classmates and expand your network.</p>
+                <h3 className="text-white text-3xl font-bold leading-tight mb-4">Upcoming Events</h3>
+                <p className="text-gray-300 mb-6">Never miss an opportunity to reconnect with your former classmates and expand your network.</p>
                 <button className="h-12 px-6 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all">
                   View Calendar
                 </button>
               </div>
               <div className="md:w-2/3 flex flex-col gap-4">
                 {events.map((event, index) => (
-                  <div key={event.id} className="flex gap-6 items-center p-4 bg-background-light dark:bg-background-dark rounded-xl border border-transparent hover:border-primary/20 transition-all group animate-scale-in" style={{animationDelay: `${index * 0.1}s`}}>
-                    <div className={`flex flex-col items-center justify-center min-w-[70px] h-[70px] ${event.isPrimary ? 'bg-primary text-white' : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700'} rounded-lg`}>
+                  <div key={event.id} className="flex gap-6 items-center p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 hover:border-primary/50 transition-all group animate-scale-in" style={{animationDelay: `${index * 0.1}s`}}>
+                    <div className={`flex flex-col items-center justify-center min-w-[70px] h-[70px] ${event.isPrimary ? 'bg-primary text-white' : 'bg-white/20 border border-white/30 rounded-lg'}`}>
                       <span className="text-xl font-bold">{event.date}</span>
-                      <span className="text-[10px] uppercase font-medium">{event.month}</span>
+                      <span className="text-[10px] uppercase font-medium text-gray-300">{event.month}</span>
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-lg font-bold group-hover:text-primary transition-colors">{event.title}</h4>
-                      <p className="text-[#636c88] dark:text-gray-400 text-sm flex items-center gap-1">
+                      <h4 className="text-white text-lg font-bold group-hover:text-primary transition-colors">{event.title}</h4>
+                      <p className="text-gray-300 text-sm flex items-center gap-1">
                         {event.icon} {event.location} • {event.time}
                       </p>
                     </div>
-                    <FiArrowRight className="text-gray-400 group-hover:text-primary transition-colors" />
+                    <button className="material-symbols-outlined text-gray-400 group-hover:text-primary">arrow_forward</button>
                   </div>
                 ))}
               </div>
