@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { 
   FiArrowRight, 
   FiMapPin, 
@@ -87,12 +88,12 @@ const Layout = ({ children }) => {
               </div>
               
               <nav className="hidden lg:flex items-center gap-4 sm:gap-6">
-                <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                <Link to="/directory" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                   isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
                 }`}>
                   Directory
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 group-hover:w-full"></span>
-                </a>
+                </Link>
                 <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                   isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
                 }`}>
@@ -171,13 +172,13 @@ const Layout = ({ children }) => {
                   {/* Navigation Menu */}
                   <nav className="flex-1 p-4">
                     <div className="flex flex-col gap-2">
-                      <a 
-                        href="#" 
+                      <Link 
+                        to="/directory"
                         onClick={handleMenuClick}
                         className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
                       >
                         Directory
-                      </a>
+                      </Link>
                       <a 
                         href="#" 
                         onClick={handleMenuClick}
