@@ -16,7 +16,8 @@ import Layout from '../components/Layout';
 
 const DirectoryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [expandedFilter, setExpandedFilter] = useState('faculty');
+  const [expandedFilter, setExpandedFilter] = useState(null);
+  const [expandedFilters, setExpandedFilters] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({
     faculty: ['Civil Engineering'],
     graduationYear: [],
@@ -84,7 +85,14 @@ const DirectoryPage = () => {
   ];
 
   const toggleFilter = (filterName) => {
-    setExpandedFilter(expandedFilter === filterName ? null : filterName);
+    // Allow multiple filters to be open at once
+    if (expandedFilters.includes(filterName)) {
+      // Close this filter
+      setExpandedFilters(prev => prev.filter(f => f !== filterName));
+    } else {
+      // Open this filter
+      setExpandedFilters(prev => [...prev, filterName]);
+    }
   };
 
   const handleFacultyChange = (faculty) => {
@@ -161,11 +169,11 @@ const DirectoryPage = () => {
                         <p className="text-gray-900 text-sm font-medium">Graduation Year</p>
                       </div>
                       <FiChevronDown className={`text-sm text-gray-600 transition-transform ${
-                        expandedFilter === 'graduation' ? 'rotate-180' : ''
+                        expandedFilters.includes('graduation') ? 'rotate-180' : ''
                       }`} />
                     </button>
                     
-                    {expandedFilter === 'graduation' && (
+                    {expandedFilters.includes('graduation') && (
                       <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                         <div className="p-3">
                           <div className="flex flex-col gap-2">
@@ -196,25 +204,25 @@ const DirectoryPage = () => {
                     <button 
                       onClick={() => toggleFilter('faculty')}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                        expandedFilter === 'faculty' 
+                        expandedFilters.includes('faculty') 
                           ? 'bg-gradient-to-r from-[#002759]/10 to-[#0a519b]/10 border border-[#002759]/20' 
                           : 'hover:bg-gray-50'
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <FiBookOpen className={`text-sm font-semibold ${
-                          expandedFilter === 'faculty' ? 'text-[#002759]' : 'text-gray-900'
+                          expandedFilters.includes('faculty') ? 'text-[#002759]' : 'text-gray-900'
                         }`} />
                         <p className={`text-sm font-semibold ${
-                          expandedFilter === 'faculty' ? 'text-[#002759]' : 'text-gray-900'
+                          expandedFilters.includes('faculty') ? 'text-[#002759]' : 'text-gray-900'
                         }`}>Faculty</p>
                       </div>
                       <FiChevronDown className={`text-sm transition-transform ${
-                        expandedFilter === 'faculty' ? 'rotate-180' : ''
+                        expandedFilters.includes('faculty') ? 'rotate-180' : ''
                       }`} />
                     </button>
                     
-                    {expandedFilter === 'faculty' && (
+                    {expandedFilters.includes('faculty') && (
                       <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                         <div className="p-3">
                           <div className="flex flex-col gap-2">
@@ -280,11 +288,11 @@ const DirectoryPage = () => {
                         <p className="text-gray-900 text-sm font-medium">Degree Type</p>
                       </div>
                       <FiChevronDown className={`text-sm text-gray-600 transition-transform ${
-                        expandedFilter === 'degree' ? 'rotate-180' : ''
+                        expandedFilters.includes('degree') ? 'rotate-180' : ''
                       }`} />
                     </button>
                     
-                    {expandedFilter === 'degree' && (
+                    {expandedFilters.includes('degree') && (
                       <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                         <div className="p-3">
                           <div className="flex flex-col gap-2">
@@ -317,11 +325,11 @@ const DirectoryPage = () => {
                         <p className="text-gray-900 text-sm font-medium">Current Industry</p>
                       </div>
                       <FiChevronDown className={`text-sm text-gray-600 transition-transform ${
-                        expandedFilter === 'industry' ? 'rotate-180' : ''
+                        expandedFilters.includes('industry') ? 'rotate-180' : ''
                       }`} />
                     </button>
                     
-                    {expandedFilter === 'industry' && (
+                    {expandedFilters.includes('industry') && (
                       <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
                         <div className="p-3">
                           <div className="flex flex-col gap-2">
