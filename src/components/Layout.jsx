@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-[#002759] backdrop-blur-md shadow-lg border-b border-[#003d7a]' 
+          ? 'bg-[#002759] backdrop-blur-md shadow-lg' 
           : 'bg-transparent !bg-transparent'
       }`}>
         <div className="w-full px-8 py-3">
