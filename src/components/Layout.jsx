@@ -9,7 +9,8 @@ import {
   FiX,
   FiMail,
   FiLinkedin,
-  FiFacebook
+  FiFacebook,
+  FiUser
 } from 'react-icons/fi';
 
 const Layout = ({ children }) => {
@@ -38,7 +39,7 @@ const Layout = ({ children }) => {
           ? 'bg-[#002759] backdrop-blur-md shadow-lg' 
           : 'bg-transparent !bg-transparent'
       }`}>
-        <div className="w-full px-8 py-3">
+        <div className="w-full px-12 py-3">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-8 px-4">
               <div className={`flex items-center gap-4 transition-colors duration-300 ${
@@ -53,17 +54,17 @@ const Layout = ({ children }) => {
               </div>
               
               <nav className="hidden md:flex items-center gap-9">
-                <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
-                  isScrolled ? 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded' : 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded'
+                <a href="#" className={`text-sm font-medium transition-colors duration-300 px-3 py-1 rounded ${
+                  isScrolled ? 'text-white hover:bg-[#0a519b]' : 'text-white hover:bg-[#0a519b]'
                 }`}>Directory</a>
-                <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
-                  isScrolled ? 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded' : 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded'
+                <a href="#" className={`text-sm font-medium transition-colors duration-300 px-3 py-1 rounded ${
+                  isScrolled ? 'text-white hover:bg-[#0a519b]' : 'text-white hover:bg-[#0a519b]'
                 }`}>Events</a>
-                <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
-                  isScrolled ? 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded' : 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded'
+                <a href="#" className={`text-sm font-medium transition-colors duration-300 px-3 py-1 rounded ${
+                  isScrolled ? 'text-white hover:bg-[#0a519b]' : 'text-white hover:bg-[#0a519b]'
                 }`}>Jobs</a>
-                <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
-                  isScrolled ? 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded' : 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded'
+                <a href="#" className={`text-sm font-medium transition-colors duration-300 px-3 py-1 rounded ${
+                  isScrolled ? 'text-white hover:bg-[#0a519b]' : 'text-white hover:bg-[#0a519b]'
                 }`}>Giving</a>
               </nav>
             </div>
@@ -71,15 +72,15 @@ const Layout = ({ children }) => {
             <div className="flex items-center gap-4 px-4">
               <button className={`min-w-[84px] h-10 px-4 text-sm font-bold rounded-lg transition-all duration-300 ${
                 isScrolled 
-                  ? 'bg-white text-[#002759] hover:bg-[#e6f0fa]' 
+                  ? 'bg-white text-[#002759] hover:bg-[#0a519b] hover:text-white' 
                   : 'bg-transparent text-white border border-white hover:bg-white/10'
               }`}>
                 Login
               </button>
-              <div className={`w-10 h-10 rounded-full border-2 bg-cover bg-center transition-all duration-300 ${
-                isScrolled ? 'border-white/30' : 'border-white/50'
-              }`} 
-                   style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAS9Vwo0qwV7Bxvqk4epDLllUitvUDO63E01kIgsIOquLEbaJkkdpaUsDA0zrN9GEAXw5Ic_ZsM_8NIDR-GKAtvzuTkmXZwod0RC49hxhfrMh4Kw9mKSpFK_yYYSu03f-yFQZPUJSkGY4p6nCOsavUG6DQga8tC8AvQBC6KIaUjgVmucujKJHKDRMbqxkM8moIQOiv8VpET-c9AnlRu3OcT62paaXKQdN4DilRJlH7Pn_p8ZoVoyrmPxH5iydfl4h70P8yrbc84pXEq")'}}>
+              <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                isScrolled ? 'bg-white/20 border-white/30' : 'bg-white/20 border-white/50'
+              }`}>
+                <FiUser className="text-white text-lg" />
               </div>
               <button 
                 className={`md:hidden transition-colors duration-300 ml-4 ${
@@ -96,12 +97,12 @@ const Layout = ({ children }) => {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-[#003d7a] animate-slide-up">
               <nav className="flex flex-col gap-4 mb-4">
-                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors">Directory</a>
-                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors">Events</a>
-                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors">Jobs</a>
-                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors">Giving</a>
+                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors px-3 py-1 rounded">Directory</a>
+                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors px-3 py-1 rounded">Events</a>
+                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors px-3 py-1 rounded">Jobs</a>
+                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors px-3 py-1 rounded">Giving</a>
               </nav>
-              <button className="w-full h-10 bg-white text-[#002759] text-sm font-bold rounded-lg hover:bg-[#e6f0fa] transition-all">
+              <button className="w-full h-10 bg-white text-[#002759] text-sm font-bold rounded-lg hover:bg-[#0a519b] hover:text-white transition-all">
                 Login
               </button>
             </div>
