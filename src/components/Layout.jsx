@@ -58,10 +58,11 @@ const Layout = ({ children }) => {
 
   // Handle menu item click
   const handleMenuClick = (e) => {
-    e.preventDefault();
+    // Don't prevent default for Link components, only for regular anchors
+    if (e && e.target.tagName !== 'A') {
+      e.preventDefault();
+    }
     setIsMenuOpen(false);
-    // Here you can add navigation logic if needed
-    // For now, we'll just close the menu
   };
 
   return (
@@ -78,8 +79,8 @@ const Layout = ({ children }) => {
               <div className={`flex items-center gap-2 sm:gap-4 transition-all duration-300 ${
                 isScrolled ? 'text-white' : 'text-white'
               }`}>
-                <Link to="/" className="flex items-center gap-2 sm:gap-4 hover:scale-105 transition-transform">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
+                <Link to="/" className="flex items-center gap-2 sm:gap-4">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg">
                     <svg fill="white" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 sm:w-6 sm:h-6">
                       <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
                     </svg>
