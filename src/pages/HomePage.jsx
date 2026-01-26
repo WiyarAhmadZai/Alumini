@@ -3,8 +3,6 @@ import {
   FiArrowRight, 
   FiMapPin, 
   FiVideo, 
-  FiChevronLeft, 
-  FiChevronRight,
   FiUser,
   FiMail
 } from 'react-icons/fi';
@@ -198,20 +196,6 @@ const HomePage = () => {
               ))}
             </div>
           </div>
-
-          {/* Slider Navigation Arrows */}
-          <button
-            onClick={() => setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-            className="absolute left-1 sm:left-2 md:left-4 top-1/2 transform -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition-all"
-          >
-            <FiChevronLeft size={12} />
-          </button>
-          <button
-            onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
-            className="absolute right-1 sm:right-2 md:right-4 top-1/2 transform -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition-all"
-          >
-            <FiChevronRight size={12} />
-          </button>
         </div>
       </section>
 
