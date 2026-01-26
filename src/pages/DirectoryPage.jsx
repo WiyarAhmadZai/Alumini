@@ -88,12 +88,20 @@ const DirectoryPage = () => {
   };
 
   const handleFacultyChange = (faculty) => {
-    setSelectedFilters(prev => ({
-      ...prev,
-      faculty: prev.faculty.includes(faculty)
-        ? prev.faculty.filter(f => f !== faculty)
-        : [...prev.faculty, faculty]
-    }));
+    if (faculty === 'All') {
+      // If 'All' is selected, clear all faculty selections
+      setSelectedFilters(prev => ({
+        ...prev,
+        faculty: []
+      }));
+    } else {
+      setSelectedFilters(prev => ({
+        ...prev,
+        faculty: prev.faculty.includes(faculty)
+          ? prev.faculty.filter(f => f !== faculty)
+          : [...prev.faculty, faculty]
+      }));
+    }
   };
 
   const removeFilter = (filterType, value) => {
@@ -134,64 +142,220 @@ const DirectoryPage = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Side Navigation Bar (Filters) */}
           <aside className="w-full lg:w-80 flex-shrink-0">
-            <div className="sticky top-24 flex flex-col gap-6 bg-white dark:bg-slate-900/50 p-6 rounded-xl border border-gray-200 dark:border-slate-800 shadow-sm">
-              <div>
-                <h1 className="text-gray-900 dark:text-white text-lg font-bold">Advanced Filters</h1>
-                <p className="text-gray-600 dark:text-slate-400 text-sm">Refine your network search</p>
+            <div className="sticky top-24">
+              <div className="flex flex-col gap-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                <div>
+                  <h1 className="text-gray-900 text-lg font-bold">Advanced Filters</h1>
+                  <p className="text-gray-600 text-sm">Refine your network search</p>
+                </div>
+                
+                <div className="flex flex-col gap-1">
+                  {/* Graduation Year Dropdown */}
+                  <div className="relative">
+                    <button 
+                      onClick={() => toggleFilter('graduation')}
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer group transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FiCalendar className="text-[#002759]" />
+                        <p className="text-gray-900 text-sm font-medium">Graduation Year</p>
+                      </div>
+                      <FiChevronDown className={`text-sm text-gray-600 transition-transform ${
+                        expandedFilter === 'graduation' ? 'rotate-180' : ''
+                      }`} />
+                    </button>
+                    
+                    {expandedFilter === 'graduation' && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <div className="p-3">
+                          <div className="flex flex-col gap-2">
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>2015 - 2020</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>2010 - 2014</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>2005 - 2009</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>2000 - 2004</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Faculty Dropdown */}
+                  <div className="relative">
+                    <button 
+                      onClick={() => toggleFilter('faculty')}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                        expandedFilter === 'faculty' 
+                          ? 'bg-gradient-to-r from-[#002759]/10 to-[#0a519b]/10 border border-[#002759]/20' 
+                          : 'hover:bg-gray-50'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <FiBookOpen className={`text-sm font-semibold ${
+                          expandedFilter === 'faculty' ? 'text-[#002759]' : 'text-gray-900'
+                        }`} />
+                        <p className={`text-sm font-semibold ${
+                          expandedFilter === 'faculty' ? 'text-[#002759]' : 'text-gray-900'
+                        }`}>Faculty</p>
+                      </div>
+                      <FiChevronDown className={`text-sm transition-transform ${
+                        expandedFilter === 'faculty' ? 'rotate-180' : ''
+                      }`} />
+                    </button>
+                    
+                    {expandedFilter === 'faculty' && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <div className="p-3">
+                          <div className="flex flex-col gap-2">
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input 
+                                checked={selectedFilters.faculty.includes('Civil Engineering')}
+                                onChange={() => handleFacultyChange('Civil Engineering')}
+                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                                type="checkbox" 
+                              />
+                              <span>Civil Engineering</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input 
+                                checked={selectedFilters.faculty.includes('Computer Science')}
+                                onChange={() => handleFacultyChange('Computer Science')}
+                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                                type="checkbox" 
+                              />
+                              <span>Computer Science</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input 
+                                checked={selectedFilters.faculty.includes('Geomatics')}
+                                onChange={() => handleFacultyChange('Geomatics')}
+                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                                type="checkbox" 
+                              />
+                              <span>Geomatics</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input 
+                                checked={selectedFilters.faculty.includes('Electromechanics')}
+                                onChange={() => handleFacultyChange('Electromechanics')}
+                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                                type="checkbox" 
+                              />
+                              <span>Electromechanics</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input 
+                                checked={selectedFilters.faculty.includes('All')}
+                                onChange={() => handleFacultyChange('All')}
+                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                                type="checkbox" 
+                              />
+                              <span>All Faculties</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Degree Type Dropdown */}
+                  <div className="relative">
+                    <button 
+                      onClick={() => toggleFilter('degree')}
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer group transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FiBookOpen className="text-gray-900" />
+                        <p className="text-gray-900 text-sm font-medium">Degree Type</p>
+                      </div>
+                      <FiChevronDown className={`text-sm text-gray-600 transition-transform ${
+                        expandedFilter === 'degree' ? 'rotate-180' : ''
+                      }`} />
+                    </button>
+                    
+                    {expandedFilter === 'degree' && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <div className="p-3">
+                          <div className="flex flex-col gap-2">
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>Bachelor's Degree</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>Master's Degree</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>PhD</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Industry Dropdown */}
+                  <div className="relative">
+                    <button 
+                      onClick={() => toggleFilter('industry')}
+                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer group transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <FiBriefcase className="text-gray-900" />
+                        <p className="text-gray-900 text-sm font-medium">Current Industry</p>
+                      </div>
+                      <FiChevronDown className={`text-sm text-gray-600 transition-transform ${
+                        expandedFilter === 'industry' ? 'rotate-180' : ''
+                      }`} />
+                    </button>
+                    
+                    {expandedFilter === 'industry' && (
+                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <div className="p-3">
+                          <div className="flex flex-col gap-2">
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>Technology</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>Engineering</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>Healthcare</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>Education</span>
+                            </label>
+                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                              <span>Finance</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <button className="mt-4 flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 text-sm font-bold hover:from-gray-200 hover:to-gray-300 transition-all">
+                  Reset Filters
+                </button>
               </div>
-              
-              <div className="flex flex-col gap-3">
-                {/* Graduation Year Filter */}
-                <div className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-[#002759]/5 hover:to-[#0a519b]/5 cursor-pointer group">
-                  <div className="flex items-center gap-3">
-                    <FiCalendar className="text-[#002759]" />
-                    <p className="text-gray-900 text-sm font-medium">Graduation Year</p>
-                  </div>
-                </div>
-
-                {/* Faculty Filter */}
-                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gradient-to-r from-[#002759]/10 to-[#0a519b]/10 border border-[#002759]/20 cursor-pointer">
-                  <div className="flex items-center gap-3">
-                    <FiBookOpen className="text-[#002759]" />
-                    <p className="text-[#002759] text-sm font-semibold">Faculty</p>
-                  </div>
-                </div>
-
-                {/* Faculty Options */}
-                <div className="px-10 py-2 flex flex-col gap-2">
-                  {faculties.map(faculty => (
-                    <label key={faculty} className="flex items-center gap-2 text-sm text-gray-600">
-                      <input 
-                        checked={selectedFilters.faculty.includes(faculty)}
-                        onChange={() => handleFacultyChange(faculty)}
-                        className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                        type="checkbox" 
-                      />
-                      {faculty}
-                    </label>
-                  ))}
-                </div>
-
-                {/* Degree Type Filter */}
-                <div className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-[#002759]/5 hover:to-[#0a519b]/5 cursor-pointer group">
-                  <div className="flex items-center gap-3">
-                    <FiBookOpen className="text-gray-900" />
-                    <p className="text-gray-900 text-sm font-medium">Degree Type</p>
-                  </div>
-                </div>
-
-                {/* Industry Filter */}
-                <div className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-[#002759]/5 hover:to-[#0a519b]/5 cursor-pointer group">
-                  <div className="flex items-center gap-3">
-                    <FiBriefcase className="text-gray-900" />
-                    <p className="text-gray-900 text-sm font-medium">Current Industry</p>
-                  </div>
-                </div>
-              </div>
-
-              <button className="mt-4 flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-white text-sm font-bold hover:bg-gray-200 dark:hover:bg-slate-700 transition-all">
-                Reset Filters
-              </button>
             </div>
           </aside>
 
