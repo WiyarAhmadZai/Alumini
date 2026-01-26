@@ -108,102 +108,81 @@ const MentorshipPage = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50">
-        {/* Hero Section */}
-        <section className="bg-white border-b border-gray-200">
-          <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-12">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">Guide the next generation or find your own path</h1>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                Connect with experienced KPU alumni for career guidance, technical skill development, and professional networking.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <div className="bg-blue-600 text-white rounded-2xl p-8 flex flex-col gap-6 shadow-xl relative overflow-hidden group">
-                <div className="relative z-10">
-                  <FiUsers className="text-4xl mb-4" />
-                  <h3 className="text-2xl font-bold mb-2">Become a Mentor</h3>
-                  <p className="text-white/80 mb-6">
-                    Share your industry expertise and help shape the careers of fellow KPU alumni and students.
-                  </p>
-                  <button className="w-full bg-white text-blue-600 font-bold py-3 rounded-xl hover:bg-gray-100 transition-all">
-                    Join as Mentor
-                  </button>
-                </div>
-                <div className="absolute -right-10 -bottom-10 opacity-10 scale-150 group-hover:rotate-12 transition-transform duration-500">
-                  <FiBookOpen className="text-[200px]" />
-                </div>
-              </div>
-              <div className="bg-white border-2 border-blue-600/20 rounded-2xl p-8 flex flex-col gap-6 shadow-lg relative overflow-hidden group">
-                <div className="relative z-10">
-                  <FiSearch className="text-4xl text-blue-600 mb-4" />
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">Find a Mentor</h3>
-                  <p className="text-gray-600 mb-6">
-                    Connect with industry leaders who graduated from KPU and can help you navigate your professional journey.
-                  </p>
-                  <button className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-all">
-                    Browse Mentors
-                  </button>
-                </div>
-                <div className="absolute -right-10 -bottom-10 opacity-5 scale-150 group-hover:-rotate-12 transition-transform duration-500">
-                  <FiTrendingUp className="text-[200px] text-blue-600" />
-                </div>
-              </div>
-            </div>
+      {/* Hero Section */}
+      <section className="relative w-full h-80 sm:h-96 overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6")',
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        ></div>
+        
+        <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
+          <div className="text-center text-white max-w-4xl">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-4">
+              KPU Alumni Mentorship Hub
+            </h1>
+            <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto">
+              Connect with experienced alumni mentors and guide the next generation of KPU professionals
+            </p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Main Content */}
-        <main className="flex-1 flex flex-col lg:flex-row max-w-[1440px] mx-auto w-full px-4 lg:px-10 py-12 gap-8">
-          {/* Sidebar Filters */}
-          <aside className="w-full lg:w-72 flex-shrink-0">
-            <div className="sticky top-24 flex flex-col gap-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <div>
-                <h2 className="text-gray-900 text-lg font-bold">Filter Mentors</h2>
-                <p className="text-gray-600 text-sm">Find your perfect match</p>
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col lg:flex-row max-w-[1440px] mx-auto w-full px-4 lg:px-10 py-12 gap-8">
+        {/* Sidebar Filters */}
+        <aside className="w-full lg:w-72 flex-shrink-0">
+          <div className="sticky top-24 flex flex-col gap-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div>
+              <h2 className="text-gray-900 text-lg font-bold">Filter Mentors</h2>
+              <p className="text-gray-600 text-sm">Find your perfect match</p>
+            </div>
+            
+            <div className="flex flex-col gap-3">
+              <p className="text-sm font-bold text-gray-900">Faculty</p>
+              <div className="flex flex-col gap-2">
+                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                  <input 
+                    checked={selectedFaculty.civilEngineering}
+                    onChange={() => handleFacultyChange('civilEngineering')}
+                    className="rounded text-blue-600 focus:ring-blue-500 border-gray-300" 
+                    type="checkbox"
+                  />
+                  <span>Civil Engineering</span>
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                  <input 
+                    checked={selectedFaculty.computerScience}
+                    onChange={() => handleFacultyChange('computerScience')}
+                    className="rounded text-blue-600 focus:ring-blue-500 border-gray-300" 
+                    type="checkbox"
+                  />
+                  <span>Computer Science</span>
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                  <input 
+                    checked={selectedFaculty.electromechanics}
+                    onChange={() => handleFacultyChange('electromechanics')}
+                    className="rounded text-blue-600 focus:ring-blue-500 border-gray-300" 
+                    type="checkbox"
+                  />
+                  <span>Electromechanics</span>
+                </label>
+                <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+                  <input 
+                    checked={selectedFaculty.geomatics}
+                    onChange={() => handleFacultyChange('geomatics')}
+                    className="rounded text-blue-600 focus:ring-blue-500 border-gray-300" 
+                    type="checkbox"
+                  />
+                  <span>Geomatics</span>
+                </label>
               </div>
-              
-              <div className="flex flex-col gap-3">
-                <p className="text-sm font-bold text-gray-900">Faculty</p>
-                <div className="flex flex-col gap-2">
-                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                    <input 
-                      checked={selectedFaculty.civilEngineering}
-                      onChange={() => handleFacultyChange('civilEngineering')}
-                      className="rounded text-blue-600 focus:ring-blue-500 border-gray-300" 
-                      type="checkbox"
-                    />
-                    <span>Civil Engineering</span>
-                  </label>
-                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                    <input 
-                      checked={selectedFaculty.computerScience}
-                      onChange={() => handleFacultyChange('computerScience')}
-                      className="rounded text-blue-600 focus:ring-blue-500 border-gray-300" 
-                      type="checkbox"
-                    />
-                    <span>Computer Science</span>
-                  </label>
-                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                    <input 
-                      checked={selectedFaculty.electromechanics}
-                      onChange={() => handleFacultyChange('electromechanics')}
-                      className="rounded text-blue-600 focus:ring-blue-500 border-gray-300" 
-                      type="checkbox"
-                    />
-                    <span>Electromechanics</span>
-                  </label>
-                  <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                    <input 
-                      checked={selectedFaculty.geomatics}
-                      onChange={() => handleFacultyChange('geomatics')}
-                      className="rounded text-blue-600 focus:ring-blue-500 border-gray-300" 
-                      type="checkbox"
-                    />
-                    <span>Geomatics</span>
-                  </label>
-                </div>
-              </div>
+            </div>
 
               <div className="flex flex-col gap-3">
                 <p className="text-sm font-bold text-gray-900">Years of Experience</p>
@@ -329,7 +308,6 @@ const MentorshipPage = () => {
             </div>
           </div>
         </main>
-      </div>
     </Layout>
   );
 };
