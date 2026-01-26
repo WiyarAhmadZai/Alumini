@@ -83,12 +83,9 @@ const HomePage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTestimonial((prev) => {
-        if (prev >= testimonials.length - 1) {
-          // When reaching the last real testimonial, reset to first seamlessly
-          setTimeout(() => {
-            setCurrentTestimonial(0);
-          }, 700); // Wait for transition to complete
-          return prev + 1; // Move to the cloned first card
+        if (prev >= testimonials.length) {
+          // When reaching the cloned first card, instantly jump to real first card
+          return 0;
         }
         return prev + 1;
       });
@@ -344,7 +341,8 @@ const HomePage = () => {
                 <div 
                   className="flex transition-transform duration-700 ease-out"
                   style={{
-                    transform: `translateX(-${currentTestimonial * 100}%)`
+                    transform: `translateX(-${currentTestimonial * 100}%)`,
+                    transition: currentTestimonial === 0 ? 'none' : 'transform 700ms ease-out'
                   }}
                 >
                   {[...testimonials, testimonials[0]].map((testimonial, index) => (
@@ -413,7 +411,13 @@ const HomePage = () => {
               {/* Navigation Buttons */}
               <button 
                 className="absolute top-1/2 -left-3 sm:-left-4 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-white shadow-xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
-                onClick={() => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
+                onClick={() => {
+                  if (currentTestimonial === 0) {
+                    setCurrentTestimonial(testimonials.length - 1);
+                  } else {
+                    setCurrentTestimonial(prev => prev - 1);
+                  }
+                }}
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
@@ -421,7 +425,9 @@ const HomePage = () => {
               </button>
               <button 
                 className="absolute top-1/2 -right-3 sm:-right-4 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-white shadow-xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
-                onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
+                onClick={() => {
+                  setCurrentTestimonial(prev => prev + 1);
+                }}
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
@@ -435,7 +441,7 @@ const HomePage = () => {
                     key={index}
                     onClick={() => setCurrentTestimonial(index)}
                     className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${
-                      index === currentTestimonial 
+                      (currentTestimonial === index || (currentTestimonial === testimonials.length && index === 0))
                         ? 'w-8 sm:w-12 bg-gradient-to-r from-[#002759] to-[#0a519b]' 
                         : 'w-2.5 sm:w-3 bg-gray-300 hover:bg-gray-400'
                     }`}
