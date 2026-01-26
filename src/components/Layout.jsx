@@ -220,6 +220,16 @@ const Layout = ({ children }) => {
                         <p className="text-blue-200 text-xs">Manage profile</p>
                       </div>
                     </div>
+                    <div className="mt-4 pt-4 border-t border-[#003d7a]/30">
+                      <Link 
+                        to="/directory"
+                        onClick={handleMenuClick}
+                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
+                      >
+                        <span className="text-lg opacity-70">📁</span>
+                        Alumni Directory
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
