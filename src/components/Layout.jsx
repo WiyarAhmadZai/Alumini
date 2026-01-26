@@ -20,7 +20,7 @@ const Layout = ({ children }) => {
   const sidebarRef = useRef(null);
   const location = useLocation();
 
-  // Handle scroll effect
+  // Handle scroll effect and scroll to top on route change
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -33,6 +33,11 @@ const Layout = ({ children }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Scroll to top when route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   // Handle click outside to close menu
   useEffect(() => {
