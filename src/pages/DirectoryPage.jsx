@@ -224,7 +224,7 @@ const DirectoryPage = () => {
                         }`}>Faculty</p>
                       </div>
                       <FiChevronDown className={`text-sm transition-transform ${
-                        expandedFilters.includes('faculty') ? 'rotate-180' : ''
+                        expandedFilters.includes('faculty') ? 'rotate-180 text-[#002759]' : 'text-gray-600'
                       }`} />
                     </button>
                     
