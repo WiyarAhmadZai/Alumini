@@ -1,0 +1,138 @@
+import React, { useState } from 'react';
+import { 
+  FiArrowRight, 
+  FiMapPin, 
+  FiVideo, 
+  FiChevronLeft, 
+  FiChevronRight,
+  FiMenu,
+  FiX,
+  FiMail,
+  FiLinkedin,
+  FiFacebook
+} from 'react-icons/fi';
+
+const Layout = ({ children }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-background-light dark:bg-background-dark text-[#111318] dark:text-white font-display">
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b border-[#1e3a8a] dark:border-[#1e3a8a] bg-[#1e40af] dark:bg-[#1e3a8a] backdrop-blur-md animate-fade-in shadow-lg">
+        <div className="max-w-[1200px] mx-auto px-10 py-3">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-4 text-white">
+              <div className="w-8 h-8">
+                <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold leading-tight tracking-[-0.015em]">KPU Alumni</h2>
+            </div>
+            
+            <nav className="hidden md:flex items-center gap-9">
+              <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Directory</a>
+              <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Events</a>
+              <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Jobs</a>
+              <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Giving</a>
+            </nav>
+
+            <div className="flex items-center gap-4">
+              <button className="min-w-[84px] h-10 px-4 bg-white text-[#1e40af] text-sm font-bold rounded-lg hover:bg-blue-50 transition-all">
+                Login
+              </button>
+              <div className="w-10 h-10 rounded-full border-2 border-white/30 bg-cover bg-center" 
+                   style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAS9Vwo0qwV7Bxvqk4epDLllUitvUDO63E01kIgsIOquLEbaJkkdpaUsDA0zrN9GEAXw5Ic_ZsM_8NIDR-GKAtvzuTkmXZwod0RC49hxhfrMh4Kw9mKSpFK_yYYSu03f-yFQZPUJSkGY4p6nCOsavUG6DQga8tC8AvQBC6KIaUjgVmucujKJHKDRMbqxkM8moIQOiv8VpET-c9AnlRu3OcT62paaXKQdN4DilRJlH7Pn_p8ZoVoyrmPxH5iydfl4h70P8yrbc84pXEq")'}}>
+              </div>
+              <button 
+                className="md:hidden text-white ml-4"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                {isMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile Menu */}
+          {isMenuOpen && (
+            <div className="md:hidden py-4 border-t border-white/20 animate-slide-up">
+              <nav className="flex flex-col gap-4 mb-4">
+                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Directory</a>
+                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Events</a>
+                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Jobs</a>
+                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Giving</a>
+              </nav>
+              <button className="w-full h-10 bg-white text-[#1e40af] text-sm font-bold rounded-lg hover:bg-blue-50 transition-all">
+                Login
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main>
+        {children}
+      </main>
+
+      {/* Footer */}
+      <footer className="w-full bg-[#1e40af] dark:bg-[#1e3a8a] text-white py-12 border-t border-[#1e3a8a]">
+        <div className="max-w-[1200px] mx-auto px-10 grid grid-cols-1 md:grid-cols-4 gap-12">
+          <div className="col-span-1 md:col-span-1">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-6 h-6 text-white">
+                <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
+                </svg>
+              </div>
+              <span className="text-xl font-bold">KPU Alumni</span>
+            </div>
+            <p className="text-blue-100 text-sm leading-relaxed">
+              Fostering excellence, community, and lifelong learning for all Kabul Polytechnic University graduates.
+            </p>
+          </div>
+          
+          <div>
+            <h4 className="font-bold mb-6 text-lg">Quick Links</h4>
+            <ul className="flex flex-col gap-4 text-blue-100 text-sm">
+              <li><a href="#" className="hover:text-white transition-colors">Alumni Directory</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Job Board</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Mentorship Program</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Campus News</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="font-bold mb-6 text-lg">University</h4>
+            <ul className="flex flex-col gap-4 text-blue-100 text-sm">
+              <li><a href="#" className="hover:text-white transition-colors">About KPU</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Faculties</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Research Labs</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">Contact Office</a></li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="font-bold mb-6 text-lg">Follow Us</h4>
+            <div className="flex gap-4">
+              <a href="#" className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                <FiLinkedin className="text-xl text-white" />
+              </a>
+              <a href="#" className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                <FiMail className="text-xl text-white" />
+              </a>
+              <a href="#" className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                <FiFacebook className="text-xl text-white" />
+              </a>
+            </div>
+            <p className="text-blue-200 text-[10px] mt-8">
+              © 2023 Kabul Polytechnic University Alumni Association. All Rights Reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default Layout;
