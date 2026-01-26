@@ -179,14 +179,41 @@ const Layout = ({ children }) => {
           {isMenuOpen && (
             <>
               {/* Backdrop */}
-              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden animate-fade-in"></div>
+              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[50] lg:hidden animate-fade-in"></div>
               
               {/* Sidebar */}
               <div 
                 ref={sidebarRef}
-                className="fixed top-0 right-0 h-full w-72 sm:w-80 bg-[#002759] shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out animate-slide-in-left"
+                className="mobile-menu-sidebar fixed top-0 right-0 h-full w-72 sm:w-80 bg-[#002759] shadow-2xl border-l-4 border-gray-900 z-[99999] lg:hidden transform transition-all duration-300 ease-in-out animate-slide-in-left"
+                style={{ 
+                  backgroundColor: '#002759 !important',
+                  backgroundImage: 'linear-gradient(to bottom, #002759, #002759) !important',
+                  isolation: 'isolate',
+                  position: 'fixed',
+                  top: '0',
+                  right: '0',
+                  background: '#002759 !important',
+                  backgroundClip: 'padding-box',
+                  WebkitBackgroundClip: 'padding-box'
+                }}
               >
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full bg-[#002759] relative"
+                   style={{
+                     position: 'relative',
+                     zIndex: 1,
+                     backgroundColor: '#002759 !important',
+                     background: '#002759 !important'
+                   }}
+                >
+                  {/* Background protection overlay */}
+                  <div 
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      backgroundColor: '#002759',
+                      zIndex: -1,
+                      background: '#002759'
+                    }}
+                  />
                   {/* Sidebar Header */}
                   <div className="flex items-center justify-between p-4 border-b border-[#003d7a]">
                     <div className="flex items-center gap-3">
