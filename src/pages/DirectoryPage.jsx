@@ -267,24 +267,48 @@ const DirectoryPage = () => {
             </div>
 
             {/* Pagination Area */}
-            <div className="flex items-center justify-between py-6 border-t border-gray-200 dark:border-slate-800 mt-4">
-              <p className="text-sm text-gray-600 dark:text-slate-400">
-                Showing <span className="font-bold text-gray-900 dark:text-white">124</span> KPU Alumni
-              </p>
+            <div className="flex items-center justify-between py-8 border-t border-gray-200 mt-6">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#002759] to-[#0a519b] rounded-lg flex items-center justify-center text-white shadow-lg">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9 2a1 1 0 000 2v6a1 1 0 001 1h6a1 1 0 001-1V4a1 1 0 00-1-1H9zM4 6a1 1 0 00-1 1v6a1 1 0 001 1h6a1 1 0 001-1V7a1 1 0 00-1-1H4z"/>
+                  </svg>
+                </div>
+                <p className="text-gray-600 text-sm">
+                  Showing <span className="font-bold text-[#002759] text-base">124</span> KPU Alumni
+                </p>
+              </div>
               <div className="flex gap-2">
-                <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 dark:border-slate-800 hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-900 dark:text-white">
+                <button 
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  className={`flex h-10 w-10 items-center justify-center rounded-lg border transition-all ${
+                    currentPage === 1 
+                      ? 'border-gray-200 text-gray-400 cursor-not-allowed' 
+                      : 'border-gray-300 text-gray-700 hover:bg-[#002759] hover:text-white hover:border-[#002759]'
+                  }`}
+                  disabled={currentPage === 1}
+                >
                   <FiChevronLeft />
                 </button>
-                <button className="flex h-10 px-4 items-center justify-center rounded-lg bg-[#002759] text-white font-bold text-sm">
-                  {currentPage}
-                </button>
-                <button className="flex h-10 px-4 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-900 dark:text-white font-bold text-sm">
-                  2
-                </button>
-                <button className="flex h-10 px-4 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-900 dark:text-white font-bold text-sm">
-                  3
-                </button>
-                <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 dark:border-slate-800 hover:bg-gray-100 dark:hover:bg-slate-800 text-gray-900 dark:text-white">
+                
+                {[1, 2, 3].map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`h-10 px-4 items-center justify-center rounded-lg font-bold text-sm transition-all ${
+                      currentPage === page
+                        ? 'bg-gradient-to-r from-[#002759] to-[#0a519b] text-white shadow-lg transform scale-105'
+                        : 'border border-gray-300 text-gray-700 hover:bg-[#002759]/10 hover:text-[#002759] hover:border-[#002759]'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                
+                <button 
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 text-gray-700 hover:bg-[#002759] hover:text-white hover:border-[#002759] transition-all"
+                >
                   <FiChevronRight />
                 </button>
               </div>
