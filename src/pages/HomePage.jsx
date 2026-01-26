@@ -109,7 +109,7 @@ const HomePage = () => {
   return (
     <Layout>
       {/* Hero Section - Full Width Slider */}
-      <section className="relative w-full h-screen overflow-hidden">
+      <section className="relative w-full h-screen overflow-hidden pt-16">
         <div className="relative w-full h-full">
           {heroSlides.map((slide, index) => (
             <div
