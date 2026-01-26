@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   FiArrowRight, 
   FiMapPin, 
@@ -16,6 +16,7 @@ import {
 const Layout = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const sidebarRef = useRef(null);
 
   // Handle scroll effect
   useEffect(() => {
@@ -30,6 +31,36 @@ const Layout = ({ children }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Handle click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMenuOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
+
+  // Handle menu item click
+  const handleMenuClick = (e) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+    // Here you can add navigation logic if needed
+    // For now, we'll just close the menu
+  };
 
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark text-[#111318] dark:text-white font-display">
@@ -107,19 +138,95 @@ const Layout = ({ children }) => {
             </div>
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Sidebar Menu */}
           {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-[#003d7a] animate-slide-up">
-              <nav className="flex flex-col gap-4 mb-4">
-                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors px-3 py-1 rounded">Directory</a>
-                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors px-3 py-1 rounded">Events</a>
-                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors px-3 py-1 rounded">Jobs</a>
-                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors px-3 py-1 rounded">Giving</a>
-              </nav>
-              <button className="w-full h-10 bg-white text-[#002759] text-sm font-bold rounded-lg hover:bg-[#0a519b] hover:text-white transition-all">
-                Login
-              </button>
-            </div>
+            <>
+              {/* Backdrop */}
+              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden animate-fade-in"></div>
+              
+              {/* Sidebar */}
+              <div 
+                ref={sidebarRef}
+                className="fixed top-0 left-0 h-full w-80 bg-[#002759] shadow-2xl z-50 md:hidden transform transition-transform duration-300 ease-in-out animate-slide-in-right"
+              >
+                <div className="flex flex-col h-full">
+                  {/* Sidebar Header */}
+                  <div className="flex items-center justify-between p-4 border-b border-[#003d7a]">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <svg fill="white" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6">
+                          <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
+                        </svg>
+                      </div>
+                      <h2 className="text-xl font-bold text-white">KPU Alumni</h2>
+                    </div>
+                    <button 
+                      className="w-10 h-10 rounded-lg flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <FiX size={20} />
+                    </button>
+                  </div>
+                  
+                  {/* Navigation Menu */}
+                  <nav className="flex-1 p-4">
+                    <div className="flex flex-col gap-2">
+                      <a 
+                        href="#" 
+                        onClick={handleMenuClick}
+                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors group"
+                      >
+                        <span className="text-lg opacity-70 group-hover:opacity-100">📁</span>
+                        Directory
+                      </a>
+                      <a 
+                        href="#" 
+                        onClick={handleMenuClick}
+                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors group"
+                      >
+                        <span className="text-lg opacity-70 group-hover:opacity-100">📅</span>
+                        Events
+                      </a>
+                      <a 
+                        href="#" 
+                        onClick={handleMenuClick}
+                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors group"
+                      >
+                        <span className="text-lg opacity-70 group-hover:opacity-100">💼</span>
+                        Jobs
+                      </a>
+                      <a 
+                        href="#" 
+                        onClick={handleMenuClick}
+                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors group"
+                      >
+                        <span className="text-lg opacity-70 group-hover:opacity-100">❤️</span>
+                        Giving
+                      </a>
+                    </div>
+                  </nav>
+                  
+                  {/* Sidebar Footer */}
+                  <div className="p-4 border-t border-[#003d7a]">
+                    <button 
+                      onClick={handleMenuClick}
+                      className="w-full h-12 bg-white text-[#002759] text-sm font-bold rounded-lg hover:bg-gray-100 transition-all mb-3"
+                    >
+                      Login
+                    </button>
+                    <div className="flex items-center gap-3 px-4 py-3">
+                      <div className="w-10 h-10 rounded-xl border-2 border-white/40 flex items-center justify-center">
+                        <FiUser className="text-white text-lg" />
+                      </div>
+                      <div>
+                        <p className="text-white font-medium">Account</p>
+                        <p className="text-blue-200 text-xs">Manage profile</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
           )}
         </div>
       </header>
