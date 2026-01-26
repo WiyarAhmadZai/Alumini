@@ -3,6 +3,7 @@ import './App.css';
 import HomePage from './pages/HomePage';
 import DirectoryPage from './pages/DirectoryPage';
 import JobBoard from './pages/JobBoard';
+import MentorshipPage from './pages/MentorshipPage';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/directory" element={<DirectoryPage />} />
         <Route path="/jobs" element={<JobBoard />} />
+        <Route path="/mentorship" element={<MentorshipPage />} />
       </Routes>
     </div>
   );
