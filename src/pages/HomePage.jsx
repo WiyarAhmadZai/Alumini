@@ -82,7 +82,16 @@ const HomePage = () => {
   // Auto-slide functionality for testimonials
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+      setCurrentTestimonial((prev) => {
+        if (prev >= testimonials.length - 1) {
+          // When reaching the last real testimonial, reset to first seamlessly
+          setTimeout(() => {
+            setCurrentTestimonial(0);
+          }, 700); // Wait for transition to complete
+          return prev + 1; // Move to the cloned first card
+        }
+        return prev + 1;
+      });
     }, 4000); // Change slide every 4 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
@@ -338,8 +347,8 @@ const HomePage = () => {
                     transform: `translateX(-${currentTestimonial * 100}%)`
                   }}
                 >
-                  {testimonials.map((testimonial, index) => (
-                    <div key={testimonial.id} className="w-full flex-shrink-0">
+                  {[...testimonials, testimonials[0]].map((testimonial, index) => (
+                    <div key={`${testimonial.id}-${index}`} className="w-full flex-shrink-0">
                       <div className="relative p-6 sm:p-8 md:p-10 lg:p-12">
                         <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-center">
                           {/* Left - Image */}
@@ -403,16 +412,20 @@ const HomePage = () => {
               
               {/* Navigation Buttons */}
               <button 
-                className="absolute top-1/2 -left-4 sm:-left-6 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-white shadow-2xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
+                className="absolute top-1/2 -left-3 sm:-left-4 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-white shadow-xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
                 onClick={() => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
               >
-                <FiChevronLeft className="text-xl sm:text-2xl lg:text-3xl group-hover:scale-110 transition-transform" />
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 19l-7-7 7-7" />
+                </svg>
               </button>
               <button 
-                className="absolute top-1/2 -right-4 sm:-right-6 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-white shadow-2xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
+                className="absolute top-1/2 -right-3 sm:-right-4 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-white shadow-xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
                 onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
               >
-                <FiChevronRight className="text-xl sm:text-2xl lg:text-3xl group-hover:scale-110 transition-transform" />
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                </svg>
               </button>
               
               {/* Progress Indicators */}
