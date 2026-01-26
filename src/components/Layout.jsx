@@ -70,42 +70,42 @@ const Layout = ({ children }) => {
           ? 'bg-[#002759]/95 backdrop-blur-xl shadow-2xl' 
           : 'bg-transparent !bg-transparent'
       }`}>
-        <div className="w-full px-12 py-3">
+        <div className="w-full px-4 sm:px-6 lg:px-12 py-3">
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-8 px-4">
-              <div className={`flex items-center gap-4 transition-all duration-300 ${
+            <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
+              <div className={`flex items-center gap-2 sm:gap-4 transition-all duration-300 ${
                 isScrolled ? 'text-white' : 'text-white'
               }`}>
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
-                  <svg fill="white" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform">
+                  <svg fill="white" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 sm:w-6 sm:h-6">
                     <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
                   </svg>
                 </div>
-                <h2 className="text-xl font-bold leading-tight tracking-[-0.015em] bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
+                <h2 className="text-lg sm:text-xl font-bold leading-tight tracking-[-0.015em] bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent hidden xs:block">
                   KPU Alumni
                 </h2>
               </div>
               
-              <nav className="hidden md:flex items-center gap-6">
-                <a href="#" className={`text-sm font-medium transition-all duration-300 px-4 py-2 rounded-lg relative group ${
+              <nav className="hidden lg:flex items-center gap-4 sm:gap-6">
+                <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                   isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
                 }`}>
                   Directory
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 group-hover:w-full"></span>
                 </a>
-                <a href="#" className={`text-sm font-medium transition-all duration-300 px-4 py-2 rounded-lg relative group ${
+                <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                   isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
                 }`}>
                   Events
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 group-hover:w-full"></span>
                 </a>
-                <a href="#" className={`text-sm font-medium transition-all duration-300 px-4 py-2 rounded-lg relative group ${
+                <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                   isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
                 }`}>
                   Jobs
                   <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 group-hover:w-full"></span>
                 </a>
-                <a href="#" className={`text-sm font-medium transition-all duration-300 px-4 py-2 rounded-lg relative group ${
+                <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                   isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
                 }`}>
                   Giving
@@ -114,26 +114,26 @@ const Layout = ({ children }) => {
               </nav>
             </div>
 
-            <div className="flex items-center gap-4 px-4">
-              <button className={`min-w-[84px] h-10 px-4 text-sm font-semibold rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg ${
+            <div className="flex items-center gap-2 sm:gap-4">
+              <button className={`min-w-[60px] sm:min-w-[84px] h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg ${
                 isScrolled 
                   ? 'bg-gradient-to-r from-white to-blue-50 text-[#002759] hover:from-blue-50 hover:to-white hover:shadow-xl' 
                   : 'bg-white/10 backdrop-blur-md text-white border border-white/30 hover:bg-white/20 hover:border-white/50'
               }`}>
                 Login
               </button>
-              <div className={`w-10 h-10 rounded-xl border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg ${
+              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg hidden sm:flex ${
                 isScrolled ? 'bg-gradient-to-br from-white/20 to-white/10 border-white/40 hover:from-white/30 hover:to-white/20' : 'bg-white/10 border-white/40 hover:bg-white/20'
               }`}>
-                <FiUser className="text-white text-lg" />
+                <FiUser className="text-white text-sm sm:text-lg" />
               </div>
               <button 
-                className={`md:hidden transition-all duration-300 ml-4 w-10 h-10 rounded-lg flex items-center justify-center transform hover:scale-105 ${
+                className={`lg:hidden transition-all duration-300 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transform hover:scale-105 ${
                   isScrolled ? 'text-white hover:bg-white/10' : 'text-white hover:bg-white/10'
                 }`}
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
               >
-                {isMenuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
+                {isMenuOpen ? <FiX size={16} className="sm:w-5 sm:h-5" /> : <FiMenu size={16} className="sm:w-5 sm:h-5" />}
               </button>
             </div>
           </div>
@@ -142,12 +142,12 @@ const Layout = ({ children }) => {
           {isMenuOpen && (
             <>
               {/* Backdrop */}
-              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden animate-fade-in"></div>
+              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden animate-fade-in"></div>
               
               {/* Sidebar */}
               <div 
                 ref={sidebarRef}
-                className="fixed top-0 left-0 h-full w-80 bg-[#002759] shadow-2xl z-50 md:hidden transform transition-transform duration-300 ease-in-out animate-slide-in-right"
+                className="fixed top-0 right-0 h-full w-72 sm:w-80 bg-[#002759] shadow-2xl z-50 lg:hidden transform transition-transform duration-300 ease-in-out animate-slide-in-left"
               >
                 <div className="flex flex-col h-full">
                   {/* Sidebar Header */}
