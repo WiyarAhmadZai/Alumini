@@ -35,10 +35,10 @@ const Layout = ({ children }) => {
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-[#1e40af] dark:bg-[#1e3a8a] backdrop-blur-md shadow-lg border-b border-[#1e3a8a]' 
+          ? 'bg-[#002759] backdrop-blur-md shadow-lg border-b border-[#003d7a]' 
           : 'bg-transparent !bg-transparent'
       }`}>
-        <div className="w-full px-4 py-3">
+        <div className="w-full px-8 py-3">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-8 px-4">
               <div className={`flex items-center gap-4 transition-colors duration-300 ${
@@ -54,16 +54,16 @@ const Layout = ({ children }) => {
               
               <nav className="hidden md:flex items-center gap-9">
                 <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
-                  isScrolled ? 'text-white hover:text-blue-200' : 'text-white hover:text-blue-200'
+                  isScrolled ? 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded' : 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded'
                 }`}>Directory</a>
                 <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
-                  isScrolled ? 'text-white hover:text-blue-200' : 'text-white hover:text-blue-200'
+                  isScrolled ? 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded' : 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded'
                 }`}>Events</a>
                 <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
-                  isScrolled ? 'text-white hover:text-blue-200' : 'text-white hover:text-blue-200'
+                  isScrolled ? 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded' : 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded'
                 }`}>Jobs</a>
                 <a href="#" className={`text-sm font-medium transition-colors duration-300 ${
-                  isScrolled ? 'text-white hover:text-blue-200' : 'text-white hover:text-blue-200'
+                  isScrolled ? 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded' : 'text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded'
                 }`}>Giving</a>
               </nav>
             </div>
@@ -71,7 +71,7 @@ const Layout = ({ children }) => {
             <div className="flex items-center gap-4 px-4">
               <button className={`min-w-[84px] h-10 px-4 text-sm font-bold rounded-lg transition-all duration-300 ${
                 isScrolled 
-                  ? 'bg-white text-[#1e40af] hover:bg-blue-50' 
+                  ? 'bg-white text-[#002759] hover:bg-[#e6f0fa]' 
                   : 'bg-transparent text-white border border-white hover:bg-white/10'
               }`}>
                 Login
@@ -94,14 +94,14 @@ const Layout = ({ children }) => {
 
           {/* Mobile Menu */}
           {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-white/20 animate-slide-up">
+            <div className="md:hidden py-4 border-t border-[#003d7a] animate-slide-up">
               <nav className="flex flex-col gap-4 mb-4">
-                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Directory</a>
-                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Events</a>
-                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Jobs</a>
-                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Giving</a>
+                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors">Directory</a>
+                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors">Events</a>
+                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors">Jobs</a>
+                <a href="#" className="text-sm font-medium text-white hover:bg-[#0a519b] hover:px-3 hover:py-1 hover:rounded transition-colors">Giving</a>
               </nav>
-              <button className="w-full h-10 bg-white text-[#1e40af] text-sm font-bold rounded-lg hover:bg-blue-50 transition-all">
+              <button className="w-full h-10 bg-white text-[#002759] text-sm font-bold rounded-lg hover:bg-[#e6f0fa] transition-all">
                 Login
               </button>
             </div>
@@ -115,7 +115,7 @@ const Layout = ({ children }) => {
       </main>
 
       {/* Footer */}
-      <footer className="w-full bg-[#1e40af] dark:bg-[#1e3a8a] text-white py-12 border-t border-[#1e3a8a]">
+      <footer className="w-full bg-[#002759] text-white py-12 border-t border-[#003d7a]">
         <div className="max-w-[1200px] mx-auto px-10 grid grid-cols-1 md:grid-cols-4 gap-12">
           <div className="col-span-1 md:col-span-1">
             <div className="flex items-center gap-3 mb-6">
