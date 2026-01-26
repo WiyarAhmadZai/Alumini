@@ -110,6 +110,19 @@ const Layout = ({ children }) => {
                     location.pathname === '/directory' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
+                <Link 
+                  to="/jobs" 
+                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                    location.pathname === '/jobs' 
+                      ? 'text-white bg-white/20' 
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  Career
+                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
+                    location.pathname === '/jobs' ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}></span>
+                </Link>
                 <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                   isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
                 }`}>
@@ -199,6 +212,17 @@ const Layout = ({ children }) => {
                       >
                         Directory
                       </Link>
+                      <Link 
+                        to="/jobs"
+                        onClick={handleMenuClick}
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                          location.pathname === '/jobs' 
+                            ? 'bg-white/20 text-white' 
+                            : 'hover:bg-[#0a519b]'
+                        }`}
+                      >
+                        Career
+                      </Link>
                       <a 
                         href="#" 
                         onClick={handleMenuClick}
@@ -252,6 +276,18 @@ const Layout = ({ children }) => {
                       >
                         <span className="text-lg opacity-70">📁</span>
                         Alumni Directory
+                      </Link>
+                      <Link 
+                        to="/jobs"
+                        onClick={handleMenuClick}
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                          location.pathname === '/jobs' 
+                            ? 'bg-white/20' 
+                            : 'hover:bg-[#0a519b]'
+                        }`}
+                      >
+                        <span className="text-lg opacity-70">💼</span>
+                        Career Opportunities
                       </Link>
                     </div>
                   </div>
