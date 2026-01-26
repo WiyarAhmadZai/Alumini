@@ -174,33 +174,29 @@ const Layout = ({ children }) => {
                       <a 
                         href="#" 
                         onClick={handleMenuClick}
-                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors group"
+                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
                       >
-                        <span className="text-lg opacity-70 group-hover:opacity-100">📁</span>
                         Directory
                       </a>
                       <a 
                         href="#" 
                         onClick={handleMenuClick}
-                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors group"
+                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
                       >
-                        <span className="text-lg opacity-70 group-hover:opacity-100">📅</span>
                         Events
                       </a>
                       <a 
                         href="#" 
                         onClick={handleMenuClick}
-                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors group"
+                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
                       >
-                        <span className="text-lg opacity-70 group-hover:opacity-100">💼</span>
                         Jobs
                       </a>
                       <a 
                         href="#" 
                         onClick={handleMenuClick}
-                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors group"
+                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
                       >
-                        <span className="text-lg opacity-70 group-hover:opacity-100">❤️</span>
                         Giving
                       </a>
                     </div>
