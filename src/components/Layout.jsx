@@ -233,25 +233,25 @@ const Layout = ({ children }) => {
       </main>
 
       {/* Footer */}
-      <footer className="w-full bg-[#002759] text-white py-12 border-t border-[#003d7a]">
-        <div className="max-w-[1200px] mx-auto px-10 grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div className="col-span-1 md:col-span-1">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-6 h-6 text-white">
+      <footer className="w-full bg-[#002759] text-white py-8 sm:py-10 md:py-12 border-t border-[#003d7a]">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
+          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+            <div className="flex items-center gap-3 mb-4 sm:mb-6">
+              <div className="w-5 h-5 sm:w-6 sm:h-6 text-white">
                 <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
                   <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
                 </svg>
               </div>
-              <span className="text-xl font-bold">KPU Alumni</span>
+              <span className="text-lg sm:text-xl font-bold">KPU Alumni</span>
             </div>
-            <p className="text-blue-100 text-sm leading-relaxed">
+            <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
               Fostering excellence, community, and lifelong learning for all Kabul Polytechnic University graduates.
             </p>
           </div>
           
           <div>
-            <h4 className="font-bold mb-6 text-lg">Quick Links</h4>
-            <ul className="flex flex-col gap-4 text-blue-100 text-sm">
+            <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">Quick Links</h4>
+            <ul className="flex flex-col gap-2 sm:gap-4 text-blue-100 text-xs sm:text-sm">
               <li><a href="#" className="hover:text-white transition-colors">Alumni Directory</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Job Board</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Mentorship Program</a></li>
@@ -260,8 +260,8 @@ const Layout = ({ children }) => {
           </div>
           
           <div>
-            <h4 className="font-bold mb-6 text-lg">University</h4>
-            <ul className="flex flex-col gap-4 text-blue-100 text-sm">
+            <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">University</h4>
+            <ul className="flex flex-col gap-2 sm:gap-4 text-blue-100 text-xs sm:text-sm">
               <li><a href="#" className="hover:text-white transition-colors">About KPU</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Faculties</a></li>
               <li><a href="#" className="hover:text-white transition-colors">Research Labs</a></li>
@@ -269,20 +269,20 @@ const Layout = ({ children }) => {
             </ul>
           </div>
           
-          <div>
-            <h4 className="font-bold mb-6 text-lg">Follow Us</h4>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
-                <FiLinkedin className="text-xl text-white" />
+          <div className="col-span-1 sm:col-span-2 lg:col-span-1">
+            <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">Follow Us</h4>
+            <div className="flex gap-3 sm:gap-4">
+              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                <FiLinkedin className="text-sm sm:text-xl text-white" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
-                <FiMail className="text-xl text-white" />
+              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                <FiMail className="text-sm sm:text-xl text-white" />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
-                <FiFacebook className="text-xl text-white" />
+              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+                <FiFacebook className="text-sm sm:text-xl text-white" />
               </a>
             </div>
-            <p className="text-blue-200 text-[10px] mt-8">
+            <p className="text-blue-200 text-[9px] sm:text-[10px] mt-6 sm:mt-8">
               © 2023 Kabul Polytechnic University Alumni Association. All Rights Reserved.
             </p>
           </div>
