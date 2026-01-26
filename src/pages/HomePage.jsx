@@ -126,18 +126,20 @@ const HomePage = () => {
           
           <div className="relative z-10 h-full flex items-center justify-center">
             <div className="text-center text-white max-w-4xl px-4">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-[-0.033em] mb-6 animate-slide-up">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-tight tracking-[-0.033em] mb-6 animate-slide-up">
                 {heroSlides[currentSlide].title}
               </h1>
-              <p className="text-lg md:text-xl lg:text-2xl font-normal leading-relaxed mb-8 animate-slide-up" style={{animationDelay: '0.2s'}}>
+              <p className="text-base md:text-lg lg:text-xl font-normal leading-relaxed mb-8 animate-slide-up" style={{animationDelay: '0.2s'}}>
                 {heroSlides[currentSlide].subtitle}
               </p>
               <div className="flex flex-wrap gap-4 justify-center animate-slide-up" style={{animationDelay: '0.4s'}}>
-                <button className="min-w-[160px] h-12 px-6 bg-primary text-white text-base font-bold rounded-lg shadow-lg hover:scale-105 transition-transform">
-                  Join the Network
+                <button className="group relative px-8 py-3 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-base font-semibold rounded-xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <span className="relative z-10">Join the Network</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0a519b] to-[#003d7a] transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
                 </button>
-                <button className="min-w-[160px] h-12 px-6 bg-white/20 backdrop-blur-md text-white border border-white/30 text-base font-bold rounded-lg hover:bg-white/30 transition-all">
-                  Learn More
+                <button className="group relative px-8 py-3 bg-white/10 backdrop-blur-md text-white border border-white/40 text-base font-semibold rounded-xl hover:bg-white/20 hover:border-white/60 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <span className="relative z-10">Learn More</span>
+                  <div className="absolute inset-0 bg-white/20 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
                 </button>
               </div>
             </div>
