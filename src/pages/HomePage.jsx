@@ -22,6 +22,30 @@ const HomePage = () => {
       position: "Senior Structural Engineer, Global Bridges Co.",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBaWputQgrtqvH19cpmyP3uCvvRmQa3yZJ4fhdPG6u6uH1r6tax7vI96sWnFw9EMI0dSs6bc61_YdpgFuNeDszhcVigGvIVfjANjMt3AlTzSSr7E5m3mb9pNzz4-YZdl44IKjcYUA0Mvxl0Shnm8GbxU8ZdtZYNo9X1gp4syOsx8EZjGvYWgiELwXtgKqZFxKqS0x6zjem1YxkW0yyMTxZ7Nl0iEkeqbb5IQul9v1EPclzONwYppFPstjSfgJF7bXNeJRkm4oB1O2ZQ",
       quote: "KPU gave me the solid foundation I needed to excel in the global engineering landscape. The network I built here continues to support my professional journey as a Project Lead in Germany."
+    },
+    {
+      id: 2,
+      name: "Dr. Sarah Ahmad",
+      faculty: "Faculty of Computer Science, Class of 2015",
+      position: "AI Research Director, Tech Innovations Lab",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6",
+      quote: "The rigorous curriculum and excellent faculty at KPU prepared me for the challenges of the tech industry. Today, I lead a team of researchers developing cutting-edge AI solutions."
+    },
+    {
+      id: 3,
+      name: "Arch. Maria Hassan",
+      faculty: "Faculty of Architecture, Class of 2010",
+      position: "Principal Architect, Urban Design Studio",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDVohtH1gLp5WAJrlgReHjFK4bcxbaKExtmpDy1ddOFn43bBT3qxvxGyxeWK8rgUxc2WSB-oTdim3H3s_Wbux3NuIZpRy_nRWKG8WudjGPZSUyThUcvs3JH_vT483tyT74PZ49c6ks7QwWUJyRYkiz9kPgKtBcRNPt5J2oTEEQwn3MecGPMc39f7d__iXaRM87cMUs9kZQDq8XIppsbkxUr5mrUDLFHfwiLAawH4zgMRMerxMwtmcQGiblMLofVGU9ViCf5O95tPuAr",
+      quote: "KPU's architecture program provided me with both technical skills and creative vision. I'm now designing sustainable buildings that shape our urban landscape."
+    },
+    {
+      id: 4,
+      name: "Eng. Mohammad Omar",
+      faculty: "Faculty of Electrical Engineering, Class of 2013",
+      position: "Power Systems Manager, National Energy Corp",
+      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAqdS05N6dUOezB_fXLMqTRjdAAp6B3kOeB6cWFmDUtCh6j8IDrV6MDyV3yKgI7hLgUYZtqG5cv_RDjVj7WtEoAyaZHA4mndXhA0WnIyFFI6TwptPI2Ti4zi6Zf3ixLjcqWeoA-XVucLQriYGZwlIhqkE8gwl-x3gmjz-YByccyZDHW7IkUlKaU4LCxGX2gJdyUkeQI7BwVZ78_nbdY7OehekRwxmpFhXqKrplRTGPt9r7yGOv2pIJRApgUpP4aGy8iK3K6J693CixZ",
+      quote: "The practical training and industry connections at KPU helped me secure my dream job. I'm now contributing to national energy infrastructure projects."
     }
   ];
 
@@ -59,10 +83,10 @@ const HomePage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 4000); // Change testimonial every 4 seconds
+    }, 4000); // Change slide every 4 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
+  }, [testimonials.length]);
 
   const newsItems = [
     {
@@ -283,7 +307,7 @@ const HomePage = () => {
         </section>
 
         {/* Success Stories - Modern Slider */}
-        <section className="w-full py-16 sm:py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
+        <section className="w-full py-16 sm:py-20 bg-gradient-to-br from-slate-50 via-white to-blue-50 relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute top-0 left-0 w-full h-full opacity-5">
             <div className="absolute top-10 left-10 w-32 h-32 bg-[#002759] rounded-full blur-3xl"></div>
@@ -292,11 +316,11 @@ const HomePage = () => {
           
           <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 relative z-10">
             {/* Section Header */}
-            <div className="text-center mb-12 sm:mb-16">
-              <span className="inline-block text-xs sm:text-sm font-bold uppercase tracking-widest text-[#002759] mb-3 sm:mb-4 px-4 py-2 bg-[#002759]/10 rounded-full">
+            <div className="text-center mb-8 sm:mb-12">
+              <span className="inline-block text-xs sm:text-sm font-bold uppercase tracking-widest text-[#002759] mb-2 sm:mb-3 px-3 py-1.5 bg-[#002759]/10 rounded-full">
                 Our Pride
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-tight mb-4 bg-gradient-to-r from-[#002759] to-[#0a519b] bg-clip-text text-transparent">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-3 bg-gradient-to-r from-[#002759] to-[#0a519b] bg-clip-text text-transparent">
                 Success Stories
               </h2>
               <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto">
@@ -305,64 +329,67 @@ const HomePage = () => {
             </div>
             
             {/* Modern Slider */}
-            <div className="relative max-w-5xl mx-auto">
-              <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl bg-white">
+            <div className="relative max-w-6xl mx-auto">
+              <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-white border border-gray-100">
                 {/* Slider Container */}
                 <div 
-                  className="flex transition-all duration-700 ease-out"
+                  className="flex transition-transform duration-700 ease-out"
                   style={{
                     transform: `translateX(-${currentTestimonial * 100}%)`
                   }}
                 >
-                  {[...testimonials, ...testimonials].map((testimonial, index) => (
-                    <div key={`${testimonial.id}-${index}`} className="w-full flex-shrink-0">
-                      <div className="relative p-8 sm:p-12 md:p-16">
-                        {/* Quote Mark */}
-                        <div className="absolute top-6 sm:top-8 left-6 sm:left-8 text-6xl sm:text-8xl font-serif text-[#002759]/5">
-                          "
-                        </div>
-                        
-                        <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
+                  {testimonials.map((testimonial, index) => (
+                    <div key={testimonial.id} className="w-full flex-shrink-0">
+                      <div className="relative p-6 sm:p-8 md:p-10 lg:p-12">
+                        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-center">
                           {/* Left - Image */}
-                          <div className="relative order-2 md:order-1">
-                            <div className="relative mx-auto w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64">
-                              <div className="absolute inset-0 bg-gradient-to-br from-[#002759] to-[#0a519b] rounded-full opacity-20 blur-2xl transform scale-110"></div>
-                              <img 
-                                src={testimonial.image} 
-                                alt={testimonial.name}
-                                className="relative w-full h-full rounded-full object-cover border-4 border-white shadow-2xl"
-                              />
+                          <div className="relative order-2 lg:order-1">
+                            <div className="relative mx-auto w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56">
+                              {/* Glow effect */}
+                              <div className="absolute inset-0 bg-gradient-to-br from-[#002759]/15 to-[#0a519b]/15 rounded-full blur-2xl transform scale-110"></div>
+                              {/* Image container */}
+                              <div className="relative w-full h-full rounded-full overflow-hidden border-3 sm:border-4 border-white shadow-xl">
+                                <img 
+                                  src={testimonial.image} 
+                                  alt={testimonial.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
                               {/* Floating badge */}
-                              <div className="absolute -bottom-2 -right-2 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#002759] to-[#0a519b] rounded-full flex items-center justify-center shadow-lg">
-                                <span className="text-white text-2xl sm:text-3xl font-bold">✓</span>
+                              <div className="absolute -bottom-2 -right-2 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#002759] to-[#0a519b] rounded-full flex items-center justify-center shadow-lg border-3 border-white">
+                                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                </svg>
                               </div>
                             </div>
                           </div>
                           
                           {/* Right - Content */}
-                          <div className="order-1 md:order-2 text-center md:text-left">
-                            <blockquote className="text-lg sm:text-xl md:text-2xl font-medium text-gray-700 leading-relaxed mb-6 sm:mb-8 italic">
-                              "{testimonial.quote}"
-                            </blockquote>
+                          <div className="order-1 lg:order-2 text-center lg:text-left">
+                            <p className="text-gray-700 text-sm sm:text-base leading-relaxed mb-4 sm:mb-6">
+                              {testimonial.quote}
+                            </p>
                             
                             <div className="space-y-2 sm:space-y-3">
-                              <h4 className="text-xl sm:text-2xl font-bold text-[#002759]">
+                              <h4 className="text-lg sm:text-xl lg:text-2xl font-bold text-[#002759]">
                                 {testimonial.name}
                               </h4>
-                              <p className="text-gray-600 text-sm sm:text-base font-medium">
-                                {testimonial.faculty}
-                              </p>
-                              <p className="text-[#0a519b] text-sm sm:text-base font-semibold">
-                                {testimonial.position}
-                              </p>
+                              <div className="space-y-1">
+                                <p className="text-gray-600 text-xs sm:text-sm font-medium">
+                                  {testimonial.faculty}
+                                </p>
+                                <p className="text-[#0a519b] text-xs sm:text-sm font-semibold">
+                                  {testimonial.position}
+                                </p>
+                              </div>
                             </div>
                             
                             {/* Achievement badges */}
-                            <div className="flex flex-wrap gap-2 mt-6 justify-center md:justify-start">
-                              <span className="px-3 py-1 bg-[#002759]/10 text-[#002759] text-xs font-semibold rounded-full">
+                            <div className="flex flex-wrap gap-2 mt-4 sm:mt-6 justify-center lg:justify-start">
+                              <span className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-[#002759]/10 to-[#0a519b]/10 text-[#002759] text-xs font-semibold rounded-full border border-[#002759]/20">
                                 Alumni Success
                               </span>
-                              <span className="px-3 py-1 bg-[#0a519b]/10 text-[#0a519b] text-xs font-semibold rounded-full">
+                              <span className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-[#0a519b]/10 to-[#003d7a]/10 text-[#0a519b] text-xs font-semibold rounded-full border border-[#0a519b]/20">
                                 Global Impact
                               </span>
                             </div>
@@ -376,16 +403,16 @@ const HomePage = () => {
               
               {/* Navigation Buttons */}
               <button 
-                className="absolute top-1/2 -left-4 sm:-left-6 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-[#002759] hover:bg-[#002759] hover:text-white transition-all duration-300 z-20 group"
+                className="absolute top-1/2 -left-4 sm:-left-6 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-white shadow-2xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
                 onClick={() => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
               >
-                <FiChevronLeft className="text-xl sm:text-2xl group-hover:scale-110 transition-transform" />
+                <FiChevronLeft className="text-xl sm:text-2xl lg:text-3xl group-hover:scale-110 transition-transform" />
               </button>
               <button 
-                className="absolute top-1/2 -right-4 sm:-right-6 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-[#002759] hover:bg-[#002759] hover:text-white transition-all duration-300 z-20 group"
+                className="absolute top-1/2 -right-4 sm:-right-6 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-white shadow-2xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
                 onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
               >
-                <FiChevronRight className="text-xl sm:text-2xl group-hover:scale-110 transition-transform" />
+                <FiChevronRight className="text-xl sm:text-2xl lg:text-3xl group-hover:scale-110 transition-transform" />
               </button>
               
               {/* Progress Indicators */}
@@ -394,10 +421,10 @@ const HomePage = () => {
                   <button
                     key={index}
                     onClick={() => setCurrentTestimonial(index)}
-                    className={`h-2 sm:h-3 rounded-full transition-all duration-300 ${
+                    className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${
                       index === currentTestimonial 
                         ? 'w-8 sm:w-12 bg-gradient-to-r from-[#002759] to-[#0a519b]' 
-                        : 'w-2 sm:w-3 bg-gray-300 hover:bg-gray-400'
+                        : 'w-2.5 sm:w-3 bg-gray-300 hover:bg-gray-400'
                     }`}
                   />
                 ))}
