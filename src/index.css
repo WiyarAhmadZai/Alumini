@@ -12,3 +12,31 @@ body {
   overflow: hidden;
   line-clamp: 2;
 }
+
+/* Mobile menu fixes */
+@media (max-width: 1024px) {
+  .lg\:hidden {
+    display: block !important;
+  }
+  
+  .lg\:flex {
+    display: none !important;
+  }
+}
+
+/* Ensure proper z-index stacking */
+.mobile-menu-backdrop {
+  z-index: 9998 !important;
+}
+
+.mobile-menu-sidebar {
+  z-index: 9999 !important;
+  background-color: #002759 !important;
+}
+
+/* Prevent scroll jump when menu opens */
+body.menu-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+}
