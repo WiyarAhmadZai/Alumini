@@ -21,21 +21,23 @@ const Layout = ({ children }) => {
       <header className="sticky top-0 z-50 border-b border-[#1e3a8a] dark:border-[#1e3a8a] bg-[#1e40af] dark:bg-[#1e3a8a] backdrop-blur-md animate-fade-in shadow-lg">
         <div className="max-w-[1200px] mx-auto px-10 py-3">
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-4 text-white">
-              <div className="w-8 h-8">
-                <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
-                </svg>
+            <div className="flex items-center gap-8">
+              <div className="flex items-center gap-4 text-white">
+                <div className="w-8 h-8">
+                  <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
+                  </svg>
+                </div>
+                <h2 className="text-xl font-bold leading-tight tracking-[-0.015em]">KPU Alumni</h2>
               </div>
-              <h2 className="text-xl font-bold leading-tight tracking-[-0.015em]">KPU Alumni</h2>
+              
+              <nav className="hidden md:flex items-center gap-9">
+                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Directory</a>
+                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Events</a>
+                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Jobs</a>
+                <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Giving</a>
+              </nav>
             </div>
-            
-            <nav className="hidden md:flex items-center gap-9">
-              <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Directory</a>
-              <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Events</a>
-              <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Jobs</a>
-              <a href="#" className="text-sm font-medium text-white hover:text-blue-200 transition-colors">Giving</a>
-            </nav>
 
             <div className="flex items-center gap-4">
               <button className="min-w-[84px] h-10 px-4 bg-white text-[#1e40af] text-sm font-bold rounded-lg hover:bg-blue-50 transition-all">
