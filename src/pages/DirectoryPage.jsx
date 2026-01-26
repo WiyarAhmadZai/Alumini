@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   FiSearch, 
   FiCalendar, 
-  FiSchool, 
+  FiBookOpen, 
   FiBriefcase, 
   FiFilter,
   FiChevronDown,
@@ -140,75 +140,52 @@ const DirectoryPage = () => {
                 <p className="text-gray-600 dark:text-slate-400 text-sm">Refine your network search</p>
               </div>
               
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-3">
                 {/* Graduation Year Filter */}
-                <div 
-                  className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 cursor-pointer group"
-                  onClick={() => toggleFilter('graduation')}
-                >
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-[#002759]/5 hover:to-[#0a519b]/5 cursor-pointer group">
                   <div className="flex items-center gap-3">
                     <FiCalendar className="text-[#002759]" />
-                    <p className="text-gray-900 dark:text-white text-sm font-medium">Graduation Year</p>
+                    <p className="text-gray-900 text-sm font-medium">Graduation Year</p>
                   </div>
-                  {expandedFilter === 'graduation' ? <FiChevronUp className="text-sm text-gray-600" /> : <FiChevronDown className="text-sm text-gray-600" />}
                 </div>
 
                 {/* Faculty Filter */}
-                <div 
-                  className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer ${
-                    expandedFilter === 'faculty' 
-                      ? 'bg-[#002759]/10 border border-[#002759]/20' 
-                      : 'hover:bg-gray-100 dark:hover:bg-slate-800'
-                  }`}
-                  onClick={() => toggleFilter('faculty')}
-                >
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-gradient-to-r from-[#002759]/10 to-[#0a519b]/10 border border-[#002759]/20 cursor-pointer">
                   <div className="flex items-center gap-3">
-                    <FiSchool className="text-[#002759]" />
-                    <p className={`text-sm font-semibold ${expandedFilter === 'faculty' ? 'text-[#002759]' : 'text-gray-900 dark:text-white'}`}>
-                      Faculty
-                    </p>
+                    <FiBookOpen className="text-[#002759]" />
+                    <p className="text-[#002759] text-sm font-semibold">Faculty</p>
                   </div>
-                  {expandedFilter === 'faculty' ? <FiChevronUp className="text-sm text-[#002759]" /> : <FiChevronDown className="text-sm text-gray-600" />}
                 </div>
 
-                {expandedFilter === 'faculty' && (
-                  <div className="px-10 py-2 flex flex-col gap-2">
-                    {faculties.map(faculty => (
-                      <label key={faculty} className="flex items-center gap-2 text-sm text-gray-600 dark:text-slate-300">
-                        <input 
-                          checked={selectedFilters.faculty.includes(faculty)}
-                          onChange={() => handleFacultyChange(faculty)}
-                          className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                          type="checkbox" 
-                        />
-                        {faculty}
-                      </label>
-                    ))}
-                  </div>
-                )}
+                {/* Faculty Options */}
+                <div className="px-10 py-2 flex flex-col gap-2">
+                  {faculties.map(faculty => (
+                    <label key={faculty} className="flex items-center gap-2 text-sm text-gray-600">
+                      <input 
+                        checked={selectedFilters.faculty.includes(faculty)}
+                        onChange={() => handleFacultyChange(faculty)}
+                        className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                        type="checkbox" 
+                      />
+                      {faculty}
+                    </label>
+                  ))}
+                </div>
 
                 {/* Degree Type Filter */}
-                <div 
-                  className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 cursor-pointer group"
-                  onClick={() => toggleFilter('degree')}
-                >
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-[#002759]/5 hover:to-[#0a519b]/5 cursor-pointer group">
                   <div className="flex items-center gap-3">
-                    <FiSchool className="text-gray-900 dark:text-white" />
-                    <p className="text-gray-900 dark:text-white text-sm font-medium">Degree Type</p>
+                    <FiBookOpen className="text-gray-900" />
+                    <p className="text-gray-900 text-sm font-medium">Degree Type</p>
                   </div>
-                  {expandedFilter === 'degree' ? <FiChevronUp className="text-sm text-gray-600" /> : <FiChevronDown className="text-sm text-gray-600" />}
                 </div>
 
                 {/* Industry Filter */}
-                <div 
-                  className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 cursor-pointer group"
-                  onClick={() => toggleFilter('industry')}
-                >
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gradient-to-r hover:from-[#002759]/5 hover:to-[#0a519b]/5 cursor-pointer group">
                   <div className="flex items-center gap-3">
-                    <FiBriefcase className="text-gray-900 dark:text-white" />
-                    <p className="text-gray-900 dark:text-white text-sm font-medium">Current Industry</p>
+                    <FiBriefcase className="text-gray-900" />
+                    <p className="text-gray-900 text-sm font-medium">Current Industry</p>
                   </div>
-                  {expandedFilter === 'industry' ? <FiChevronUp className="text-sm text-gray-600" /> : <FiChevronDown className="text-sm text-gray-600" />}
                 </div>
               </div>
 
@@ -224,12 +201,12 @@ const DirectoryPage = () => {
             <div className="flex flex-col gap-4">
               <div className="w-full">
                 <label className="flex flex-col h-14 w-full">
-                  <div className="flex w-full flex-1 items-stretch rounded-xl h-full shadow-sm border border-gray-200 dark:border-slate-800">
-                    <div className="text-gray-600 flex border-none bg-white dark:bg-slate-900 items-center justify-center pl-4 rounded-l-xl">
+                  <div className="flex w-full flex-1 items-stretch rounded-xl h-full shadow-sm border-0">
+                    <div className="text-gray-600 flex border-none bg-white items-center justify-center pl-4 rounded-l-xl">
                       <FiSearch />
                     </div>
                     <input 
-                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden text-gray-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-white dark:bg-slate-900 focus:border-none h-full placeholder:text-gray-600 px-4 rounded-r-xl pl-2 text-base font-normal"
+                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden text-gray-900 focus:outline-0 focus:ring-0 border-none bg-white focus:border-none h-full placeholder:text-gray-600 px-4 rounded-r-xl pl-2 text-base font-normal"
                       placeholder="Search by name, company, or skills..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -240,9 +217,9 @@ const DirectoryPage = () => {
 
               {/* Selected Filters (Chips) */}
               <div className="flex gap-2 flex-wrap items-center">
-                <p className="text-sm font-medium text-gray-600 dark:text-slate-400 mr-2">Quick tags:</p>
+                <p className="text-sm font-medium text-gray-600 mr-2">Quick tags:</p>
                 {selectedFilters.faculty.map(faculty => (
-                  <button key={faculty} className="flex h-8 items-center gap-x-2 rounded-full bg-[#002759]/10 text-[#002759] border border-[#002759]/20 px-4">
+                  <button key={faculty} className="flex h-8 items-center gap-x-2 rounded-full bg-gradient-to-r from-[#002759] to-[#0a519b] text-white border border-[#002759]/20 px-4">
                     <span className="text-xs font-semibold">{faculty}</span>
                     <FiX 
                       className="text-[16px] cursor-pointer" 
@@ -250,11 +227,11 @@ const DirectoryPage = () => {
                     />
                   </button>
                 ))}
-                <button className="flex h-8 items-center gap-x-2 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-white px-4">
+                <button className="flex h-8 items-center gap-x-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4">
                   <span className="text-xs font-semibold">Class of 2020</span>
                   <FiChevronDown className="text-[16px]" />
                 </button>
-                <button className="flex h-8 items-center gap-x-2 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-white px-4">
+                <button className="flex h-8 items-center gap-x-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4">
                   <span className="text-xs font-semibold">Kabul, Afghanistan</span>
                   <FiChevronDown className="text-[16px]" />
                 </button>
@@ -264,24 +241,24 @@ const DirectoryPage = () => {
             {/* Alumni Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {alumni.map((person) => (
-                <div key={person.id} className="bg-white dark:bg-slate-900 border border-gray-200 dark:border-slate-800 rounded-xl p-6 flex flex-col items-center text-center group hover:shadow-md transition-all">
+                <div key={person.id} className="bg-white border border-gray-200 rounded-xl p-6 flex flex-col items-center text-center group hover:shadow-lg transition-all transform hover:-translate-y-1">
                   <div className="relative mb-4">
                     <div 
                       className="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-full border-4 border-[#002759]/10"
                       style={{ backgroundImage: `url("${person.image}")` }}
                     ></div>
                     {person.online && (
-                      <div className="absolute bottom-1 right-1 w-5 h-5 bg-green-500 border-2 border-white dark:border-slate-900 rounded-full"></div>
+                      <div className="absolute bottom-1 right-1 w-5 h-5 bg-gradient-to-r from-green-400 to-green-500 border-2 border-white rounded-full"></div>
                     )}
                   </div>
-                  <h3 className="text-gray-900 dark:text-white text-lg font-bold">{person.name}</h3>
+                  <h3 className="text-gray-900 text-lg font-bold">{person.name}</h3>
                   <p className="text-[#002759] text-sm font-semibold mb-1">{person.position}</p>
-                  <p className="text-gray-600 dark:text-slate-400 text-xs mb-4">{person.class}</p>
+                  <p className="text-gray-600 text-xs mb-4">{person.class}</p>
                   <div className="flex gap-2 w-full mt-auto">
-                    <button className="flex-1 bg-[#002759] text-white text-sm font-bold py-2 rounded-lg hover:bg-[#0a519b] transition-colors">
+                    <button className="flex-1 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-sm font-bold py-2 rounded-lg hover:from-[#0a519b] hover:to-[#003d7a] transition-all transform hover:scale-105">
                       Connect
                     </button>
-                    <button className="px-3 bg-gray-100 dark:bg-slate-800 text-gray-900 dark:text-white rounded-lg hover:bg-gray-200 dark:hover:bg-slate-700 transition-colors">
+                    <button className="px-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all transform hover:scale-105">
                       <FiMail className="text-[20px] align-middle" />
                     </button>
                   </div>
