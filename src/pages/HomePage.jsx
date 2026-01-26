@@ -46,11 +46,20 @@ const HomePage = () => {
     }
   ];
 
-  // Auto-slide functionality
+  // Auto-slide functionality for hero
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000); // Change slide every 5 seconds
+
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
+  // Auto-slide functionality for testimonials
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+    }, 4000); // Change testimonial every 4 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
   }, []);
@@ -274,92 +283,107 @@ const HomePage = () => {
         </section>
 
         {/* Success Stories */}
-        <section className="w-full max-w-[1200px] mx-auto px-4 md:px-10 py-20 text-center">
-          <h2 className="text-primary text-sm font-bold uppercase tracking-widest mb-2">Our Pride</h2>
-          <h3 className="text-3xl font-bold mb-12">Success Stories</h3>
-          <div className="relative max-w-4xl mx-auto">
-            <div className="bg-white dark:bg-background-dark p-10 md:p-16 rounded-3xl shadow-2xl relative animate-scale-in">
-              <div className="text-6xl text-primary/10 absolute top-8 left-8">"</div>
-              <div className="flex flex-col items-center">
-                <div className="w-24 h-24 rounded-full border-4 border-primary/20 mb-6 bg-cover bg-center" 
-                     style={{backgroundImage: `url("${testimonials[currentTestimonial].image}")`}}></div>
-                <p className="text-lg md:text-xl italic text-[#111318] dark:text-gray-300 leading-relaxed mb-8">
-                  {testimonials[currentTestimonial].quote}
-                </p>
-                <h4 className="text-xl font-bold text-primary">{testimonials[currentTestimonial].name}</h4>
-                <p className="text-[#636c88] dark:text-gray-400 text-sm">{testimonials[currentTestimonial].faculty}</p>
-                <p className="text-gray-400 text-xs font-medium mt-1">{testimonials[currentTestimonial].position}</p>
-              </div>
-              <div className="flex justify-center gap-2 mt-10">
-                {testimonials.map((_, index) => (
-                  <div key={index} className={`w-2 h-2 rounded-full ${index === currentTestimonial ? 'bg-primary' : 'bg-gray-200 dark:bg-gray-700'}`}></div>
-                ))}
-              </div>
+        <section className="w-full py-20 bg-gray-50">
+          <div className="max-w-[1200px] mx-auto px-4 md:px-10">
+            <div className="text-center mb-12">
+              <h2 className="text-sm font-bold uppercase tracking-widest text-[#002759] mb-2">Our Pride</h2>
+              <h3 className="text-3xl font-bold">Success Stories</h3>
             </div>
-            <button 
-              className="absolute top-1/2 -left-4 md:-left-12 -translate-y-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all"
-              onClick={() => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
-            >
-              <FiChevronLeft />
-            </button>
-            <button 
-              className="absolute top-1/2 -right-4 md:-right-12 -translate-y-1/2 w-12 h-12 rounded-full bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all"
-              onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
-            >
-              <FiChevronRight />
-            </button>
+            
+            <div className="relative max-w-6xl mx-auto">
+              <div className="overflow-hidden rounded-xl">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{
+                    transform: `translateX(-${currentTestimonial * 100}%)`
+                  }}
+                >
+                  {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => (
+                    <div key={`${testimonial.id}-${index}`} className="w-full flex-shrink-0 px-4">
+                      <div className="bg-white p-8 rounded-xl shadow-lg">
+                        <div className="text-6xl text-[#002759]/10 absolute top-4 left-4">"</div>
+                        <div className="flex flex-col items-center">
+                          <div className="w-20 h-20 rounded-full border-4 border-[#002759]/20 mb-4 bg-cover bg-center" 
+                               style={{backgroundImage: `url("${testimonial.image}")`}}></div>
+                          <p className="text-base italic text-gray-700 leading-relaxed mb-4 line-clamp-3">
+                            {testimonial.quote}
+                          </p>
+                          <h4 className="text-lg font-bold text-[#002759]">{testimonial.name}</h4>
+                          <p className="text-gray-600 text-xs">{testimonial.faculty}</p>
+                          <p className="text-gray-500 text-xs font-medium mt-1">{testimonial.position}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              <button 
+                className="absolute top-1/2 -left-4 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-[#002759] hover:bg-[#0a519b] hover:text-white transition-all z-10"
+                onClick={() => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
+              >
+                <FiChevronLeft />
+              </button>
+              <button 
+                className="absolute top-1/2 -right-4 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-[#002759] hover:bg-[#0a519b] hover:text-white transition-all z-10"
+                onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
+              >
+                <FiChevronRight />
+              </button>
+            </div>
           </div>
         </section>
 
         {/* Call to Action */}
-        <section className="w-full py-20 bg-gray-50">
-          <div className="max-w-4xl mx-auto px-4">
-            <div className="bg-white rounded-2xl shadow-xl p-12 text-center relative border border-gray-100">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#002759] to-[#0a519b]"></div>
-              <div className="relative z-10">
-                <div className="mb-8">
-                  <span className="text-sm font-bold uppercase tracking-widest text-[#002759] bg-blue-50 px-4 py-2 rounded-full inline-block">Join Our Community</span>
+        <section className="w-full py-20 bg-gradient-to-br from-[#002759] via-[#0a519b] to-[#003d7a] text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"></div>
+          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"></div>
+          <div className="relative z-10 px-4 md:px-8">
+            <div className="max-w-7xl mx-auto text-center">
+              <div className="mb-8">
+                <span className="text-sm font-bold uppercase tracking-widest text-cyan-300 bg-cyan-400/10 backdrop-blur-sm px-6 py-3 rounded-full shadow-2xl border border-cyan-300/30">Join Our Community</span>
+              </div>
+              <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight">Ready to Reconnect?</h2>
+              <p className="text-white/90 text-lg md:text-xl mb-12 max-w-4xl mx-auto leading-relaxed">
+                Join over 15,000 alumni worldwide and stay updated with the latest university developments and opportunities.
+              </p>
+              <div className="flex flex-wrap justify-center gap-6 mb-16">
+                <button className="group relative px-10 py-4 bg-white text-[#002759] text-base font-bold rounded-xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <span className="relative z-10 flex items-center gap-2">
+                    <FiUser className="text-lg" />
+                    Sign Up Now
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#0a519b] to-[#003d7a] transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
+                </button>
+                <button className="group relative px-10 py-4 bg-transparent border-2 border-white/50 text-white text-base font-bold rounded-xl hover:bg-white/10 hover:border-white transition-all duration-300 transform hover:-translate-y-1">
+                  <span className="flex items-center gap-2">
+                    <FiMail className="text-lg" />
+                    Contact Us
+                  </span>
+                </button>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div className="text-center group">
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300 transform hover:scale-110">
+                    <FiUser className="text-3xl text-cyan-400" />
+                  </div>
+                  <div className="text-4xl md:text-5xl font-bold text-white mb-2">15,000+</div>
+                  <p className="text-white/80 text-sm md:text-base">Alumni Worldwide</p>
                 </div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 leading-tight">Ready to Reconnect?</h2>
-                <p className="text-gray-600 text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
-                  Join over 15,000 alumni worldwide and stay updated with the latest university developments and opportunities.
-                </p>
-                <div className="flex flex-wrap justify-center gap-4 mb-12">
-                  <button className="px-8 py-3 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-base font-semibold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-                    <span className="flex items-center gap-2">
-                      <FiUser className="text-lg" />
-                      Sign Up Now
-                    </span>
-                  </button>
-                  <button className="px-8 py-3 bg-white text-[#002759] border-2 border-[#002759] text-base font-semibold rounded-lg hover:bg-[#002759] hover:text-white transition-all duration-300 transform hover:-translate-y-1">
-                    <span className="flex items-center gap-2">
-                      <FiMail className="text-lg" />
-                      Contact Us
-                    </span>
-                  </button>
+                <div className="text-center group">
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300 transform hover:scale-110">
+                    <FiMapPin className="text-3xl text-cyan-400" />
+                  </div>
+                  <div className="text-4xl md:text-5xl font-bold text-white mb-2">50+</div>
+                  <p className="text-white/80 text-sm md:text-base">Countries</p>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl">
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#002759]/10 flex items-center justify-center">
-                      <FiUser className="text-2xl text-[#002759]" />
-                    </div>
-                    <div className="text-3xl font-bold text-gray-900 mb-2">15,000+</div>
-                    <p className="text-gray-600 text-sm">Alumni Worldwide</p>
+                <div className="text-center group">
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300 transform hover:scale-110">
+                    <FiArrowRight className="text-3xl text-cyan-400" />
                   </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#002759]/10 flex items-center justify-center">
-                      <FiMapPin className="text-2xl text-[#002759]" />
-                    </div>
-                    <div className="text-3xl font-bold text-gray-900 mb-2">50+</div>
-                    <p className="text-gray-600 text-sm">Countries</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#002759]/10 flex items-center justify-center">
-                      <FiArrowRight className="text-2xl text-[#002759]" />
-                    </div>
-                    <div className="text-3xl font-bold text-gray-900 mb-2">1000+</div>
-                    <p className="text-gray-600 text-sm">Success Stories</p>
-                  </div>
+                  <div className="text-4xl md:text-5xl font-bold text-white mb-2">1000+</div>
+                  <p className="text-white/80 text-sm md:text-base">Success Stories</p>
                 </div>
               </div>
             </div>
