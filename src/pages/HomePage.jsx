@@ -175,29 +175,61 @@ const HomePage = () => {
       </section>
 
       {/* Latest News Section */}
-      <section className="w-full max-w-[1200px] mx-auto px-4 md:px-10 py-10">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold leading-tight tracking-[-0.015em]">Latest News</h2>
-            <a className="text-primary font-semibold flex items-center gap-1 hover:underline" href="#">
-              View All <FiArrowRight className="text-sm" />
-            </a>
+      <section className="w-full max-w-[1200px] mx-auto px-4 md:px-10 py-16 bg-gradient-to-br from-gray-50 to-white">
+        <div className="flex items-center justify-between mb-12">
+          <div>
+            <h2 className="text-sm font-bold uppercase tracking-widest text-[#002759] mb-2">Stay Updated</h2>
+            <h3 className="text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900">Latest News</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {newsItems.map((item, index) => (
-              <div key={item.id} className="flex flex-col gap-4 group cursor-pointer bg-white dark:bg-background-dark p-2 rounded-xl border border-transparent hover:border-primary/20 hover:shadow-lg transition-all animate-scale-in" style={{animationDelay: `${index * 0.1}s`}}>
-                <div className="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-lg overflow-hidden" style={{backgroundImage: `url("${item.image}")`}}></div>
-                <div className="px-2 pb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`${item.categoryColor} text-[10px] uppercase font-bold px-2 py-0.5 rounded`}>{item.category}</span>
-                    <p className="text-[#636c88] dark:text-gray-400 text-xs font-normal">{item.date}</p>
-                  </div>
-                  <h3 className="text-lg font-bold leading-tight group-hover:text-primary transition-colors">{item.title}</h3>
-                  <p className="text-[#636c88] dark:text-gray-400 text-sm font-normal leading-normal mt-2 line-clamp-2">{item.excerpt}</p>
+          <a className="group flex items-center gap-2 text-[#002759] font-semibold hover:text-[#0a519b] transition-all duration-300" href="#">
+            View All 
+            <FiArrowRight className="text-sm transform group-hover:translate-x-1 transition-transform duration-300" />
+          </a>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {newsItems.map((item, index) => (
+            <article key={item.id} className="group cursor-pointer bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100">
+              <div className="relative h-48 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
+                <img 
+                  src={item.image} 
+                  alt={item.title}
+                  className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-500"
+                />
+                <div className="absolute top-4 left-4 z-20">
+                  <span className={`${item.categoryColor} text-xs font-bold px-3 py-1 rounded-full shadow-md`}>
+                    {item.category}
+                  </span>
+                </div>
+                <div className="absolute bottom-4 right-4 z-20">
+                  <span className="text-white text-xs font-medium bg-black/50 backdrop-blur-sm px-2 py-1 rounded">
+                    {item.date}
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
+              <div className="p-6">
+                <h3 className="text-xl font-bold leading-tight text-gray-900 mb-3 group-hover:text-[#002759] transition-colors duration-300">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+                  {item.excerpt}
+                </p>
+                <div className="flex items-center justify-between">
+                  <a href="#" className="inline-flex items-center gap-2 text-[#002759] font-medium text-sm hover:text-[#0a519b] transition-colors duration-300">
+                    Read More
+                    <FiArrowRight className="text-xs transform group-hover:translate-x-1 transition-transform duration-300" />
+                  </a>
+                  <div className="flex gap-2">
+                    <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
         {/* Upcoming Events */}
         <section className="w-full py-16 flex justify-center relative overflow-hidden">
