@@ -452,56 +452,140 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Call to Action */}
-        <section className="w-full py-20 bg-gradient-to-br from-[#002759] via-[#0a519b] to-[#003d7a] text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"></div>
-          <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600"></div>
-          <div className="relative z-10 px-4 md:px-8">
-            <div className="max-w-7xl mx-auto text-center">
-              <div className="mb-8">
-                <span className="text-sm font-bold uppercase tracking-widest text-cyan-300 bg-cyan-400/10 backdrop-blur-sm px-6 py-3 rounded-full shadow-2xl border border-cyan-300/30">Join Our Community</span>
+        {/* Join Community - Modern CTA */}
+        <section className="w-full py-12 sm:py-16 lg:py-20 relative overflow-hidden">
+          {/* Background with modern gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-[#002759] to-slate-800"></div>
+          
+          {/* Modern decorative elements */}
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute top-10 left-10 w-40 h-40 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/3 right-10 w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-10 left-1/3 w-36 h-36 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-20 right-1/4 w-28 h-28 bg-gradient-to-br from-cyan-300 to-blue-400 rounded-full blur-2xl"></div>
+          </div>
+          
+          {/* Subtle grid pattern */}
+          <div 
+            className="absolute inset-0 opacity-10"
+            style={{
+              backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+              backgroundSize: '50px 50px'
+            }}
+          ></div>
+          
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
+            <div className="text-center mb-10 sm:mb-12">
+              {/* Modern badge */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm border border-cyan-400/30 rounded-full mb-6">
+                <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                <span className="text-cyan-300 text-sm font-semibold">Join Our Global Network</span>
               </div>
-              <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight">Ready to Reconnect?</h2>
-              <p className="text-white/90 text-lg md:text-xl mb-12 max-w-4xl mx-auto leading-relaxed">
+              
+              {/* Main heading */}
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
+                Ready to 
+                <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"> Reconnect</span>?
+              </h2>
+              
+              {/* Subtitle */}
+              <p className="text-white/70 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-10">
                 Join over 15,000 alumni worldwide and stay updated with the latest university developments and opportunities.
               </p>
-              <div className="flex flex-wrap justify-center gap-6 mb-16">
-                <button className="group relative px-10 py-4 bg-white text-[#002759] text-base font-bold rounded-xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                  <span className="relative z-10 flex items-center gap-2">
-                    <FiUser className="text-lg" />
+              
+              {/* Action buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+                <button className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-base sm:text-lg font-bold rounded-xl shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <span className="relative z-10 flex items-center gap-3">
+                    <FiUser className="text-xl" />
                     Sign Up Now
                   </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#0a519b] to-[#003d7a] transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
                 </button>
-                <button className="group relative px-10 py-4 bg-transparent border-2 border-white/50 text-white text-base font-bold rounded-xl hover:bg-white/10 hover:border-white transition-all duration-300 transform hover:-translate-y-1">
-                  <span className="flex items-center gap-2">
-                    <FiMail className="text-lg" />
+                
+                <button className="group relative px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white text-base sm:text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                  <span className="flex items-center gap-3">
+                    <FiMail className="text-xl" />
                     Contact Us
                   </span>
                 </button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div className="text-center group">
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300 transform hover:scale-110">
-                    <FiUser className="text-3xl text-cyan-400" />
+            </div>
+            
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+              <div className="text-center group">
+                <div className="relative mx-auto w-16 h-16 sm:w-20 sm:h-20 mb-4">
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/20 to-blue-400/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  {/* Icon container */}
+                  <div className="relative w-full h-full rounded-full bg-gradient-to-br from-cyan-500/10 to-blue-500/10 backdrop-blur-sm border border-cyan-400/20 flex items-center justify-center group-hover:border-cyan-400/40 transition-all duration-300">
+                    <FiUser className="text-2xl sm:text-3xl text-cyan-400 group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-2">15,000+</div>
-                  <p className="text-white/80 text-sm md:text-base">Alumni Worldwide</p>
                 </div>
-                <div className="text-center group">
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300 transform hover:scale-110">
-                    <FiMapPin className="text-3xl text-cyan-400" />
+                <div className="space-y-1">
+                  <div className="text-3xl sm:text-4xl font-black text-white">
+                    <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">15,000+</span>
                   </div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-2">50+</div>
-                  <p className="text-white/80 text-sm md:text-base">Countries</p>
+                  <p className="text-white/60 text-sm sm:text-base font-medium">Alumni Worldwide</p>
                 </div>
-                <div className="text-center group">
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center group-hover:bg-white/20 transition-colors duration-300 transform hover:scale-110">
-                    <FiArrowRight className="text-3xl text-cyan-400" />
+              </div>
+              
+              <div className="text-center group">
+                <div className="relative mx-auto w-16 h-16 sm:w-20 sm:h-20 mb-4">
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  {/* Icon container */}
+                  <div className="relative w-full h-full rounded-full bg-gradient-to-br from-blue-500/10 to-purple-500/10 backdrop-blur-sm border border-blue-400/20 flex items-center justify-center group-hover:border-blue-400/40 transition-all duration-300">
+                    <FiMapPin className="text-2xl sm:text-3xl text-blue-400 group-hover:scale-110 transition-transform duration-300" />
                   </div>
-                  <div className="text-4xl md:text-5xl font-bold text-white mb-2">1000+</div>
-                  <p className="text-white/80 text-sm md:text-base">Success Stories</p>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-3xl sm:text-4xl font-black text-white">
+                    <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">50+</span>
+                  </div>
+                  <p className="text-white/60 text-sm sm:text-base font-medium">Countries</p>
+                </div>
+              </div>
+              
+              <div className="text-center group">
+                <div className="relative mx-auto w-16 h-16 sm:w-20 sm:h-20 mb-4">
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 to-pink-400/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+                  {/* Icon container */}
+                  <div className="relative w-full h-full rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm border border-purple-400/20 flex items-center justify-center group-hover:border-purple-400/40 transition-all duration-300">
+                    <FiArrowRight className="text-2xl sm:text-3xl text-purple-400 group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <div className="text-3xl sm:text-4xl font-black text-white">
+                    <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">1000+</span>
+                  </div>
+                  <p className="text-white/60 text-sm sm:text-base font-medium">Success Stories</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Bottom trust indicators */}
+            <div className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t border-white/10">
+              <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-8">
+                <div className="flex items-center gap-2 text-white/50">
+                  <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-xs sm:text-sm">Verified Alumni Network</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/50">
+                  <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="text-xs sm:text-sm">Secure Platform</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/50">
+                  <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  <span className="text-xs sm:text-sm">Premium Features</span>
                 </div>
               </div>
             </div>
