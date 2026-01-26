@@ -184,7 +184,7 @@ const Layout = ({ children }) => {
               {/* Sidebar */}
               <div 
                 ref={sidebarRef}
-                className="mobile-menu-sidebar fixed top-0 right-0 h-full w-72 sm:w-80 bg-[#002759] shadow-2xl border-l-4 border-gray-900 z-[99999] lg:hidden transform transition-all duration-300 ease-in-out animate-slide-in-left"
+                className="mobile-menu-sidebar fixed top-0 right-0 h-screen w-72 sm:w-80 bg-[#002759] shadow-2xl border-l-4 border-gray-900 z-[99999] lg:hidden transform transition-all duration-300 ease-in-out animate-slide-in-left"
                 style={{ 
                   backgroundColor: '#002759 !important',
                   backgroundImage: 'linear-gradient(to bottom, #002759, #002759) !important',
@@ -192,15 +192,19 @@ const Layout = ({ children }) => {
                   position: 'fixed',
                   top: '0',
                   right: '0',
+                  height: '100vh !important',
+                  maxHeight: '100vh !important',
                   background: '#002759 !important',
                   backgroundClip: 'padding-box',
                   WebkitBackgroundClip: 'padding-box'
                 }}
               >
-                <div className="flex flex-col h-full bg-[#002759] relative"
+                <div className="flex flex-col h-screen bg-[#002759] relative"
                    style={{
                      position: 'relative',
                      zIndex: 1,
+                     height: '100vh !important',
+                     maxHeight: '100vh !important',
                      backgroundColor: '#002759 !important',
                      background: '#002759 !important'
                    }}
