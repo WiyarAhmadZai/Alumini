@@ -112,6 +112,16 @@ const DirectoryPage = () => {
     }
   };
 
+  const resetFilters = () => {
+    setSelectedFilters({
+      faculty: [],
+      graduationYear: [],
+      degreeType: [],
+      industry: []
+    });
+    setExpandedFilters([]);
+  };
+
   const removeFilter = (filterType, value) => {
     setSelectedFilters(prev => ({
       ...prev,
@@ -158,8 +168,8 @@ const DirectoryPage = () => {
                 </div>
                 
                 <div className="flex flex-col gap-1">
-                  {/* Graduation Year Dropdown */}
-                  <div className="relative">
+                  {/* Graduation Year Filter */}
+                  <div>
                     <button 
                       onClick={() => toggleFilter('graduation')}
                       className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer group transition-colors"
@@ -174,33 +184,29 @@ const DirectoryPage = () => {
                     </button>
                     
                     {expandedFilters.includes('graduation') && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                        <div className="p-3">
-                          <div className="flex flex-col gap-2">
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>2015 - 2020</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>2010 - 2014</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>2005 - 2009</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>2000 - 2004</span>
-                            </label>
-                          </div>
-                        </div>
+                      <div className="px-10 py-3 flex flex-col gap-2 bg-gray-50 border-l-4 border-[#002759]">
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>2015 - 2020</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>2010 - 2014</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>2005 - 2009</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>2000 - 2004</span>
+                        </label>
                       </div>
                     )}
                   </div>
 
-                  {/* Faculty Dropdown */}
-                  <div className="relative">
+                  {/* Faculty Filter */}
+                  <div>
                     <button 
                       onClick={() => toggleFilter('faculty')}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
@@ -223,62 +229,58 @@ const DirectoryPage = () => {
                     </button>
                     
                     {expandedFilters.includes('faculty') && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                        <div className="p-3">
-                          <div className="flex flex-col gap-2">
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input 
-                                checked={selectedFilters.faculty.includes('Civil Engineering')}
-                                onChange={() => handleFacultyChange('Civil Engineering')}
-                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                                type="checkbox" 
-                              />
-                              <span>Civil Engineering</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input 
-                                checked={selectedFilters.faculty.includes('Computer Science')}
-                                onChange={() => handleFacultyChange('Computer Science')}
-                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                                type="checkbox" 
-                              />
-                              <span>Computer Science</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input 
-                                checked={selectedFilters.faculty.includes('Geomatics')}
-                                onChange={() => handleFacultyChange('Geomatics')}
-                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                                type="checkbox" 
-                              />
-                              <span>Geomatics</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input 
-                                checked={selectedFilters.faculty.includes('Electromechanics')}
-                                onChange={() => handleFacultyChange('Electromechanics')}
-                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                                type="checkbox" 
-                              />
-                              <span>Electromechanics</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input 
-                                checked={selectedFilters.faculty.includes('All')}
-                                onChange={() => handleFacultyChange('All')}
-                                className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                                type="checkbox" 
-                              />
-                              <span>All Faculties</span>
-                            </label>
-                          </div>
-                        </div>
+                      <div className="px-10 py-3 flex flex-col gap-2 bg-gray-50 border-l-4 border-[#002759]">
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input 
+                            checked={selectedFilters.faculty.includes('Civil Engineering')}
+                            onChange={() => handleFacultyChange('Civil Engineering')}
+                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                            type="checkbox" 
+                          />
+                          <span>Civil Engineering</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input 
+                            checked={selectedFilters.faculty.includes('Computer Science')}
+                            onChange={() => handleFacultyChange('Computer Science')}
+                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                            type="checkbox" 
+                          />
+                          <span>Computer Science</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input 
+                            checked={selectedFilters.faculty.includes('Geomatics')}
+                            onChange={() => handleFacultyChange('Geomatics')}
+                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                            type="checkbox" 
+                          />
+                          <span>Geomatics</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input 
+                            checked={selectedFilters.faculty.includes('Electromechanics')}
+                            onChange={() => handleFacultyChange('Electromechanics')}
+                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                            type="checkbox" 
+                          />
+                          <span>Electromechanics</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input 
+                            checked={selectedFilters.faculty.includes('All')}
+                            onChange={() => handleFacultyChange('All')}
+                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
+                            type="checkbox" 
+                          />
+                          <span>All Faculties</span>
+                        </label>
                       </div>
                     )}
                   </div>
 
-                  {/* Degree Type Dropdown */}
-                  <div className="relative">
+                  {/* Degree Type Filter */}
+                  <div>
                     <button 
                       onClick={() => toggleFilter('degree')}
                       className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer group transition-colors"
@@ -293,29 +295,25 @@ const DirectoryPage = () => {
                     </button>
                     
                     {expandedFilters.includes('degree') && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                        <div className="p-3">
-                          <div className="flex flex-col gap-2">
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>Bachelor's Degree</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>Master's Degree</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>PhD</span>
-                            </label>
-                          </div>
-                        </div>
+                      <div className="px-10 py-3 flex flex-col gap-2 bg-gray-50 border-l-4 border-[#002759]">
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>Bachelor's Degree</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>Master's Degree</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>PhD</span>
+                        </label>
                       </div>
                     )}
                   </div>
 
-                  {/* Industry Dropdown */}
-                  <div className="relative">
+                  {/* Industry Filter */}
+                  <div>
                     <button 
                       onClick={() => toggleFilter('industry')}
                       className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer group transition-colors"
@@ -330,37 +328,36 @@ const DirectoryPage = () => {
                     </button>
                     
                     {expandedFilters.includes('industry') && (
-                      <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                        <div className="p-3">
-                          <div className="flex flex-col gap-2">
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>Technology</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>Engineering</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>Healthcare</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>Education</span>
-                            </label>
-                            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-gray-50 p-1 rounded">
-                              <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                              <span>Finance</span>
-                            </label>
-                          </div>
-                        </div>
+                      <div className="px-10 py-3 flex flex-col gap-2 bg-gray-50 border-l-4 border-[#002759]">
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>Technology</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>Engineering</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>Healthcare</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>Education</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
+                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
+                          <span>Finance</span>
+                        </label>
                       </div>
                     )}
                   </div>
                 </div>
 
-                <button className="mt-4 flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 text-sm font-bold hover:from-gray-200 hover:to-gray-300 transition-all">
+                <button 
+                  onClick={resetFilters}
+                  className="mt-4 flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 text-sm font-bold hover:from-gray-200 hover:to-gray-300 transition-all"
+                >
                   Reset Filters
                 </button>
               </div>
