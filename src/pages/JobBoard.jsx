@@ -250,17 +250,17 @@ const JobBoard = () => {
         </aside>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col gap-8">
+        <div className="flex-1 flex flex-col gap-6">
           {/* Search Bar */}
-          <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="bg-white rounded-2xl shadow-xl p-5">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
-                <div className="flex w-full items-stretch rounded-xl h-14 bg-gray-50 border border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
+                <div className="flex w-full items-stretch rounded-xl h-12 bg-gray-50 border border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
                   <div className="text-gray-400 flex items-center justify-center pl-4">
-                    <FiSearch className="text-xl" />
+                    <FiSearch className="text-lg" />
                   </div>
                   <input 
-                    className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-400 px-4 text-base font-medium"
+                    className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-400 px-4 text-sm font-medium"
                     placeholder="Job title, company, or keywords..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -268,37 +268,37 @@ const JobBoard = () => {
                 </div>
               </div>
               <div className="w-full md:w-64">
-                <div className="flex w-full items-stretch rounded-xl h-14 bg-gray-50 border border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
+                <div className="flex w-full items-stretch rounded-xl h-12 bg-gray-50 border border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
                   <div className="text-gray-400 flex items-center justify-center pl-4">
-                    <FiMapPin className="text-xl" />
+                    <FiMapPin className="text-lg" />
                   </div>
                   <input 
-                    className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-400 px-4 text-base font-medium"
+                    className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-400 px-4 text-sm font-medium"
                     placeholder="Location..."
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
                   />
                 </div>
               </div>
-              <button className="h-14 px-8 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+              <button className="h-12 px-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm">
                 Search Jobs
               </button>
             </div>
           </div>
 
           {/* Job Listings */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             {jobs.map((job) => {
               const Icon = job.icon;
               return (
-                <div key={job.id} className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-2xl transition-all duration-300 hover:border-blue-200 group">
-                  <div className="flex flex-col md:flex-row gap-6 items-start">
-                    <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                      <Icon className="text-blue-600 text-4xl" />
+                <div key={job.id} className="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-2xl transition-all duration-300 hover:border-blue-200 group">
+                  <div className="flex flex-col md:flex-row gap-5 items-start">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                      <Icon className="text-blue-600 text-3xl" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-3 mb-3">
-                        <h3 className="text-gray-900 text-xl font-bold group-hover:text-blue-600 transition-colors">{job.title}</h3>
+                        <h3 className="text-gray-900 text-lg font-bold group-hover:text-blue-600 transition-colors">{job.title}</h3>
                         <span className={`${getTypeColor(job.type)} text-xs font-bold px-3 py-1.5 rounded-full uppercase shadow-sm`}>
                           {job.type}
                         </span>
@@ -309,7 +309,7 @@ const JobBoard = () => {
                           </div>
                         )}
                       </div>
-                      <p className="text-blue-600 font-semibold text-lg mb-4">{job.company}</p>
+                      <p className="text-blue-600 font-semibold text-base mb-3">{job.company}</p>
                       <div className="flex flex-wrap gap-6 text-gray-600 text-sm">
                         <div className="flex items-center gap-2">
                           <FiMapPin className="text-[20px] text-gray-400" />
@@ -328,11 +328,11 @@ const JobBoard = () => {
                       </div>
                     </div>
                     <div className="flex md:flex-col gap-3 w-full md:w-auto">
-                      <button className="flex-1 md:w-36 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-bold py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
+                      <button className="flex-1 md:w-32 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-bold py-2.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105">
                         Apply Now
                       </button>
-                      <button className="p-3 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all duration-300 hover:scale-105">
-                        <FiBookmark className="text-[24px]" />
+                      <button className="p-2.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all duration-300 hover:scale-105">
+                        <FiBookmark className="text-[22px]" />
                       </button>
                     </div>
                   </div>
@@ -342,27 +342,27 @@ const JobBoard = () => {
           </div>
 
           {/* Pagination */}
-          <div className="bg-white rounded-2xl shadow-xl p-6">
+          <div className="bg-white rounded-2xl shadow-xl p-5">
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-600">
                 Showing <span className="font-bold text-gray-900 text-lg">42</span> matching jobs
               </p>
               <div className="flex gap-2">
                 <button 
-                  className="flex h-12 w-12 items-center justify-center rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 disabled:opacity-50 transition-all duration-300 hover:scale-105"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 disabled:opacity-50 transition-all duration-300 hover:scale-105"
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                 >
                   <FiChevronLeft className="text-xl" />
                 </button>
-                <button className="flex h-12 px-6 items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-sm transition-all duration-300 shadow-lg">
+                <button className="flex h-10 px-5 items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-sm transition-all duration-300 shadow-lg">
                   1
                 </button>
-                <button className="flex h-12 px-6 items-center justify-center rounded-xl hover:bg-gray-50 text-gray-700 font-bold text-sm transition-all duration-300 hover:scale-105">
+                <button className="flex h-10 px-5 items-center justify-center rounded-xl hover:bg-gray-50 text-gray-700 font-bold text-sm transition-all duration-300 hover:scale-105">
                   2
                 </button>
                 <button 
-                  className="flex h-12 w-12 items-center justify-center rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 transition-all duration-300 hover:scale-105"
+                  className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 transition-all duration-300 hover:scale-105"
                   onClick={() => setCurrentPage(prev => prev + 1)}
                 >
                   <FiChevronRight className="text-xl" />
