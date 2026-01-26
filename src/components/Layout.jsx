@@ -19,9 +19,9 @@ const Layout = ({ children }) => {
     <div className="min-h-screen bg-background-light dark:bg-background-dark text-[#111318] dark:text-white font-display">
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-[#1e3a8a] dark:border-[#1e3a8a] bg-[#1e40af] dark:bg-[#1e3a8a] backdrop-blur-md animate-fade-in shadow-lg">
-        <div className="max-w-[1200px] mx-auto px-10 py-3">
+        <div className="w-full px-4 py-3">
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-8">
+            <div className="flex items-center gap-8 px-4">
               <div className="flex items-center gap-4 text-white">
                 <div className="w-8 h-8">
                   <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -39,7 +39,7 @@ const Layout = ({ children }) => {
               </nav>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 px-4">
               <button className="min-w-[84px] h-10 px-4 bg-white text-[#1e40af] text-sm font-bold rounded-lg hover:bg-blue-50 transition-all">
                 Login
               </button>
