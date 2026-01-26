@@ -120,7 +120,7 @@ const HomePage = () => {
   return (
     <Layout>
       {/* Hero Section - Full Width Slider */}
-      <section className="relative w-full h-screen overflow-hidden">
+      <section className="relative w-full h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen overflow-hidden">
         <div className="relative w-full h-full bg-black">
           {heroSlides.map((slide, index) => (
             <div
@@ -135,20 +135,20 @@ const HomePage = () => {
             />
           ))}
           
-          <div className="relative z-10 h-full flex items-center justify-center">
-            <div className="text-center text-white max-w-4xl px-4">
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black leading-tight tracking-[-0.033em] mb-6 animate-slide-up">
+          <div className="relative z-10 h-full flex items-center justify-center px-3 sm:px-4 md:px-6">
+            <div className="text-center text-white max-w-5xl">
+              <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-black leading-tight tracking-[-0.033em] mb-3 sm:mb-4 md:mb-6 animate-slide-up">
                 {heroSlides[currentSlide].title}
               </h1>
-              <p className="text-base md:text-lg lg:text-xl font-normal leading-relaxed mb-8 animate-slide-up" style={{animationDelay: '0.2s'}}>
+              <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-normal leading-relaxed mb-4 sm:mb-6 md:mb-8 animate-slide-up" style={{animationDelay: '0.2s'}}>
                 {heroSlides[currentSlide].subtitle}
               </p>
-              <div className="flex flex-wrap gap-4 justify-center animate-slide-up" style={{animationDelay: '0.4s'}}>
-                <button className="group relative px-8 py-3 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-base font-semibold rounded-xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4 justify-center animate-slide-up" style={{animationDelay: '0.4s'}}>
+                <button className="group relative px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg sm:shadow-xl hover:shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                   <span className="relative z-10">Join the Network</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-[#0a519b] to-[#003d7a] transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
                 </button>
-                <button className="group relative px-8 py-3 bg-white/10 backdrop-blur-md text-white border border-white/40 text-base font-semibold rounded-xl hover:bg-white/20 hover:border-white/60 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                <button className="group relative px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-white/10 backdrop-blur-md text-white border border-white/40 text-xs sm:text-sm md:text-base font-semibold rounded-lg sm:rounded-xl hover:bg-white/20 hover:border-white/60 hover:shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                   <span className="relative z-10">Learn More</span>
                   <div className="absolute inset-0 bg-white/20 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
                 </button>
@@ -157,13 +157,13 @@ const HomePage = () => {
           </div>
 
           {/* Slider Navigation Dots */}
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
-            <div className="flex gap-2">
+          <div className="absolute bottom-3 sm:bottom-4 md:bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+            <div className="flex gap-1 sm:gap-2">
               {heroSlides.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
-                  className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? 'bg-white w-8' : 'bg-white/50 hover:bg-white/70'}`}
+                  className={`w-1.5 h-1.5 sm:w-2 sm:h-2 md:w-3 md:h-3 rounded-full transition-all ${index === currentSlide ? 'bg-white w-4 sm:w-6 md:w-8' : 'bg-white/50 hover:bg-white/70'}`}
                 />
               ))}
             </div>
@@ -172,68 +172,68 @@ const HomePage = () => {
           {/* Slider Navigation Arrows */}
           <button
             onClick={() => setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length)}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition-all"
+            className="absolute left-1 sm:left-2 md:left-4 top-1/2 transform -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition-all"
           >
-            <FiChevronLeft size={24} />
+            <FiChevronLeft size={12} />
           </button>
           <button
             onClick={() => setCurrentSlide((prev) => (prev + 1) % heroSlides.length)}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition-all"
+            className="absolute right-1 sm:right-2 md:right-4 top-1/2 transform -translate-y-1/2 z-20 w-6 h-6 sm:w-8 sm:h-8 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/30 transition-all"
           >
-            <FiChevronRight size={24} />
+            <FiChevronRight size={12} />
           </button>
         </div>
       </section>
 
       {/* Latest News Section */}
-      <section className="w-full max-w-[1200px] mx-auto px-4 md:px-10 py-16 bg-gradient-to-br from-gray-50 to-white">
-        <div className="flex items-center justify-between mb-12">
+      <section className="w-full max-w-[1200px] mx-auto px-2 sm:px-4 md:px-8 lg:px-10 py-8 sm:py-12 md:py-16 bg-gradient-to-br from-gray-50 to-white">
+        <div className="flex flex-col lg:flex-row items-center justify-between mb-6 sm:mb-8 lg:mb-12 gap-4">
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-widest text-[#002759] mb-2">Stay Updated</h2>
-            <h3 className="text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900">Latest News</h3>
+            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#002759] mb-1 sm:mb-2">Stay Updated</h2>
+            <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900">Latest News</h3>
           </div>
-          <a className="group flex items-center gap-2 text-[#002759] font-semibold hover:text-[#0a519b] transition-all duration-300" href="#">
+          <a className="group flex items-center gap-1 sm:gap-2 text-[#002759] font-semibold hover:text-[#0a519b] transition-all duration-300" href="#">
             View All 
-            <FiArrowRight className="text-sm transform group-hover:translate-x-1 transition-transform duration-300" />
+            <FiArrowRight className="text-xs sm:text-sm transform group-hover:translate-x-1 transition-transform duration-300" />
           </a>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
           {newsItems.map((item, index) => (
-            <article key={item.id} className="group cursor-pointer bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100">
-              <div className="relative h-48 overflow-hidden">
+            <article key={item.id} className="group cursor-pointer bg-white rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100">
+              <div className="relative h-32 sm:h-40 md:h-48 lg:h-56 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
                 <img 
                   src={item.image} 
                   alt={item.title}
                   className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-500"
                 />
-                <div className="absolute top-4 left-4 z-20">
-                  <span className={`${item.categoryColor} text-xs font-bold px-3 py-1 rounded-full shadow-md`}>
+                <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-20">
+                  <span className={`${item.categoryColor} text-xs font-bold px-1 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-md`}>
                     {item.category}
                   </span>
                 </div>
-                <div className="absolute bottom-4 right-4 z-20">
-                  <span className="text-white text-xs font-medium bg-black/50 backdrop-blur-sm px-2 py-1 rounded">
+                <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 z-20">
+                  <span className="text-white text-xs font-medium bg-black/50 backdrop-blur-sm px-1 sm:px-2 py-0.5 rounded">
                     {item.date}
                   </span>
                 </div>
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold leading-tight text-gray-900 mb-3 group-hover:text-[#002759] transition-colors duration-300">
+              <div className="p-3 sm:p-4 md:p-6">
+                <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight text-gray-900 mb-1 sm:mb-2 md:mb-3 group-hover:text-[#002759] transition-colors duration-300">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed line-clamp-3 mb-4">
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-3 md:mb-4">
                   {item.excerpt}
                 </p>
                 <div className="flex items-center justify-between">
-                  <a href="#" className="inline-flex items-center gap-2 text-[#002759] font-medium text-sm hover:text-[#0a519b] transition-colors duration-300">
+                  <a href="#" className="inline-flex items-center gap-1 sm:gap-2 text-[#002759] font-medium text-xs sm:text-sm hover:text-[#0a519b] transition-colors duration-300">
                     Read More
                     <FiArrowRight className="text-xs transform group-hover:translate-x-1 transition-transform duration-300" />
                   </a>
-                  <div className="flex gap-2">
-                    <span className="w-2 h-2 rounded-full bg-blue-400"></span>
-                    <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                    <span className="w-2 h-2 rounded-full bg-blue-600"></span>
+                  <div className="flex gap-0.5 sm:gap-1">
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-400"></span>
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-500"></span>
+                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-600"></span>
                   </div>
                 </div>
               </div>
@@ -243,7 +243,7 @@ const HomePage = () => {
       </section>
 
         {/* Upcoming Events */}
-        <section className="w-full py-16 flex justify-center relative overflow-hidden">
+        <section className="w-full py-12 sm:py-16 flex justify-center relative overflow-hidden">
           <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
                style={{
                  backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6")',
@@ -251,30 +251,30 @@ const HomePage = () => {
                  backgroundSize: 'cover',
                  backgroundPosition: 'center'
                }}></div>
-          <div className="w-full max-w-[1200px] px-4 md:px-10 relative z-10">
-            <div className="flex flex-col md:flex-row gap-12">
-              <div className="md:w-1/3">
-                <h2 className="text-primary text-sm font-bold uppercase tracking-widest mb-2">Save the Date</h2>
-                <h3 className="text-white text-3xl font-bold leading-tight mb-4">Upcoming Events</h3>
-                <p className="text-gray-300 mb-6">Never miss an opportunity to reconnect with your former classmates and expand your network.</p>
-                <button className="h-12 px-6 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-all">
+          <div className="w-full max-w-[1200px] px-4 sm:px-6 md:px-10 relative z-10">
+            <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+              <div className="lg:w-1/3">
+                <h2 className="text-sm font-bold uppercase tracking-widest text-white mb-2">Save the Date</h2>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight mb-4 text-white">Upcoming Events</h3>
+                <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">Never miss an opportunity to reconnect with your former classmates and expand your network.</p>
+                <button className="h-10 px-4 sm:h-12 border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-[#002759] transition-all">
                   View Calendar
                 </button>
               </div>
-              <div className="md:w-2/3 flex flex-col gap-4">
+              <div className="lg:w-2/3 flex flex-col gap-3 sm:gap-4">
                 {events.map((event, index) => (
-                  <div key={event.id} className="flex gap-6 items-center p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 hover:border-primary/50 transition-all group animate-scale-in" style={{animationDelay: `${index * 0.1}s`}}>
-                    <div className={`flex flex-col items-center justify-center min-w-[70px] h-[70px] ${event.isPrimary ? 'bg-primary text-white' : 'bg-white/20 border border-white/30 rounded-lg'}`}>
-                      <span className="text-xl font-bold">{event.date}</span>
+                  <div key={event.id} className="flex gap-3 sm:gap-6 items-center p-3 sm:p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 hover:border-[#002759]/50 transition-all group animate-scale-in" style={{animationDelay: `${index * 0.1}s`}}>
+                    <div className={`flex flex-col items-center justify-center min-w-[60px] sm:min-w-[70px] h-[60px] sm:h-[70px] ${event.isPrimary ? 'bg-[#002759] text-white' : 'bg-white/20 border border-white/30 rounded-lg'}`}>
+                      <span className="text-lg sm:text-xl font-bold">{event.date}</span>
                       <span className="text-[10px] uppercase font-medium text-gray-300">{event.month}</span>
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-white text-lg font-bold group-hover:text-primary transition-colors">{event.title}</h4>
-                      <p className="text-gray-300 text-sm flex items-center gap-1">
+                      <h4 className="text-white text-base sm:text-lg font-bold group-hover:text-[#002759] transition-colors">{event.title}</h4>
+                      <p className="text-gray-300 text-xs sm:text-sm flex items-center gap-1">
                         {event.icon} {event.location} • {event.time}
                       </p>
                     </div>
-                    <button className="material-symbols-outlined text-gray-400 group-hover:text-primary">arrow_forward</button>
+                    <button className="material-symbols-outlined text-gray-400 group-hover:text-[#002759]">arrow_forward</button>
                   </div>
                 ))}
               </div>
