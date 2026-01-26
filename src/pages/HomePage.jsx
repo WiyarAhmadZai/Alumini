@@ -282,35 +282,91 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Success Stories */}
-        <section className="w-full py-20 bg-gray-50">
-          <div className="max-w-[1200px] mx-auto px-4 md:px-10">
-            <div className="text-center mb-12">
-              <h2 className="text-sm font-bold uppercase tracking-widest text-[#002759] mb-2">Our Pride</h2>
-              <h3 className="text-3xl font-bold">Success Stories</h3>
+        {/* Success Stories - Modern Slider */}
+        <section className="w-full py-16 sm:py-20 bg-gradient-to-br from-gray-50 via-white to-blue-50 relative overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute top-0 left-0 w-full h-full opacity-5">
+            <div className="absolute top-10 left-10 w-32 h-32 bg-[#002759] rounded-full blur-3xl"></div>
+            <div className="absolute bottom-10 right-10 w-40 h-40 bg-[#0a519b] rounded-full blur-3xl"></div>
+          </div>
+          
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 relative z-10">
+            {/* Section Header */}
+            <div className="text-center mb-12 sm:mb-16">
+              <span className="inline-block text-xs sm:text-sm font-bold uppercase tracking-widest text-[#002759] mb-3 sm:mb-4 px-4 py-2 bg-[#002759]/10 rounded-full">
+                Our Pride
+              </span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black leading-tight mb-4 bg-gradient-to-r from-[#002759] to-[#0a519b] bg-clip-text text-transparent">
+                Success Stories
+              </h2>
+              <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto">
+                Discover the inspiring journeys of our alumni who are making a difference worldwide
+              </p>
             </div>
             
-            <div className="relative max-w-6xl mx-auto">
-              <div className="overflow-hidden rounded-xl">
+            {/* Modern Slider */}
+            <div className="relative max-w-5xl mx-auto">
+              <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl bg-white">
+                {/* Slider Container */}
                 <div 
-                  className="flex transition-transform duration-500 ease-in-out"
+                  className="flex transition-all duration-700 ease-out"
                   style={{
                     transform: `translateX(-${currentTestimonial * 100}%)`
                   }}
                 >
-                  {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => (
-                    <div key={`${testimonial.id}-${index}`} className="w-full flex-shrink-0 px-4">
-                      <div className="bg-white p-8 rounded-xl shadow-lg">
-                        <div className="text-6xl text-[#002759]/10 absolute top-4 left-4">"</div>
-                        <div className="flex flex-col items-center">
-                          <div className="w-20 h-20 rounded-full border-4 border-[#002759]/20 mb-4 bg-cover bg-center" 
-                               style={{backgroundImage: `url("${testimonial.image}")`}}></div>
-                          <p className="text-base italic text-gray-700 leading-relaxed mb-4 line-clamp-3">
-                            {testimonial.quote}
-                          </p>
-                          <h4 className="text-lg font-bold text-[#002759]">{testimonial.name}</h4>
-                          <p className="text-gray-600 text-xs">{testimonial.faculty}</p>
-                          <p className="text-gray-500 text-xs font-medium mt-1">{testimonial.position}</p>
+                  {[...testimonials, ...testimonials].map((testimonial, index) => (
+                    <div key={`${testimonial.id}-${index}`} className="w-full flex-shrink-0">
+                      <div className="relative p-8 sm:p-12 md:p-16">
+                        {/* Quote Mark */}
+                        <div className="absolute top-6 sm:top-8 left-6 sm:left-8 text-6xl sm:text-8xl font-serif text-[#002759]/5">
+                          "
+                        </div>
+                        
+                        <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center">
+                          {/* Left - Image */}
+                          <div className="relative order-2 md:order-1">
+                            <div className="relative mx-auto w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64">
+                              <div className="absolute inset-0 bg-gradient-to-br from-[#002759] to-[#0a519b] rounded-full opacity-20 blur-2xl transform scale-110"></div>
+                              <img 
+                                src={testimonial.image} 
+                                alt={testimonial.name}
+                                className="relative w-full h-full rounded-full object-cover border-4 border-white shadow-2xl"
+                              />
+                              {/* Floating badge */}
+                              <div className="absolute -bottom-2 -right-2 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-[#002759] to-[#0a519b] rounded-full flex items-center justify-center shadow-lg">
+                                <span className="text-white text-2xl sm:text-3xl font-bold">✓</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {/* Right - Content */}
+                          <div className="order-1 md:order-2 text-center md:text-left">
+                            <blockquote className="text-lg sm:text-xl md:text-2xl font-medium text-gray-700 leading-relaxed mb-6 sm:mb-8 italic">
+                              "{testimonial.quote}"
+                            </blockquote>
+                            
+                            <div className="space-y-2 sm:space-y-3">
+                              <h4 className="text-xl sm:text-2xl font-bold text-[#002759]">
+                                {testimonial.name}
+                              </h4>
+                              <p className="text-gray-600 text-sm sm:text-base font-medium">
+                                {testimonial.faculty}
+                              </p>
+                              <p className="text-[#0a519b] text-sm sm:text-base font-semibold">
+                                {testimonial.position}
+                              </p>
+                            </div>
+                            
+                            {/* Achievement badges */}
+                            <div className="flex flex-wrap gap-2 mt-6 justify-center md:justify-start">
+                              <span className="px-3 py-1 bg-[#002759]/10 text-[#002759] text-xs font-semibold rounded-full">
+                                Alumni Success
+                              </span>
+                              <span className="px-3 py-1 bg-[#0a519b]/10 text-[#0a519b] text-xs font-semibold rounded-full">
+                                Global Impact
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -318,18 +374,34 @@ const HomePage = () => {
                 </div>
               </div>
               
+              {/* Navigation Buttons */}
               <button 
-                className="absolute top-1/2 -left-4 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-[#002759] hover:bg-[#0a519b] hover:text-white transition-all z-10"
+                className="absolute top-1/2 -left-4 sm:-left-6 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-[#002759] hover:bg-[#002759] hover:text-white transition-all duration-300 z-20 group"
                 onClick={() => setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length)}
               >
-                <FiChevronLeft />
+                <FiChevronLeft className="text-xl sm:text-2xl group-hover:scale-110 transition-transform" />
               </button>
               <button 
-                className="absolute top-1/2 -right-4 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center text-[#002759] hover:bg-[#0a519b] hover:text-white transition-all z-10"
+                className="absolute top-1/2 -right-4 sm:-right-6 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white shadow-2xl flex items-center justify-center text-[#002759] hover:bg-[#002759] hover:text-white transition-all duration-300 z-20 group"
                 onClick={() => setCurrentTestimonial((prev) => (prev + 1) % testimonials.length)}
               >
-                <FiChevronRight />
+                <FiChevronRight className="text-xl sm:text-2xl group-hover:scale-110 transition-transform" />
               </button>
+              
+              {/* Progress Indicators */}
+              <div className="flex justify-center gap-2 sm:gap-3 mt-8 sm:mt-12">
+                {testimonials.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentTestimonial(index)}
+                    className={`h-2 sm:h-3 rounded-full transition-all duration-300 ${
+                      index === currentTestimonial 
+                        ? 'w-8 sm:w-12 bg-gradient-to-r from-[#002759] to-[#0a519b]' 
+                        : 'w-2 sm:w-3 bg-gray-300 hover:bg-gray-400'
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </section>
