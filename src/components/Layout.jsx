@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   FiArrowRight, 
   FiMapPin, 
@@ -18,6 +18,7 @@ const Layout = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const sidebarRef = useRef(null);
+  const location = useLocation();
 
   // Handle scroll effect
   useEffect(() => {
@@ -88,11 +89,18 @@ const Layout = ({ children }) => {
               </div>
               
               <nav className="hidden lg:flex items-center gap-4 sm:gap-6">
-                <Link to="/directory" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
-                  isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
-                }`}>
+                <Link 
+                  to="/directory" 
+                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                    location.pathname === '/directory' 
+                      ? 'text-white bg-white/20' 
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
+                  }`}
+                >
                   Directory
-                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 group-hover:w-full"></span>
+                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
+                    location.pathname === '/directory' ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}></span>
                 </Link>
                 <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                   isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -175,7 +183,11 @@ const Layout = ({ children }) => {
                       <Link 
                         to="/directory"
                         onClick={handleMenuClick}
-                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                          location.pathname === '/directory' 
+                            ? 'bg-white/20 text-white' 
+                            : 'hover:bg-[#0a519b]'
+                        }`}
                       >
                         Directory
                       </Link>
@@ -224,7 +236,11 @@ const Layout = ({ children }) => {
                       <Link 
                         to="/directory"
                         onClick={handleMenuClick}
-                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                          location.pathname === '/directory' 
+                            ? 'bg-white/20' 
+                            : 'hover:bg-[#0a519b]'
+                        }`}
                       >
                         <span className="text-lg opacity-70">📁</span>
                         Alumni Directory
