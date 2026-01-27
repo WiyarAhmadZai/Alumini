@@ -5,6 +5,7 @@ import DirectoryPage from './pages/DirectoryPage';
 import JobBoard from './pages/JobBoard';
 import MentorshipPage from './pages/MentorshipPage';
 import EventsPage from './pages/EventsPage';
+import LegalPage from './pages/LegalPage';
 
 function App() {
   return (
@@ -15,6 +16,10 @@ function App() {
         <Route path="/jobs" element={<JobBoard />} />
         <Route path="/mentorship" element={<MentorshipPage />} />
         <Route path="/events" element={<EventsPage />} />
+        <Route path="/legal" element={<LegalPage />} />
+        <Route path="/privacy" element={<LegalPage />} />
+        <Route path="/terms" element={<LegalPage />} />
+        <Route path="/guidelines" element={<LegalPage />} />
       </Routes>
     </div>
   );
