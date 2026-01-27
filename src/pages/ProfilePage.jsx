@@ -121,7 +121,7 @@ const ProfilePage = () => {
                 <div className="space-y-8">
                   {/* Experience Item 1 */}
                   <div className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
-                    <div className="absolute -left-[9px] top-0 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-sm"></div>
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 bg-primary rounded-full border-4 border-gray-100 shadow-sm"></div>
                     <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
                         <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">Senior Structural Engineer</h4>
@@ -156,7 +156,7 @@ const ProfilePage = () => {
                 <div className="space-y-8">
                   {/* KPU Entry */}
                   <div className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
-                    <div className="absolute -left-[9px] top-0 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-sm"></div>
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 bg-primary rounded-full border-4 border-gray-100 shadow-sm"></div>
                     <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
                       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
                         <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">Kabul Polytechnic University (KPU)</h4>
