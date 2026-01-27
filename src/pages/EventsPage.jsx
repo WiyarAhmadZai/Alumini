@@ -305,7 +305,7 @@ const EventsPage = () => {
                   <div className="flex-1 relative">
                     <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input 
-                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600" 
+                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 text-black text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600" 
                       placeholder="Search events..." 
                       type="text"
                       value={searchTerm}
@@ -314,7 +314,7 @@ const EventsPage = () => {
                   </div>
                   <div className="flex gap-3">
                     <select 
-                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                       value={eventFilter}
                       onChange={(e) => setEventFilter(e.target.value)}
                     >
@@ -324,7 +324,7 @@ const EventsPage = () => {
                       <option value="webinars">Webinars</option>
                     </select>
                     <input 
-                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:border-blue-600" 
+                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600" 
                       type="date"
                       value={dateFilter}
                       onChange={(e) => setDateFilter(e.target.value)}
@@ -403,19 +403,6 @@ const EventsPage = () => {
           </div>
         </main>
 
-        {/* Footer */}
-        <footer className="bg-gray-900 text-gray-400 py-8 mt-16">
-          <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="text-center">
-              <p className="text-sm">© 2024 Kabul Polytechnic University Alumni Association</p>
-              <div className="flex justify-center gap-6 mt-4 text-sm">
-                <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-                <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-                <a href="#" className="hover:text-white transition-colors">Event Guidelines</a>
-              </div>
-            </div>
-          </div>
-        </footer>
       </div>
     </Layout>
   );
