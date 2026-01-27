@@ -116,30 +116,30 @@ const ProfilePage = () => {
                   <span className="material-symbols-outlined text-primary">work</span>
                   Professional Experience
                 </h3>
-                <div className="space-y-6">
+                <div className="space-y-8">
                   {/* Experience Item 1 */}
-                  <div className="flex gap-4">
-                    <div className="size-10 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-white text-sm">engineering</span>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-black font-bold text-lg">Senior Structural Engineer</h4>
-                      <p className="text-primary font-medium">Afghanistan Urban Development Authority</p>
-                      <p className="text-black text-sm mt-1">Jan 2019 — Present • Kabul, AF</p>
-                      <p className="text-black text-sm mt-3 leading-relaxed">Leading structural assessments for municipal buildings and overseeing a team of 12 junior engineers.</p>
+                  <div className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-sm"></div>
+                    <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                        <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">Senior Structural Engineer</h4>
+                        <span className="text-primary font-medium text-sm">Afghanistan Urban Development Authority</span>
+                      </div>
+                      <p className="text-gray-600 text-sm mb-3">Jan 2019 — Present • Kabul, AF</p>
+                      <p className="text-black text-sm leading-relaxed">Leading structural assessments for municipal buildings and overseeing a team of 12 junior engineers.</p>
                     </div>
                   </div>
 
                   {/* Experience Item 2 */}
-                  <div className="flex gap-4">
-                    <div className="size-10 rounded-lg bg-[#f0f1f4] flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-primary text-sm">architecture</span>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="text-black font-bold text-lg">Junior Site Engineer</h4>
-                      <p className="text-primary font-medium">National Bridge Construction Co.</p>
-                      <p className="text-black text-sm mt-1">Aug 2015 — Dec 2018 • Kabul, AF</p>
-                      <p className="text-black text-sm mt-3 leading-relaxed">Assisted in site supervision and quality control for major highway bridge reconstruction projects.</p>
+                  <div className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 bg-gray-400 rounded-full border-4 border-white shadow-sm"></div>
+                    <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                        <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">Junior Site Engineer</h4>
+                        <span className="text-primary font-medium text-sm">National Bridge Construction Co.</span>
+                      </div>
+                      <p className="text-gray-600 text-sm mb-3">Aug 2015 — Dec 2018 • Kabul, AF</p>
+                      <p className="text-black text-sm leading-relaxed">Assisted in site supervision and quality control for major highway bridge reconstruction projects.</p>
                     </div>
                   </div>
                 </div>
