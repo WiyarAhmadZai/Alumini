@@ -18,7 +18,7 @@ const ProfilePage = () => {
             <div className="bg-primary px-8 pb-8 flex flex-col md:flex-row items-end gap-6 -mt-16 relative z-10">
               <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-white size-40 shadow-lg" style={{backgroundImage: 'url("https://picsum.photos/seed/avatar/200/200.jpg")'}}></div>
               <div className="flex-1 flex flex-col md:flex-row justify-between items-end pb-2">
-                <div className="flex flex-col">
+                <div className="flex flex-col pt-20">
                   <div className="flex items-center gap-2">
                     <h1 className="text-black text-3xl font-bold leading-tight">Ahmad Wali</h1>
                     <span className="material-symbols-outlined text-black fill-1" title="Verified Alumnus">verified</span>
@@ -32,8 +32,8 @@ const ProfilePage = () => {
                 </div>
                 <div className="flex gap-3 mt-4 md:mt-0">
                   <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                    <span className="material-symbols-outlined text-sm mr-2">edit</span>
-                    Edit Profile
+                    <span className="material-symbols-outlined text-sm mr-2">Edit Profile</span>
+                    
                   </button>
                   <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
                     <span className="material-symbols-outlined">share</span>
