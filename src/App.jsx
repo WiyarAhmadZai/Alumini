@@ -22,6 +22,7 @@ function App() {
         <Route path="/terms" element={<GivingPage />} />
         <Route path="/guidelines" element={<GivingPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<LoginPage />} />
       </Routes>
     </div>
   );
