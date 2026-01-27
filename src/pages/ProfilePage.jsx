@@ -41,6 +41,9 @@ const ProfilePage = () => {
                 </div>
               </div>
             </div>
+            <div className="bg-white px-8 pb-8 pt-8">
+              {/* Main content will go here */}
+            </div>
           </div>
 
           {/* Two Column Layout */}
