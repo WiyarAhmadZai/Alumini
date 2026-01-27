@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Layout from '../components/Layout';
 import { FiHeart, FiTarget, FiAward, FiUsers, FiTrendingUp, FiCalendar, FiDollarSign } from 'react-icons/fi';
 
-const LegalPage = () => {
+const GivingPage = () => {
   const [selectedAmount, setSelectedAmount] = useState('');
   const [customAmount, setCustomAmount] = useState('');
 
@@ -260,4 +260,4 @@ const LegalPage = () => {
   );
 };
 
-export default LegalPage;
+export default GivingPage;
