@@ -100,14 +100,16 @@ const ProfilePage = () => {
             {/* Right Column (Main Content) */}
             <div className="md:col-span-8 flex flex-col gap-6">
               {/* About Me */}
-              <section className="bg-white dark:bg-[#1a1f2e] p-8 rounded-xl border border-[#dcdee5] dark:border-gray-800 shadow-sm">
-                <h3 className="text-[#111318] dark:text-white text-xl font-bold mb-4 flex items-center gap-2">
+              <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+                <h3 className="text-black text-xl font-bold mb-6 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary">person</span>
                   About Me
                 </h3>
-                <p className="text-[#636c88] dark:text-gray-300 leading-relaxed">
-                  Dedicated Civil Engineer with over 8 years of experience in structural design and urban planning. Since graduating from KPU in 2015, I have worked on numerous infrastructure projects across Kabul and beyond. I am passionate about sustainable building practices and mentoring the next generation of Polytechnic engineers.
-                </p>
+                <div className="bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg p-6 border border-gray-200">
+                  <p className="text-black leading-relaxed text-base">
+                    Dedicated Civil Engineer with over 8 years of experience in structural design and urban planning. Since graduating from KPU in 2015, I have worked on numerous infrastructure projects across Kabul and beyond. I am passionate about sustainable building practices and mentoring the next generation of Polytechnic engineers.
+                  </p>
+                </div>
               </section>
 
               {/* Professional Experience */}
