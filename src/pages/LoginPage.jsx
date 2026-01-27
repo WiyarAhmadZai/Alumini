@@ -46,7 +46,7 @@ const LoginPage = () => {
         <section className="relative min-h-[600px] overflow-hidden">
           <div className="absolute inset-0">
             <img 
-              src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80"
+              src="/kpu2.jpg"
               alt="KPU Campus"
               className="w-full h-full object-cover"
             />
@@ -57,6 +57,25 @@ const LoginPage = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left Content */}
               <div className="text-white">
+                <div className="mb-8">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <img
+                        src="/logo_kpu.png"
+                        alt="KPU University"
+                        className="w-8 h-8 object-contain"
+                      />
+                    </div>
+                    <div className="text-left min-w-0">
+                      <div className="font-bold text-neutral-800 text-sm truncate">
+                        KPU University
+                      </div>
+                      <div className="text-xs text-neutral-500 truncate">
+                        Excellence in Education
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6">
                   {isLogin ? 'Welcome Back to KPU Alumni' : 'Join KPU Alumni Network'}
                 </h1>
