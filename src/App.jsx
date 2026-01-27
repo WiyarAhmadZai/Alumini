@@ -6,6 +6,7 @@ import JobBoard from './pages/JobBoard';
 import MentorshipPage from './pages/MentorshipPage';
 import EventsPage from './pages/EventsPage';
 import GivingPage from './pages/LegalPage';
+import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/privacy" element={<GivingPage />} />
         <Route path="/terms" element={<GivingPage />} />
         <Route path="/guidelines" element={<GivingPage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </div>
   );
