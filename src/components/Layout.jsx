@@ -149,12 +149,19 @@ const Layout = ({ children }) => {
                     location.pathname === '/events' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
-                  isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
-                }`}>
-                  Giving
-                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 group-hover:w-full"></span>
-                </a>
+                <Link 
+                  to="/legal" 
+                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                    location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines'
+                      ? 'text-white bg-white/20' 
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  Giving & Impact
+                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
+                    location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines' ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}></span>
+                </Link>
               </nav>
             </div>
 
@@ -290,13 +297,17 @@ const Layout = ({ children }) => {
                       >
                         Events
                       </Link>
-                      <a 
-                        href="#" 
+                      <Link 
+                        to="/legal"
                         onClick={handleMenuClick}
-                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                          location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines'
+                            ? 'bg-white/20 text-white' 
+                            : 'hover:bg-[#0a519b]'
+                        }`}
                       >
-                        Giving
-                      </a>
+                        Giving & Impact
+                      </Link>
                     </div>
                   </nav>
                   
@@ -430,9 +441,16 @@ const Layout = ({ children }) => {
                 <FiFacebook className="text-sm sm:text-xl text-white" />
               </a>
             </div>
-            <p className="text-blue-200 text-[9px] sm:text-[10px] mt-6 sm:mt-8">
-              © 2023 Kabul Polytechnic University Alumni Association. All Rights Reserved.
-            </p>
+            <div className="mt-6 sm:mt-8 space-y-2">
+              <div className="flex flex-col gap-2">
+                <a href="/privacy" className="text-blue-200 text-[9px] sm:text-[10px] hover:text-white transition-colors">Privacy Policy</a>
+                <a href="/terms" className="text-blue-200 text-[9px] sm:text-[10px] hover:text-white transition-colors">Terms of Service</a>
+                <a href="/guidelines" className="text-blue-200 text-[9px] sm:text-[10px] hover:text-white transition-colors">Event Guidelines</a>
+              </div>
+              <p className="text-blue-200 text-[9px] sm:text-[10px] pt-2 border-t border-white/20">
+                © 2023 Kabul Polytechnic University Alumni Association. All Rights Reserved.
+              </p>
+            </div>
           </div>
         </div>
       </footer>
