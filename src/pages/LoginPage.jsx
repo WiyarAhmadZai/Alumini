@@ -13,7 +13,8 @@ const LoginPage = () => {
     fullName: '',
     confirmPassword: '',
     graduationYear: '',
-    department: ''
+    department: '',
+    universityId: ''
   });
 
   const handleInputChange = (e) => {
@@ -171,6 +172,24 @@ const LoginPage = () => {
                             <option value="computer">Computer Science</option>
                             <option value="architecture">Architecture</option>
                           </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
+                          University ID
+                        </label>
+                        <div className="relative">
+                          <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                          <input
+                            type="text"
+                            name="universityId"
+                            value={formData.universityId || ''}
+                            onChange={handleInputChange}
+                            placeholder="Enter your university ID"
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black placeholder-gray-700 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
+                            required
+                          />
                         </div>
                       </div>
                     </>
