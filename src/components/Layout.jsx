@@ -183,11 +183,14 @@ const Layout = ({ children }) => {
               >
                 Login
               </Link>
-              <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg hidden sm:flex ${
-                isScrolled ? 'bg-gradient-to-br from-white/20 to-white/10 border-white/40 hover:from-white/30 hover:to-white/20' : 'bg-white/10 border-white/40 hover:bg-white/20'
-              }`}>
+              <Link 
+                to="/profile"
+                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg hidden sm:flex ${
+                  isScrolled ? 'bg-gradient-to-br from-white/20 to-white/10 border-white/40 hover:from-white/30 hover:to-white/20' : 'bg-white/10 border-white/40 hover:bg-white/20'
+                }`}
+              >
                 <FiUser className="text-white text-sm sm:text-lg" />
-              </div>
+              </Link>
               <button 
                 className={`lg:hidden transition-all duration-300 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transform hover:scale-105 ${
                   isScrolled ? 'text-white hover:bg-white/10' : 'text-white hover:bg-white/10'
@@ -339,7 +342,11 @@ const Layout = ({ children }) => {
                     >
                       Login
                     </Link>
-                    <div className="flex items-center gap-3 px-4 py-3">
+                    <Link 
+                      to="/profile"
+                      onClick={handleMenuClick}
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-[#0a519b] rounded-lg transition-colors"
+                    >
                       <div className="w-10 h-10 rounded-xl border-2 border-white/40 flex items-center justify-center">
                         <FiUser className="text-white text-lg" />
                       </div>
@@ -347,7 +354,7 @@ const Layout = ({ children }) => {
                         <p className="text-white font-medium">Account</p>
                         <p className="text-blue-200 text-xs">Manage profile</p>
                       </div>
-                    </div>
+                    </Link>
                     <div className="mt-4 pt-4 border-t border-[#003d7a]/30">
                       <Link 
                         to="/directory"
