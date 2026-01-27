@@ -87,13 +87,14 @@ const LegalPage = () => {
     <Layout>
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="relative min-h-[500px] bg-gradient-to-r from-blue-900 to-blue-700 overflow-hidden">
+        <section className="relative min-h-[500px] overflow-hidden">
           <div className="absolute inset-0">
             <img 
               src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80"
               alt="Students studying"
-              className="w-full h-full object-cover opacity-30"
+              className="w-full h-full object-cover"
             />
+            <div className="absolute inset-0 bg-black/60"></div>
           </div>
           <div className="relative max-w-7xl mx-auto px-4 lg:px-8 py-20 lg:py-32">
             <div className="text-center">
