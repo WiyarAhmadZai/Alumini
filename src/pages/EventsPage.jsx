@@ -63,49 +63,146 @@ const EventsPage = () => {
     <Layout>
       <div className="min-h-screen bg-background-light dark:bg-background-dark">
       {/* Hero Section */}
-      <section className="hero-gradient text-white overflow-hidden relative">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-        <div className="max-w-[1440px] mx-auto px-6 lg:px-10 py-16 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="flex flex-col gap-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold w-fit">
-                <span className="relative flex h-2 w-2">
+      <section className="relative min-h-[600px] lg:min-h-[700px] overflow-hidden">
+        {/* Enhanced gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-blue-600 to-indigo-800"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+        
+        {/* Animated background elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-indigo-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+        </div>
+        
+        {/* Subtle pattern overlay */}
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/diagonal-lines.png')] opacity-5"></div>
+        
+        <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-10 py-16 lg:py-24">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left Content */}
+            <div className="flex flex-col gap-8">
+              {/* Featured badge */}
+              <div className="inline-flex items-center gap-3 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full text-sm font-semibold w-fit border border-white/20 shadow-lg">
+                <span className="relative flex h-3 w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500 shadow-lg"></span>
                 </span>
                 Featured Event
+                <span className="px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full">LIVE</span>
               </div>
-              <h1 className="text-4xl lg:text-5xl font-bold leading-tight">Annual KPU Alumni Gala 2024</h1>
-              <p className="text-white/80 text-lg max-w-xl">
-                Join us for an unforgettable evening of celebration, networking, and honoring the achievements of our global alumni community in Kabul.
-              </p>
-              <div className="flex flex-wrap gap-4 mt-2">
-                <div className="countdown-item">
-                  <span className="text-2xl font-bold">12</span>
-                  <span className="text-[10px] uppercase font-bold text-white/60">Days</span>
-                </div>
-                <div className="countdown-item">
-                  <span className="text-2xl font-bold">08</span>
-                  <span className="text-[10px] uppercase font-bold text-white/60">Hours</span>
-                </div>
-                <div className="countdown-item">
-                  <span className="text-2xl font-bold">45</span>
-                  <span className="text-[10px] uppercase font-bold text-white/60">Mins</span>
-                </div>
-                <div className="countdown-item">
-                  <span className="text-2xl font-bold">19</span>
-                  <span className="text-[10px] uppercase font-bold text-white/60">Secs</span>
+              
+              {/* Main title */}
+              <div className="space-y-4">
+                <h1 className="text-4xl lg:text-6xl font-bold leading-tight text-white">
+                  Annual KPU Alumni
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-400">
+                    Gala 2024
+                  </span>
+                </h1>
+                <p className="text-xl lg:text-2xl text-white/90 leading-relaxed max-w-2xl">
+                  Join us for an unforgettable evening of celebration, networking, and honoring the achievements of our global alumni community in Kabul.
+                </p>
+              </div>
+
+              {/* Enhanced countdown */}
+              <div className="space-y-4">
+                <p className="text-white/80 font-medium">Event starts in:</p>
+                <div className="flex flex-wrap gap-4">
+                  <div className="countdown-item hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                    <span className="text-3xl lg:text-4xl font-bold text-white">12</span>
+                    <span className="text-xs uppercase font-bold text-white/70 tracking-wider">Days</span>
+                  </div>
+                  <div className="countdown-item hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                    <span className="text-3xl lg:text-4xl font-bold text-white">08</span>
+                    <span className="text-xs uppercase font-bold text-white/70 tracking-wider">Hours</span>
+                  </div>
+                  <div className="countdown-item hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                    <span className="text-3xl lg:text-4xl font-bold text-white">45</span>
+                    <span className="text-xs uppercase font-bold text-white/70 tracking-wider">Mins</span>
+                  </div>
+                  <div className="countdown-item hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                    <span className="text-3xl lg:text-4xl font-bold text-white">19</span>
+                    <span className="text-xs uppercase font-bold text-white/70 tracking-wider">Secs</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex gap-4 mt-4">
-                <button className="px-8 py-3 bg-white text-primary font-bold rounded-xl hover:bg-opacity-90 transition-all shadow-xl">Register Now</button>
-                <button className="px-8 py-3 bg-transparent border-2 border-white text-white font-bold rounded-xl hover:bg-white/10 transition-all">Event Details</button>
+
+              {/* Enhanced CTA buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <button className="group relative px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-primary font-bold rounded-xl hover:from-yellow-500 hover:to-orange-600 transition-all duration-300 shadow-xl transform hover:scale-105 hover:shadow-2xl">
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    Register Now
+                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl blur opacity-50 group-hover:opacity-75 transition-opacity"></div>
+                </button>
+                <button className="group px-8 py-4 bg-transparent border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/10 hover:border-white/50 transition-all duration-300 backdrop-blur-sm">
+                  <span className="flex items-center gap-2">
+                    Event Details
+                    <svg className="w-5 h-5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </span>
+                </button>
+              </div>
+
+              {/* Event info badges */}
+              <div className="flex flex-wrap gap-3 pt-2">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-lg text-white/80 text-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  Dec 15, 2024
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-lg text-white/80 text-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Serena Hotel, Kabul
+                </div>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-lg text-white/80 text-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                  500+ Attendees
+                </div>
               </div>
             </div>
-            <div className="hidden lg:block">
-              <div className="relative">
-                <div className="absolute -inset-4 bg-white/10 blur-3xl rounded-full"></div>
-                <img alt="Gala" className="relative rounded-2xl shadow-2xl border-4 border-white/20 object-cover aspect-video w-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC126DAr5Qw0O932Pa0F2On4dslt3MWS_V3gpBn1Cz1NZ_N-2Y8VlOccwUzND9fm-7ViMYqM4C-LVI6nNrm2H513MmA-nFftbknCRJFqpNzWrXsiDtLBnBgYspv_2CFnttuHxcWL6eSjmZQAEAQc7DBvevDehS-7A-AftbR6VoGfIqdukQ-RRORDocSbRBEtViltUH9cCoFPYOKxUqX0K1I8AFEI4UKSg3-Fu7nvlG-ZwZBxZiMInQ-Bl8B6-yJmvkmA45zu8he7T3B"/>
+
+            {/* Right Content - Enhanced Image */}
+            <div className="hidden lg:block relative">
+              {/* Glowing background effect */}
+              <div className="absolute -inset-8 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 blur-3xl rounded-3xl animate-pulse"></div>
+              
+              {/* Main image container */}
+              <div className="relative group">
+                {/* Image frame */}
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white/20 backdrop-blur-sm transform transition-all duration-500 group-hover:scale-105">
+                  <img 
+                    alt="KPU Alumni Gala" 
+                    className="w-full h-auto object-cover aspect-video" 
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC126DAr5Qw0O932Pa0F2On4dslt3MWS_V3gpBn1Cz1NZ_N-2Y8VlOccwUzND9fm-7ViMYqM4C-LVI6nNrm2H513MmA-nFftbknCRJFqpNzWrXsiDtLBnBgYspv_2CFnttuHxcWL6eSjmZQAEAQc7DBvevDehS-7A-AftbR6VoGfIqdukQ-RRORDocSbRBEtViltUH9cCoFPYOKxUqX0K1I8AFEI4UKSg3-Fu7nvlG-ZwZBxZiMInQ-Bl8B6-yJmvkmA45zu8he7T3B"
+                  />
+                  
+                  {/* Overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent"></div>
+                  
+                  {/* Floating badges */}
+                  <div className="absolute top-6 left-6 bg-red-500 text-white px-4 py-2 rounded-full font-bold shadow-lg animate-bounce">
+                    🔴 LIVE
+                  </div>
+                  <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm text-primary px-4 py-2 rounded-full font-bold shadow-lg">
+                    Featured
+                  </div>
+                </div>
+                
+                {/* Decorative elements */}
+                <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-yellow-400/20 rounded-full blur-2xl"></div>
+                <div className="absolute -top-4 -right-4 w-32 h-32 bg-orange-400/20 rounded-full blur-2xl"></div>
               </div>
             </div>
           </div>
