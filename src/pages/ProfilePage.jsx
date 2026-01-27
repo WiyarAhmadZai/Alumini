@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Layout from '../components/Layout';
 
 const ProfilePage = () => {
   return (
-    <div className="layout-container flex flex-col">
-      {/* Main Content Wrapper */}
-      <main className="flex flex-1 justify-center py-5">
-        <div className="layout-content-container flex flex-col max-w-[1200px] flex-1 px-4 md:px-10">
+    <Layout>
+      <div className="layout-container flex flex-col">
+        {/* Main Content Wrapper */}
+        <main className="flex flex-1 justify-center py-5">
+          <div className="layout-content-container flex flex-col max-w-[1200px] flex-1 px-4 md:px-10">
           {/* Profile Header Card */}
           <div className="bg-white dark:bg-[#1a1f2e] rounded-xl overflow-hidden border border-[#dcdee5] dark:border-gray-800 shadow-sm mb-6">
             {/* Cover Image */}
@@ -114,13 +116,13 @@ const ProfilePage = () => {
                   <span className="material-symbols-outlined text-primary">work</span>
                   Professional Experience
                 </h3>
-                <div className="space-y-8 relative before:content-[''] before:absolute before:left-[19px] before:top-2 before:bottom-2 before:w-0.5 before:bg-[#f0f1f4] dark:before:bg-gray-800">
+                <div className="space-y-6">
                   {/* Experience Item 1 */}
-                  <div className="relative pl-12">
-                    <div className="absolute left-0 top-1 size-10 rounded-full bg-primary flex items-center justify-center border-4 border-white dark:border-[#1a1f2e] z-10">
+                  <div className="flex gap-4">
+                    <div className="size-10 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-white text-sm">engineering</span>
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex-1">
                       <h4 className="text-[#111318] dark:text-white font-bold text-lg">Senior Structural Engineer</h4>
                       <p className="text-primary font-medium">Afghanistan Urban Development Authority</p>
                       <p className="text-[#636c88] dark:text-gray-400 text-sm mt-1">Jan 2019 — Present • Kabul, AF</p>
@@ -129,11 +131,11 @@ const ProfilePage = () => {
                   </div>
 
                   {/* Experience Item 2 */}
-                  <div className="relative pl-12">
-                    <div className="absolute left-0 top-1 size-10 rounded-full bg-[#f0f1f4] dark:bg-gray-800 flex items-center justify-center border-4 border-white dark:border-[#1a1f2e] z-10">
+                  <div className="flex gap-4">
+                    <div className="size-10 rounded-lg bg-[#f0f1f4] dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-primary text-sm">architecture</span>
                     </div>
-                    <div className="flex flex-col">
+                    <div className="flex-1">
                       <h4 className="text-[#111318] dark:text-white font-bold text-lg">Junior Site Engineer</h4>
                       <p className="text-primary font-medium">National Bridge Construction Co.</p>
                       <p className="text-[#636c88] dark:text-gray-400 text-sm mt-1">Aug 2015 — Dec 2018 • Kabul, AF</p>
@@ -151,8 +153,8 @@ const ProfilePage = () => {
                 </h3>
                 <div className="flex flex-col gap-6">
                   {/* KPU Entry */}
-                  <div className="flex items-start gap-4 p-4 rounded-lg bg-primary/5 border border-primary/20">
-                    <div className="size-12 rounded-lg bg-white dark:bg-gray-800 flex items-center justify-center text-primary shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="size-12 rounded-lg bg-white dark:bg-gray-800 flex items-center justify-center text-primary shadow-sm flex-shrink-0">
                       <span className="material-symbols-outlined text-3xl">account_balance</span>
                     </div>
                     <div className="flex flex-col">
@@ -163,8 +165,8 @@ const ProfilePage = () => {
                   </div>
 
                   {/* Other Entry */}
-                  <div className="flex items-start gap-4 p-4 rounded-lg border border-[#f0f1f4] dark:border-gray-800">
-                    <div className="size-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-[#636c88] shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="size-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-[#636c88] shadow-sm flex-shrink-0">
                       <span className="material-symbols-outlined text-3xl">school</span>
                     </div>
                     <div className="flex flex-col">
@@ -197,6 +199,7 @@ const ProfilePage = () => {
         </div>
       </main>
     </div>
+    </Layout>
   );
 };
 
