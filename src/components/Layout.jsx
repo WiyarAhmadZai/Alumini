@@ -84,15 +84,22 @@ const Layout = ({ children }) => {
               <div className={`flex items-center gap-2 sm:gap-4 transition-all duration-300 ${
                 isScrolled ? 'text-white' : 'text-white'
               }`}>
-                <Link to="/" className="flex items-center gap-2 sm:gap-4">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center shadow-lg">
-                    <svg fill="white" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" className="w-4 h-4 sm:w-6 sm:h-6">
-                      <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
-                    </svg>
+                <Link to="/" className="flex items-center space-x-2">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <img
+                      src="/logo_kpu.png"
+                      alt="KPU University"
+                      className="w-6 h-6 sm:w-8 sm:h-8 object-contain"
+                    />
                   </div>
-                  <h2 className="text-lg sm:text-xl font-bold leading-tight tracking-[-0.015em] bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                    KPU Alumni
-                  </h2>
+                  <div className="text-left min-w-0">
+                    <div className="font-bold text-white text-sm sm:text-base truncate">
+                      KPU University
+                    </div>
+                    <div className="text-xs text-white/80 truncate">
+                      Excellence in Education
+                    </div>
+                  </div>
                 </Link>
               </div>
               
@@ -237,13 +244,22 @@ const Layout = ({ children }) => {
                   />
                   {/* Sidebar Header */}
                   <div className="flex items-center justify-between p-4 border-b border-[#003d7a]">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <svg fill="white" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6">
-                          <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
-                        </svg>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <img
+                          src="/logo_kpu.png"
+                          alt="KPU University"
+                          className="w-8 h-8 object-contain"
+                        />
                       </div>
-                      <h2 className="text-xl font-bold text-white">KPU Alumni</h2>
+                      <div className="text-left min-w-0">
+                        <div className="font-bold text-white text-sm truncate">
+                          KPU University
+                        </div>
+                        <div className="text-xs text-white/80 truncate">
+                          Excellence in Education
+                        </div>
+                      </div>
                     </div>
                     <button 
                       className="w-10 h-10 rounded-lg flex items-center justify-center text-white hover:bg-white/10 transition-colors"
@@ -399,13 +415,22 @@ const Layout = ({ children }) => {
       <footer className="w-full bg-[#002759] text-white py-8 sm:py-10 md:py-12 border-t border-[#003d7a]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-3 mb-4 sm:mb-6">
-              <div className="w-5 h-5 sm:w-6 sm:h-6 text-white">
-                <svg fill="currentColor" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z"></path>
-                </svg>
+            <div className="flex items-center space-x-2 mb-4 sm:mb-6">
+              <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <img
+                  src="/logo_kpu.png"
+                  alt="KPU University"
+                  className="w-8 h-8 object-contain"
+                />
               </div>
-              <span className="text-lg sm:text-xl font-bold">KPU Alumni</span>
+              <div className="text-left min-w-0">
+                <div className="font-bold text-white text-sm sm:text-base truncate">
+                  KPU University
+                </div>
+                <div className="text-xs text-blue-100 truncate">
+                  Excellence in Education
+                </div>
+              </div>
             </div>
             <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
               Fostering excellence, community, and lifelong learning for all Kabul Polytechnic University graduates.
