@@ -146,33 +146,33 @@ const ProfilePage = () => {
               </section>
 
               {/* Education */}
-              <section className="bg-white dark:bg-[#1a1f2e] p-8 rounded-xl border border-[#dcdee5] dark:border-gray-800 shadow-sm">
-                <h3 className="text-[#111318] dark:text-white text-xl font-bold mb-6 flex items-center gap-2">
+              <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+                <h3 className="text-black text-xl font-bold mb-6 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary">school</span>
                   Education
                 </h3>
-                <div className="flex flex-col gap-6">
+                <div className="space-y-8">
                   {/* KPU Entry */}
-                  <div className="flex items-start gap-4">
-                    <div className="size-12 rounded-lg bg-white dark:bg-gray-800 flex items-center justify-center text-primary shadow-sm flex-shrink-0">
-                      <span className="material-symbols-outlined text-3xl">account_balance</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <h4 className="text-[#111318] dark:text-white font-bold">Kabul Polytechnic University (KPU)</h4>
-                      <p className="text-[#111318] dark:text-gray-300 font-medium">Bachelor of Science in Civil Engineering</p>
-                      <p className="text-[#636c88] dark:text-gray-400 text-sm">Class of 2015</p>
+                  <div className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 bg-primary rounded-full border-4 border-white shadow-sm"></div>
+                    <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                        <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">Kabul Polytechnic University (KPU)</h4>
+                        <span className="text-primary font-medium text-sm">Bachelor of Science in Civil Engineering</span>
+                      </div>
+                      <p className="text-gray-600 text-sm mb-3">Class of 2015</p>
                     </div>
                   </div>
 
-                  {/* Other Entry */}
-                  <div className="flex items-start gap-4">
-                    <div className="size-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-[#636c88] shadow-sm flex-shrink-0">
-                      <span className="material-symbols-outlined text-3xl">school</span>
-                    </div>
-                    <div className="flex flex-col">
-                      <h4 className="text-[#111318] dark:text-white font-bold">Certification in Project Management</h4>
-                      <p className="text-[#111318] dark:text-gray-300 font-medium">Global Engineering Institute</p>
-                      <p className="text-[#636c88] dark:text-gray-400 text-sm">2017</p>
+                  {/* Certification Entry */}
+                  <div className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
+                    <div className="absolute -left-[9px] top-0 w-4 h-4 bg-gray-400 rounded-full border-4 border-white shadow-sm"></div>
+                    <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                        <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">Certification in Project Management</h4>
+                        <span className="text-primary font-medium text-sm">Global Engineering Institute</span>
+                      </div>
+                      <p className="text-gray-600 text-sm mb-3">2017</p>
                     </div>
                   </div>
                 </div>
