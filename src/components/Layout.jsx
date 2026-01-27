@@ -136,12 +136,19 @@ const Layout = ({ children }) => {
                     location.pathname === '/mentorship' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
-                  isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
-                }`}>
+                <Link 
+                  to="/events" 
+                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                    location.pathname === '/events' 
+                      ? 'text-white bg-white/20' 
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
+                  }`}
+                >
                   Events
-                  <span className="absolute bottom-0 left-1/2 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 group-hover:w-full"></span>
-                </a>
+                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
+                    location.pathname === '/events' ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}></span>
+                </Link>
                 <a href="#" className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                   isScrolled ? 'text-white/90 hover:text-white hover:bg-white/10' : 'text-white/90 hover:text-white hover:bg-white/10'
                 }`}>
@@ -272,13 +279,17 @@ const Layout = ({ children }) => {
                       >
                         Mentorship
                       </Link>
-                      <a 
-                        href="#" 
+                      <Link 
+                        to="/events"
                         onClick={handleMenuClick}
-                        className="flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg hover:bg-[#0a519b] transition-colors"
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                          location.pathname === '/events' 
+                            ? 'bg-white/20 text-white' 
+                            : 'hover:bg-[#0a519b]'
+                        }`}
                       >
                         Events
-                      </a>
+                      </Link>
                       <a 
                         href="#" 
                         onClick={handleMenuClick}
@@ -342,6 +353,18 @@ const Layout = ({ children }) => {
                       >
                         <span className="text-lg opacity-70">🤝</span>
                         Mentorship Hub
+                      </Link>
+                      <Link 
+                        to="/events"
+                        onClick={handleMenuClick}
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                          location.pathname === '/events' 
+                            ? 'bg-white/20' 
+                            : 'hover:bg-[#0a519b]'
+                        }`}
+                      >
+                        <span className="text-lg opacity-70">📅</span>
+                        Events Calendar
                       </Link>
                     </div>
                   </div>
