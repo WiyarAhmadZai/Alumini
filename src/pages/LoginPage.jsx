@@ -67,10 +67,10 @@ const LoginPage = () => {
                       />
                     </div>
                     <div className="text-left min-w-0">
-                      <div className="font-bold text-neutral-800 text-sm truncate">
+                      <div className="font-bold text-white text-sm truncate">
                         KPU University
                       </div>
-                      <div className="text-xs text-neutral-500 truncate">
+                      <div className="text-xs text-white/80 truncate">
                         Excellence in Education
                       </div>
                     </div>
