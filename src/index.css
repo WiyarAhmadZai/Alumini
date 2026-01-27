@@ -100,3 +100,12 @@ body.menu-open {
   transform: translateX(100%);
   transition: transform 0.3s ease-in;
 }
+
+/* Events page specific styles */
+.hero-gradient {
+  background: linear-gradient(135deg, #194ce6 0%, #0a2d8f 100%);
+}
+
+.countdown-item {
+  @apply flex flex-col items-center justify-center bg-white/10 backdrop-blur-md rounded-xl p-3 min-w-[80px] border border-white/20;
+}
