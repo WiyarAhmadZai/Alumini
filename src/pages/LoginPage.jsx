@@ -1,15 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiCheckCircle } from 'react-icons/fi';
+import { useLocation } from 'react-router-dom';
+import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiCheckCircle, FiCalendar } from 'react-icons/fi';
 
 const LoginPage = () => {
+  const location = useLocation();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     fullName: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    graduationYear: '',
+    department: ''
   });
 
   const handleInputChange = (e) => {
@@ -18,6 +22,15 @@ const LoginPage = () => {
       [e.target.name]: e.target.value
     });
   };
+
+  useEffect(() => {
+    // Set mode based on URL
+    if (location.pathname === '/signup') {
+      setIsLogin(false);
+    } else {
+      setIsLogin(true);
+    }
+  }, [location.pathname]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -86,23 +99,81 @@ const LoginPage = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {!isLogin && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-2">
-                        Full Name
-                      </label>
-                      <div className="relative">
-                        <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                        <input
-                          type="text"
-                          name="fullName"
-                          value={formData.fullName}
-                          onChange={handleInputChange}
-                          placeholder="Enter your full name"
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black placeholder-gray-700 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
-                          required
-                        />
+                    <>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
+                          Full Name
+                        </label>
+                        <div className="relative">
+                          <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                          <input
+                            type="text"
+                            name="fullName"
+                            value={formData.fullName}
+                            onChange={handleInputChange}
+                            placeholder="Enter your full name"
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black placeholder-gray-700 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
+                            required
+                          />
+                        </div>
                       </div>
-                    </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
+                          Graduation Year
+                        </label>
+                        <div className="relative">
+                          <FiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                          <select
+                            name="graduationYear"
+                            value={formData.graduationYear || ''}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
+                            required
+                          >
+                            <option value="">Select graduation year</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                            <option value="2019">2019</option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2015">2015</option>
+                            <option value="2014">2014</option>
+                            <option value="2013">2013</option>
+                            <option value="2012">2012</option>
+                            <option value="2011">2011</option>
+                            <option value="2010">2010</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium text-gray-900 mb-2">
+                          Department
+                        </label>
+                        <div className="relative">
+                          <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+                          <select
+                            name="department"
+                            value={formData.department || ''}
+                            onChange={handleInputChange}
+                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
+                            required
+                          >
+                            <option value="">Select department</option>
+                            <option value="civil">Civil Engineering</option>
+                            <option value="mechanical">Mechanical Engineering</option>
+                            <option value="electrical">Electrical Engineering</option>
+                            <option value="computer">Computer Science</option>
+                            <option value="architecture">Architecture</option>
+                          </select>
+                        </div>
+                      </div>
+                    </>
                   )}
 
                   <div>
