@@ -166,13 +166,16 @@ const Layout = ({ children }) => {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <button className={`min-w-[60px] sm:min-w-[84px] h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                isScrolled 
-                  ? 'bg-gradient-to-r from-white to-blue-50 text-[#002759] hover:from-blue-50 hover:to-white hover:shadow-xl' 
-                  : 'bg-white/10 backdrop-blur-md text-white border border-white/30 hover:bg-white/20 hover:border-white/50'
-              }`}>
+              <Link 
+                to="/login"
+                className={`min-w-[60px] sm:min-w-[84px] h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center ${
+                  isScrolled 
+                    ? 'bg-gradient-to-r from-white to-blue-50 text-[#002759] hover:from-blue-50 hover:to-white hover:shadow-xl' 
+                    : 'bg-white/10 backdrop-blur-md text-white border border-white/30 hover:bg-white/20 hover:border-white/50'
+                }`}
+              >
                 Login
-              </button>
+              </Link>
               <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg hidden sm:flex ${
                 isScrolled ? 'bg-gradient-to-br from-white/20 to-white/10 border-white/40 hover:from-white/30 hover:to-white/20' : 'bg-white/10 border-white/40 hover:bg-white/20'
               }`}>
@@ -313,12 +316,13 @@ const Layout = ({ children }) => {
                   
                   {/* Sidebar Footer */}
                   <div className="p-4 border-t border-[#003d7a]">
-                    <button 
+                    <Link 
+                      to="/login"
                       onClick={handleMenuClick}
-                      className="w-full h-12 bg-white text-[#002759] text-sm font-bold rounded-lg hover:bg-gray-100 transition-all mb-3"
+                      className="w-full h-12 bg-white text-[#002759] text-sm font-bold rounded-lg hover:bg-gray-100 transition-all mb-3 flex items-center justify-center"
                     >
                       Login
-                    </button>
+                    </Link>
                     <div className="flex items-center gap-3 px-4 py-3">
                       <div className="w-10 h-10 rounded-xl border-2 border-white/40 flex items-center justify-center">
                         <FiUser className="text-white text-lg" />
