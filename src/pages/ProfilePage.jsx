@@ -111,8 +111,8 @@ const ProfilePage = () => {
               </section>
 
               {/* Professional Experience */}
-              <section className="bg-white dark:bg-[#1a1f2e] p-8 rounded-xl border border-[#dcdee5] dark:border-gray-800 shadow-sm">
-                <h3 className="text-[#111318] dark:text-white text-xl font-bold mb-6 flex items-center gap-2">
+              <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+                <h3 className="text-black text-xl font-bold mb-6 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary">work</span>
                   Professional Experience
                 </h3>
@@ -123,23 +123,23 @@ const ProfilePage = () => {
                       <span className="material-symbols-outlined text-white text-sm">engineering</span>
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-[#111318] dark:text-white font-bold text-lg">Senior Structural Engineer</h4>
+                      <h4 className="text-black font-bold text-lg">Senior Structural Engineer</h4>
                       <p className="text-primary font-medium">Afghanistan Urban Development Authority</p>
-                      <p className="text-[#636c88] dark:text-gray-400 text-sm mt-1">Jan 2019 — Present • Kabul, AF</p>
-                      <p className="text-[#636c88] dark:text-gray-300 text-sm mt-3 leading-relaxed">Leading structural assessments for municipal buildings and overseeing a team of 12 junior engineers.</p>
+                      <p className="text-black text-sm mt-1">Jan 2019 — Present • Kabul, AF</p>
+                      <p className="text-black text-sm mt-3 leading-relaxed">Leading structural assessments for municipal buildings and overseeing a team of 12 junior engineers.</p>
                     </div>
                   </div>
 
                   {/* Experience Item 2 */}
                   <div className="flex gap-4">
-                    <div className="size-10 rounded-lg bg-[#f0f1f4] dark:bg-gray-800 flex items-center justify-center flex-shrink-0">
+                    <div className="size-10 rounded-lg bg-[#f0f1f4] flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-primary text-sm">architecture</span>
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-[#111318] dark:text-white font-bold text-lg">Junior Site Engineer</h4>
+                      <h4 className="text-black font-bold text-lg">Junior Site Engineer</h4>
                       <p className="text-primary font-medium">National Bridge Construction Co.</p>
-                      <p className="text-[#636c88] dark:text-gray-400 text-sm mt-1">Aug 2015 — Dec 2018 • Kabul, AF</p>
-                      <p className="text-[#636c88] dark:text-gray-300 text-sm mt-3 leading-relaxed">Assisted in site supervision and quality control for major highway bridge reconstruction projects.</p>
+                      <p className="text-black text-sm mt-1">Aug 2015 — Dec 2018 • Kabul, AF</p>
+                      <p className="text-black text-sm mt-3 leading-relaxed">Assisted in site supervision and quality control for major highway bridge reconstruction projects.</p>
                     </div>
                   </div>
                 </div>
