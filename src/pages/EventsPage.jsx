@@ -197,13 +197,33 @@ const EventsPage = () => {
                 </div>
               </div>
 
-              {/* Right Content - Image */}
+              {/* Right Content - Styled Div */}
               <div className="hidden lg:block">
-                <img 
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
-                  alt="Professional man"
-                  className="w-full h-auto rounded-lg shadow-2xl"
-                />
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
+                  <div className="text-center space-y-6">
+                    <div className="w-20 h-20 bg-yellow-400/20 rounded-full flex items-center justify-center mx-auto">
+                      <svg className="w-10 h-10 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold text-white">Premium Event</h3>
+                    <p className="text-white/80">Experience an unforgettable evening with distinguished alumni, faculty, and industry leaders.</p>
+                    <div className="flex justify-center gap-6 pt-4">
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-yellow-400">500+</div>
+                        <div className="text-sm text-white/70">Attendees</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-yellow-400">50+</div>
+                        <div className="text-sm text-white/70">Speakers</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-3xl font-bold text-yellow-400">10+</div>
+                        <div className="text-sm text-white/70">Awards</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
