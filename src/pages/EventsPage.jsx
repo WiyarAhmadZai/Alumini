@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Layout from '../components/Layout';
 import { FiCalendar, FiClock, FiMapPin, FiVideo, FiSearch, FiFilter, FiChevronLeft, FiChevronRight, FiMail } from 'react-icons/fi';
 
 const EventsPage = () => {
@@ -59,7 +60,8 @@ const EventsPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background-light dark:bg-background-dark">
+    <Layout>
+      <div className="min-h-screen bg-background-light dark:bg-background-dark">
       {/* Hero Section */}
       <section className="hero-gradient text-white overflow-hidden relative">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
@@ -286,7 +288,8 @@ const EventsPage = () => {
           </div>
         </div>
       </main>
-    </div>
+      </div>
+    </Layout>
   );
 };
 
