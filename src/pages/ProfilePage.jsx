@@ -48,29 +48,29 @@ const ProfilePage = () => {
             {/* Left Column (Sidebar) */}
             <aside className="md:col-span-4 flex flex-col gap-6">
               {/* Contact Info Card */}
-              <div className="bg-white dark:bg-[#1a1f2e] p-6 rounded-xl border border-[#dcdee5] dark:border-gray-800 shadow-sm">
-                <h3 className="text-[#111318] dark:text-white text-lg font-bold mb-4">Contact Information</h3>
+              <div className="p-6 rounded-xl border border-[#dcdee5] shadow-sm">
+                <h3 className="text-black text-lg font-bold mb-4">Contact Information</h3>
                 <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-3 text-[#636c88] dark:text-gray-400">
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <span className="material-symbols-outlined text-primary">mail</span>
-                    <span className="text-sm">ahmad.wali@example.com</span>
+                    <span className="text-black text-sm font-medium">ahmad.wali@example.com</span>
                   </div>
-                  <div className="flex items-center gap-3 text-[#636c88] dark:text-gray-400">
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <span className="material-symbols-outlined text-primary">call</span>
-                    <span className="text-sm">+93 70 123 4567</span>
+                    <span className="text-black text-sm font-medium">+93 70 123 4567</span>
                   </div>
-                  <div className="flex items-center gap-3 text-[#636c88] dark:text-gray-400">
+                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <span className="material-symbols-outlined text-primary">location_on</span>
-                    <span className="text-sm">Kabul, Afghanistan</span>
+                    <span className="text-black text-sm font-medium">Kabul, Afghanistan</span>
                   </div>
                 </div>
-                <div className="mt-6 pt-6 border-t border-[#f0f1f4] dark:border-gray-800">
-                  <h4 className="text-[#111318] dark:text-white text-sm font-bold mb-3">Social Links</h4>
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <h4 className="text-black text-sm font-bold mb-3">Social Links</h4>
                   <div className="flex gap-3">
-                    <a className="size-10 flex items-center justify-center rounded-lg bg-[#f0f1f4] dark:bg-gray-800 text-primary hover:bg-primary hover:text-white transition-all" href="#">
+                    <a className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 text-primary hover:from-blue-100 hover:to-indigo-100 transition-all border border-blue-200" href="#">
                       <span className="material-symbols-outlined">link</span>
                     </a>
-                    <a className="size-10 flex items-center justify-center rounded-lg bg-[#f0f1f4] dark:bg-gray-800 text-primary hover:bg-primary hover:text-white transition-all" href="#">
+                    <a className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 text-primary hover:from-green-100 hover:to-emerald-100 transition-all border border-green-200" href="#">
                       <span className="material-symbols-outlined">alternate_email</span>
                     </a>
                   </div>
@@ -78,20 +78,20 @@ const ProfilePage = () => {
               </div>
 
               {/* Quick Stats Card */}
-              <div className="bg-white dark:bg-[#1a1f2e] p-6 rounded-xl border border-[#dcdee5] dark:border-gray-800 shadow-sm">
-                <h3 className="text-[#111318] dark:text-white text-lg font-bold mb-4">Quick Stats</h3>
+              <div className="p-6 rounded-xl border border-[#dcdee5] shadow-sm">
+                <h3 className="text-black text-lg font-bold mb-4">Quick Stats</h3>
                 <div className="grid grid-cols-1 gap-3">
-                  <div className="flex flex-col gap-1 rounded-lg border border-[#dcdee5] dark:border-gray-800 p-4 bg-background-light dark:bg-background-dark/30">
-                    <p className="text-primary tracking-light text-2xl font-bold">450</p>
-                    <p className="text-[#636c88] dark:text-gray-400 text-xs font-medium uppercase tracking-wider">Connections</p>
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200 hover:shadow-md transition-shadow">
+                    <p className="text-primary text-2xl font-bold">450</p>
+                    <p className="text-black text-xs font-medium uppercase tracking-wider">Connections</p>
                   </div>
-                  <div className="flex flex-col gap-1 rounded-lg border border-[#dcdee5] dark:border-gray-800 p-4 bg-background-light dark:bg-background-dark/30">
-                    <p className="text-primary tracking-light text-2xl font-bold">12</p>
-                    <p className="text-[#636c88] dark:text-gray-400 text-xs font-medium uppercase tracking-wider">Events Attended</p>
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200 hover:shadow-md transition-shadow">
+                    <p className="text-primary text-2xl font-bold">12</p>
+                    <p className="text-black text-xs font-medium uppercase tracking-wider">Events Attended</p>
                   </div>
-                  <div className="flex flex-col gap-1 rounded-lg border border-[#dcdee5] dark:border-gray-800 p-4 bg-background-light dark:bg-background-dark/30">
-                    <p className="text-primary tracking-light text-2xl font-bold">5</p>
-                    <p className="text-[#636c88] dark:text-gray-400 text-xs font-medium uppercase tracking-wider">Active Mentorships</p>
+                  <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg p-4 border border-purple-200 hover:shadow-md transition-shadow">
+                    <p className="text-primary text-2xl font-bold">5</p>
+                    <p className="text-black text-xs font-medium uppercase tracking-wider">Active Mentorships</p>
                   </div>
                 </div>
               </div>
