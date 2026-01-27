@@ -10,32 +10,32 @@ const ProfilePage = () => {
         <main className="flex flex-1 justify-center py-5">
           <div className="layout-content-container flex flex-col max-w-[1200px] flex-1 px-4 md:px-10">
           {/* Profile Header Card */}
-          <div className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+          <div className="bg-primary rounded-xl border border-primary shadow-sm overflow-hidden">
             {/* Cover Image */}
-            <div className="w-full bg-center bg-no-repeat bg-cover min-h-64 relative rounded-lg overflow-hidden" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuB9baFdwUZiFrxu0QtZNqlAkfmleWtllXIwAsn2YZ67ds8Vkueff7JFCv3kIY0M8Xt4e9-vQXZBrlG7WdQZ3M1aRjn7MalJmpSFuVC1YUc8K7Y2U65Dl4ThQHsVMintH06CozjOSJRoJhLhkYqUGqRWXgzTPSZsQCKBnlzf8HrM0X6QVCdweNVr0OEdJQnQQ09WtbDywecNMe3CNIsZnRnwhK0vV7-UlC8RPx1O_VXPTEpd0_DsxOHLosd9qj1OpkQ6jlogJvPGFnwb")'}}>
+            <div className="w-full bg-center bg-no-repeat bg-cover min-h-64 relative" style={{backgroundImage: 'url("https://picsum.photos/seed/cover/1200/400.jpg")'}}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
             </div>
-            <div className="px-8 pb-8 flex flex-col md:flex-row items-end gap-6 -mt-16 relative z-10">
-              <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-gray-100 size-40 shadow-lg" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDix8TQifu5Mb-_N2MkYqrl2yZ6lA_f7izQ4k1-xQ5frtY_M0zRDnKDl0qvjw_8MqOOdcNHzvfg5peaCKPSfy7AEUDaFKR9ur8PxFdSLd5oHjhUoOwBUQhQBz8GoYRoAyyd3zvOfKn33QW_jBfAYkbUPuevRxHtA0njCtulU1fo4yp64mCUiR4zd7wJQjxpA7AHwJrPUC9Ykt-cvIhxttcofVN5n8BCQvaeyvPsipJomjFV2Y_Zs_RCRKjLvtAT7Xrpd7bErOfRr1mA")'}}></div>
+            <div className="bg-primary px-8 pb-8 flex flex-col md:flex-row items-end gap-6 -mt-16 relative z-10">
+              <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-white size-40 shadow-lg" style={{backgroundImage: 'url("https://picsum.photos/seed/avatar/200/200.jpg")'}}></div>
               <div className="flex-1 flex flex-col md:flex-row justify-between items-end pb-2">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2">
                     <h1 className="text-black text-3xl font-bold leading-tight">Ahmad Wali</h1>
-                    <span className="material-symbols-outlined text-primary fill-1" title="Verified Alumnus">verified</span>
+                    <span className="material-symbols-outlined text-black fill-1" title="Verified Alumnus">verified</span>
                   </div>
                   <p className="text-black text-lg font-medium">Class of 2015 • Faculty of Civil Engineering</p>
                   <div className="flex items-center gap-1 mt-1">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary/10 text-primary">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
                       Verified Alumnus
                     </span>
                   </div>
                 </div>
                 <div className="flex gap-3 mt-4 md:mt-0">
-                  <button className="flex min-w-[120px] items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold tracking-[0.015em] hover:bg-primary/90 transition-colors">
+                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
                     <span className="material-symbols-outlined text-sm mr-2">edit</span>
                     Edit Profile
                   </button>
-                  <button className="flex min-w-[40px] items-center justify-center rounded-lg h-10 px-4 bg-gray-100 text-black text-sm font-bold border border-gray-300 hover:bg-gray-200 transition-colors">
+                  <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
                     <span className="material-symbols-outlined">share</span>
                   </button>
                 </div>
@@ -212,8 +212,8 @@ const ProfilePage = () => {
               </section>
             </div>
           </div>
-        </div>
-      </main>
+          </div>
+        </main>
     </div>
     </Layout>
   );
