@@ -1,235 +1,258 @@
 import React, { useState } from 'react';
 import Layout from '../components/Layout';
-import { FiShield, FiFileText, FiCalendar, FiChevronRight, FiLock, FiUser, FiMail, FiGlobe, FiAlertCircle } from 'react-icons/fi';
+import { FiHeart, FiTarget, FiAward, FiUsers, FiTrendingUp, FiCalendar, FiDollarSign } from 'react-icons/fi';
 
 const LegalPage = () => {
-  const [activeSection, setActiveSection] = useState('privacy');
+  const [selectedAmount, setSelectedAmount] = useState('');
+  const [customAmount, setCustomAmount] = useState('');
 
-  const sections = [
+  const fundraisingProjects = [
     {
-      id: 'privacy',
-      title: 'Privacy Policy',
-      icon: FiLock,
-      color: 'bg-blue-600'
+      id: 1,
+      title: "Student Scholarship Fund",
+      description: "Support deserving students with financial assistance for their education at KPU.",
+      image: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+      raised: 45000,
+      goal: 75000,
+      donors: 156
     },
     {
-      id: 'terms',
-      title: 'Terms of Service',
-      icon: FiFileText,
-      color: 'bg-green-600'
+      id: 2,
+      title: "Laboratory Equipment Upgrade",
+      description: "Modernize our engineering labs with state-of-the-art equipment for practical learning.",
+      image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+      raised: 120000,
+      goal: 200000,
+      donors: 89
     },
     {
-      id: 'guidelines',
-      title: 'Event Guidelines',
-      icon: FiCalendar,
-      color: 'bg-purple-600'
+      id: 3,
+      title: "Alumni Career Center",
+      description: "Establish a dedicated career center to help students and alumni with job placement.",
+      image: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
+      raised: 67000,
+      goal: 100000,
+      donors: 234
     }
   ];
 
-  const content = {
-    privacy: {
-      hero: {
-        title: 'Privacy Policy',
-        subtitle: 'Your privacy is our priority',
-        description: 'Learn how we collect, use, and protect your personal information'
-      },
-      sections: [
-        {
-          title: 'Information We Collect',
-          content: 'We collect information you provide directly to us, such as when you create an account, update your profile, contact us, or participate in alumni events. This may include your name, email address, phone number, professional information, and other details you choose to provide.',
-          icon: FiUser
-        },
-        {
-          title: 'How We Use Your Information',
-          content: 'We use the information we collect to provide, maintain, and improve our services, process transactions, send you technical notices and support messages, communicate with you about events, and personalize your experience on our platform.',
-          icon: FiMail
-        },
-        {
-          title: 'Information Sharing',
-          content: 'We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as described in this policy. We may share information with alumni event organizers and other members for networking purposes.',
-          icon: FiGlobe
-        },
-        {
-          title: 'Data Security',
-          content: 'We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction. However, no method of transmission over the internet is 100% secure.',
-          icon: FiShield
-        }
-      ]
+  const wallOfHonor = [
+    {
+      name: "Ahmad Zahir",
+      class: "Class of 1995",
+      contribution: "Engineering Lab Equipment",
+      amount: 25000,
+      date: "2024"
     },
-    terms: {
-      hero: {
-        title: 'Terms of Service',
-        subtitle: 'Rules and guidelines for using our platform',
-        description: 'Please read these terms carefully before using the KPU Alumni Association platform'
-      },
-      sections: [
-        {
-          title: 'Acceptance of Terms',
-          content: 'By accessing and using the KPU Alumni Association platform, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service.',
-          icon: FiFileText
-        },
-        {
-          title: 'User Responsibilities',
-          content: 'Users are responsible for maintaining the confidentiality of their account credentials and for all activities that occur under their account. You agree to provide accurate, current, and complete information as prompted by our registration form.',
-          icon: FiUser
-        },
-        {
-          title: 'Prohibited Activities',
-          content: 'You may not use our platform for any illegal or unauthorized purpose. You may not use our platform to harass, abuse, or harm other users, or to post or transmit any content that is unlawful, harmful, or objectionable.',
-          icon: FiAlertCircle
-        },
-        {
-          title: 'Intellectual Property',
-          content: 'All content, features, and functionality of the platform are owned by Kabul Polytechnic University Alumni Association and are protected by international copyright, trademark, and other intellectual property laws.',
-          icon: FiShield
-        }
-      ]
+    {
+      name: "Sara Hassan",
+      class: "Class of 2008",
+      contribution: "Student Scholarship",
+      amount: 15000,
+      date: "2024"
     },
-    guidelines: {
-      hero: {
-        title: 'Event Guidelines',
-        subtitle: 'Making every alumni event memorable and respectful',
-        description: 'Guidelines to ensure positive and productive alumni gatherings'
-      },
-      sections: [
-        {
-          title: 'Event Registration',
-          content: 'Please register for events in advance to help us plan accordingly. Registration deadlines are typically one week before the event. Cancellations should be made at least 48 hours prior to the event.',
-          icon: FiCalendar
-        },
-        {
-          title: 'Code of Conduct',
-          content: 'All attendees are expected to behave professionally and respectfully. Harassment, discrimination, or any form of inappropriate behavior will not be tolerated and may result in removal from the event and future events.',
-          icon: FiUser
-        },
-        {
-          title: 'Dress Code',
-          content: 'Most events require business casual or formal attire. Specific dress requirements will be mentioned in event invitations. When in doubt, it\'s better to be slightly overdressed than underdressed.',
-          icon: FiAlertCircle
-        },
-        {
-          title: 'Networking Etiquette',
-          content: 'Be respectful of others\' time and boundaries. Exchange contact information appropriately, follow up within 24-48 hours after meeting someone, and always be genuine in your networking approach.',
-          icon: FiMail
-        }
-      ]
+    {
+      name: "Mohammad Karim",
+      class: "Class of 2002",
+      contribution: "Library Resources",
+      amount: 10000,
+      date: "2023"
+    },
+    {
+      name: "Fatima Noori",
+      class: "Class of 2015",
+      contribution: "Sports Complex",
+      amount: 20000,
+      date: "2023"
     }
+  ];
+
+  const quickGiftAmounts = [25, 50, 100, 250, 500, 1000];
+
+  const handleAmountSelect = (amount) => {
+    setSelectedAmount(amount);
+    setCustomAmount('');
   };
 
-  const currentContent = content[activeSection];
+  const handleCustomAmountChange = (value) => {
+    setCustomAmount(value);
+    setSelectedAmount('');
+  };
+
+  const getProgressPercentage = (raised, goal) => {
+    return Math.min((raised / goal) * 100, 100);
+  };
 
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="relative min-h-[400px] bg-blue-900 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24">
+        <section className="relative min-h-[500px] bg-gradient-to-r from-blue-900 to-blue-700 overflow-hidden">
+          <div className="absolute inset-0">
+            <img 
+              src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80"
+              alt="Students studying"
+              className="w-full h-full object-cover opacity-30"
+            />
+          </div>
+          <div className="relative max-w-7xl mx-auto px-4 lg:px-8 py-20 lg:py-32">
             <div className="text-center">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-semibold text-white w-fit mb-6">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-yellow-400"></span>
-                </span>
-                Legal Information
-              </div>
-              
-              <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
-                {currentContent.hero.title}
+              <h1 className="text-4xl lg:text-6xl font-bold text-white leading-tight mb-6">
+                Support the Future of KPU
               </h1>
-              
-              <p className="text-xl text-white/90 leading-relaxed max-w-3xl mx-auto">
-                {currentContent.hero.description}
+              <p className="text-xl lg:text-2xl text-white/90 leading-relaxed max-w-3xl mx-auto mb-8">
+                Your generous contributions help us maintain excellence in education and provide opportunities for the next generation of engineers and innovators.
               </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button className="px-8 py-4 bg-yellow-400 text-blue-900 font-bold rounded-lg hover:bg-yellow-300 transition-colors text-lg">
+                  Explore Projects
+                </button>
+                <button className="px-8 py-4 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-colors text-lg">
+                  Quick Donation
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar */}
-            <aside className="w-full lg:w-80 flex-shrink-0">
-              <div className="sticky top-8">
-                <div className="bg-white rounded-lg border border-gray-200 p-6">
-                  <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Navigation</h2>
-                  <div className="space-y-2">
-                    {sections.map((section) => {
-                      const Icon = section.icon;
-                      return (
-                        <button
-                          key={section.id}
-                          onClick={() => setActiveSection(section.id)}
-                          className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-left transition-all ${
-                            activeSection === section.id
-                              ? `${section.color} text-white shadow-md`
-                              : 'text-gray-700 hover:bg-gray-100'
-                          }`}
-                        >
-                          <Icon className="text-xl" />
-                          <span className="font-medium">{section.title}</span>
-                          {activeSection === section.id && (
-                            <FiChevronRight className="ml-auto" />
-                          )}
-                        </button>
-                      );
-                    })}
+        <main className="max-w-7xl mx-auto px-4 lg:px-8 py-16">
+          {/* Fundraising Projects Section */}
+          <section className="mb-16">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Fundraising Projects</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Join us in supporting these important initiatives that will benefit current and future KPU students.
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {fundraisingProjects.map((project) => (
+                <div key={project.id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+                  <div className="relative h-48">
+                    <img 
+                      src={project.image} 
+                      alt={project.title}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                </div>
-
-                {/* Contact Info */}
-                <div className="bg-blue-600 rounded-lg p-6 mt-6 text-white">
-                  <FiMail className="text-2xl mb-3" />
-                  <h3 className="font-bold text-lg mb-2">Have Questions?</h3>
-                  <p className="text-sm text-white/80 mb-4">
-                    If you have any questions about our policies or guidelines, please don't hesitate to contact us.
-                  </p>
-                  <a 
-                    href="mailto:legal@kpualumni.af" 
-                    className="inline-flex items-center gap-2 text-white font-medium hover:text-yellow-300 transition-colors"
-                  >
-                    legal@kpualumni.af
-                    <FiChevronRight className="text-sm" />
-                  </a>
-                </div>
-              </div>
-            </aside>
-
-            {/* Content */}
-            <div className="flex-1">
-              <div className="bg-white rounded-lg border border-gray-200 p-8">
-                <div className="space-y-8">
-                  {currentContent.sections.map((section, index) => {
-                    const Icon = section.icon;
-                    return (
-                      <div key={index} className="border-b border-gray-200 pb-8 last:border-0 last:pb-0">
-                        <div className="flex items-start gap-4">
-                          <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                            <Icon className="text-blue-600 text-xl" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-gray-900 mb-3">
-                              {section.title}
-                            </h3>
-                            <p className="text-gray-600 leading-relaxed">
-                              {section.content}
-                            </p>
-                          </div>
-                        </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">{project.title}</h3>
+                    <p className="text-gray-600 mb-4">{project.description}</p>
+                    
+                    <div className="mb-4">
+                      <div className="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>Raised: ${project.raised.toLocaleString()}</span>
+                        <span>Goal: ${project.goal.toLocaleString()}</span>
                       </div>
-                    );
-                  })}
-                </div>
-
-                {/* Last Updated */}
-                <div className="mt-12 pt-8 border-t border-gray-200">
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <span>Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                    <span>© 2024 Kabul Polytechnic University Alumni Association</span>
+                      <div className="w-full bg-gray-200 rounded-full h-3">
+                        <div 
+                          className="bg-blue-600 h-3 rounded-full transition-all duration-500"
+                          style={{ width: `${getProgressPercentage(project.raised, project.goal)}%` }}
+                        ></div>
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span>{project.donors} donors</span>
+                        <span>{getProgressPercentage(project.raised, project.goal).toFixed(0)}% funded</span>
+                      </div>
+                    </div>
+                    
+                    <button className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                      Donate Now
+                    </button>
                   </div>
                 </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Make a Quick Gift Section */}
+          <section className="mb-16">
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <div className="text-center mb-8">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Make a Quick Gift</h2>
+                <p className="text-lg text-gray-600">
+                  Every contribution, no matter the size, makes a difference in our students' lives.
+                </p>
+              </div>
+              
+              <div className="max-w-2xl mx-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+                  {quickGiftAmounts.map((amount) => (
+                    <button
+                      key={amount}
+                      onClick={() => handleAmountSelect(amount)}
+                      className={`py-3 px-4 rounded-lg font-bold transition-all ${
+                        selectedAmount === amount
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      ${amount}
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Custom Amount
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
+                    <input
+                      type="number"
+                      value={customAmount}
+                      onChange={(e) => handleCustomAmountChange(e.target.value)}
+                      placeholder="Enter custom amount"
+                      className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                    />
+                  </div>
+                </div>
+                
+                <button className="w-full bg-yellow-400 text-blue-900 font-bold py-4 rounded-lg hover:bg-yellow-300 transition-colors text-lg">
+                  Process Donation
+                </button>
               </div>
             </div>
-          </div>
+          </section>
+
+          {/* Wall of Honor Section */}
+          <section>
+            <div className="text-center mb-12">
+              <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Wall of Honor</h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                We gratefully acknowledge the generous alumni who have made significant contributions to KPU.
+              </p>
+            </div>
+            
+            <div className="bg-white rounded-xl shadow-lg p-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {wallOfHonor.map((donor, index) => (
+                  <div key={index} className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <FiHeart className="text-blue-600 text-2xl" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-bold text-gray-900">{donor.name}</h4>
+                      <p className="text-sm text-gray-600">{donor.class}</p>
+                      <p className="text-sm text-gray-500">{donor.contribution}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-blue-600">${donor.amount.toLocaleString()}</p>
+                      <p className="text-sm text-gray-500">{donor.date}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="text-center mt-8">
+                <button className="inline-flex items-center gap-2 text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                  View All Donors
+                  <FiTrendingUp className="text-lg" />
+                </button>
+              </div>
+            </div>
+          </section>
         </main>
       </div>
     </Layout>
