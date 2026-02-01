@@ -119,22 +119,23 @@ const ContactPage = () => {
                     ></a>
                   </div>
                 
-                {/* Map Info */}
-                <div className="p-4 bg-gray-50 border-t">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-semibold text-gray-900">Kabul Polytechnic University</h4>
-                      <p className="text-sm text-gray-600">Main Campus, Kabul, Afghanistan</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <a 
-                        href="https://maps.google.com/?q=Kabul+Polytechnic+University" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                      >
-                        <FiNavigation className="text-sm" />
-                      </a>
+                  {/* Map Info */}
+                  <div className="p-4 bg-gray-50 border-t">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-semibold text-gray-900">Kabul Polytechnic University</h4>
+                        <p className="text-sm text-gray-600">Main Campus, Kabul, Afghanistan</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <a 
+                          href="https://maps.google.com/?q=Kabul+Polytechnic+University" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                        >
+                          <FiNavigation className="text-sm" />
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </div>
