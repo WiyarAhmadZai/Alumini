@@ -96,47 +96,19 @@ const ContactPage = () => {
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Find Us</h2>
               <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                 <div className="relative">
-                  {/* Map Placeholder */}
-                  <div className="w-full h-[400px] bg-gray-200 relative overflow-hidden group cursor-pointer">
-                    <img 
-                      src="/kpu.jpg" 
-                      alt="Kabul Polytechnic University" 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
-                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                        <FiMapPin className="text-blue-600 text-2xl" />
-                      </div>
-                    </div>
-                    
-                    {/* Clickable Link Overlay */}
-                    <a 
-                      href="https://maps.google.com/?q=Kabul+Polytechnic+University" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="absolute inset-0 z-10"
-                      aria-label="Open in Google Maps"
-                    ></a>
-                  </div>
-                
-                  {/* Map Info */}
-                  <div className="p-4 bg-gray-50 border-t">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h4 className="font-semibold text-gray-900">Kabul Polytechnic University</h4>
-                        <p className="text-sm text-gray-600">Main Campus, Kabul, Afghanistan</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <a 
-                          href="https://maps.google.com/?q=Kabul+Polytechnic+University" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                          <FiNavigation className="text-sm" />
-                        </a>
-                      </div>
-                    </div>
+                  {/* Google Maps Embed */}
+                  <div className="w-full h-[400px] relative">
+                    <iframe
+                      src="https://www.google.com/maps?q=Kabul+Polytechnic+University&output=embed"
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0 }}
+                      allowFullScreen=""
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      className="w-full h-full"
+                      title="Kabul Polytechnic University Map"
+                    ></iframe>
                   </div>
                 </div>
               </div>
