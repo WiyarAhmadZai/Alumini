@@ -7,7 +7,7 @@ const AboutPage = () => {
     <Layout>
       {/* Hero Section */}
       <div className="relative h-[400px] md:h-[500px] lg:h-[600px] bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/kpu1.jpg")'}}>
-        <div className="absolute inset-0 bg-black/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/30 to-black/20"></div>
         <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-4 sm:mb-6 lg:mb-8 leading-tight tracking-tight">
