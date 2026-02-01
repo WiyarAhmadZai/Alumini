@@ -104,7 +104,7 @@ const Layout = ({ children }) => {
               </div>
               
               <nav className="hidden lg:flex items-center gap-4 sm:gap-6">
-                <Link 
+                {/* <Link 
                   to="/directory" 
                   className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/directory' 
@@ -116,7 +116,7 @@ const Layout = ({ children }) => {
                   <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
                     location.pathname === '/directory' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
-                </Link>
+                </Link> */}
                 <Link 
                   to="/jobs" 
                   className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
@@ -275,7 +275,7 @@ const Layout = ({ children }) => {
                   {/* Navigation Menu */}
                   <nav className="flex-1 p-4">
                     <div className="flex flex-col gap-2">
-                      <Link 
+                      {/* <Link 
                         to="/directory"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
@@ -285,7 +285,7 @@ const Layout = ({ children }) => {
                         }`}
                       >
                         Directory
-                      </Link>
+                      </Link> */}
                       <Link 
                         to="/jobs"
                         onClick={handleMenuClick}
@@ -356,7 +356,7 @@ const Layout = ({ children }) => {
                       </div>
                     </Link>
                     <div className="mt-4 pt-4 border-t border-[#003d7a]/30">
-                      <Link 
+                      {/* <Link 
                         to="/directory"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
@@ -367,7 +367,7 @@ const Layout = ({ children }) => {
                       >
                         <span className="text-lg opacity-70">📁</span>
                         Alumni Directory
-                      </Link>
+                      </Link> */}
                       <Link 
                         to="/jobs"
                         onClick={handleMenuClick}
