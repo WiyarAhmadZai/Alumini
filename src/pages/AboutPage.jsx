@@ -91,26 +91,6 @@ const AboutPage = () => {
               </div>
             </div>
           </div>
-
-          {/* Stats Section */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-12">
-            <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="text-3xl font-bold text-blue-600 mb-2">5,000+</div>
-              <div className="text-gray-600 text-sm">Active Alumni</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="text-3xl font-bold text-emerald-600 mb-2">13+</div>
-              <div className="text-gray-600 text-sm">Years of Excellence</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="text-3xl font-bold text-purple-600 mb-2">8+</div>
-              <div className="text-gray-600 text-sm">Global Chapters</div>
-            </div>
-            <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="text-3xl font-bold text-orange-600 mb-2">50+</div>
-              <div className="text-gray-600 text-sm">Annual Events</div>
-            </div>
-          </div>
         </div>
       </div>
 
