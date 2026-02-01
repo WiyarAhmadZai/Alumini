@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../components/Layout';
-import { FiMail, FiPhone, FiMapPin, FiLinkedin, FiTwitter, FiFacebook, FiAward, FiUsers, FiTarget, FiGlobe } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiLinkedin, FiTwitter, FiFacebook, FiAward, FiUsers, FiTarget, FiGlobe, FiArrowRight } from 'react-icons/fi';
 
 const AboutPage = () => {
   return (
@@ -21,50 +21,94 @@ const AboutPage = () => {
       </div>
 
       {/* Mission & History Section */}
-      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20">
+      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16">
-            {/* Mission */}
-            <div className="transform hover:scale-105 transition-transform duration-300">
-              <div className="flex items-center mb-6">
-                <FiTarget className="text-3xl sm:text-4xl text-blue-600 mr-4" />
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">Our Mission</h2>
-              </div>
-              <div className="space-y-4">
-                <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-                  To create a vibrant network of Kabul Polytechnic University alumni, fostering professional development, 
-                  knowledge sharing, and collaborative opportunities that contribute to the advancement of our members 
-                  and the engineering community in Afghanistan and beyond.
-                </p>
-                <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-                  We strive to maintain strong connections between graduates and the university, facilitating mentorship, 
-                  career opportunities, and continuous learning while celebrating the achievements of our alumni community.
-                </p>
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Foundation</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">The principles and journey that guide our alumni community</p>
+            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-4"></div>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            {/* Mission Card */}
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group">
+              <div className="h-2 bg-gradient-to-r from-blue-600 to-blue-400"></div>
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                    <FiTarget className="text-blue-600 text-xl" />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Our Mission</h3>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+                    To create a vibrant network of Kabul Polytechnic University alumni, fostering professional development, 
+                    knowledge sharing, and collaborative opportunities that contribute to the advancement of our members 
+                    and the engineering community in Afghanistan and beyond.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+                    We strive to maintain strong connections between graduates and the university, facilitating mentorship, 
+                    career opportunities, and continuous learning while celebrating the achievements of our alumni community.
+                  </p>
+                </div>
+                <div className="mt-6 flex items-center text-blue-600 font-medium text-sm hover:text-blue-700 transition-colors cursor-pointer">
+                  <span>Learn more about our mission</span>
+                  <FiArrowRight className="ml-2" />
+                </div>
               </div>
             </div>
 
-            {/* History */}
-            <div className="transform hover:scale-105 transition-transform duration-300">
-              <div className="flex items-center mb-6">
-                <FiGlobe className="text-3xl sm:text-4xl text-blue-600 mr-4" />
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900">Our History</h2>
+            {/* History Card */}
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group">
+              <div className="h-2 bg-gradient-to-r from-emerald-600 to-emerald-400"></div>
+              <div className="p-6 sm:p-8">
+                <div className="flex items-center mb-6">
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                    <FiGlobe className="text-emerald-600 text-xl" />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Our History</h3>
+                </div>
+                <div className="space-y-4">
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+                    Founded in 2010, the KPU Alumni Association began as a small initiative by dedicated graduates who 
+                    recognized the need for a structured network to connect Kabul Polytechnic University alumni across 
+                    various engineering disciplines and geographical locations.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+                    Over the past decade, we have grown from a handful of members to a thriving community of over 
+                    5,000 alumni, establishing chapters in major cities and organizing numerous events that bring 
+                    our community together.
+                  </p>
+                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
+                    Today, we stand as a testament to the excellence of KPU's engineering education and the remarkable 
+                    achievements of our graduates in shaping Afghanistan's infrastructure and technological advancement.
+                  </p>
+                </div>
+                <div className="mt-6 flex items-center text-emerald-600 font-medium text-sm hover:text-emerald-700 transition-colors cursor-pointer">
+                  <span>Explore our journey</span>
+                  <FiArrowRight className="ml-2" />
+                </div>
               </div>
-              <div className="space-y-4">
-                <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-                  Founded in 2010, the KPU Alumni Association began as a small initiative by dedicated graduates who 
-                  recognized the need for a structured network to connect Kabul Polytechnic University alumni across 
-                  various engineering disciplines and geographical locations.
-                </p>
-                <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-                  Over the past decade, we have grown from a handful of members to a thriving community of over 
-                  5,000 alumni, establishing chapters in major cities and organizing numerous events that bring 
-                  our community together.
-                </p>
-                <p className="text-base sm:text-lg text-gray-700 leading-relaxed">
-                  Today, we stand as a testament to the excellence of KPU's engineering education and the remarkable 
-                  achievements of our graduates in shaping Afghanistan's infrastructure and technological advancement.
-                </p>
-              </div>
+            </div>
+          </div>
+
+          {/* Stats Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-12">
+            <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-blue-600 mb-2">5,000+</div>
+              <div className="text-gray-600 text-sm">Active Alumni</div>
+            </div>
+            <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-emerald-600 mb-2">13+</div>
+              <div className="text-gray-600 text-sm">Years of Excellence</div>
+            </div>
+            <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-purple-600 mb-2">8+</div>
+              <div className="text-gray-600 text-sm">Global Chapters</div>
+            </div>
+            <div className="bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-orange-600 mb-2">50+</div>
+              <div className="text-gray-600 text-sm">Annual Events</div>
             </div>
           </div>
         </div>
