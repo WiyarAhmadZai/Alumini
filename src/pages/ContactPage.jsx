@@ -96,31 +96,28 @@ const ContactPage = () => {
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Find Us</h2>
               <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                 <div className="relative">
-                  {/* Embedded Map */}
-                  <div className="w-full h-[400px] bg-gray-100 relative">
-                    <iframe
-                      src="https://www.google.com/maps?q=Kabul+Polytechnic+University&output=embed"
-                      width="100%"
-                      height="100%"
-                      style={{ border: 0 }}
-                      allowFullScreen=""
-                      loading="lazy"
-                      referrerPolicy="no-referrer-when-downgrade"
-                      className="w-full h-full"
-                      title="Kabul Polytechnic University Map"
-                    ></iframe>
-                  </div>
-                  
-                  {/* Map Overlay with Click to Navigate */}
-                  <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-all duration-300 cursor-pointer flex items-center justify-center">
-                    <div className="bg-white rounded-lg shadow-lg px-4 py-2 opacity-0 hover:opacity-100 transition-opacity">
-                      <div className="flex items-center gap-2">
-                        <FiNavigation className="text-blue-600" />
-                        <span className="text-sm font-medium">Click for Google Maps</span>
+                  {/* Map Placeholder */}
+                  <div className="w-full h-[400px] bg-gray-200 relative overflow-hidden">
+                    <img 
+                      src="/kpu.jpg" 
+                      alt="Kabul Polytechnic University" 
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 mx-auto">
+                          <FiMapPin className="text-blue-600 text-2xl" />
+                        </div>
+                        <h3 className="text-white text-xl font-bold mb-2">Kabul Polytechnic University</h3>
+                        <p className="text-white/90 text-sm mb-4">Main Campus, Kabul, Afghanistan</p>
+                        <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
+                          <span className="text-white text-sm">Click to open in Google Maps</span>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
+                  {/* Clickable Link Overlay */}
                   <a 
                     href="https://maps.google.com/?q=Kabul+Polytechnic+University" 
                     target="_blank" 
