@@ -192,22 +192,6 @@ const AboutPage = () => {
               </div>
             </div>
           </div>
-          
-          {/* Chancellor Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
-            <div className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="text-3xl font-bold text-blue-600 mb-2">25+</div>
-              <div className="text-gray-600 text-sm">Years of Academic Leadership</div>
-            </div>
-            <div className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="text-3xl font-bold text-emerald-600 mb-2">10,000+</div>
-              <div className="text-gray-600 text-sm">Graduates Mentored</div>
-            </div>
-            <div className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
-              <div className="text-3xl font-bold text-purple-600 mb-2">50+</div>
-              <div className="text-gray-600 text-sm">Research Publications</div>
-            </div>
-          </div>
         </div>
       </div>
 
