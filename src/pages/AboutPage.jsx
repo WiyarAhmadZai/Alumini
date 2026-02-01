@@ -115,48 +115,105 @@ const AboutPage = () => {
       </div>
 
       {/* Message from Chancellor Section */}
-      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-blue-50 to-white">
+      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-slate-50 to-blue-50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Leadership Message</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">Words of wisdom from our esteemed Chancellor</p>
-            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-4"></div>
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full mb-4">
+              <FiAward className="text-white text-2xl" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">Leadership Message</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">Words of wisdom from our esteemed Chancellor</p>
           </div>
-          <div className="max-w-6xl mx-auto">
-            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden">
-              <div className="flex flex-col lg:flex-row">
-                <div className="lg:w-2/5">
-                  <div className="h-full min-h-[300px] lg:min-h-[400px] bg-cover bg-center" style={{backgroundImage: 'url("/chancellor_bg.jpg")'}}></div>
-                </div>
-                <div className="lg:w-3/5 p-6 sm:p-8 lg:p-12">
-                  <div className="flex items-center mb-6">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mr-3">
-                      <FiAward className="text-blue-600 text-xl" />
+          
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden">
+              {/* Quote Mark */}
+              <div className="relative">
+                <div className="absolute top-4 left-6 text-6xl sm:text-8xl text-blue-100 font-serif opacity-50">"</div>
+                
+                <div className="relative z-10 p-8 sm:p-10 lg:p-12">
+                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+                    {/* Chancellor Image */}
+                    <div className="flex-shrink-0">
+                      <div className="relative">
+                        <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-2xl overflow-hidden shadow-lg">
+                          <img src="/chancelor.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full flex items-center justify-center shadow-lg">
+                          <FiAward className="text-white text-lg" />
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-blue-600 font-semibold text-lg">Chancellor's Vision</span>
+                    
+                    {/* Content */}
+                    <div className="flex-1 text-center lg:text-left">
+                      <div className="mb-6">
+                        <span className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
+                          Chancellor's Vision
+                        </span>
+                      </div>
+                      
+                      <blockquote className="text-gray-700 leading-relaxed mb-8 text-base sm:text-lg font-light italic">
+                        "The KPU Alumni Association represents the pride of our institution. Our graduates continue to 
+                        make significant contributions to Afghanistan's development, and this association serves as a 
+                        bridge between our past achievements and future aspirations. I encourage all alumni to actively 
+                        participate in this vibrant community."
+                      </blockquote>
+                      
+                      <div className="flex flex-col sm:flex-row items-center gap-4">
+                        <div className="flex items-center gap-4">
+                          <div className="text-left">
+                            <h4 className="text-xl font-bold text-gray-900">Dr. Ahmad Zia Massoud</h4>
+                            <p className="text-gray-600 text-sm sm:text-base">Chancellor</p>
+                            <p className="text-blue-600 text-sm">Kabul Polytechnic University</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-3 mt-4 sm:mt-0">
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
+                            <FiMail className="text-blue-600 text-sm" />
+                          </div>
+                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
+                            <FiLinkedin className="text-blue-600 text-sm" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <blockquote className="text-gray-700 leading-relaxed mb-8 font-light text-sm sm:text-base italic">
-                    "The KPU Alumni Association represents the pride of our institution. Our graduates continue to 
-                    make significant contributions to Afghanistan's development, and this association serves as a 
-                    bridge between our past achievements and future aspirations. I encourage all alumni to actively 
-                    participate in this vibrant community."
-                  </blockquote>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
-                        <img src="/chancelor.jpg" alt="Chancellor" className="w-full h-full object-cover" />
-                      </div>
-                      <div>
-                        <h4 className="text-lg sm:text-xl font-bold text-gray-900">Dr. Ahmad Zia Massoud</h4>
-                        <p className="text-gray-600 text-sm sm:text-base">Chancellor, Kabul Polytechnic University</p>
-                      </div>
-                    </div>
-                    <div className="hidden lg:flex items-center text-blue-600 hover:text-blue-700 transition-colors cursor-pointer">
-                      <FiArrowRight className="text-xl" />
-                    </div>
+                </div>
+                
+                {/* Bottom Quote Mark */}
+                <div className="absolute bottom-4 right-6 text-6xl sm:text-8xl text-blue-100 font-serif opacity-50">"</div>
+              </div>
+              
+              {/* Footer Bar */}
+              <div className="bg-gradient-to-r from-blue-600 to-blue-400 px-8 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-white text-sm font-medium">
+                    Leading Excellence in Engineering Education Since 2010
+                  </div>
+                  <div className="flex items-center text-white/80 hover:text-white transition-colors cursor-pointer">
+                    <span className="text-sm mr-2">Read Full Message</span>
+                    <FiArrowRight className="text-sm" />
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+          
+          {/* Chancellor Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
+            <div className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-blue-600 mb-2">25+</div>
+              <div className="text-gray-600 text-sm">Years of Academic Leadership</div>
+            </div>
+            <div className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-emerald-600 mb-2">10,000+</div>
+              <div className="text-gray-600 text-sm">Graduates Mentored</div>
+            </div>
+            <div className="bg-white rounded-2xl shadow-md p-6 text-center hover:shadow-lg transition-shadow">
+              <div className="text-3xl font-bold text-purple-600 mb-2">50+</div>
+              <div className="text-gray-600 text-sm">Research Publications</div>
             </div>
           </div>
         </div>
