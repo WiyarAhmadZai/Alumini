@@ -131,6 +131,19 @@ const Layout = ({ children }) => {
                   }`}></span>
                 </Link>
                 <Link 
+                  to="/contact" 
+                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                    location.pathname === '/contact' 
+                      ? 'text-white bg-white/20' 
+                      : 'text-white/90 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  Contact
+                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
+                    location.pathname === '/contact' ? 'w-full' : 'w-0 group-hover:w-full'
+                  }`}></span>
+                </Link>
+                <Link 
                   to="/jobs" 
                   className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/jobs' 
@@ -311,6 +324,17 @@ const Layout = ({ children }) => {
                         About
                       </Link>
                       <Link 
+                        to="/contact"
+                        onClick={handleMenuClick}
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                          location.pathname === '/contact' 
+                            ? 'bg-white/20 text-white' 
+                            : 'hover:bg-[#0a519b]'
+                        }`}
+                      >
+                        Contact
+                      </Link>
+                      <Link 
                         to="/jobs"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
@@ -403,6 +427,18 @@ const Layout = ({ children }) => {
                       >
                         <span className="text-lg opacity-70">ℹ️</span>
                         About KPU
+                      </Link>
+                      <Link 
+                        to="/contact"
+                        onClick={handleMenuClick}
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                          location.pathname === '/contact' 
+                            ? 'bg-white/20' 
+                            : 'hover:bg-[#0a519b]'
+                        }`}
+                      >
+                        <span className="text-lg opacity-70">📧</span>
+                        Contact Us
                       </Link>
                       <Link 
                         to="/jobs"
