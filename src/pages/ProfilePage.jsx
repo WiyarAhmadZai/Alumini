@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings } from 'react-icons/fi';
 
 const ProfilePage = () => {
   return (
@@ -41,11 +42,11 @@ const ProfilePage = () => {
                 </div>
                 <div className="flex gap-3 mt-4 md:mt-0">
                   <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                    <span className="material-symbols-outlined text-sm mr-2">Edit Profile</span>
+                  <FiEdit className="text-sm mr-2" />
                     
                   </button>
                   <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-                    <span className="material-symbols-outlined">share</span>
+                    <FiShare2 />
                   </button>
                 </div>
               </div>
@@ -64,28 +65,31 @@ const ProfilePage = () => {
                 <h3 className="text-black text-lg font-bold mb-4">Contact Information</h3>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <span className="material-symbols-outlined text-primary">mail</span>
+                    <div className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md">
+                      <FiMail className="text-white" />
+                    </div>
                     <span className="text-black text-sm font-medium">ahmad.wali@example.com</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <span className="material-symbols-outlined text-primary">call</span>
+                    <div className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md">
+                      <FiPhone className="text-white" />
+                    </div>
                     <span className="text-black text-sm font-medium">+93 70 123 4567</span>
                   </div>
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <span className="material-symbols-outlined text-primary">location_on</span>
+                    <div className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md">
+                      <FiMapPin className="text-white" />
+                    </div>
                     <span className="text-black text-sm font-medium">Kabul, Afghanistan</span>
                   </div>
                 </div>
                 <div className="mt-6 pt-6 border-t border-gray-200">
-                  <h4 className="text-black text-sm font-bold mb-4">Social Links</h4>
                   <div className="flex gap-3">
-                    <a className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 border border-blue-400" href="#" title="Website">
-                      <span className="material-symbols-outled text-lg">link</span>
-                      <span className="text-sm font-medium">Website</span>
+                    <a className="size-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 border border-blue-400" href="#" title="Website">
+                      <FiLink className="text-xl" />
                     </a>
-                    <a className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 border border-emerald-400" href="#" title="Email">
-                      <span className="material-symbols-outlined text-lg">alternate_email</span>
-                      <span className="text-sm font-medium">Email</span>
+                    <a className="size-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 border border-emerald-400" href="#" title="Email">
+                      <FiMail className="text-xl" />
                     </a>
                   </div>
                 </div>
@@ -116,7 +120,7 @@ const ProfilePage = () => {
               {/* About Me */}
               <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
                 <h3 className="text-black text-xl font-bold mb-6 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">person</span>
+                  <FiUser className="text-primary" />
                   About Me
                 </h3>
                 <div className="bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg p-6 border border-gray-200">
@@ -129,7 +133,7 @@ const ProfilePage = () => {
               {/* Professional Experience */}
               <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
                 <h3 className="text-black text-xl font-bold mb-6 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">work</span>
+                  <FiBriefcase className="text-primary" />
                   Professional Experience
                 </h3>
                 <div className="space-y-8">
@@ -164,7 +168,7 @@ const ProfilePage = () => {
               {/* Education */}
               <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
                 <h3 className="text-black text-xl font-bold mb-6 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">school</span>
+                  <FiBookOpen className="text-primary" />
                   Education
                 </h3>
                 <div className="space-y-8">
@@ -197,7 +201,7 @@ const ProfilePage = () => {
               {/* Skills & Expertise */}
               <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
                 <h3 className="text-black text-xl font-bold mb-6 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary">settings_suggest</span>
+                  <FiSettings className="text-primary" />
                   Skills & Expertise
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
