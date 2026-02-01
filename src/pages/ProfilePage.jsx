@@ -6,6 +6,9 @@ import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcas
 const ProfilePage = () => {
   return (
     <Layout>
+      {/* Background Gradient Section */}
+      <div className="fixed top-0 left-0 right-0 h-screen bg-gradient-to-b from-[#002759]/80 via-[#002759]/40 to-[#002759]/10 -z-10"></div>
+      
       {/* Hero Section */}
       <div className="relative h-18 bg-cover bg-center" >
         <div className="absolute inset-0 bg-gradient-to-b bg-blue-900 to-transparent"></div>
