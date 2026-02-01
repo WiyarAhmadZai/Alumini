@@ -404,51 +404,63 @@ const AboutPage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-6 sm:p-8 border border-gray-100">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                <FiMail className="text-blue-600 text-2xl sm:text-3xl" />
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">Email</h3>
-              <p className="text-gray-600 text-base sm:text-lg font-medium mb-4">alumni@kpu.edu.af</p>
-              <div className="flex items-center justify-center text-blue-600 hover:text-blue-700 transition-colors cursor-pointer">
-                <span className="text-sm font-medium">Send Message</span>
-                <FiArrowRight className="ml-2 text-sm" />
-              </div>
-            </div>
-            
-            <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-6 sm:p-8 border border-gray-100">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                <FiPhone className="text-emerald-600 text-2xl sm:text-3xl" />
-              </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">Phone</h3>
-              <p className="text-gray-600 text-base sm:text-lg font-medium mb-4">+93 20 123 4567</p>
-              <div className="flex items-center justify-center text-emerald-600 hover:text-emerald-700 transition-colors cursor-pointer">
-                <span className="text-sm font-medium">Call Now</span>
-                <FiArrowRight className="ml-2 text-sm" />
+            <div className="group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <FiMail className="text-blue-600 text-lg" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Email</h3>
+                  <p className="text-gray-600 text-sm mb-3">alumni@kpu.edu.af</p>
+                  <div className="flex items-center text-blue-600 hover:text-blue-700 transition-colors cursor-pointer">
+                    <span className="text-sm font-medium">Send Message</span>
+                    <FiArrowRight className="ml-1 text-sm" />
+                  </div>
+                </div>
               </div>
             </div>
             
-            <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-6 sm:p-8 border border-gray-100">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform">
-                <FiMapPin className="text-purple-600 text-2xl sm:text-3xl" />
+            <div className="group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <FiPhone className="text-emerald-600 text-lg" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Phone</h3>
+                  <p className="text-gray-600 text-sm mb-3">+93 20 123 4567</p>
+                  <div className="flex items-center text-emerald-600 hover:text-emerald-700 transition-colors cursor-pointer">
+                    <span className="text-sm font-medium">Call Now</span>
+                    <FiArrowRight className="ml-1 text-sm" />
+                  </div>
+                </div>
               </div>
-              <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3">Address</h3>
-              <p className="text-gray-600 text-base sm:text-lg font-medium mb-4">Kabul Polytechnic University<br />Kabul, Afghanistan</p>
-              <div className="flex items-center justify-center text-purple-600 hover:text-purple-700 transition-colors cursor-pointer">
-                <span className="text-sm font-medium">Get Directions</span>
-                <FiArrowRight className="ml-2 text-sm" />
+            </div>
+            
+            <div className="group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <FiMapPin className="text-purple-600 text-lg" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Address</h3>
+                  <p className="text-gray-600 text-sm mb-3">Kabul Polytechnic University<br />Kabul, Afghanistan</p>
+                  <div className="flex items-center text-purple-600 hover:text-purple-700 transition-colors cursor-pointer">
+                    <span className="text-sm font-medium">Get Directions</span>
+                    <FiArrowRight className="ml-1 text-sm" />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
           {/* Contact Form CTA */}
           <div className="mt-12 text-center">
-            <div className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-2xl p-8 sm:p-12 shadow-xl">
-              <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4">Have Questions?</h3>
-              <p className="text-white/90 mb-6 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-xl p-6 sm:p-8 shadow-lg">
+              <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">Have Questions?</h3>
+              <p className="text-white/90 mb-6 max-w-2xl mx-auto text-sm sm:text-base">
                 Our team is here to help you with any inquiries about membership, events, or opportunities.
               </p>
-              <button className="px-8 py-3 bg-white text-blue-900 font-bold rounded-lg hover:bg-gray-50 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              <button className="px-6 py-2 sm:px-8 sm:py-3 bg-white text-blue-900 font-bold rounded-lg hover:bg-gray-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 text-sm sm:text-base">
                 Contact Support Team
               </button>
             </div>
