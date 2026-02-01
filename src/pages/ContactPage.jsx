@@ -86,28 +86,6 @@ const ContactPage = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Office Hours */}
-              <div className="mt-8 bg-gray-50 rounded-xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <FiClock className="text-gray-600 text-xl" />
-                  <h3 className="text-lg font-semibold text-gray-900">Office Hours</h3>
-                </div>
-                <div className="space-y-2 text-gray-600">
-                  <p className="flex justify-between">
-                    <span>Monday - Friday</span>
-                    <span className="font-medium">9:00 AM - 5:00 PM</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span>Saturday</span>
-                    <span className="font-medium">10:00 AM - 2:00 PM</span>
-                  </p>
-                  <p className="flex justify-between">
-                    <span>Sunday</span>
-                    <span className="font-medium">Closed</span>
-                  </p>
-                </div>
-              </div>
             </div>
 
             {/* Map */}
