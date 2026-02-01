@@ -7,13 +7,9 @@ const ProfilePage = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <div className="relative h-64 bg-cover bg-center" style={{backgroundImage: 'url("/martin-adams-_OZCl4XcpRw-unsplash.jpg")'}}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/90 to-transparent"></div>
+      <div className="relative h-18 bg-cover bg-center" >
+        <div className="absolute inset-0 bg-gradient-to-b bg-blue-900 to-transparent"></div>
         <div className="relative z-10 flex items-center justify-center h-full">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-white mb-2">Alumni Profile</h1>
-            <p className="text-xl text-gray-200">Kabul Polytechnic University</p>
-          </div>
         </div>
       </div>
 
