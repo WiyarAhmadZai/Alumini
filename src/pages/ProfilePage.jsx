@@ -77,13 +77,15 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 <div className="mt-6 pt-6 border-t border-gray-200">
-                  <h4 className="text-black text-sm font-bold mb-3">Social Links</h4>
+                  <h4 className="text-black text-sm font-bold mb-4">Social Links</h4>
                   <div className="flex gap-3">
-                    <a className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 text-primary hover:from-blue-100 hover:to-indigo-100 transition-all border border-blue-200" href="#">
-                      <span className="material-symbols-outlined">link</span>
+                    <a className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 border border-blue-400" href="#" title="Website">
+                      <span className="material-symbols-outled text-lg">link</span>
+                      <span className="text-sm font-medium">Website</span>
                     </a>
-                    <a className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-green-50 to-emerald-50 text-primary hover:from-green-100 hover:to-emerald-100 transition-all border border-green-200" href="#">
-                      <span className="material-symbols-outlined">alternate_email</span>
+                    <a className="group flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 border border-emerald-400" href="#" title="Email">
+                      <span className="material-symbols-outlined text-lg">alternate_email</span>
+                      <span className="text-sm font-medium">Email</span>
                     </a>
                   </div>
                 </div>
