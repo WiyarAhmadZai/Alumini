@@ -21,19 +21,21 @@ const AdminDashboard = () => {
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-colors" onClick={() => setSidebarOpen(true)}>
               <FiBarChart2 className="text-white text-xl" />
             </div>
             {sidebarOpen && (
               <span className="text-xl font-bold text-gray-900">Admin</span>
             )}
           </div>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            {sidebarOpen ? <FiX className="text-xl" /> : <FiMenu className="text-xl" />}
-          </button>
+          {sidebarOpen && (
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="text-gray-500 hover:text-gray-700 transition-colors"
+            >
+              <FiX className="text-xl" />
+            </button>
+          )}
         </div>
 
         {/* Navigation Menu */}
