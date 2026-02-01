@@ -95,24 +95,6 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              {/* Quick Stats Card */}
-              <div className="p-6 rounded-xl border border-[#dcdee5] shadow-sm">
-                <h3 className="text-black text-lg font-bold mb-4">Quick Stats</h3>
-                <div className="grid grid-cols-1 gap-3">
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200 hover:shadow-md transition-shadow">
-                    <p className="text-black text-2xl font-bold">450</p>
-                    <p className="text-black text-xs font-medium uppercase tracking-wider">Connections</p>
-                  </div>
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-200 hover:shadow-md transition-shadow">
-                    <p className="text-black text-2xl font-bold">12</p>
-                    <p className="text-black text-xs font-medium uppercase tracking-wider">Events Attended</p>
-                  </div>
-                  <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg p-4 border border-purple-200 hover:shadow-md transition-shadow">
-                    <p className="text-black text-2xl font-bold">5</p>
-                    <p className="text-black text-xs font-medium uppercase tracking-wider">Active Mentorships</p>
-                  </div>
-                </div>
-              </div>
             </aside>
 
             {/* Right Column (Main Content) */}
