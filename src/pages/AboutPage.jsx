@@ -362,7 +362,7 @@ const AboutPage = () => {
             </p>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
             <button className="group px-8 py-4 bg-white text-blue-900 font-bold text-base sm:text-lg rounded-xl hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 flex items-center justify-center">
               <span>Join Alumni Network</span>
               <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
@@ -371,22 +371,6 @@ const AboutPage = () => {
               <span>Learn More</span>
               <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
             </button>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center border border-white/20">
-              <div className="text-3xl font-bold text-white mb-2">5,000+</div>
-              <div className="text-white/80 text-sm">Active Members</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center border border-white/20">
-              <div className="text-3xl font-bold text-white mb-2">50+</div>
-              <div className="text-white/80 text-sm">Events Yearly</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 text-center border border-white/20">
-              <div className="text-3xl font-bold text-white mb-2">8+</div>
-              <div className="text-white/80 text-sm">Global Chapters</div>
-            </div>
           </div>
         </div>
       </div>
