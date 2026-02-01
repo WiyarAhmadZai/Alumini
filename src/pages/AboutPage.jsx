@@ -127,63 +127,55 @@ const AboutPage = () => {
           
           <div className="max-w-5xl mx-auto">
             <div className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden">
-              {/* Quote Mark */}
-              <div className="relative">
-                <div className="absolute top-4 left-6 text-6xl sm:text-8xl text-blue-100 font-serif opacity-50">"</div>
-                
-                <div className="relative z-10 p-8 sm:p-10 lg:p-12">
-                  <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
-                    {/* Chancellor Image */}
-                    <div className="flex-shrink-0">
-                      <div className="relative">
-                        <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-2xl overflow-hidden shadow-lg">
-                          <img src="/chanceler.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
-                        </div>
-                        <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full flex items-center justify-center shadow-lg">
-                          <FiAward className="text-white text-lg" />
-                        </div>
+              <div className="p-8 sm:p-10 lg:p-12">
+                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
+                  {/* Chancellor Image */}
+                  <div className="flex-shrink-0">
+                    <div className="relative">
+                      <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="/chanceler.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
+                      </div>
+                      <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full flex items-center justify-center shadow-lg">
+                        <FiAward className="text-white text-lg" />
                       </div>
                     </div>
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1 text-center lg:text-left">
+                    <div className="mb-6">
+                      <span className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
+                        Chancellor's Vision
+                      </span>
+                    </div>
                     
-                    {/* Content */}
-                    <div className="flex-1 text-center lg:text-left">
-                      <div className="mb-6">
-                        <span className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
-                          Chancellor's Vision
-                        </span>
+                    <div className="text-gray-700 leading-relaxed mb-8 text-base sm:text-lg font-normal">
+                      The KPU Alumni Association represents the pride of our institution. Our graduates continue to 
+                      make significant contributions to Afghanistan's development, and this association serves as a 
+                      bridge between our past achievements and future aspirations. I encourage all alumni to actively 
+                      participate in this vibrant community.
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                      <div className="flex items-center gap-4">
+                        <div className="text-left">
+                          <h4 className="text-xl font-bold text-gray-900">Dr. Ahmad Zia Massoud</h4>
+                          <p className="text-gray-600 text-sm sm:text-base">Chancellor</p>
+                          <p className="text-blue-600 text-sm">Kabul Polytechnic University</p>
+                        </div>
                       </div>
                       
-                      <blockquote className="text-gray-700 leading-relaxed mb-8 text-base sm:text-lg font-light italic">
-                        "The KPU Alumni Association represents the pride of our institution. Our graduates continue to 
-                        make significant contributions to Afghanistan's development, and this association serves as a 
-                        bridge between our past achievements and future aspirations. I encourage all alumni to actively 
-                        participate in this vibrant community."
-                      </blockquote>
-                      
-                      <div className="flex flex-col sm:flex-row items-center gap-4">
-                        <div className="flex items-center gap-4">
-                          <div className="text-left">
-                            <h4 className="text-xl font-bold text-gray-900">Dr. Ahmad Zia Massoud</h4>
-                            <p className="text-gray-600 text-sm sm:text-base">Chancellor</p>
-                            <p className="text-blue-600 text-sm">Kabul Polytechnic University</p>
-                          </div>
+                      <div className="flex gap-3 mt-4 sm:mt-0">
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
+                          <FiMail className="text-blue-600 text-sm" />
                         </div>
-                        
-                        <div className="flex gap-3 mt-4 sm:mt-0">
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
-                            <FiMail className="text-blue-600 text-sm" />
-                          </div>
-                          <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
-                            <FiLinkedin className="text-blue-600 text-sm" />
-                          </div>
+                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
+                          <FiLinkedin className="text-blue-600 text-sm" />
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                
-                {/* Bottom Quote Mark */}
-                <div className="absolute bottom-4 right-6 text-6xl sm:text-8xl text-blue-100 font-serif opacity-50">"</div>
               </div>
               
               {/* Footer Bar */}
