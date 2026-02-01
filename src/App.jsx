@@ -9,6 +9,7 @@ import GivingPage from './pages/LegalPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
+import AboutPage from './pages/AboutPage';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/signup" element={<LoginPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/about" element={<AboutPage />} />
       </Routes>
     </div>
   );
