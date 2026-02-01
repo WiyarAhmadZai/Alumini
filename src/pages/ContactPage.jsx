@@ -97,35 +97,27 @@ const ContactPage = () => {
               <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                 <div className="relative">
                   {/* Map Placeholder */}
-                  <div className="w-full h-[400px] bg-gray-200 relative overflow-hidden">
+                  <div className="w-full h-[400px] bg-gray-200 relative overflow-hidden group cursor-pointer">
                     <img 
                       src="/kpu.jpg" 
                       alt="Kabul Polytechnic University" 
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
-                    <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                      <div className="text-center">
-                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 mx-auto">
-                          <FiMapPin className="text-blue-600 text-2xl" />
-                        </div>
-                        <h3 className="text-white text-xl font-bold mb-2">Kabul Polytechnic University</h3>
-                        <p className="text-white/90 text-sm mb-4">Main Campus, Kabul, Afghanistan</p>
-                        <div className="bg-white/20 backdrop-blur-sm rounded-lg px-4 py-2">
-                          <span className="text-white text-sm">Click to open in Google Maps</span>
-                        </div>
+                    <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
+                      <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                        <FiMapPin className="text-blue-600 text-2xl" />
                       </div>
                     </div>
+                    
+                    {/* Clickable Link Overlay */}
+                    <a 
+                      href="https://maps.google.com/?q=Kabul+Polytechnic+University" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="absolute inset-0 z-10"
+                      aria-label="Open in Google Maps"
+                    ></a>
                   </div>
-                  
-                  {/* Clickable Link Overlay */}
-                  <a 
-                    href="https://maps.google.com/?q=Kabul+Polytechnic+University" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="absolute inset-0 z-10"
-                    aria-label="Open in Google Maps"
-                  ></a>
-                </div>
                 
                 {/* Map Info */}
                 <div className="p-4 bg-gray-50 border-t">
