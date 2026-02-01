@@ -137,7 +137,7 @@ const AboutPage = () => {
                     <div className="flex-shrink-0">
                       <div className="relative">
                         <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-2xl overflow-hidden shadow-lg">
-                          <img src="/chancelor.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
+                          <img src="/chanceler.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
                         </div>
                         <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full flex items-center justify-center shadow-lg">
                           <FiAward className="text-white text-lg" />
