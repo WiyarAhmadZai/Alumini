@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FiMenu, FiX, FiHome, FiUsers, FiBookOpen, FiCalendar, FiSettings, FiBarChart2, FiLogOut, FiChevronDown } from 'react-icons/fi';
 
 const AdminDashboard = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState('dashboard');
+  const sidebarRef = useRef(null);
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: FiHome },
@@ -14,28 +15,61 @@ const AdminDashboard = () => {
     { id: 'settings', label: 'Settings', icon: FiSettings },
   ];
 
+  // Handle click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sidebarOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setSidebarOpen(false);
+      }
+    };
+
+    if (sidebarOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [sidebarOpen]);
+
+  // Handle menu item click
+  const handleMenuClick = (menuId) => {
+    setActiveMenu(menuId);
+    setSidebarOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className={`fixed left-0 top-0 h-full bg-white border-r border-gray-200 transition-all duration-300 z-40 ${sidebarOpen ? 'w-64' : 'w-20'}`}>
+      {sidebarOpen && (
+        <>
+          {/* Backdrop */}
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"></div>
+          
+          {/* Sidebar */}
+          <div 
+            ref={sidebarRef}
+            className="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 shadow-2xl z-50 transform transition-all duration-300 ease-in-out"
+          >
         {/* Sidebar Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center cursor-pointer hover:bg-blue-700 transition-colors" onClick={() => setSidebarOpen(true)}>
+            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
               <FiBarChart2 className="text-white text-xl" />
             </div>
-            {sidebarOpen && (
-              <span className="text-xl font-bold text-gray-900">Admin</span>
-            )}
+            <span className="text-xl font-bold text-gray-900">Admin</span>
           </div>
-          {sidebarOpen && (
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
-            >
-              <FiX className="text-xl" />
-            </button>
-          )}
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            <FiX className="text-xl" />
+          </button>
         </div>
 
         {/* Navigation Menu */}
@@ -44,7 +78,7 @@ const AdminDashboard = () => {
             {menuItems.map((item) => (
               <li key={item.id}>
                 <button
-                  onClick={() => setActiveMenu(item.id)}
+                  onClick={() => handleMenuClick(item.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${
                     activeMenu === item.id
                       ? 'bg-blue-50 text-blue-600 border-l-4 border-blue-600'
@@ -52,9 +86,7 @@ const AdminDashboard = () => {
                   }`}
                 >
                   <item.icon className="text-xl" />
-                  {sidebarOpen && (
-                    <span className="font-medium">{item.label}</span>
-                  )}
+                  <span className="font-medium">{item.label}</span>
                 </button>
               </li>
             ))}
@@ -62,30 +94,38 @@ const AdminDashboard = () => {
         </nav>
 
         {/* User Profile Section */}
-        {sidebarOpen && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
-            <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-              <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                <FiUsers className="text-gray-600" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">Admin User</p>
-                <p className="text-xs text-gray-500">admin@alumni.com</p>
-              </div>
-              <FiChevronDown className="text-gray-400" />
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <div className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+            <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+              <FiUsers className="text-gray-600" />
             </div>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-900">Admin User</p>
+              <p className="text-xs text-gray-500">admin@alumni.com</p>
+            </div>
+            <FiChevronDown className="text-gray-400" />
           </div>
-        )}
+        </div>
       </div>
+    </>
+      )}
 
       {/* Main Content */}
-      <div className={`transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
+      <div className="ml-0">
         {/* Top Header */}
         <header className="bg-white border-b border-gray-200 px-6 py-4">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-              <p className="text-sm text-gray-500">Welcome back, Admin</p>
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setSidebarOpen(true)}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <FiMenu className="text-gray-600 text-xl" />
+              </button>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+                <p className="text-sm text-gray-500">Welcome back, Admin</p>
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
