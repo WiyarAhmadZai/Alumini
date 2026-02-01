@@ -6,11 +6,14 @@ const ContactPage = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <div className="relative h-[300px] md:h-[400px] bg-gradient-to-br from-blue-900 to-blue-700">
-        <div className="relative z-10 h-full flex items-center justify-center text-center px-4">
+      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/kpu1.jpg")'}}>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/30 to-black/20"></div>
+        <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4">Contact Us</h1>
-            <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-4 sm:mb-6 lg:mb-8 leading-tight tracking-tight">
+              Contact Us
+            </h1>
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 max-w-3xl mx-auto leading-relaxed font-light">
               Get in touch with Kabul Polytechnic University Alumni Association
             </p>
           </div>
