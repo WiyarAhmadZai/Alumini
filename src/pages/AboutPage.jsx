@@ -115,36 +115,44 @@ const AboutPage = () => {
       </div>
 
       {/* Message from Chancellor Section */}
-      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-gray-50 to-blue-50">
+      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-blue-50 to-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Message from the Chancellor</h2>
-            <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto"></div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Leadership Message</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">Words of wisdom from our esteemed Chancellor</p>
+            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-4"></div>
           </div>
           <div className="max-w-6xl mx-auto">
-            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transform hover:scale-[1.02] transition-all duration-500">
+            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden">
               <div className="flex flex-col lg:flex-row">
                 <div className="lg:w-2/5">
                   <div className="h-full min-h-[300px] lg:min-h-[400px] bg-cover bg-center" style={{backgroundImage: 'url("/chancellor_bg.jpg")'}}></div>
                 </div>
                 <div className="lg:w-3/5 p-6 sm:p-8 lg:p-12">
                   <div className="flex items-center mb-6">
-                    <FiAward className="text-3xl text-blue-600 mr-3" />
-                    <span className="text-blue-600 font-semibold text-lg">Leadership Message</span>
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mr-3">
+                      <FiAward className="text-blue-600 text-xl" />
+                    </div>
+                    <span className="text-blue-600 font-semibold text-lg">Chancellor's Vision</span>
                   </div>
-                  <blockquote className="text-lg sm:text-xl text-gray-700 italic leading-relaxed mb-8 font-light">
+                  <blockquote className="text-gray-700 leading-relaxed mb-8 font-light text-sm sm:text-base italic">
                     "The KPU Alumni Association represents the pride of our institution. Our graduates continue to 
                     make significant contributions to Afghanistan's development, and this association serves as a 
                     bridge between our past achievements and future aspirations. I encourage all alumni to actively 
                     participate in this vibrant community."
                   </blockquote>
-                  <div className="flex items-center gap-4 sm:gap-6">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center shadow-lg">
-                      <span className="text-gray-600 text-2xl sm:text-3xl">👤</span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+                        <img src="/chancelor.jpg" alt="Chancellor" className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <h4 className="text-lg sm:text-xl font-bold text-gray-900">Dr. Ahmad Zia Massoud</h4>
+                        <p className="text-gray-600 text-sm sm:text-base">Chancellor, Kabul Polytechnic University</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-xl sm:text-2xl font-bold text-gray-900">Dr. Ahmad Zia Massoud</h4>
-                      <p className="text-gray-600 text-base sm:text-lg">Chancellor, Kabul Polytechnic University</p>
+                    <div className="hidden lg:flex items-center text-blue-600 hover:text-blue-700 transition-colors cursor-pointer">
+                      <FiArrowRight className="text-xl" />
                     </div>
                   </div>
                 </div>
@@ -155,68 +163,122 @@ const AboutPage = () => {
       </div>
 
       {/* Meet the Board Section */}
-      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20">
+      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-8 sm:mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4">Meet the Board</h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">Dedicated leaders guiding our alumni community</p>
-            <div className="w-20 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-4"></div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Leadership Team</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">Dedicated leaders guiding our alumni community</p>
+            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-4"></div>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {/* Board Member 1 */}
-            <div className="text-center group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-6">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-4 sm:mb-6 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center group-hover:shadow-xl transition-shadow duration-300">
-                <span className="text-gray-500 text-4xl sm:text-5xl md:text-6xl">👤</span>
-              </div>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2">Eng. Mohammad Hassan</h3>
-              <p className="text-gray-600 text-sm sm:text-base md:text-lg mb-3 font-medium">President</p>
-              <p className="text-xs sm:text-sm text-gray-500 mb-4">Civil Engineering, Class of 1995</p>
-              <div className="flex justify-center gap-3 sm:gap-4">
-                <FiLinkedin className="text-gray-400 hover:text-blue-600 cursor-pointer transition-colors text-xl sm:text-2xl" />
-                <FiMail className="text-gray-400 hover:text-blue-600 cursor-pointer transition-colors text-xl sm:text-2xl" />
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
+              <div className="h-2 bg-gradient-to-r from-blue-600 to-blue-400"></div>
+              <div className="p-6 text-center">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
+                  <img src="/1teacher.jpg" alt="Mohammad Hassan" className="w-full h-full object-cover" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Eng. Mohammad Hassan</h3>
+                <div className="w-12 h-1 bg-blue-600 mx-auto mb-3"></div>
+                <p className="text-blue-600 font-semibold text-sm mb-3">President</p>
+                <p className="text-gray-500 text-xs mb-4">Civil Engineering, Class of 1995</p>
+                <div className="flex justify-center gap-3">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
+                    <FiLinkedin className="text-blue-600 text-sm" />
+                  </div>
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
+                    <FiMail className="text-blue-600 text-sm" />
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Board Member 2 */}
-            <div className="text-center group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-6">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-4 sm:mb-6 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center group-hover:shadow-xl transition-shadow duration-300">
-                <span className="text-gray-500 text-4xl sm:text-5xl md:text-6xl">👤</span>
-              </div>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2">Dr. Sarah Ahmadzai</h3>
-              <p className="text-gray-600 text-sm sm:text-base md:text-lg mb-3 font-medium">Vice President</p>
-              <p className="text-xs sm:text-sm text-gray-500 mb-4">Electrical Engineering, Class of 2000</p>
-              <div className="flex justify-center gap-3 sm:gap-4">
-                <FiLinkedin className="text-gray-400 hover:text-blue-600 cursor-pointer transition-colors text-xl sm:text-2xl" />
-                <FiMail className="text-gray-400 hover:text-blue-600 cursor-pointer transition-colors text-xl sm:text-2xl" />
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
+              <div className="h-2 bg-gradient-to-r from-emerald-600 to-emerald-400"></div>
+              <div className="p-6 text-center">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
+                  <img src="/teacher.jpg" alt="Sarah Ahmadzai" className="w-full h-full object-cover" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Dr. Sarah Ahmadzai</h3>
+                <div className="w-12 h-1 bg-emerald-600 mx-auto mb-3"></div>
+                <p className="text-emerald-600 font-semibold text-sm mb-3">Vice President</p>
+                <p className="text-gray-500 text-xs mb-4">Electrical Engineering, Class of 2000</p>
+                <div className="flex justify-center gap-3">
+                  <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center hover:bg-emerald-200 transition-colors cursor-pointer">
+                    <FiLinkedin className="text-emerald-600 text-sm" />
+                  </div>
+                  <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center hover:bg-emerald-200 transition-colors cursor-pointer">
+                    <FiMail className="text-emerald-600 text-sm" />
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Board Member 3 */}
-            <div className="text-center group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-6">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-4 sm:mb-6 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center group-hover:shadow-xl transition-shadow duration-300">
-                <span className="text-gray-500 text-4xl sm:text-5xl md:text-6xl">👤</span>
-              </div>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2">Ahmad Wali Karimi</h3>
-              <p className="text-gray-600 text-sm sm:text-base md:text-lg mb-3 font-medium">Secretary</p>
-              <p className="text-xs sm:text-sm text-gray-500 mb-4">Mechanical Engineering, Class of 2008</p>
-              <div className="flex justify-center gap-3 sm:gap-4">
-                <FiLinkedin className="text-gray-400 hover:text-blue-600 cursor-pointer transition-colors text-xl sm:text-2xl" />
-                <FiMail className="text-gray-400 hover:text-blue-600 cursor-pointer transition-colors text-xl sm:text-2xl" />
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
+              <div className="h-2 bg-gradient-to-r from-purple-600 to-purple-400"></div>
+              <div className="p-6 text-center">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
+                  <img src="/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg" alt="Ahmad Wali Karimi" className="w-full h-full object-cover" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Ahmad Wali Karimi</h3>
+                <div className="w-12 h-1 bg-purple-600 mx-auto mb-3"></div>
+                <p className="text-purple-600 font-semibold text-sm mb-3">Secretary</p>
+                <p className="text-gray-500 text-xs mb-4">Mechanical Engineering, Class of 2008</p>
+                <div className="flex justify-center gap-3">
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center hover:bg-purple-200 transition-colors cursor-pointer">
+                    <FiLinkedin className="text-purple-600 text-sm" />
+                  </div>
+                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center hover:bg-purple-200 transition-colors cursor-pointer">
+                    <FiMail className="text-purple-600 text-sm" />
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Board Member 4 */}
-            <div className="text-center group bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 p-6">
-              <div className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 lg:w-56 lg:h-56 mx-auto mb-4 sm:mb-6 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center group-hover:shadow-xl transition-shadow duration-300">
-                <span className="text-gray-500 text-4xl sm:text-5xl md:text-6xl">👤</span>
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
+              <div className="h-2 bg-gradient-to-r from-orange-600 to-orange-400"></div>
+              <div className="p-6 text-center">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
+                  <img src="/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg" alt="Fatima Noori" className="w-full h-full object-cover" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Fatima Noori</h3>
+                <div className="w-12 h-1 bg-orange-600 mx-auto mb-3"></div>
+                <p className="text-orange-600 font-semibold text-sm mb-3">Treasurer</p>
+                <p className="text-gray-500 text-xs mb-4">Computer Engineering, Class of 2012</p>
+                <div className="flex justify-center gap-3">
+                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center hover:bg-orange-200 transition-colors cursor-pointer">
+                    <FiLinkedin className="text-orange-600 text-sm" />
+                  </div>
+                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center hover:bg-orange-200 transition-colors cursor-pointer">
+                    <FiMail className="text-orange-600 text-sm" />
+                  </div>
+                </div>
               </div>
-              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-2">Fatima Noori</h3>
-              <p className="text-gray-600 text-sm sm:text-base md:text-lg mb-3 font-medium">Treasurer</p>
-              <p className="text-xs sm:text-sm text-gray-500 mb-4">Computer Engineering, Class of 2012</p>
-              <div className="flex justify-center gap-3 sm:gap-4">
-                <FiLinkedin className="text-gray-400 hover:text-blue-600 cursor-pointer transition-colors text-xl sm:text-2xl" />
-                <FiMail className="text-gray-400 hover:text-blue-600 cursor-pointer transition-colors text-xl sm:text-2xl" />
+            </div>
+          </div>
+
+          {/* Board Stats */}
+          <div className="mt-12 bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+              <div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">15+</div>
+                <div className="text-sm text-gray-600">Years Combined Experience</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">4</div>
+                <div className="text-sm text-gray-600">Engineering Disciplines</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">100+</div>
+                <div className="text-sm text-gray-600">Projects Led</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">50+</div>
+                <div className="text-sm text-gray-600">Awards & Recognitions</div>
               </div>
             </div>
           </div>
