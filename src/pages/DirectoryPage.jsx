@@ -41,7 +41,7 @@ const DirectoryPage = () => {
     {
       id: 2,
       name: "Sara Mohammadi",
-      position: "Lead Data Scientist",
+      position: "Lead Data Scientist, the full stack web developer with smart mind, the full stack web developer with smart mind, the full stack web developer with smart mind, the full stack web developer with smart mind, the full stack web developer with smart mind",
       class: "Class of 2018 — Computer Science",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA0dUWcNiyn3vjWhg_aU4GGrZNqP2W7qXonUCX8rAV7Gq9g2s6NM7WWoULwrrII12ZgCOatOWePZ4jVn2wMvlBYTnjBTRQPnKT4buVUSMNE9rXaedHzziBWP-gwivhk4GjxDhxwZwin8JRgOSdkzQiKVMuzBYCwza_ILhJqG97kkZ8cp6QpmDwplHbO_kcoO-gqpqFG6--UJylVHImpf-_lY0uiqwxpfNqqBu0liHQFMD4WTF2yxXM3tHj2WXthfJAVQokhVRxKte9B",
       online: false
@@ -228,7 +228,7 @@ const DirectoryPage = () => {
                   )}
                 </div>
                 <h3 className="text-gray-900 text-sm font-bold mb-3 leading-tight">{person.name}</h3>
-                <div className="text-gray-700 text-xs font-medium mb-4 leading-tight flex-grow relative">
+                <div className="text-gray-700 text-xs font-medium mb-4 leading-tight flex-grow relative overflow-y-auto">
                   <div className={isExpanded ? '' : 'line-clamp-2'}>
                     {person.position}
                   </div>
@@ -238,6 +238,14 @@ const DirectoryPage = () => {
                       className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium inline"
                     >
                       see more
+                    </span>
+                  )}
+                  {needsSeeMore && isExpanded && (
+                    <span 
+                      onClick={() => toggleCardExpansion(person.id)}
+                      className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium inline"
+                    >
+                      see less
                     </span>
                   )}
                 </div>
