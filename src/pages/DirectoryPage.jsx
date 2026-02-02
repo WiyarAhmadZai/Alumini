@@ -226,8 +226,8 @@ const DirectoryPage = () => {
                     <div className="absolute bottom-1 right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>
                   )}
                 </div>
-                <h3 className="text-gray-900 text-sm font-bold mb-2 leading-tight">{person.name}</h3>
-                <div className="text-gray-700 text-xs font-medium mb-2 leading-tight">
+                <h3 className="text-gray-900 text-sm font-bold mb-3 leading-tight">{person.name}</h3>
+                <div className="text-gray-700 text-xs font-medium mb-4 leading-tight">
                   <div className={isExpanded ? '' : 'line-clamp-2'}>
                     {person.position}
                     {!isExpanded && (
@@ -239,35 +239,6 @@ const DirectoryPage = () => {
                       </span>
                     )}
                   </div>
-                  {isExpanded && (
-                    <span 
-                      onClick={() => toggleCardExpansion(person.id)}
-                      className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium"
-                    >
-                      see less
-                    </span>
-                  )}
-                </div>
-                <div className="text-gray-500 text-xs mb-4 leading-tight">
-                  <div className={isExpanded ? '' : 'line-clamp-2'}>
-                    {person.class}
-                    {!isExpanded && (
-                      <span 
-                        onClick={() => toggleCardExpansion(person.id)}
-                        className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium inline"
-                      >
-                        see more
-                      </span>
-                    )}
-                  </div>
-                  {isExpanded && (
-                    <span 
-                      onClick={() => toggleCardExpansion(person.id)}
-                      className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium"
-                    >
-                      see less
-                    </span>
-                  )}
                 </div>
                 <button 
                   onClick={() => navigate('/profile')}
