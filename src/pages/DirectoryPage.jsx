@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   FiSearch, 
   FiCalendar, 
@@ -15,7 +16,9 @@ import {
 import Layout from '../components/Layout';
 
 const DirectoryPage = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
+  const [expandedCards, setExpandedCards] = useState(new Set());
   const [expandedFilter, setExpandedFilter] = useState(null);
   const [expandedFilters, setExpandedFilters] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({
@@ -129,14 +132,26 @@ const DirectoryPage = () => {
     }));
   };
 
+  const toggleCardExpansion = (cardId) => {
+    setExpandedCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative w-full h-80 sm:h-96 overflow-hidden">
+      <section className="relative w-full h-64 sm:h-72 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6")',
+            backgroundImage: 'linear-gradient(rgba(0, 39, 89, 0.9) 0%, rgba(0, 39, 89, 0.95) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6")',
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
             backgroundPosition: 'center'
@@ -157,332 +172,119 @@ const DirectoryPage = () => {
 
       {/* Main Content */}
       <div className="max-w-[1440px] mx-auto w-full px-4 sm:px-6 md:px-8 lg:px-10 py-6">
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Side Navigation Bar (Filters) */}
-          <aside className="w-full lg:w-80 flex-shrink-0">
-            <div className="sticky top-24">
-              <div className="flex flex-col gap-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                <div>
-                  <h1 className="text-gray-900 text-lg font-bold">Advanced Filters</h1>
-                  <p className="text-gray-600 text-sm">Refine your network search</p>
-                </div>
-                
-                <div className="flex flex-col gap-1">
-                  {/* Graduation Year Filter */}
-                  <div>
-                    <button 
-                      onClick={() => toggleFilter('graduation')}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer group transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <FiCalendar className="text-[#002759]" />
-                        <p className="text-gray-900 text-sm font-medium">Graduation Year</p>
-                      </div>
-                      <FiChevronDown className={`text-sm text-gray-600 transition-transform ${
-                        expandedFilters.includes('graduation') ? 'rotate-180' : ''
-                      }`} />
-                    </button>
-                    
-                    {expandedFilters.includes('graduation') && (
-                      <div className="px-10 py-3 flex flex-col gap-2 bg-gray-50 border-l-4 border-[#002759]">
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>2015 - 2020</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>2010 - 2014</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>2005 - 2009</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>2000 - 2004</span>
-                        </label>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Faculty Filter */}
-                  <div>
-                    <button 
-                      onClick={() => toggleFilter('faculty')}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                        expandedFilters.includes('faculty') 
-                          ? 'bg-gradient-to-r from-[#002759]/10 to-[#0a519b]/10 border border-[#002759]/20' 
-                          : 'hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3">
-                        <FiBookOpen className={`text-sm font-semibold ${
-                          expandedFilters.includes('faculty') ? 'text-[#002759]' : 'text-gray-900'
-                        }`} />
-                        <p className={`text-sm font-semibold ${
-                          expandedFilters.includes('faculty') ? 'text-[#002759]' : 'text-gray-900'
-                        }`}>Faculty</p>
-                      </div>
-                      <FiChevronDown className={`text-sm transition-transform ${
-                        expandedFilters.includes('faculty') ? 'rotate-180 text-[#002759]' : 'text-gray-600'
-                      }`} />
-                    </button>
-                    
-                    {expandedFilters.includes('faculty') && (
-                      <div className="px-10 py-3 flex flex-col gap-2 bg-gray-50 border-l-4 border-[#002759]">
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input 
-                            checked={selectedFilters.faculty.includes('Civil Engineering')}
-                            onChange={() => handleFacultyChange('Civil Engineering')}
-                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                            type="checkbox" 
-                          />
-                          <span>Civil Engineering</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input 
-                            checked={selectedFilters.faculty.includes('Computer Science')}
-                            onChange={() => handleFacultyChange('Computer Science')}
-                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                            type="checkbox" 
-                          />
-                          <span>Computer Science</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input 
-                            checked={selectedFilters.faculty.includes('Geomatics')}
-                            onChange={() => handleFacultyChange('Geomatics')}
-                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                            type="checkbox" 
-                          />
-                          <span>Geomatics</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input 
-                            checked={selectedFilters.faculty.includes('Electromechanics')}
-                            onChange={() => handleFacultyChange('Electromechanics')}
-                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                            type="checkbox" 
-                          />
-                          <span>Electromechanics</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input 
-                            checked={selectedFilters.faculty.includes('All')}
-                            onChange={() => handleFacultyChange('All')}
-                            className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" 
-                            type="checkbox" 
-                          />
-                          <span>All Faculties</span>
-                        </label>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Degree Type Filter */}
-                  <div>
-                    <button 
-                      onClick={() => toggleFilter('degree')}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer group transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <FiBookOpen className="text-gray-900" />
-                        <p className="text-gray-900 text-sm font-medium">Degree Type</p>
-                      </div>
-                      <FiChevronDown className={`text-sm text-gray-600 transition-transform ${
-                        expandedFilters.includes('degree') ? 'rotate-180' : ''
-                      }`} />
-                    </button>
-                    
-                    {expandedFilters.includes('degree') && (
-                      <div className="px-10 py-3 flex flex-col gap-2 bg-gray-50 border-l-4 border-[#002759]">
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>Bachelor's Degree</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>Master's Degree</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>PhD</span>
-                        </label>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Industry Filter */}
-                  <div>
-                    <button 
-                      onClick={() => toggleFilter('industry')}
-                      className="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 cursor-pointer group transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <FiBriefcase className="text-gray-900" />
-                        <p className="text-gray-900 text-sm font-medium">Current Industry</p>
-                      </div>
-                      <FiChevronDown className={`text-sm text-gray-600 transition-transform ${
-                        expandedFilters.includes('industry') ? 'rotate-180' : ''
-                      }`} />
-                    </button>
-                    
-                    {expandedFilters.includes('industry') && (
-                      <div className="px-10 py-3 flex flex-col gap-2 bg-gray-50 border-l-4 border-[#002759]">
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>Technology</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>Engineering</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>Healthcare</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>Education</span>
-                        </label>
-                        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer hover:bg-white p-2 rounded">
-                          <input className="rounded text-[#002759] focus:ring-[#002759] border-gray-300" type="checkbox"/>
-                          <span>Finance</span>
-                        </label>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <button 
-                  onClick={resetFilters}
-                  className="mt-4 flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-gradient-to-r from-gray-100 to-gray-200 text-gray-900 text-sm font-bold hover:from-gray-200 hover:to-gray-300 transition-all"
-                >
-                  Reset Filters
-                </button>
-              </div>
-            </div>
-          </aside>
-
-          {/* Main Content Area */}
-          <div className="flex-1 flex flex-col gap-6">
-            {/* Search Bar Section */}
-            <div className="flex flex-col gap-4">
-              <div className="w-full">
-                <label className="flex flex-col h-14 w-full">
-                  <div className="flex w-full flex-1 items-stretch rounded-xl h-full shadow-sm border-0">
-                    <div className="text-gray-600 flex border-none bg-white items-center justify-center pl-4 rounded-l-xl">
-                      <FiSearch />
-                    </div>
-                    <input 
-                      className="flex w-full min-w-0 flex-1 resize-none overflow-hidden text-gray-900 focus:outline-0 focus:ring-0 border-none bg-white focus:border-none h-full placeholder:text-gray-600 px-4 rounded-r-xl pl-2 text-base font-normal"
-                      placeholder="Search by name, company, or skills..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-                </label>
-              </div>
-
-              {/* Selected Filters (Chips) */}
-              <div className="flex gap-2 flex-wrap items-center">
-                <p className="text-sm font-medium text-gray-600 mr-2">Quick tags:</p>
-                {selectedFilters.faculty.map(faculty => (
-                  <button key={faculty} className="flex h-8 items-center gap-x-2 rounded-full bg-gradient-to-r from-[#002759] to-[#0a519b] text-white border border-[#002759]/20 px-4">
-                    <span className="text-xs font-semibold">{faculty}</span>
-                    <FiX 
-                      className="text-[16px] cursor-pointer" 
-                      onClick={() => removeFilter('faculty', faculty)}
-                    />
-                  </button>
-                ))}
-                <button className="flex h-8 items-center gap-x-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-4">
-                  <span className="text-xs font-semibold">Class of 2020</span>
-                  <FiChevronDown className="text-[16px]" />
-                </button>
-                <button className="flex h-8 items-center gap-x-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4">
-                  <span className="text-xs font-semibold">Kabul, Afghanistan</span>
-                  <FiChevronDown className="text-[16px]" />
-                </button>
-              </div>
-            </div>
-
-            {/* Alumni Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {alumni.map((person) => (
-                <div key={person.id} className="bg-white border border-gray-200 rounded-xl p-6 flex flex-col items-center text-center group hover:shadow-lg transition-all transform hover:-translate-y-1">
-                  <div className="relative mb-4">
-                    <div 
-                      className="w-24 h-24 bg-center bg-no-repeat bg-cover rounded-full border-4 border-[#002759]/10"
-                      style={{ backgroundImage: `url("${person.image}")` }}
-                    ></div>
-                    {person.online && (
-                      <div className="absolute bottom-1 right-1 w-5 h-5 bg-gradient-to-r from-green-400 to-green-500 border-2 border-white rounded-full"></div>
-                    )}
-                  </div>
-                  <h3 className="text-gray-900 text-lg font-bold">{person.name}</h3>
-                  <p className="text-[#002759] text-sm font-semibold mb-1">{person.position}</p>
-                  <p className="text-gray-600 text-xs mb-4">{person.class}</p>
-                  <div className="flex gap-2 w-full mt-auto">
-                    <button className="flex-1 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-sm font-bold py-2 rounded-lg hover:from-[#0a519b] hover:to-[#003d7a] transition-all transform hover:scale-105">
-                      Connect
-                    </button>
-                    <button className="px-3 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-lg hover:from-cyan-600 hover:to-blue-600 transition-all transform hover:scale-105">
-                      <FiMail className="text-[20px] align-middle" />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Pagination Area */}
-            <div className="flex items-center justify-between py-8 border-t border-gray-200 mt-6">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-[#002759] to-[#0a519b] rounded-lg flex items-center justify-center text-white shadow-lg">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 2a1 1 0 000 2v6a1 1 0 001 1h6a1 1 0 001-1V4a1 1 0 00-1-1H9zM4 6a1 1 0 00-1 1v6a1 1 0 001 1h6a1 1 0 001-1V7a1 1 0 00-1-1H4z"/>
-                  </svg>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  Showing <span className="font-bold text-[#002759] text-base">124</span> KPU Alumni
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  className={`flex h-10 w-10 items-center justify-center rounded-lg border transition-all ${
-                    currentPage === 1 
-                      ? 'border-gray-200 text-gray-400 cursor-not-allowed' 
-                      : 'border-gray-300 text-gray-700 hover:bg-[#002759] hover:text-white hover:border-[#002759]'
-                  }`}
-                  disabled={currentPage === 1}
-                >
-                  <FiChevronLeft />
-                </button>
-                
-                {[1, 2, 3].map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`h-10 px-4 items-center justify-center rounded-lg font-bold text-sm transition-all ${
-                      currentPage === page
-                        ? 'bg-gradient-to-r from-[#002759] to-[#0a519b] text-white shadow-lg transform scale-105'
-                        : 'border border-gray-300 text-gray-700 hover:bg-[#002759]/10 hover:text-[#002759] hover:border-[#002759]'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
-                
-                <button 
-                  onClick={() => setCurrentPage(currentPage + 1)}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 text-gray-700 hover:bg-[#002759] hover:text-white hover:border-[#002759] transition-all"
-                >
-                  <FiChevronRight />
-                </button>
-              </div>
+        {/* Search and Filter Section */}
+        <div className="flex flex-col lg:flex-row gap-4 items-center justify-between mb-8">
+          <div className="w-full lg:flex-1">
+            <div className="relative">
+              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl" />
+              <input 
+                className="w-full h-14 pl-12 pr-4 text-gray-900 bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-[#002759] focus:ring-2 focus:ring-[#002759]/20 text-base placeholder-gray-500 shadow-sm"
+                placeholder="Search by name, company, or skills..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
             </div>
           </div>
+          <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white font-semibold rounded-xl hover:from-[#0a519b] hover:to-[#003d7a] transition-all shadow-md">
+            <FiFilter className="text-lg" />
+            <span>Filter</span>
+          </button>
+        </div>
+
+        {/* Category Pills */}
+        <div className="flex flex-wrap gap-3 mb-8">
+          <button className="px-6 py-2 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white font-medium rounded-full hover:from-[#0a519b] hover:to-[#003d7a] transition-all shadow-md">
+            All Members
+          </button>
+          <button className="px-6 py-2 bg-white text-gray-700 font-medium rounded-full border border-gray-300 hover:border-[#002759] hover:text-[#002759] transition-all">
+            Faculty
+          </button>
+          <button className="px-6 py-2 bg-white text-gray-700 font-medium rounded-full border border-gray-300 hover:border-[#002759] hover:text-[#002759] transition-all">
+            Class Year
+          </button>
+          <button className="px-6 py-2 bg-white text-gray-700 font-medium rounded-full border border-gray-300 hover:border-[#002759] hover:text-[#002759] transition-all">
+            Location
+          </button>
+          <button className="px-6 py-2 bg-white text-gray-700 font-medium rounded-full border border-gray-300 hover:border-[#002759] hover:text-[#002759] transition-all">
+            Industry
+          </button>
+        </div>
+
+        {/* Alumni Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          {alumni.map((person) => {
+            const isExpanded = expandedCards.has(person.id);
+            
+            return (
+              <div key={person.id} className="bg-white border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center hover:shadow-xl transition-all duration-300 max-w-[220px] group">
+                <div className="relative mb-4">
+                  <div 
+                    className="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-full border-3 border-gray-200 shadow-md group-hover:shadow-lg transition-all duration-300"
+                    style={{ backgroundImage: `url("${person.image}")` }}
+                  ></div>
+                  {person.online && (
+                    <div className="absolute bottom-1 right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full shadow-sm"></div>
+                  )}
+                </div>
+                <h3 className="text-gray-900 text-sm font-bold mb-2 leading-tight">{person.name}</h3>
+                <div className="text-gray-700 text-xs font-medium mb-2 leading-tight">
+                  <div className={isExpanded ? '' : 'line-clamp-2'}>
+                    {person.position}
+                    {!isExpanded && (
+                      <span 
+                        onClick={() => toggleCardExpansion(person.id)}
+                        className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium inline"
+                      >
+                        see more
+                      </span>
+                    )}
+                  </div>
+                  {isExpanded && (
+                    <span 
+                      onClick={() => toggleCardExpansion(person.id)}
+                      className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium"
+                    >
+                      see less
+                    </span>
+                  )}
+                </div>
+                <div className="text-gray-500 text-xs mb-4 leading-tight">
+                  <div className={isExpanded ? '' : 'line-clamp-2'}>
+                    {person.class}
+                    {!isExpanded && (
+                      <span 
+                        onClick={() => toggleCardExpansion(person.id)}
+                        className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium inline"
+                      >
+                        see more
+                      </span>
+                    )}
+                  </div>
+                  {isExpanded && (
+                    <span 
+                      onClick={() => toggleCardExpansion(person.id)}
+                      className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium"
+                    >
+                      see less
+                    </span>
+                  )}
+                </div>
+                <button 
+                  onClick={() => navigate('/profile')}
+                  className="w-full py-2 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-sm font-semibold rounded-lg hover:from-[#0a519b] hover:to-[#003d7a] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                >
+                  View Profile
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Load More Section */}
+        <div className="flex justify-center mt-12">
+          <button className="px-8 py-3 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white font-semibold rounded-xl hover:from-[#0a519b] hover:to-[#003d7a] transition-all shadow-md">
+            Load More Alumni
+          </button>
         </div>
       </div>
     </Layout>
