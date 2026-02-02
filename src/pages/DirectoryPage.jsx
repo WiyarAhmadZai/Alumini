@@ -214,9 +214,10 @@ const DirectoryPage = () => {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {alumni.map((person) => {
             const isExpanded = expandedCards.has(person.id);
+            const needsSeeMore = person.position.length > 25;
             
             return (
-              <div key={person.id} className="bg-white border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center hover:shadow-xl transition-all duration-300 max-w-[220px] group">
+              <div key={person.id} className="bg-white border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center hover:shadow-xl transition-all duration-300 max-w-[220px] group h-[280px]">
                 <div className="relative mb-4">
                   <div 
                     className="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-full border-3 border-gray-200 shadow-md group-hover:shadow-lg transition-all duration-300"
@@ -227,22 +228,22 @@ const DirectoryPage = () => {
                   )}
                 </div>
                 <h3 className="text-gray-900 text-sm font-bold mb-3 leading-tight">{person.name}</h3>
-                <div className="text-gray-700 text-xs font-medium mb-4 leading-tight">
+                <div className="text-gray-700 text-xs font-medium mb-4 leading-tight flex-grow">
                   <div className={isExpanded ? '' : 'line-clamp-2'}>
                     {person.position}
-                    {!isExpanded && (
-                      <span 
-                        onClick={() => toggleCardExpansion(person.id)}
-                        className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium inline"
-                      >
-                        see more
-                      </span>
-                    )}
                   </div>
+                  {needsSeeMore && !isExpanded && (
+                    <span 
+                      onClick={() => toggleCardExpansion(person.id)}
+                      className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium inline"
+                    >
+                      see more
+                    </span>
+                  )}
                 </div>
                 <button 
                   onClick={() => navigate('/profile')}
-                  className="w-full py-2 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-sm font-semibold rounded-lg hover:from-[#0a519b] hover:to-[#003d7a] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                  className="w-full py-2 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-sm font-semibold rounded-lg hover:from-[#0a519b] hover:to-[#003d7a] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-auto"
                 >
                   View Profile
                 </button>
