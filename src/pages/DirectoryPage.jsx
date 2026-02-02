@@ -33,7 +33,7 @@ const DirectoryPage = () => {
     {
       id: 1,
       name: "Ahmad Rashid",
-      position: "Senior Structural Engineer, the full stack web developer with smart mind",
+      position: "Senior Structural Engineer, the full stack web developer with smart mind, the full stack web developer with smart mind, the full stack web developer with smart mind",
       class: "Class of 2015 — Civil Engineering",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC126DAr5Qw0O932Pa0F2On4dslt3MWS_V3gpBn1Cz1NZ_N-2Y8VlOccwUzND9fm-7ViMYqM4C-LVI6nNrm2H513MmA-nFftbknCRJFqpNzWrXsiDtLBnBgYspv_2CFnttuHxcWL6eSjmZQAEAQc7DBvevDehS-7A-AftbR6VoGfIqdukQ-RRORDocSbRBEtViltUH9cCoFPYOKxUqX0K1I8AFEI4UKSg3-Fu7nvlG-ZwZBxZiMInQ-Bl8B6-yJmvkmA45zu8he7T3B",
       online: true
@@ -217,7 +217,7 @@ const DirectoryPage = () => {
             const needsSeeMore = person.position.length > 25;
             
             return (
-              <div key={person.id} className="bg-white border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center hover:shadow-xl transition-all duration-300 max-w-[220px] group h-[280px]">
+              <div key={person.id} className="bg-white border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center hover:shadow-xl transition-all duration-300 max-w-[220px] group h-[280px] overflow-hidden">
                 <div className="relative mb-4">
                   <div 
                     className="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-full border-3 border-gray-200 shadow-md group-hover:shadow-lg transition-all duration-300"
@@ -228,7 +228,7 @@ const DirectoryPage = () => {
                   )}
                 </div>
                 <h3 className="text-gray-900 text-sm font-bold mb-3 leading-tight">{person.name}</h3>
-                <div className="text-gray-700 text-xs font-medium mb-4 leading-tight flex-grow">
+                <div className="text-gray-700 text-xs font-medium mb-4 leading-tight flex-grow relative">
                   <div className={isExpanded ? '' : 'line-clamp-2'}>
                     {person.position}
                   </div>
