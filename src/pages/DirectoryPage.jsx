@@ -33,7 +33,7 @@ const DirectoryPage = () => {
     {
       id: 1,
       name: "Ahmad Rashid",
-      position: "Senior Structural Engineer",
+      position: "Senior Structural Engineer, the full stack web developer with smart mind",
       class: "Class of 2015 — Civil Engineering",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuC126DAr5Qw0O932Pa0F2On4dslt3MWS_V3gpBn1Cz1NZ_N-2Y8VlOccwUzND9fm-7ViMYqM4C-LVI6nNrm2H513MmA-nFftbknCRJFqpNzWrXsiDtLBnBgYspv_2CFnttuHxcWL6eSjmZQAEAQc7DBvevDehS-7A-AftbR6VoGfIqdukQ-RRORDocSbRBEtViltUH9cCoFPYOKxUqX0K1I8AFEI4UKSg3-Fu7nvlG-ZwZBxZiMInQ-Bl8B6-yJmvkmA45zu8he7T3B",
       online: true
