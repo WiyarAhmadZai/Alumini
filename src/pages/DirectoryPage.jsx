@@ -151,7 +151,7 @@ const DirectoryPage = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'linear-gradient(rgba(0, 39, 89, 0.9) 0%, rgba(0, 39, 89, 0.95) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6")',
+            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.7) 20%, rgba(0, 39, 89, 0.01) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6")',
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
             backgroundPosition: 'center'
@@ -211,13 +211,13 @@ const DirectoryPage = () => {
         </div>
 
         {/* Alumni Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {alumni.map((person) => {
             const isExpanded = expandedCards.has(person.id);
             const needsSeeMore = person.position.length > 25;
             
             return (
-              <div key={person.id} className="bg-white border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center hover:shadow-xl transition-all duration-300 max-w-[220px] group h-[280px] overflow-hidden">
+              <div key={person.id} className="bg-white border border-gray-200 rounded-xl p-4 flex flex-col items-center text-center hover:shadow-xl transition-all duration-300 max-w-[250px] group h-[280px] overflow-hidden">
                 <div className="relative mb-4">
                   <div 
                     className="w-20 h-20 bg-center bg-no-repeat bg-cover rounded-full border-3 border-gray-200 shadow-md group-hover:shadow-lg transition-all duration-300"
