@@ -10,16 +10,17 @@ const ProfilePage = () => {
       <div className="fixed top-0 left-0 right-0 h-screen bg-gradient-to-b from-[#002759]/80 via-[#002759]/40 to-[#002759]/10 -z-10"></div>
       
       {/* Hero Section */}
-      <div className="relative h-18 bg-cover bg-center" >
-        <div className="absolute inset-0 bg-gradient-to-b bg-blue-900 to-transparent"></div>
-        <div className="relative z-10 flex items-center justify-center h-full">
-        </div>
-      </div>
+      
 
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className=" h-12 bg-cover bg-center " >
+          <div className="absolute inset-0 bg-gradient-to-b from-[#002759]/95  to-blue-500 to-transparent"></div>
+          <div className="relative flex items-center justify-center ">
+          </div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-12">
           {/* Profile Header Card */}
-          <div className="bg-primary rounded-xl border border-primary shadow-sm overflow-hidden">
+          <div className="bg-primary rounded-xl border border-primary shadow-sm overflow-hidden mb-6">
             {/* Cover Image */}
             <div className="w-full bg-center bg-no-repeat bg-cover min-h-64 relative" style={{backgroundImage: 'url("https://picsum.photos/seed/cover/1200/400.jpg")'}}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
