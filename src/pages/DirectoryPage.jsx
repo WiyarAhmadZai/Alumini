@@ -252,12 +252,20 @@ const DirectoryPage = () => {
               <div key={alumnus.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
                 {/* Profile Header */}
                 <div className="relative">
-                  <div className="h-32 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+                  {alumnus.cover_image ? (
+                    <img
+                      src={alumnus.cover_image}
+                      alt="Cover"
+                      className="w-full h-32 object-cover"
+                    />
+                  ) : (
+                    <div className="h-32 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+                  )}
                   <div className="absolute top-16 left-1/2 transform -translate-x-1/2">
                     {alumnus.profile_image || alumnus.student_photo ? (
                       <img
                         src={alumnus.profile_image || alumnus.student_photo}
-                        alt={alumnus.name}
+                        alt={alumnus.first_name}
                         className="w-20 h-20 rounded-full border-4 border-white object-cover"
                       />
                     ) : (
