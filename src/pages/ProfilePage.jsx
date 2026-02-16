@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
+import Swal from 'sweetalert2';
 import alumniService from '../services/alumniService';
 import authService from '../services/authService';
 import Modal from '../components/ui/Modal';
@@ -13,11 +14,15 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share
+  const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact
   const [editingItem, setEditingItem] = useState(null);
   const [saving, setSaving] = useState(false);
   const [modalError, setModalError] = useState('');
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
+  const [contactForm, setContactForm] = useState({
+    phone: '',
+    location: ''
+  });
 
   const [experienceAttachment, setExperienceAttachment] = useState(null);
   const [educationAttachment, setEducationAttachment] = useState(null);
@@ -410,11 +415,20 @@ const ProfilePage = () => {
     setAchievementForm(item ? {
       title: item.title || '',
       issuer: item.issuer || '',
-      year: item.year ?? '',
+      year: item.year || '',
       category: item.category || '',
       description: item.description || ''
     } : emptyAchievement);
     setActiveModal('achievement');
+  };
+
+  const openContactModal = () => {
+    setModalError('');
+    setContactForm({
+      phone: profile?.phone || '',
+      location: profile?.location || ''
+    });
+    setActiveModal('contact');
   };
 
   const handleSaveBasic = async () => {
@@ -548,6 +562,45 @@ const ProfilePage = () => {
       await refreshProfile();
     } catch (e) {
       setError(e.response?.data?.message || 'Failed to delete achievement.');
+    }
+  };
+
+  const handleSaveContact = async () => {
+    try {
+      setSaving(true);
+      setModalError('');
+      
+      await alumniService.updateProfile(contactForm);
+      await refreshProfile();
+      setActiveModal(null);
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to update contact information.';
+      setModalError(msg);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDeleteContact = async (field) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to remove your ${field} information?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, remove it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await alumniService.updateProfile({ [field]: '' });
+        await refreshProfile();
+        Swal.fire('Removed!', `${field} information has been removed.`, 'success');
+      } catch (err) {
+        Swal.fire('Error', 'Failed to remove contact information.', 'error');
+      }
     }
   };
 
@@ -763,7 +816,13 @@ const ProfilePage = () => {
             <aside className="md:col-span-4 flex flex-col gap-6">
               {/* Contact Info Card */}
               <div className="p-6 rounded-xl border border-[#dcdee5] shadow-sm">
-                <h3 className="text-black text-lg font-bold mb-4">Contact Information</h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-black text-lg font-bold">Contact Information</h3>
+                  <button type="button" onClick={openContactModal} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                    <FiEdit size={14} />
+                    Edit
+                  </button>
+                </div>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md">
@@ -771,17 +830,37 @@ const ProfilePage = () => {
                     </div>
                     <span className="text-black text-sm font-medium">{profile?.email || '-'}</span>
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="group relative flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md">
                       <FiPhone className="text-white" />
                     </div>
-                    <span className="text-black text-sm font-medium">{profile?.phone || '-'}</span>
+                    <span className="text-black text-sm font-medium">{profile?.phone || 'Not added'}</span>
+                    {profile?.phone && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteContact('phone')}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto"
+                        title="Delete phone"
+                      >
+                        <FiTrash2 className="text-red-600 hover:text-red-700" size={14} />
+                      </button>
+                    )}
                   </div>
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="group relative flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                     <div className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md">
                       <FiMapPin className="text-white" />
                     </div>
-                    <span className="text-black text-sm font-medium">{profile?.location || '-'}</span>
+                    <span className="text-black text-sm font-medium">{profile?.location || 'Not added'}</span>
+                    {profile?.location && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteContact('location')}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto"
+                        title="Delete location"
+                      >
+                        <FiTrash2 className="text-red-600 hover:text-red-700" size={14} />
+                      </button>
+                    )}
                   </div>
                 </div>
                 <div className="mt-6 pt-6 border-t border-gray-200">
@@ -1372,6 +1451,46 @@ const ProfilePage = () => {
                 View Current Attachment
               </a>
             )}
+          </div>
+        </div>
+      </Modal>
+
+      {/* Contact Modal */}
+      <Modal
+        isOpen={activeModal === 'contact'}
+        title="Edit Contact Information"
+        onClose={closeModal}
+        footer={
+          <div className="flex justify-end gap-3">
+            <button type="button" className="px-4 py-2 rounded-lg border border-gray-300 text-gray-800" onClick={closeModal} disabled={saving}>Cancel</button>
+            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold flex items-center gap-2" onClick={handleSaveContact} disabled={saving}>
+              {saving && <span className="w-4 h-4 rounded-full border-2 border-white/60 border-t-white animate-spin" />}
+              {saving ? 'Saving...' : 'Save'}
+            </button>
+          </div>
+        }
+      >
+        {modalError && <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{modalError}</div>}
+        <div className="grid grid-cols-1 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <input
+              type="tel"
+              value={contactForm.phone}
+              onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter your phone number"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+            <input
+              type="text"
+              value={contactForm.location}
+              onChange={(e) => setContactForm({ ...contactForm, location: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Enter your location"
+            />
           </div>
         </div>
       </Modal>
