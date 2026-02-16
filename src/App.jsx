@@ -30,6 +30,7 @@ function App() {
         <Route path="/signup" element={<LoginPage />} />
         <Route path="/register" element={<VerifiedAlumniRegistration />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/profile/:id" element={<ProfilePage />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<ContactPage />} />
