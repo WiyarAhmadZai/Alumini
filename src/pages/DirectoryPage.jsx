@@ -12,7 +12,7 @@ const DirectoryPage = () => {
   const [expandedFilters, setExpandedFilters] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState({
     faculty: [],
-    graduationYear: [],
+    graduationYear: '',
     degreeType: [],
     industry: []
   });
@@ -20,6 +20,7 @@ const DirectoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [alumni, setAlumni] = useState([]);
+  const [availableYears, setAvailableYears] = useState([]);
 
   useEffect(() => {
     const fetchAlumni = async () => {
@@ -27,6 +28,8 @@ const DirectoryPage = () => {
         setLoading(true);
         setError('');
         const response = await alumniService.getAll();
+        console.log('Fetched alumni data:', response.data);
+        console.log('Sample alumnus graduation years:', response.data.slice(0, 3).map(a => ({ name: a.name, graduation_year: a.graduation_year, faculty_name: a.faculty_name })));
         setAlumni(response.data);
       } catch (err) {
         setError('Failed to load alumni directory.');
@@ -35,19 +38,36 @@ const DirectoryPage = () => {
       }
     };
 
+    const fetchGraduationYears = async () => {
+      try {
+        const response = await alumniService.getGraduationYears();
+        console.log('Fetched years from API:', response.data);
+        setAvailableYears(response.data);
+      } catch (err) {
+        console.error('Failed to load graduation years:', err);
+      }
+    };
+
     fetchAlumni();
+    fetchGraduationYears();
   }, []);
 
   const filteredAlumni = alumni.filter(alumnus => {
     const matchesSearch = !searchTerm || 
-      alumnus.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      alumnus.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      alumnus.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alumnus.current_job_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alumnus.current_company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alumnus.bio?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFaculty = selectedFilters.faculty.length === 0 || selectedFilters.faculty.includes(alumnus.faculty_name);
-    const matchesYear = selectedFilters.graduationYear.length === 0 || selectedFilters.graduationYear.includes(alumnus.graduation_year);
+    
+    // Debug graduation year data
+    console.log('Alumnus graduation year:', alumnus.graduation_year, 'Type:', typeof alumnus.graduation_year);
+    console.log('Selected filter year:', selectedFilters.graduationYear, 'Type:', typeof selectedFilters.graduationYear);
+    
+    const matchesYear = !selectedFilters.graduationYear || String(alumnus.graduation_year) === String(selectedFilters.graduationYear);
+    
+    console.log('Year match result:', matchesYear);
 
     return matchesSearch && matchesFaculty && matchesYear;
   });
@@ -62,7 +82,6 @@ const DirectoryPage = () => {
     'Law',
     'Pharmacy'
   ];
-  const years = [...new Set(alumni.map(a => a.graduation_year).filter(Boolean))].sort((a, b) => b - a);
 
   const toggleFilter = (filterName) => {
     if (expandedFilters.includes(filterName)) {
@@ -89,25 +108,22 @@ const DirectoryPage = () => {
   };
 
   const handleYearChange = (year) => {
-    if (year === 'All') {
-      setSelectedFilters(prev => ({
+    console.log('Year changed to:', year, 'Type:', typeof year);
+    setSelectedFilters(prev => {
+      console.log('Previous filters:', prev);
+      const newFilters = {
         ...prev,
-        graduationYear: []
-      }));
-    } else {
-      setSelectedFilters(prev => ({
-        ...prev,
-        graduationYear: prev.graduationYear.includes(year)
-          ? prev.graduationYear.filter(y => y !== year)
-          : [...prev.graduationYear, year]
-      }));
-    }
+        graduationYear: year === 'All' ? '' : year
+      };
+      console.log('New filters:', newFilters);
+      return newFilters;
+    });
   };
 
   const resetFilters = () => {
     setSelectedFilters({
       faculty: [],
-      graduationYear: [],
+      graduationYear: '',
       degreeType: [],
       industry: []
     });
@@ -286,12 +302,12 @@ const DirectoryPage = () => {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Graduation Year</label>
               <select
-                value={expandedFilters.includes('graduationYear') ? 'All' : selectedFilters.graduationYear.join(',')}
+                value={selectedFilters.graduationYear}
                 onChange={(e) => handleYearChange(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
               >
                 <option value="">All Years</option>
-                {years.map(year => (
+                {availableYears.map(year => (
                   <option key={year} value={year}>{year}</option>
                 ))}
               </select>
@@ -336,7 +352,7 @@ const DirectoryPage = () => {
                     {alumnus.profile_image || alumnus.student_photo ? (
                       <img
                         src={alumnus.profile_image || alumnus.student_photo}
-                        alt={alumnus.first_name}
+                        alt={alumnus.name}
                         className="w-20 h-20 rounded-full border-4 border-white object-cover"
                       />
                     ) : (
@@ -351,7 +367,7 @@ const DirectoryPage = () => {
                 <div className="px-6 pt-12 pb-4 flex-1 flex flex-col">
                   <div className="text-center flex-1">
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      {alumnus.first_name} {alumnus.last_name}
+                      {alumnus.name}
                     </h3>
                     {alumnus.current_job_title && (
                       <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-2">
@@ -363,12 +379,6 @@ const DirectoryPage = () => {
                       <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-2">
                         <FiMapPin className="text-xs" />
                         <span>{alumnus.current_company}</span>
-                      </div>
-                    )}
-                    {alumnus.graduation_year && (
-                      <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-2">
-                        <FiCalendar className="text-xs" />
-                        <span>Class of {alumnus.graduation_year}</span>
                       </div>
                     )}
                     {alumnus.faculty_name && (

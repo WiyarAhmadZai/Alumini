@@ -357,6 +357,19 @@ const alumniService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  /**
+   * Get available graduation years
+   * @returns {Promise} API response
+   */
+  getGraduationYears: async () => {
+    try {
+      const response = await api.get('/alumini/graduation-years');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
