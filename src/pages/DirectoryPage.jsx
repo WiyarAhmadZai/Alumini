@@ -249,9 +249,9 @@ const DirectoryPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredAlumni.map((alumnus) => (
-              <div key={alumnus.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
+              <div key={alumnus.id} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow flex flex-col h-[400px]">
                 {/* Profile Header */}
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   {alumnus.cover_image ? (
                     <img
                       src={alumnus.cover_image}
@@ -277,8 +277,8 @@ const DirectoryPage = () => {
                 </div>
 
                 {/* Profile Content */}
-                <div className="px-6 pt-12 pb-6">
-                  <div className="text-center">
+                <div className="px-6 pt-12 pb-4 flex-1 flex flex-col">
+                  <div className="text-center flex-1">
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">
                       {alumnus.first_name} {alumnus.last_name}
                     </h3>
@@ -289,32 +289,32 @@ const DirectoryPage = () => {
                       </div>
                     )}
                     {alumnus.current_company && (
-                      <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-3">
+                      <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-2">
                         <FiMapPin className="text-xs" />
                         <span>{alumnus.current_company}</span>
                       </div>
                     )}
                     {alumnus.graduation_year && (
-                      <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-3">
+                      <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-2">
                         <FiCalendar className="text-xs" />
                         <span>Class of {alumnus.graduation_year}</span>
                       </div>
                     )}
                     {alumnus.faculty_name && (
-                      <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-3">
+                      <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-2">
                         <FiBookOpen className="text-xs" />
                         <span>{alumnus.faculty_name}</span>
                       </div>
                     )}
                     {alumnus.bio && (
-                      <p className="text-sm text-gray-700 mb-4">
+                      <p className="text-sm text-gray-700 mb-2">
                         {expandedCards.has(alumnus.id) 
                           ? alumnus.bio 
-                          : alumnus.bio.length > 100 
-                            ? `${alumnus.bio.substring(0, 100)}...` 
+                          : alumnus.bio.length > 80 
+                            ? `${alumnus.bio.substring(0, 80)}...` 
                             : alumnus.bio
                         }
-                        {alumnus.bio.length > 100 && (
+                        {alumnus.bio.length > 80 && (
                           <span 
                             onClick={() => toggleCardExpansion(alumnus.id)}
                             className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium"
@@ -327,7 +327,7 @@ const DirectoryPage = () => {
                   </div>
 
                   {/* Action Buttons */}
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mt-auto">
                     <button
                       onClick={() => navigate(`/profile/${alumnus.id}`)}
                       className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
