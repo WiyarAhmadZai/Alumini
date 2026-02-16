@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
@@ -10,9 +10,11 @@ import Modal from '../components/ui/Modal';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isOwner, setIsOwner] = useState(false);
 
   const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact
   const [editingItem, setEditingItem] = useState(null);
@@ -198,13 +200,30 @@ const ProfilePage = () => {
         setLoading(true);
         setError('');
 
-        if (!authService.isAuthenticated()) {
-          navigate('/login');
-          return;
+        const currentUser = authService.getCurrentUser();
+        
+        if (id) {
+          // Viewing another user's profile
+          const response = await alumniService.getById(id);
+          setProfile(response.data);
+          
+          // Check if current user is the owner
+          if (currentUser && currentUser.id === parseInt(id)) {
+            setIsOwner(true);
+          } else {
+            setIsOwner(false);
+          }
+        } else {
+          // Viewing own profile
+          if (!authService.isAuthenticated()) {
+            navigate('/login');
+            return;
+          }
+          
+          const response = await alumniService.getMe();
+          setProfile(response.data);
+          setIsOwner(true);
         }
-
-        const response = await alumniService.getMe();
-        setProfile(response.data);
       } catch (err) {
         const msg = err.response?.data?.message || 'Failed to load profile.';
         setError(msg);
@@ -214,11 +233,16 @@ const ProfilePage = () => {
     };
 
     fetchProfile();
-  }, [navigate]);
+  }, [navigate, id]);
 
   const refreshProfile = async () => {
-    const response = await alumniService.getMe();
-    setProfile(response.data);
+    if (id) {
+      const response = await alumniService.getById(id);
+      setProfile(response.data);
+    } else {
+      const response = await alumniService.getMe();
+      setProfile(response.data);
+    }
   };
 
   const closeModal = () => {
@@ -753,6 +777,7 @@ const ProfilePage = () => {
                 className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-900 rounded-lg px-3 py-2 text-sm font-semibold shadow flex items-center gap-2 cursor-pointer"
                 disabled={saving}
                 onMouseDown={(e) => e.stopPropagation()}
+                style={{ display: isOwner ? 'flex' : 'none' }}
               >
                 <FiCamera />
                 {profile?.cover_image ? 'Update' : 'Add'} Cover
@@ -777,13 +802,13 @@ const ProfilePage = () => {
                     />
                   ) : (
                     <div className="size-40 rounded-full border-4 border-white shadow-lg flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-pink-100 border-dashed cursor-pointer hover:from-purple-100 hover:to-pink-200 transition-colors"
-                         onClick={() => profileInputRef.current?.click()}>
+                         onClick={() => isOwner && profileInputRef.current?.click()}>
                       <FiUser className="text-3xl text-purple-400 mb-2" />
                       <p className="text-xs text-purple-600 font-medium">Add Photo</p>
                     </div>
                   )}
                 </div>
-                {profile?.profile_image && (
+                {profile?.profile_image && isOwner && (
                   <button
                     type="button"
                     onClick={(e) => {
@@ -820,10 +845,12 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 <div className="flex gap-3 mt-4 md:mt-0">
-                  <button type="button" onClick={openBasicModal} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2">
-                    <FiEdit className="text-sm" />
-                    Edit Profile
-                  </button>
+                  {isOwner && (
+                    <button type="button" onClick={openBasicModal} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2">
+                      <FiEdit className="text-sm" />
+                      Edit Profile
+                    </button>
+                  )}
                   <button 
                     onClick={() => setActiveModal('share')}
                     className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
@@ -847,10 +874,12 @@ const ProfilePage = () => {
               <div className="p-6 rounded-xl border border-[#dcdee5] shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-black text-lg font-bold">Contact Information</h3>
-                  <button type="button" onClick={openContactModal} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
-                    <FiEdit size={14} />
-                    Edit
-                  </button>
+                  {isOwner && (
+                    <button type="button" onClick={openContactModal} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                      <FiEdit size={14} />
+                      Edit
+                    </button>
+                  )}
                 </div>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
@@ -864,7 +893,7 @@ const ProfilePage = () => {
                       <FiPhone className="text-white" />
                     </div>
                     <span className="text-black text-sm font-medium">{profile?.phone || 'Not added'}</span>
-                    {profile?.phone && (
+                    {profile?.phone && isOwner && (
                       <button
                         type="button"
                         onClick={() => handleDeleteContact('phone')}
@@ -880,7 +909,7 @@ const ProfilePage = () => {
                       <FiMapPin className="text-white" />
                     </div>
                     <span className="text-black text-sm font-medium">{profile?.location || 'Not added'}</span>
-                    {profile?.location && (
+                    {profile?.location && isOwner && (
                       <button
                         type="button"
                         onClick={() => handleDeleteContact('location')}
@@ -928,29 +957,41 @@ const ProfilePage = () => {
                     <FiBriefcase className="text-primary" />
                     Professional Experience
                   </h3>
-                  <button type="button" onClick={() => openExperienceModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
-                    <FiPlus />
-                    Add
-                  </button>
+                  {isOwner && (
+                    <button type="button" onClick={() => openExperienceModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                      <FiPlus />
+                      Add
+                    </button>
+                  )}
                 </div>
                 <div className="space-y-8">
                   {experiences.length === 0 ? (
-                    <button type="button" onClick={() => openExperienceModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
-                      <FiPlus />
-                      Add Experience
-                    </button>
+                    isOwner ? (
+                      <button type="button" onClick={() => openExperienceModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+                        <FiPlus />
+                        Add Experience
+                      </button>
+                    ) : (
+                      <div className="w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
+                        No experience added yet.
+                      </div>
+                    )
                   ) : (
                     experiences.map((exp, idx) => (
                       <div key={exp.id} className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
                         <div className={`absolute -left-[9px] top-0 w-4 h-4 ${idx === 0 ? 'bg-primary border-gray-100' : 'bg-gray-400 border-white'} rounded-full border-4 shadow-sm`}></div>
                         <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 relative">
                           <div className="absolute top-3 right-3 flex gap-2">
-                            <button type="button" onClick={() => openExperienceModal(exp)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
-                              <FiEdit />
-                            </button>
-                            <button type="button" onClick={() => handleDeleteExperience(exp.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
-                              <FiTrash2 />
-                            </button>
+                            {isOwner && (
+                              <>
+                                <button type="button" onClick={() => openExperienceModal(exp)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
+                                  <FiEdit />
+                                </button>
+                                <button type="button" onClick={() => handleDeleteExperience(exp.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
+                                  <FiTrash2 />
+                                </button>
+                              </>
+                            )}
                           </div>
                           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
                             <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">{exp.job_title}</h4>
@@ -977,29 +1018,41 @@ const ProfilePage = () => {
                     <FiBookOpen className="text-primary" />
                     Education
                   </h3>
-                  <button type="button" onClick={() => openEducationModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
-                    <FiPlus />
-                    Add
-                  </button>
+                  {isOwner && (
+                    <button type="button" onClick={() => openEducationModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                      <FiPlus />
+                      Add
+                    </button>
+                  )}
                 </div>
                 <div className="space-y-8">
                   {educations.length === 0 ? (
-                    <button type="button" onClick={() => openEducationModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
-                      <FiPlus />
-                      Add Education
-                    </button>
+                    isOwner ? (
+                      <button type="button" onClick={() => openEducationModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+                        <FiPlus />
+                        Add Education
+                      </button>
+                    ) : (
+                      <div className="w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
+                        No education added yet.
+                      </div>
+                    )
                   ) : (
                     educations.map((edu, idx) => (
                       <div key={edu.id} className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
                         <div className={`absolute -left-[9px] top-0 w-4 h-4 ${idx === 0 ? 'bg-primary border-gray-100' : 'bg-gray-400 border-white'} rounded-full border-4 shadow-sm`}></div>
                         <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 relative">
                           <div className="absolute top-3 right-3 flex gap-2">
-                            <button type="button" onClick={() => openEducationModal(edu)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
-                              <FiEdit />
-                            </button>
-                            <button type="button" onClick={() => handleDeleteEducation(edu.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
-                              <FiTrash2 />
-                            </button>
+                            {isOwner && (
+                              <>
+                                <button type="button" onClick={() => openEducationModal(edu)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
+                                  <FiEdit />
+                                </button>
+                                <button type="button" onClick={() => handleDeleteEducation(edu.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
+                                  <FiTrash2 />
+                                </button>
+                              </>
+                            )}
                           </div>
                           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
                             <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">{edu.institution}</h4>
@@ -1025,27 +1078,39 @@ const ProfilePage = () => {
                     <FiSettings className="text-primary" />
                     Skills & Expertise
                   </h3>
-                  <button type="button" onClick={() => openSkillModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
-                    <FiPlus />
-                    Add
-                  </button>
+                  {isOwner && (
+                    <button type="button" onClick={() => openSkillModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                      <FiPlus />
+                      Add
+                    </button>
+                  )}
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {skills.length === 0 ? (
-                    <button type="button" onClick={() => openSkillModal(null)} className="col-span-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
-                      <FiPlus />
-                      Add Skill
-                    </button>
+                    isOwner ? (
+                      <button type="button" onClick={() => openSkillModal(null)} className="col-span-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+                        <FiPlus />
+                        Add Skill
+                      </button>
+                    ) : (
+                      <div className="col-span-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
+                        No skills added yet.
+                      </div>
+                    )
                   ) : (
                     skills.map((skill) => (
                       <div key={skill.id} className="relative bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-300 rounded-lg p-6 hover:shadow-md transition-all duration-200 hover:scale-105 min-h-[160px] w-full">
                         <div className="absolute top-3 right-3 flex gap-1">
-                          <button type="button" onClick={() => openSkillModal(skill)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center shadow-sm" title="Edit">
-                            <FiEdit size={14} />
-                          </button>
-                          <button type="button" onClick={() => handleDeleteSkill(skill.id)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center shadow-sm" title="Delete">
-                            <FiTrash2 size={14} />
-                          </button>
+                          {isOwner && (
+                            <>
+                              <button type="button" onClick={() => openSkillModal(skill)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center shadow-sm" title="Edit">
+                                <FiEdit size={14} />
+                              </button>
+                              <button type="button" onClick={() => handleDeleteSkill(skill.id)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center shadow-sm" title="Delete">
+                                <FiTrash2 size={14} />
+                              </button>
+                            </>
+                          )}
                         </div>
                         <div className="flex flex-col items-center justify-center h-full text-center">
                           <span className="text-black text-sm font-medium block mb-2">{skill.name}</span>
@@ -1081,10 +1146,12 @@ const ProfilePage = () => {
                     <FiAward className="text-primary" />
                     Achievements & Awards
                   </h3>
-                  <button type="button" onClick={() => openAchievementModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
-                    <FiPlus />
-                    Add
-                  </button>
+                  {isOwner && (
+                    <button type="button" onClick={() => openAchievementModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                      <FiPlus />
+                      Add
+                    </button>
+                  )}
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                   <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg p-6 border border-yellow-200 hover:shadow-md transition-all duration-200">
@@ -1112,10 +1179,16 @@ const ProfilePage = () => {
 
                 <div className="space-y-4">
                   {achievements.length === 0 ? (
-                    <button type="button" onClick={() => openAchievementModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
-                      <FiPlus />
-                      Add Achievement
-                    </button>
+                    isOwner ? (
+                      <button type="button" onClick={() => openAchievementModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+                        <FiPlus />
+                        Add Achievement
+                      </button>
+                    ) : (
+                      <div className="w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
+                        No achievements added yet.
+                      </div>
+                    )
                   ) : (
                     achievements.map((a) => (
                       <div key={a.id} className="bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
@@ -1138,12 +1211,16 @@ const ProfilePage = () => {
                             )}
                           </div>
                           <div className="flex gap-2">
-                            <button type="button" onClick={() => openAchievementModal(a)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
-                              <FiEdit />
-                            </button>
-                            <button type="button" onClick={() => handleDeleteAchievement(a.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
-                              <FiTrash2 />
-                            </button>
+                            {isOwner && (
+                              <>
+                                <button type="button" onClick={() => openAchievementModal(a)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
+                                  <FiEdit />
+                                </button>
+                                <button type="button" onClick={() => handleDeleteAchievement(a.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
+                                  <FiTrash2 />
+                                </button>
+                              </>
+                            )}
                           </div>
                         </div>
                       </div>
