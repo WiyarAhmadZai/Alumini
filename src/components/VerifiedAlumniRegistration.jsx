@@ -10,6 +10,7 @@ const VerifiedAlumniRegistration = () => {
     graduation_year: '',
     faculty: '',
     university_id: '',
+    tazkira_number: '',
     email: '',
     password: '',
     password_confirmation: '',
@@ -59,16 +60,20 @@ const VerifiedAlumniRegistration = () => {
     
     if (!formData.graduation_year) {
       newErrors.graduation_year = 'Graduation year is required';
-    } else if (formData.graduation_year < 1900 || formData.graduation_year > new Date().getFullYear() + 1) {
-      newErrors.graduation_year = 'Please enter a valid graduation year';
+    } else if (formData.graduation_year < 1350 || formData.graduation_year > (new Date().getFullYear() - 621)) {
+      newErrors.graduation_year = 'Please enter a valid Hijri Shamsi year (1350-1403)';
     }
     
-    if (!formData.faculty.trim()) {
-      newErrors.faculty = 'Faculty is required';
+    if (!formData.faculty) {
+      newErrors.faculty = 'Please select your faculty';
     }
     
     if (!formData.university_id.trim()) {
       newErrors.university_id = 'University ID is required';
+    }
+    
+    if (!formData.tazkira_number.trim()) {
+      newErrors.tazkira_number = 'Tazkira number is required';
     }
     
     if (!formData.email.trim()) {
@@ -129,6 +134,7 @@ const VerifiedAlumniRegistration = () => {
         graduation_year: '',
         faculty: '',
         university_id: '',
+        tazkira_number: '',
         email: '',
         password: '',
         password_confirmation: '',
@@ -151,6 +157,8 @@ const VerifiedAlumniRegistration = () => {
         // Handle specific verification errors
         if (errorCode === 'STUDENT_NOT_FOUND') {
           setSubmitError('Student not found in MIS records. Please check your University ID and try again.');
+        } else if (errorCode === 'TAZKIRA_MISMATCH') {
+          setSubmitError('Tazkira number does not match our records. Please verify your tazkira number.');
         } else if (errorCode === 'FACULTY_MISMATCH') {
           setSubmitError('Faculty does not match our records. Please verify your faculty information.');
         } else if (errorCode === 'NAME_MISMATCH') {
@@ -288,36 +296,44 @@ const VerifiedAlumniRegistration = () => {
                   </div>
                   
                   <div>
-                    <label htmlFor="graduation_year" className="block text-sm font-medium text-gray-700 mb-2">Graduation Year *</label>
+                    <label htmlFor="graduation_year" className="block text-sm font-medium text-gray-700 mb-2">Graduation Year (Hijri Shamsi) *</label>
                     <input
                       type="number"
                       id="graduation_year"
                       name="graduation_year"
                       value={formData.graduation_year}
                       onChange={handleChange}
-                      min="1900"
-                      max={new Date().getFullYear() + 1}
+                      min="1350"
+                      max={new Date().getFullYear() - 621} // Approximate current Hijri year
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
                         errors.graduation_year ? 'border-red-500 bg-red-50' : 'border-gray-300'
                       }`}
-                      placeholder="Year of graduation"
+                      placeholder="e.g., 1400"
                     />
                     {errors.graduation_year && <p className="mt-1 text-sm text-red-600">{errors.graduation_year}</p>}
                   </div>
                   
                   <div>
                     <label htmlFor="faculty" className="block text-sm font-medium text-gray-700 mb-2">Faculty *</label>
-                    <input
-                      type="text"
+                    <select
                       id="faculty"
                       name="faculty"
                       value={formData.faculty}
                       onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-base text-gray-900 ${
                         errors.faculty ? 'border-red-500 bg-red-50' : 'border-gray-300'
                       }`}
-                      placeholder="Your faculty"
-                    />
+                    >
+                      <option value="">Select your faculty</option>
+                      <option value="Geology and Mines Faculty">Geology and Mines Faculty</option>
+                      <option value="Construction Faculty">Construction Faculty</option>
+                      <option value="Electromechanics Faculty">Electromechanics Faculty</option>
+                      <option value="Computer Science Faculty">Computer Science Faculty</option>
+                      <option value="Chemical industrial Engineering Faculty">Chemical industrial Engineering Faculty</option>
+                      <option value="Water and Environmental Engineering Faculty">Water and Environmental Engineering Faculty</option>
+                      <option value="Transportation Engineering Faculty">Transportation Engineering Faculty</option>
+                      <option value="Geomatics Engineering Faculty">Geomatics Engineering Faculty</option>
+                    </select>
                     {errors.faculty && <p className="mt-1 text-sm text-red-600">{errors.faculty}</p>}
                   </div>
                   
@@ -335,6 +351,22 @@ const VerifiedAlumniRegistration = () => {
                       placeholder="Your university ID"
                     />
                     {errors.university_id && <p className="mt-1 text-sm text-red-600">{errors.university_id}</p>}
+                  </div>
+                  
+                  <div>
+                    <label htmlFor="tazkira_number" className="block text-sm font-medium text-gray-700 mb-2">Tazkira Number *</label>
+                    <input
+                      type="text"
+                      id="tazkira_number"
+                      name="tazkira_number"
+                      value={formData.tazkira_number}
+                      onChange={handleChange}
+                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
+                        errors.tazkira_number ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                      }`}
+                      placeholder="Your tazkira number"
+                    />
+                    {errors.tazkira_number && <p className="mt-1 text-sm text-red-600">{errors.tazkira_number}</p>}
                   </div>
                 </div>
               </div>
