@@ -793,12 +793,12 @@ const ProfilePage = () => {
             <div className="bg-primary px-8 pb-8 flex flex-col md:flex-row items-end gap-6 -mt-16 relative z-10">
               <div className="relative">
                 <div className="relative size-40">
-                  {profile?.profile_image ? (
+                  {profile?.profile_image || profile?.student_photo ? (
                     <img
-                      src={profile.profile_image}
+                      src={profile.profile_image || profile.student_photo}
                       alt="Profile"
                       className="size-40 rounded-full border-4 border-white shadow-lg object-cover cursor-zoom-in"
-                      onClick={() => openLightbox(profile.profile_image)}
+                      onClick={() => openLightbox(profile.profile_image || profile.student_photo)}
                     />
                   ) : (
                     <div className="size-40 rounded-full border-4 border-white shadow-lg flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-pink-100 border-dashed cursor-pointer hover:from-purple-100 hover:to-pink-200 transition-colors"
