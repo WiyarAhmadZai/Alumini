@@ -197,8 +197,6 @@ const ProfilePage = () => {
       try {
         setLoading(true);
         setError('');
-        setCoverImageLoaded(false);
-        setAvatarImageLoaded(false);
 
         if (!authService.isAuthenticated()) {
           navigate('/login');
@@ -481,7 +479,7 @@ const ProfilePage = () => {
         await refreshProfile();
         Swal.fire('Deleted!', 'Experience has been deleted.', 'success');
       } catch (e) {
-        Swal.fire('Error', 'Failed to delete experience.', 'error');
+        Swal.fire('Error', e.response?.data?.message || 'Failed to delete experience.', 'error');
       }
     }
   };
@@ -522,7 +520,7 @@ const ProfilePage = () => {
         await refreshProfile();
         Swal.fire('Deleted!', 'Education has been deleted.', 'success');
       } catch (e) {
-        Swal.fire('Error', 'Failed to delete education.', 'error');
+        Swal.fire('Error', e.response?.data?.message || 'Failed to delete education.', 'error');
       }
     }
   };
@@ -550,12 +548,25 @@ const ProfilePage = () => {
   };
 
   const handleDeleteSkill = async (id) => {
-    if (!window.confirm('Delete this skill?')) return;
-    try {
-      await alumniService.deleteSkill(id);
-      await refreshProfile();
-    } catch (e) {
-      setError(e.response?.data?.message || 'Failed to delete skill.');
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this skill?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await alumniService.deleteSkill(id);
+        await refreshProfile();
+        Swal.fire('Deleted!', 'Skill has been deleted.', 'success');
+      } catch (e) {
+        Swal.fire('Error', e.response?.data?.message || 'Failed to delete skill.', 'error');
+      }
     }
   };
 
@@ -582,12 +593,25 @@ const ProfilePage = () => {
   };
 
   const handleDeleteAchievement = async (id) => {
-    if (!window.confirm('Delete this achievement?')) return;
-    try {
-      await alumniService.deleteAchievement(id);
-      await refreshProfile();
-    } catch (e) {
-      setError(e.response?.data?.message || 'Failed to delete achievement.');
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this achievement?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await alumniService.deleteAchievement(id);
+        await refreshProfile();
+        Swal.fire('Deleted!', 'Achievement has been deleted.', 'success');
+      } catch (e) {
+        Swal.fire('Error', e.response?.data?.message || 'Failed to delete achievement.', 'error');
+      }
     }
   };
 
@@ -646,9 +670,6 @@ const ProfilePage = () => {
   const educations = profile?.educations || [];
   const skills = profile?.skills || [];
   const achievements = profile?.achievements || [];
-
-  const [coverImageLoaded, setCoverImageLoaded] = useState(false);
-  const [avatarImageLoaded, setAvatarImageLoaded] = useState(false);
 
   return (
     <Layout>
@@ -713,17 +734,8 @@ const ProfilePage = () => {
                     alt="Cover"
                     className="w-full h-full object-cover min-h-64 cursor-zoom-in"
                     onClick={() => openLightbox(profile.cover_image)}
-                    onLoad={() => setCoverImageLoaded(true)}
-                    style={{ display: coverImageLoaded ? 'block' : 'none' }}
                   />
-                  {!coverImageLoaded && (
-                    <div className="w-full min-h-64 flex items-center justify-center bg-gray-100">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                    </div>
-                  )}
-                  {coverImageLoaded && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
-                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
                 </>
               ) : (
                 <div className="w-full min-h-64 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-dashed border-blue-300">
@@ -757,21 +769,12 @@ const ProfilePage = () => {
               <div className="relative">
                 <div className="relative size-40">
                   {profile?.profile_image ? (
-                    <>
-                      <img
-                        src={profile.profile_image}
-                        alt="Profile"
-                        className="size-40 rounded-full border-4 border-white shadow-lg object-cover cursor-zoom-in"
-                        onClick={() => openLightbox(profile.profile_image)}
-                        onLoad={() => setAvatarImageLoaded(true)}
-                        style={{ display: avatarImageLoaded ? 'block' : 'none' }}
-                      />
-                      {!avatarImageLoaded && (
-                        <div className="size-40 rounded-full border-4 border-white shadow-lg flex items-center justify-center bg-gray-100">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                        </div>
-                      )}
-                    </>
+                    <img
+                      src={profile.profile_image}
+                      alt="Profile"
+                      className="size-40 rounded-full border-4 border-white shadow-lg object-cover cursor-zoom-in"
+                      onClick={() => openLightbox(profile.profile_image)}
+                    />
                   ) : (
                     <div className="size-40 rounded-full border-4 border-white shadow-lg flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-pink-100 border-dashed cursor-pointer hover:from-purple-100 hover:to-pink-200 transition-colors"
                          onClick={() => profileInputRef.current?.click()}>
