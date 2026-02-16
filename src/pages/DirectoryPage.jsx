@@ -40,7 +40,8 @@ const DirectoryPage = () => {
 
   const filteredAlumni = alumni.filter(alumnus => {
     const matchesSearch = !searchTerm || 
-      alumnus.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      alumnus.first_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      alumnus.last_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alumnus.current_job_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alumnus.current_company?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alumnus.bio?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -164,7 +165,7 @@ const DirectoryPage = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.9) 0%, rgba(0, 39, 89, 0.01) 20%, rgba(0, 39, 89, 0.01) 100%)',
+            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 39, 89, 0.8) 100%), url("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80")',
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
             backgroundPosition: 'center'
@@ -271,7 +272,7 @@ const DirectoryPage = () => {
                 <div className="px-6 pt-12 pb-6">
                   <div className="text-center">
                     <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                      {alumnus.name}
+                      {alumnus.first_name} {alumnus.last_name}
                     </h3>
                     {alumnus.current_job_title && (
                       <div className="flex items-center justify-center gap-1 text-sm text-gray-600 mb-2">
@@ -298,8 +299,21 @@ const DirectoryPage = () => {
                       </div>
                     )}
                     {alumnus.bio && (
-                      <p className="text-sm text-gray-700 mb-4 line-clamp-3">
-                        {alumnus.bio}
+                      <p className="text-sm text-gray-700 mb-4">
+                        {expandedCards.has(alumnus.id) 
+                          ? alumnus.bio 
+                          : alumnus.bio.length > 100 
+                            ? `${alumnus.bio.substring(0, 100)}...` 
+                            : alumnus.bio
+                        }
+                        {alumnus.bio.length > 100 && (
+                          <span 
+                            onClick={() => toggleCardExpansion(alumnus.id)}
+                            className="text-blue-600 cursor-pointer hover:text-blue-700 ml-1 font-medium"
+                          >
+                            {expandedCards.has(alumnus.id) ? ' see less' : ' see more'}
+                          </span>
+                        )}
                       </p>
                     )}
                   </div>
