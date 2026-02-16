@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiCheckCircle, FiCalendar } from 'react-icons/fi';
 
 const LoginPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -37,6 +38,10 @@ const LoginPage = () => {
     e.preventDefault();
     // Handle form submission
     console.log('Form submitted:', formData);
+  };
+
+  const handleVerifiedRegistration = () => {
+    navigate('/register');
   };
 
   return (
@@ -283,65 +288,40 @@ const LoginPage = () => {
                   >
                     {isLogin ? 'Sign In' : 'Create Account'}
                   </button>
+
+                  {isLogin && (
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        onClick={handleVerifiedRegistration}
+                        className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <FiCheckCircle />
+                        Register as Verified KPU Alumni
+                      </button>
+                      <p className="text-xs text-gray-600 text-center mt-2">
+                        Get verified with MIS integration • Exclusive benefits
+                      </p>
+                    </div>
+                  )}
                 </form>
 
                 <div className="mt-8 text-center">
                   <p className="text-gray-700">
                     {isLogin ? "Don't have an account?" : "Already have an account?"}
                     <button
-                      onClick={() => setIsLogin(!isLogin)}
+                      onClick={() => isLogin ? handleVerifiedRegistration() : setIsLogin(!isLogin)}
                       className="text-blue-600 hover:text-blue-700 font-medium ml-1"
                     >
-                      {isLogin ? 'Sign Up' : 'Sign In'}
+                      {isLogin ? 'Create Verified Account' : 'Sign In'}
                     </button>
                   </p>
+                  {isLogin && (
+                    <p className="text-gray-600 text-sm mt-2">
+                      Get verified as a KPU graduate with MIS integration
+                    </p>
+                  )}
                 </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Why Join KPU Alumni?</h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Connect, grow, and succeed with our comprehensive alumni network
-              </p>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FiUser className="text-blue-600 text-2xl" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Professional Network</h3>
-                <p className="text-gray-600">Connect with thousands of successful alumni worldwide</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FiMail className="text-blue-600 text-2xl" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Career Opportunities</h3>
-                <p className="text-gray-600">Access exclusive job postings and career resources</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FiLock className="text-blue-600 text-2xl" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Mentorship Programs</h3>
-                <p className="text-gray-600">Get guidance from experienced alumni in your field</p>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <FiCheckCircle className="text-blue-600 text-2xl" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Alumni Events</h3>
-                <p className="text-gray-600">Attend reunions, workshops, and networking events</p>
               </div>
             </div>
           </div>
