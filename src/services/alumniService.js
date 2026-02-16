@@ -2,6 +2,166 @@ import api from '../config/axios';
 
 const alumniService = {
   /**
+   * Get current authenticated alumni profile
+   * @returns {Promise} API response
+   */
+  getMe: async () => {
+    try {
+      const response = await api.get('/alumini/me');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateMe: async (data) => {
+    try {
+      const response = await api.put('/alumini/me', data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  uploadProfileImage: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('profile_image', file);
+
+      const response = await api.post('/alumini/me/profile-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  uploadCoverImage: async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append('cover_image', file);
+
+      const response = await api.post('/alumini/me/cover-image', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  createExperience: async (data) => {
+    try {
+      const response = await api.post('/alumini/me/experiences', data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateExperience: async (id, data) => {
+    try {
+      const response = await api.put(`/alumini/me/experiences/${id}`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteExperience: async (id) => {
+    try {
+      const response = await api.delete(`/alumini/me/experiences/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  createEducation: async (data) => {
+    try {
+      const response = await api.post('/alumini/me/educations', data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateEducation: async (id, data) => {
+    try {
+      const response = await api.put(`/alumini/me/educations/${id}`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteEducation: async (id) => {
+    try {
+      const response = await api.delete(`/alumini/me/educations/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  createSkill: async (data) => {
+    try {
+      const response = await api.post('/alumini/me/skills', data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateSkill: async (id, data) => {
+    try {
+      const response = await api.put(`/alumini/me/skills/${id}`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteSkill: async (id) => {
+    try {
+      const response = await api.delete(`/alumini/me/skills/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  createAchievement: async (data) => {
+    try {
+      const response = await api.post('/alumini/me/achievements', data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateAchievement: async (id, data) => {
+    try {
+      const response = await api.put(`/alumini/me/achievements/${id}`, data);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deleteAchievement: async (id) => {
+    try {
+      const response = await api.delete(`/alumini/me/achievements/${id}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
    * Register a verified alumni (MIS integration)
    * @param {Object} alumniData - Verified alumni registration data
    * @returns {Promise} API response
