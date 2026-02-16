@@ -159,8 +159,6 @@ const VerifiedAlumniRegistration = () => {
           setSubmitError('Student not found in MIS records. Please check your University ID and try again.');
         } else if (errorCode === 'TAZKIRA_MISMATCH') {
           setSubmitError('Tazkira number does not match our records. Please verify your tazkira number.');
-        } else if (errorCode === 'FACULTY_MISMATCH') {
-          setSubmitError('Faculty does not match our records. Please verify your faculty information.');
         } else if (errorCode === 'NAME_MISMATCH') {
           setSubmitError('Name does not match our records. Please enter your exact name as registered in MIS.');
         } else if (errorCode === 'ALREADY_REGISTERED') {
@@ -280,7 +278,7 @@ const VerifiedAlumniRegistration = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-red-700 mb-2">Full Name *</label>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Full Name <span className="text-red-700">*</span></label>
                     <input
                       type="text"
                       id="name"
@@ -296,7 +294,7 @@ const VerifiedAlumniRegistration = () => {
                   </div>
                   
                   <div>
-                    <label htmlFor="graduation_year" className="block text-sm font-medium text-red-700 mb-2">Graduation Year (Hijri Shamsi) *</label>
+                    <label htmlFor="graduation_year" className="block text-sm font-medium text-gray-700 mb-2">Graduation Year (Hijri Shamsi) <span className="text-red-700">*</span></label>
                     <input
                       type="number"
                       id="graduation_year"
@@ -314,7 +312,7 @@ const VerifiedAlumniRegistration = () => {
                   </div>
                   
                   <div>
-                    <label htmlFor="faculty" className="block text-sm font-medium text-red-700 mb-2">Faculty *</label>
+                    <label htmlFor="faculty" className="block text-sm font-medium text-gray-700 mb-2">Faculty <span className="text-red-700">*</span></label>
                     <select
                       id="faculty"
                       name="faculty"
@@ -338,7 +336,7 @@ const VerifiedAlumniRegistration = () => {
                   </div>
                   
                   <div>
-                    <label htmlFor="university_id" className="block text-sm font-medium text-red-700 mb-2">University ID *</label>
+                    <label htmlFor="university_id" className="block text-sm font-medium text-gray-700 mb-2">University ID <span className="text-red-700">*</span></label>
                     <input
                       type="text"
                       id="university_id"
@@ -354,7 +352,7 @@ const VerifiedAlumniRegistration = () => {
                   </div>
                   
                   <div>
-                    <label htmlFor="tazkira_number" className="block text-sm font-medium text-red-700 mb-2">Tazkira Number *</label>
+                    <label htmlFor="tazkira_number" className="block text-sm font-medium text-gray-700 mb-2">Tazkira Number <span className="text-red-700">*</span></label>
                     <input
                       type="text"
                       id="tazkira_number"
@@ -377,7 +375,7 @@ const VerifiedAlumniRegistration = () => {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-red-700 mb-2">Email Address *</label>
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address <span className="text-red-700">*</span></label>
                     <input
                       type="email"
                       id="email"
@@ -393,7 +391,7 @@ const VerifiedAlumniRegistration = () => {
                   </div>
                   
                   <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-red-700 mb-2">Password *</label>
+                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password <span className="text-red-700">*</span></label>
                     <input
                       type="password"
                       id="password"
@@ -429,7 +427,7 @@ const VerifiedAlumniRegistration = () => {
                   </div>
                   
                   <div>
-                    <label htmlFor="password_confirmation" className="block text-sm font-medium text-red-700 mb-2">Confirm Password *</label>
+                    <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700 mb-2">Confirm Password <span className="text-red-700">*</span></label>
                     <input
                       type="password"
                       id="password_confirmation"
