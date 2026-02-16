@@ -922,7 +922,7 @@ const ProfilePage = () => {
                     Add
                   </button>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {skills.length === 0 ? (
                     <button type="button" onClick={() => openSkillModal(null)} className="col-span-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
                       <FiPlus />
@@ -930,34 +930,36 @@ const ProfilePage = () => {
                     </button>
                   ) : (
                     skills.map((skill) => (
-                      <div key={skill.id} className="relative bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-300 rounded-lg p-5 hover:shadow-md transition-all duration-200 hover:scale-105">
-                        <div className="absolute top-2 right-2 flex gap-1">
-                          <button type="button" onClick={() => openSkillModal(skill)} className="w-7 h-7 rounded-md bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
+                      <div key={skill.id} className="relative bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-300 rounded-lg p-6 hover:shadow-md transition-all duration-200 hover:scale-105 min-h-[160px] w-full">
+                        <div className="absolute top-3 right-3 flex gap-1">
+                          <button type="button" onClick={() => openSkillModal(skill)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center shadow-sm" title="Edit">
                             <FiEdit size={14} />
                           </button>
-                          <button type="button" onClick={() => handleDeleteSkill(skill.id)} className="w-7 h-7 rounded-md bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
+                          <button type="button" onClick={() => handleDeleteSkill(skill.id)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center shadow-sm" title="Delete">
                             <FiTrash2 size={14} />
                           </button>
                         </div>
-                        <span className="text-black text-sm font-medium block text-center mb-2">{skill.name}</span>
-                        {skill.category && (
-                          <span className="block text-xs text-gray-600 text-center mb-2">{skill.category}</span>
-                        )}
-                        {skill.proficiency && (
-                          <div className="text-center">
-                            <div className="flex justify-center gap-1 mb-2">
-                              {[...Array(5)].map((_, i) => (
-                                <div key={i} className={`w-2 h-2 rounded-full ${i < skill.proficiency ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
-                              ))}
+                        <div className="flex flex-col items-center justify-center h-full text-center">
+                          <span className="text-black text-sm font-medium block mb-2">{skill.name}</span>
+                          {skill.category && (
+                            <span className="block text-xs text-gray-600 mb-2">{skill.category}</span>
+                          )}
+                          {skill.proficiency && (
+                            <div className="mb-2">
+                              <div className="flex justify-center gap-1 mb-1">
+                                {[...Array(5)].map((_, i) => (
+                                  <div key={i} className={`w-2 h-2 rounded-full ${i < skill.proficiency ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
+                                ))}
+                              </div>
+                              <span className="text-xs text-gray-600">{skill.proficiency}/5</span>
                             </div>
-                            <span className="text-xs text-gray-600">{skill.proficiency}/5</span>
-                          </div>
-                        )}
-                        {skill.attachment && (
-                          <a className="block mt-2 text-xs font-semibold text-blue-700 hover:text-blue-900 text-center" href={skill.attachment} target="_blank" rel="noreferrer">
-                            View
-                          </a>
-                        )}
+                          )}
+                          {skill.attachment && (
+                            <a className="inline-block mt-2 text-xs font-semibold text-blue-700 hover:text-blue-900" href={skill.attachment} target="_blank" rel="noreferrer">
+                              View
+                            </a>
+                          )}
+                        </div>
                       </div>
                     ))
                   )}
