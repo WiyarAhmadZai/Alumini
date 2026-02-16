@@ -153,6 +153,20 @@ const LoginPage = () => {
                   </p>
                 </div>
 
+                {error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 flex items-start justify-between gap-4">
+                    <p className="text-sm text-red-600">{error}</p>
+                    <button
+                      type="button"
+                      onClick={() => setError('')}
+                      className="text-red-600 hover:text-red-800 text-sm font-semibold"
+                      aria-label="Dismiss error"
+                    >
+                      X
+                    </button>
+                  </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {!isLogin && (
                     <>
@@ -314,14 +328,13 @@ const LoginPage = () => {
                         />
                         <span className="ml-2 text-sm text-gray-700">Remember me</span>
                       </label>
-                      <a href="#" className="text-sm text-blue-600 hover:text-blue-700">Forgot password?</a>
-                    </div>
-                  )}
-
-                  {/* Error Display */}
-                  {error && (
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
-                      <p className="text-sm text-red-600">{error}</p>
+                      <button
+                        type="button"
+                        onClick={(e) => e.preventDefault()}
+                        className="text-sm text-blue-600 hover:text-blue-700"
+                      >
+                        Forgot password?
+                      </button>
                     </div>
                   )}
 
@@ -348,6 +361,7 @@ const LoginPage = () => {
                   <p className="text-gray-700">
                     {isLogin ? "Don't have an account?" : "Already have an account?"}
                     <button
+                      type="button"
                       onClick={() => isLogin ? handleVerifiedRegistration() : setIsLogin(!isLogin)}
                       className="text-blue-600 hover:text-blue-700 font-medium ml-1"
                     >
