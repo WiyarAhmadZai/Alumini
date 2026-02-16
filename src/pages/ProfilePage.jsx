@@ -812,7 +812,7 @@ const ProfilePage = () => {
                     <h1 className="text-black text-3xl font-bold leading-tight">{profile?.name || '-'}</h1>
                     <span className="material-symbols-outlined text-black fill-1" title="Verified Alumnus">verified</span>
                   </div>
-                  <p className="text-black text-lg font-medium">Class of {profile?.graduation_year || '-'} • {profile?.faculty || '-'}</p>
+                  <p className="text-black text-lg font-medium">Class of {profile?.graduation_year || '-'} • {profile?.faculty_name || '-'}</p>
                   <div className="flex items-center gap-1 mt-1">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
                       Verified Alumnus
