@@ -17,6 +17,11 @@ const ProfilePage = () => {
   const [saving, setSaving] = useState(false);
   const [modalError, setModalError] = useState('');
 
+  const [experienceAttachment, setExperienceAttachment] = useState(null);
+  const [educationAttachment, setEducationAttachment] = useState(null);
+  const [skillAttachment, setSkillAttachment] = useState(null);
+  const [achievementAttachment, setAchievementAttachment] = useState(null);
+
   const profileInputRef = useRef(null);
   const coverInputRef = useRef(null);
 
@@ -101,6 +106,10 @@ const ProfilePage = () => {
     setActiveModal(null);
     setEditingItem(null);
     setModalError('');
+    setExperienceAttachment(null);
+    setEducationAttachment(null);
+    setSkillAttachment(null);
+    setAchievementAttachment(null);
     setExperienceForm(emptyExperience);
     setEducationForm(emptyEducation);
     setSkillForm(emptySkill);
@@ -123,6 +132,7 @@ const ProfilePage = () => {
   const openExperienceModal = (item = null) => {
     setModalError('');
     setEditingItem(item);
+    setExperienceAttachment(null);
     setExperienceForm(item ? {
       job_title: item.job_title || '',
       company: item.company || '',
@@ -138,6 +148,7 @@ const ProfilePage = () => {
   const openEducationModal = (item = null) => {
     setModalError('');
     setEditingItem(item);
+    setEducationAttachment(null);
     setEducationForm(item ? {
       institution: item.institution || '',
       degree: item.degree || '',
@@ -153,6 +164,7 @@ const ProfilePage = () => {
   const openSkillModal = (item = null) => {
     setModalError('');
     setEditingItem(item);
+    setSkillAttachment(null);
     setSkillForm(item ? {
       name: item.name || '',
       category: item.category || '',
@@ -164,6 +176,7 @@ const ProfilePage = () => {
   const openAchievementModal = (item = null) => {
     setModalError('');
     setEditingItem(item);
+    setAchievementAttachment(null);
     setAchievementForm(item ? {
       title: item.title || '',
       issuer: item.issuer || '',
@@ -193,9 +206,9 @@ const ProfilePage = () => {
       setSaving(true);
       setModalError('');
       if (editingItem?.id) {
-        await alumniService.updateExperience(editingItem.id, experienceForm);
+        await alumniService.updateExperience(editingItem.id, experienceForm, experienceAttachment);
       } else {
-        await alumniService.createExperience(experienceForm);
+        await alumniService.createExperience(experienceForm, experienceAttachment);
       }
       await refreshProfile();
       closeModal();
@@ -221,9 +234,9 @@ const ProfilePage = () => {
       setSaving(true);
       setModalError('');
       if (editingItem?.id) {
-        await alumniService.updateEducation(editingItem.id, educationForm);
+        await alumniService.updateEducation(editingItem.id, educationForm, educationAttachment);
       } else {
-        await alumniService.createEducation(educationForm);
+        await alumniService.createEducation(educationForm, educationAttachment);
       }
       await refreshProfile();
       closeModal();
@@ -253,9 +266,9 @@ const ProfilePage = () => {
         proficiency: skillForm.proficiency === '' ? null : Number(skillForm.proficiency)
       };
       if (editingItem?.id) {
-        await alumniService.updateSkill(editingItem.id, payload);
+        await alumniService.updateSkill(editingItem.id, payload, skillAttachment);
       } else {
-        await alumniService.createSkill(payload);
+        await alumniService.createSkill(payload, skillAttachment);
       }
       await refreshProfile();
       closeModal();
@@ -285,9 +298,9 @@ const ProfilePage = () => {
         year: achievementForm.year === '' ? null : Number(achievementForm.year)
       };
       if (editingItem?.id) {
-        await alumniService.updateAchievement(editingItem.id, payload);
+        await alumniService.updateAchievement(editingItem.id, payload, achievementAttachment);
       } else {
-        await alumniService.createAchievement(payload);
+        await alumniService.createAchievement(payload, achievementAttachment);
       }
       await refreshProfile();
       closeModal();
@@ -510,7 +523,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="space-y-8">
                   {experiences.length === 0 ? (
-                    <button type="button" onClick={() => openExperienceModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2">
+                    <button type="button" onClick={() => openExperienceModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
                       <FiPlus />
                       Add Experience
                     </button>
@@ -533,6 +546,11 @@ const ProfilePage = () => {
                           </div>
                           <p className="text-gray-600 text-sm mb-3">{exp.location || '-'}</p>
                           <p className="text-black text-sm leading-relaxed">{exp.description || ''}</p>
+                          {exp.attachment && (
+                            <a className="inline-block mt-3 text-sm font-semibold text-blue-700 hover:text-blue-900" href={exp.attachment} target="_blank" rel="noreferrer">
+                              View Attachment
+                            </a>
+                          )}
                         </div>
                       </div>
                     ))
@@ -554,7 +572,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="space-y-8">
                   {educations.length === 0 ? (
-                    <button type="button" onClick={() => openEducationModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2">
+                    <button type="button" onClick={() => openEducationModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
                       <FiPlus />
                       Add Education
                     </button>
@@ -576,6 +594,11 @@ const ProfilePage = () => {
                             <span className="text-primary font-medium text-sm">{edu.field_of_study || edu.degree || '-'}</span>
                           </div>
                           <p className="text-gray-600 text-sm mb-3">{edu.start_year || ''}{edu.end_year ? ` — ${edu.end_year}` : ''}</p>
+                          {edu.attachment && (
+                            <a className="inline-block mt-3 text-sm font-semibold text-blue-700 hover:text-blue-900" href={edu.attachment} target="_blank" rel="noreferrer">
+                              View Attachment
+                            </a>
+                          )}
                         </div>
                       </div>
                     ))
@@ -597,7 +620,7 @@ const ProfilePage = () => {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {skills.length === 0 ? (
-                    <button type="button" onClick={() => openSkillModal(null)} className="col-span-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2">
+                    <button type="button" onClick={() => openSkillModal(null)} className="col-span-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
                       <FiPlus />
                       Add Skill
                     </button>
@@ -613,6 +636,11 @@ const ProfilePage = () => {
                           </button>
                         </div>
                         <span className="text-black text-sm font-medium block text-center">{skill.name}</span>
+                        {skill.attachment && (
+                          <a className="block mt-2 text-xs font-semibold text-blue-700 hover:text-blue-900 text-center" href={skill.attachment} target="_blank" rel="noreferrer">
+                            View
+                          </a>
+                        )}
                       </div>
                     ))
                   )}
@@ -657,7 +685,7 @@ const ProfilePage = () => {
 
                 <div className="space-y-4">
                   {achievements.length === 0 ? (
-                    <button type="button" onClick={() => openAchievementModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2">
+                    <button type="button" onClick={() => openAchievementModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
                       <FiPlus />
                       Add Achievement
                     </button>
@@ -676,6 +704,11 @@ const ProfilePage = () => {
                               <span>•</span>
                               <span>{a.issuer || '-'}</span>
                             </div>
+                            {a.attachment && (
+                              <a className="inline-block mt-2 text-sm font-semibold text-blue-700 hover:text-blue-900" href={a.attachment} target="_blank" rel="noreferrer">
+                                View Attachment
+                              </a>
+                            )}
                           </div>
                           <div className="flex gap-2">
                             <button type="button" onClick={() => openAchievementModal(a)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
@@ -703,7 +736,10 @@ const ProfilePage = () => {
         footer={
           <div className="flex justify-end gap-3">
             <button type="button" className="px-4 py-2 rounded-lg border border-gray-300 text-gray-800" onClick={closeModal} disabled={saving}>Cancel</button>
-            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold" onClick={handleSaveBasic} disabled={saving}>Save</button>
+            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold flex items-center gap-2" onClick={handleSaveBasic} disabled={saving}>
+              {saving && <span className="w-4 h-4 rounded-full border-2 border-white/60 border-t-white animate-spin" />}
+              {saving ? 'Saving...' : 'Save'}
+            </button>
           </div>
         }
       >
@@ -743,7 +779,10 @@ const ProfilePage = () => {
         footer={
           <div className="flex justify-end gap-3">
             <button type="button" className="px-4 py-2 rounded-lg border border-gray-300 text-gray-800" onClick={closeModal} disabled={saving}>Cancel</button>
-            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold" onClick={handleSaveExperience} disabled={saving}>Save</button>
+            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold flex items-center gap-2" onClick={handleSaveExperience} disabled={saving}>
+              {saving && <span className="w-4 h-4 rounded-full border-2 border-white/60 border-t-white animate-spin" />}
+              {saving ? 'Saving...' : 'Save'}
+            </button>
           </div>
         }
       >
@@ -779,6 +818,23 @@ const ProfilePage = () => {
             <label className="block text-sm font-semibold text-gray-800 mb-1">Description</label>
             <textarea className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 min-h-[100px]" value={experienceForm.description} onChange={(e) => setExperienceForm({ ...experienceForm, description: e.target.value })} />
           </div>
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Attachment</label>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <label className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-300 bg-white text-black font-semibold hover:bg-gray-50 cursor-pointer w-fit">
+                Choose File
+                <input type="file" className="hidden" onChange={(e) => setExperienceAttachment(e.target.files?.[0] || null)} />
+              </label>
+              <span className="text-sm text-gray-900 truncate">
+                {experienceAttachment?.name || 'No file selected'}
+              </span>
+            </div>
+            {editingItem?.attachment && (
+              <a className="inline-block mt-2 text-sm font-semibold text-blue-700 hover:text-blue-900" href={editingItem.attachment} target="_blank" rel="noreferrer">
+                View Current Attachment
+              </a>
+            )}
+          </div>
         </div>
       </Modal>
 
@@ -789,7 +845,10 @@ const ProfilePage = () => {
         footer={
           <div className="flex justify-end gap-3">
             <button type="button" className="px-4 py-2 rounded-lg border border-gray-300 text-gray-800" onClick={closeModal} disabled={saving}>Cancel</button>
-            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold" onClick={handleSaveEducation} disabled={saving}>Save</button>
+            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold flex items-center gap-2" onClick={handleSaveEducation} disabled={saving}>
+              {saving && <span className="w-4 h-4 rounded-full border-2 border-white/60 border-t-white animate-spin" />}
+              {saving ? 'Saving...' : 'Save'}
+            </button>
           </div>
         }
       >
@@ -825,6 +884,23 @@ const ProfilePage = () => {
             <label className="block text-sm font-semibold text-gray-800 mb-1">Description</label>
             <textarea className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 min-h-[100px]" value={educationForm.description} onChange={(e) => setEducationForm({ ...educationForm, description: e.target.value })} />
           </div>
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Attachment</label>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <label className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-300 bg-white text-black font-semibold hover:bg-gray-50 cursor-pointer w-fit">
+                Choose File
+                <input type="file" className="hidden" onChange={(e) => setEducationAttachment(e.target.files?.[0] || null)} />
+              </label>
+              <span className="text-sm text-gray-900 truncate">
+                {educationAttachment?.name || 'No file selected'}
+              </span>
+            </div>
+            {editingItem?.attachment && (
+              <a className="inline-block mt-2 text-sm font-semibold text-blue-700 hover:text-blue-900" href={editingItem.attachment} target="_blank" rel="noreferrer">
+                View Current Attachment
+              </a>
+            )}
+          </div>
         </div>
       </Modal>
 
@@ -835,7 +911,10 @@ const ProfilePage = () => {
         footer={
           <div className="flex justify-end gap-3">
             <button type="button" className="px-4 py-2 rounded-lg border border-gray-300 text-gray-800" onClick={closeModal} disabled={saving}>Cancel</button>
-            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold" onClick={handleSaveSkill} disabled={saving}>Save</button>
+            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold flex items-center gap-2" onClick={handleSaveSkill} disabled={saving}>
+              {saving && <span className="w-4 h-4 rounded-full border-2 border-white/60 border-t-white animate-spin" />}
+              {saving ? 'Saving...' : 'Save'}
+            </button>
           </div>
         }
       >
@@ -853,6 +932,23 @@ const ProfilePage = () => {
             <label className="block text-sm font-semibold text-gray-800 mb-1">Proficiency (1-5)</label>
             <input type="number" min="1" max="5" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900" value={skillForm.proficiency} onChange={(e) => setSkillForm({ ...skillForm, proficiency: e.target.value })} />
           </div>
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Attachment</label>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <label className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-300 bg-white text-black font-semibold hover:bg-gray-50 cursor-pointer w-fit">
+                Choose File
+                <input type="file" className="hidden" onChange={(e) => setSkillAttachment(e.target.files?.[0] || null)} />
+              </label>
+              <span className="text-sm text-gray-900 truncate">
+                {skillAttachment?.name || 'No file selected'}
+              </span>
+            </div>
+            {editingItem?.attachment && (
+              <a className="inline-block mt-2 text-sm font-semibold text-blue-700 hover:text-blue-900" href={editingItem.attachment} target="_blank" rel="noreferrer">
+                View Current Attachment
+              </a>
+            )}
+          </div>
         </div>
       </Modal>
 
@@ -863,7 +959,10 @@ const ProfilePage = () => {
         footer={
           <div className="flex justify-end gap-3">
             <button type="button" className="px-4 py-2 rounded-lg border border-gray-300 text-gray-800" onClick={closeModal} disabled={saving}>Cancel</button>
-            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold" onClick={handleSaveAchievement} disabled={saving}>Save</button>
+            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold flex items-center gap-2" onClick={handleSaveAchievement} disabled={saving}>
+              {saving && <span className="w-4 h-4 rounded-full border-2 border-white/60 border-t-white animate-spin" />}
+              {saving ? 'Saving...' : 'Save'}
+            </button>
           </div>
         }
       >
@@ -890,6 +989,23 @@ const ProfilePage = () => {
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-1">Description</label>
             <textarea className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 min-h-[100px]" value={achievementForm.description} onChange={(e) => setAchievementForm({ ...achievementForm, description: e.target.value })} />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-black mb-1">Attachment</label>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <label className="inline-flex items-center justify-center px-4 py-2 rounded-lg border border-gray-300 bg-white text-black font-semibold hover:bg-gray-50 cursor-pointer w-fit">
+                Choose File
+                <input type="file" className="hidden" onChange={(e) => setAchievementAttachment(e.target.files?.[0] || null)} />
+              </label>
+              <span className="text-sm text-gray-900 truncate">
+                {achievementAttachment?.name || 'No file selected'}
+              </span>
+            </div>
+            {editingItem?.attachment && (
+              <a className="inline-block mt-2 text-sm font-semibold text-blue-700 hover:text-blue-900" href={editingItem.attachment} target="_blank" rel="noreferrer">
+                View Current Attachment
+              </a>
+            )}
           </div>
         </div>
       </Modal>
