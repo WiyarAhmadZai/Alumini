@@ -853,13 +853,13 @@ const ProfilePage = () => {
                   <img
                     src={profile.cover_image}
                     alt="Cover"
-                    className="w-full h-full object-cover min-h-64 cursor-zoom-in"
+                    className="w-full h-64 object-cover cursor-zoom-in"
                     onClick={() => openLightbox(profile.cover_image)}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
                 </>
               ) : (
-                <div className="w-full min-h-64 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-dashed border-blue-300">
+                <div className="w-full h-64 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-dashed border-blue-300">
                   <FiCamera className="text-4xl text-blue-400 mb-3" />
                   <p className="text-blue-600 font-medium">Add Cover Photo</p>
                   <p className="text-blue-500 text-sm mt-1">Click to upload</p>
