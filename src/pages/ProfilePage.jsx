@@ -192,6 +192,8 @@ const ProfilePage = () => {
       try {
         setLoading(true);
         setError('');
+        setCoverImageLoaded(false);
+        setAvatarImageLoaded(false);
 
         if (!authService.isAuthenticated()) {
           navigate('/login');
@@ -566,8 +568,8 @@ const ProfilePage = () => {
   const skills = profile?.skills || [];
   const achievements = profile?.achievements || [];
 
-  const coverImage = profile?.cover_image || 'https://picsum.photos/seed/cover/1200/400.jpg';
-  const avatarImage = profile?.profile_image || 'https://picsum.photos/seed/avatar/200/200.jpg';
+  const [coverImageLoaded, setCoverImageLoaded] = useState(false);
+  const [avatarImageLoaded, setAvatarImageLoaded] = useState(false);
 
   return (
     <Layout>
@@ -624,8 +626,33 @@ const ProfilePage = () => {
           {/* Profile Header Card */}
           <div className="bg-primary rounded-xl border border-primary shadow-sm overflow-hidden mb-6">
             {/* Cover Image */}
-            <div className="w-full bg-center bg-no-repeat bg-cover min-h-64 relative cursor-zoom-in" style={{backgroundImage: `url("${coverImage}")`}} onClick={() => openLightbox(coverImage)}>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+            <div className="w-full min-h-64 relative bg-gray-100">
+              {profile?.cover_image ? (
+                <>
+                  <img
+                    src={profile.cover_image}
+                    alt="Cover"
+                    className="w-full h-full object-cover min-h-64 cursor-zoom-in"
+                    onClick={() => openLightbox(profile.cover_image)}
+                    onLoad={() => setCoverImageLoaded(true)}
+                    style={{ display: coverImageLoaded ? 'block' : 'none' }}
+                  />
+                  {!coverImageLoaded && (
+                    <div className="w-full min-h-64 flex items-center justify-center bg-gray-100">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
+                  )}
+                  {coverImageLoaded && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+                  )}
+                </>
+              ) : (
+                <div className="w-full min-h-64 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-dashed border-blue-300">
+                  <FiCamera className="text-4xl text-blue-400 mb-3" />
+                  <p className="text-blue-600 font-medium">Add Cover Photo</p>
+                  <p className="text-blue-500 text-sm mt-1">Click to upload</p>
+                </div>
+              )}
               <button
                 type="button"
                 onClick={(e) => {
@@ -637,7 +664,7 @@ const ProfilePage = () => {
                 onMouseDown={(e) => e.stopPropagation()}
               >
                 <FiCamera />
-                Update Cover
+                {profile?.cover_image ? 'Update' : 'Add'} Cover
               </button>
               <input
                 ref={coverInputRef}
@@ -649,20 +676,46 @@ const ProfilePage = () => {
             </div>
             <div className="bg-primary px-8 pb-8 flex flex-col md:flex-row items-end gap-6 -mt-16 relative z-10">
               <div className="relative">
-                <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-white size-40 shadow-lg cursor-zoom-in" style={{backgroundImage: `url("${avatarImage}")`}} onClick={() => openLightbox(avatarImage)}></div>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    profileInputRef.current?.click();
-                  }}
-                  className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-white text-gray-900 shadow flex items-center justify-center hover:bg-gray-50 cursor-pointer"
-                  title="Update profile image"
-                  disabled={saving}
-                  onMouseDown={(e) => e.stopPropagation()}
-                >
-                  <FiCamera />
-                </button>
+                <div className="relative size-40">
+                  {profile?.profile_image ? (
+                    <>
+                      <img
+                        src={profile.profile_image}
+                        alt="Profile"
+                        className="size-40 rounded-full border-4 border-white shadow-lg object-cover cursor-zoom-in"
+                        onClick={() => openLightbox(profile.profile_image)}
+                        onLoad={() => setAvatarImageLoaded(true)}
+                        style={{ display: avatarImageLoaded ? 'block' : 'none' }}
+                      />
+                      {!avatarImageLoaded && (
+                        <div className="size-40 rounded-full border-4 border-white shadow-lg flex items-center justify-center bg-gray-100">
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div className="size-40 rounded-full border-4 border-white shadow-lg flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-pink-100 border-dashed cursor-pointer hover:from-purple-100 hover:to-pink-200 transition-colors"
+                         onClick={() => profileInputRef.current?.click()}>
+                      <FiUser className="text-3xl text-purple-400 mb-2" />
+                      <p className="text-xs text-purple-600 font-medium">Add Photo</p>
+                    </div>
+                  )}
+                </div>
+                {profile?.profile_image && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      profileInputRef.current?.click();
+                    }}
+                    className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-white text-gray-900 shadow flex items-center justify-center hover:bg-gray-50 cursor-pointer"
+                    title="Update profile image"
+                    disabled={saving}
+                    onMouseDown={(e) => e.stopPropagation()}
+                  >
+                    <FiCamera />
+                  </button>
+                )}
                 <input
                   ref={profileInputRef}
                   type="file"
