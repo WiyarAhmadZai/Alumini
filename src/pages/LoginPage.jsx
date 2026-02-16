@@ -150,7 +150,7 @@ const LoginPage = () => {
                               name="graduationYear"
                               value={formData.graduationYear || ''}
                               onChange={handleInputChange}
-                              placeholder="Enter graduation year (e.g., 1403)"
+                              placeholder="Graduation Year"
                               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black placeholder-gray-700 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
                               required
                             />
