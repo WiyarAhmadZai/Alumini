@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import authService from '../services/authService';
 import { 
   FiArrowRight, 
   FiMapPin, 
@@ -17,8 +18,12 @@ import {
 const Layout = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(authService.isAuthenticated());
   const sidebarRef = useRef(null);
+  const userMenuRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Handle scroll effect and scroll to top on route change
   useEffect(() => {
@@ -34,6 +39,10 @@ const Layout = ({ children }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    setIsAuthenticated(authService.isAuthenticated());
+  }, [location.pathname]);
+
   // Scroll to top when route changes
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -45,12 +54,15 @@ const Layout = ({ children }) => {
       if (isMenuOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
         setIsMenuOpen(false);
       }
+      if (isUserMenuOpen && userMenuRef.current && !userMenuRef.current.contains(event.target)) {
+        setIsUserMenuOpen(false);
+      }
     };
 
-    if (isMenuOpen) {
+    if (isMenuOpen || isUserMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       // Prevent body scroll when menu is open
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = isMenuOpen ? 'hidden' : 'unset';
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -59,7 +71,26 @@ const Layout = ({ children }) => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.body.style.overflow = 'unset';
     };
-  }, [isMenuOpen]);
+  }, [isMenuOpen, isUserMenuOpen]);
+
+  useEffect(() => {
+    const handleStorage = () => {
+      setIsAuthenticated(authService.isAuthenticated());
+    };
+
+    window.addEventListener('storage', handleStorage);
+    return () => window.removeEventListener('storage', handleStorage);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+    } finally {
+      setIsAuthenticated(false);
+      setIsUserMenuOpen(false);
+      navigate('/login');
+    }
+  };
 
   // Handle menu item click
   const handleMenuClick = (e) => {
@@ -199,24 +230,54 @@ const Layout = ({ children }) => {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <Link 
-                to="/login"
-                className={`min-w-[60px] sm:min-w-[84px] h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center ${
-                  isScrolled 
-                    ? 'bg-gradient-to-r from-white to-blue-50 text-[#002759] hover:from-blue-50 hover:to-white hover:shadow-xl' 
-                    : 'bg-white/10 backdrop-blur-md text-white border border-white/30 hover:bg-white/20 hover:border-white/50'
-                }`}
-              >
-                Login
-              </Link>
-              <Link 
-                to="/profile"
-                className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg hidden sm:flex ${
-                  isScrolled ? 'bg-gradient-to-br from-white/20 to-white/10 border-white/40 hover:from-white/30 hover:to-white/20' : 'bg-white/10 border-white/40 hover:bg-white/20'
-                }`}
-              >
-                <FiUser className="text-white text-sm sm:text-lg" />
-              </Link>
+              {!isAuthenticated && (
+                <Link 
+                  to="/login"
+                  className={`min-w-[60px] sm:min-w-[84px] h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center ${
+                    isScrolled 
+                      ? 'bg-gradient-to-r from-white to-blue-50 text-[#002759] hover:from-blue-50 hover:to-white hover:shadow-xl' 
+                      : 'bg-white/10 backdrop-blur-md text-white border border-white/30 hover:bg-white/20 hover:border-white/50'
+                  }`}
+                >
+                  Login
+                </Link>
+              )}
+
+              {isAuthenticated && (
+                <div className="relative hidden sm:flex" ref={userMenuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setIsUserMenuOpen((v) => !v)}
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl border-2 flex items-center justify-center transition-all duration-300 transform hover:scale-105 shadow-lg ${
+                      isScrolled ? 'bg-gradient-to-br from-white/20 to-white/10 border-white/40 hover:from-white/30 hover:to-white/20' : 'bg-white/10 border-white/40 hover:bg-white/20'
+                    }`}
+                    aria-haspopup="menu"
+                    aria-expanded={isUserMenuOpen}
+                  >
+                    <FiUser className="text-white text-sm sm:text-lg" />
+                  </button>
+
+                  {isUserMenuOpen && (
+                    <div className="absolute right-0 mt-3 w-40 rounded-xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden">
+                      <Link
+                        to="/profile"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-gray-50"
+                      >
+                        Profile
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <button 
                 className={`lg:hidden transition-all duration-300 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transform hover:scale-105 ${
                   isScrolled ? 'text-white hover:bg-white/10' : 'text-white hover:bg-white/10'
