@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import alumniService from '../services/alumniService';
@@ -6,27 +6,29 @@ import alumniService from '../services/alumniService';
 const VerifiedAlumniRegistration = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    graduation_year: '',
-    faculty: '',
     university_id: '',
-    tazkira_number: '',
     email: '',
     password: '',
     password_confirmation: '',
-    phone: '',
     current_job_title: '',
     current_company: '',
     location: '',
     linkedin_profile: '',
     bio: ''
   });
+  
+  const [studentData, setStudentData] = useState(null);
+  const [showTazkiraModal, setShowTazkiraModal] = useState(false);
+  const [tazkiraNumber, setTazkiraNumber] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [verificationLoading, setVerificationLoading] = useState(false);
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
-  const [verificationStatus, setVerificationStatus] = useState('');
+  const [searchError, setSearchError] = useState('');
+  const [verificationError, setVerificationError] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -43,133 +45,146 @@ const VerifiedAlumniRegistration = () => {
       }));
     }
     
-    // Clear verification status when user changes verification fields
-    if (['name', 'faculty', 'university_id'].includes(name)) {
-      setVerificationStatus('');
+    // Clear errors when user changes university_id
+    if (name === 'university_id') {
+      setSearchError('');
+      setStudentData(null);
       setSubmitError('');
     }
   };
-
-  const validateForm = () => {
-    const newErrors = {};
-    
-    // Required fields
-    if (!formData.name.trim()) {
-      newErrors.name = 'Full name is required';
-    }
-    
-    if (!formData.graduation_year) {
-      newErrors.graduation_year = 'Graduation year is required';
-    } else if (formData.graduation_year < 1350 || formData.graduation_year > (new Date().getFullYear() - 621)) {
-      newErrors.graduation_year = 'Please enter a valid Hijri Shamsi year (1350-1403)';
-    }
-    
-    if (!formData.faculty) {
-      newErrors.faculty = 'Please select your faculty';
-    }
-    
-    if (!formData.university_id.trim()) {
-      newErrors.university_id = 'University ID is required';
-    }
-    
-    if (!formData.tazkira_number.trim()) {
-      newErrors.tazkira_number = 'Tazkira number is required';
-    }
-    
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-    
-    // Password validation - at least 8 chars, one capital, one number, one special
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    } else if (!/^(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*?&]).{8,}$/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one capital letter, one number, and one special character';
-    }
-    
-    if (!formData.password_confirmation) {
-      newErrors.password_confirmation = 'Password confirmation is required';
-    } else if (formData.password !== formData.password_confirmation) {
-      newErrors.password_confirmation = 'Passwords do not match';
-    }
-    
-    // Optional field validations
-    if (formData.linkedin_profile && !/^https?:\/\/.+\..+/.test(formData.linkedin_profile)) {
-      newErrors.linkedin_profile = 'Please enter a valid URL';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+  
+  const handleTazkiraChange = (e) => {
+    setTazkiraNumber(e.target.value);
+    setVerificationError('');
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
+  
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    if (files && files[0]) {
+      setFormData(prev => ({
+        ...prev,
+        [name]: files[0]
+      }));
+    }
+  };
+  
+  
+  const searchStudent = async () => {
+    if (!formData.university_id.trim()) {
+      setSearchError('University ID is required');
       return;
+    }
+    
+    setSearchLoading(true);
+    setSearchError('');
+    
+    try {
+      const response = await alumniService.searchStudent(formData.university_id);
+      setStudentData(response.data);
+    } catch (error) {
+      setSearchError(error.response?.data?.message || 'Student not found. Please check your University ID.');
+      setStudentData(null);
+    } finally {
+      setSearchLoading(false);
+    }
+  };
+  
+  const verifyTazkira = async () => {
+    if (!tazkiraNumber.trim()) {
+      setVerificationError('Tazkira number is required');
+      return;
+    }
+    
+    setVerificationLoading(true);
+    setVerificationError('');
+    
+    try {
+      const response = await alumniService.verifyTazkira(formData.university_id, tazkiraNumber);
+      
+      if (response.verified) {
+        setShowTazkiraModal(false);
+        // Proceed with registration
+        await submitRegistration();
+      }
+    } catch (error) {
+      let errorMessage = 'Tazkira verification failed. Please check your tazkira number.';
+      
+      if (error.response?.data?.error_type) {
+        switch (error.response.data.error_type) {
+          case 'university_id_not_found':
+            errorMessage = 'University ID not found in our records. Please check your University ID first.';
+            break;
+          case 'tazkira_not_found':
+            errorMessage = 'Tazkira number not found in our records. Please check your tazkira number.';
+            break;
+          case 'mismatch':
+            errorMessage = 'University ID and Tazkira number do not match the same student in our records.';
+            break;
+          default:
+            errorMessage = error.response?.data?.message || errorMessage;
+        }
+      } else {
+        errorMessage = error.response?.data?.message || errorMessage;
+      }
+      
+      setVerificationError(errorMessage);
+    } finally {
+      setVerificationLoading(false);
+    }
+  };
+  
+  const submitRegistration = async () => {
+    const submissionData = new FormData();
+    submissionData.append('university_id', formData.university_id);
+    submissionData.append('email', formData.email);
+    submissionData.append('password', formData.password);
+    submissionData.append('password_confirmation', formData.password_confirmation);
+    submissionData.append('current_job_title', formData.current_job_title);
+    submissionData.append('current_company', formData.current_company);
+    submissionData.append('location', formData.location);
+    submissionData.append('linkedin_profile', formData.linkedin_profile);
+    submissionData.append('bio', formData.bio);
+    
+    if (formData.profile_image) {
+      submissionData.append('profile_image', formData.profile_image);
+    }
+    
+    if (formData.cover_image) {
+      submissionData.append('cover_image', formData.cover_image);
     }
     
     setLoading(true);
     setSubmitError('');
-    setSuccess(false);
-    setVerificationStatus('verifying');
     
     try {
-      await alumniService.registerVerifiedAlumni(formData);
+      await alumniService.registerVerifiedAlumni(submissionData);
       setSuccess(true);
-      setVerificationStatus('verified');
       
       // Redirect to profile page after successful registration
       setTimeout(() => {
         navigate('/profile');
-      }, 2000); // Wait 2 seconds to show success message
-      
-      // Reset form
-      setFormData({
-        name: '',
-        graduation_year: '',
-        faculty: '',
-        university_id: '',
-        tazkira_number: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-        phone: '',
-        current_job_title: '',
-        current_company: '',
-        location: '',
-        linkedin_profile: '',
-        bio: ''
-      });
+      }, 2000);
     } catch (error) {
-      setVerificationStatus('failed');
-      
       if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);
       } else {
-        const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
-        const errorCode = error.response?.data?.error_code;
-        
-        // Handle specific verification errors
-        if (errorCode === 'STUDENT_NOT_FOUND') {
-          setSubmitError('Student not found in MIS records. Please check your University ID and try again.');
-        } else if (errorCode === 'TAZKIRA_MISMATCH') {
-          setSubmitError('Tazkira number does not match our records. Please verify your tazkira number.');
-        } else if (errorCode === 'NAME_MISMATCH') {
-          setSubmitError('Name does not match our records. Please enter your exact name as registered in MIS.');
-        } else if (errorCode === 'ALREADY_REGISTERED') {
-          setSubmitError('You are already registered in our alumni system.');
-        } else {
-          setSubmitError(errorMessage);
-        }
+        setSubmitError(error.response?.data?.message || 'Registration failed. Please try again.');
       }
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!studentData) {
+      setSearchError('Please search for your student profile first');
+      return;
+    }
+    
+    // Show tazkira verification modal
+    setShowTazkiraModal(true);
   };
 
   const getPasswordStrength = (password) => {
@@ -253,89 +268,14 @@ const VerifiedAlumniRegistration = () => {
               </div>
             )}
             
-            {verificationStatus === 'verifying' && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <svg className="animate-spin h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  </div>
-                  <div className="ml-3">
-                    <h3 className="text-sm font-medium text-blue-800">Verifying Your Information</h3>
-                    <p className="text-sm text-blue-700 mt-1">Please wait while we verify your information against our MIS records...</p>
-                  </div>
-                </div>
-              </div>
-            )}
-            
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Verification Information Section */}
+              {/* Student Search Section */}
               <div className="border-b border-gray-200 pb-8">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">📋 Verification Information</h2>
-                <p className="text-sm text-gray-600 mb-6">This information will be verified against our MIS records.</p>
+                <h2 className="text-xl font-semibold text-gray-900 mb-4">� Find Your Student Profile</h2>
+                <p className="text-sm text-gray-600 mb-6">Enter your University ID to search for your student profile in our MIS records.</p>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Full Name <span className="text-red-700">*</span></label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
-                        errors.name ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                      placeholder="your full name"
-                    />
-                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="graduation_year" className="block text-sm font-medium text-gray-700 mb-2">Graduation Year (Hijri Shamsi) <span className="text-red-700">*</span></label>
-                    <input
-                      type="number"
-                      id="graduation_year"
-                      name="graduation_year"
-                      value={formData.graduation_year}
-                      onChange={handleChange}
-                      min="1350"
-                      max={new Date().getFullYear() - 621} // Approximate current Hijri year
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
-                        errors.graduation_year ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                      placeholder="e.g., 1400"
-                    />
-                    {errors.graduation_year && <p className="mt-1 text-sm text-red-600">{errors.graduation_year}</p>}
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="faculty" className="block text-sm font-medium text-gray-700 mb-2">Faculty <span className="text-red-700">*</span></label>
-                    <select
-                      id="faculty"
-                      name="faculty"
-                      value={formData.faculty}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-base text-gray-900 ${
-                        errors.faculty ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                    >
-                      <option value="">Select your faculty</option>
-                      <option value="Geology and Mines Faculty">Geology and Mines Faculty</option>
-                      <option value="Construction Faculty">Construction Faculty</option>
-                      <option value="Electromechanics Faculty">Electromechanics Faculty</option>
-                      <option value="Computer Science Faculty">Computer Science Faculty</option>
-                      <option value="Chemical industrial Engineering Faculty">Chemical industrial Engineering Faculty</option>
-                      <option value="Water and Environmental Engineering Faculty">Water and Environmental Engineering Faculty</option>
-                      <option value="Transportation Engineering Faculty">Transportation Engineering Faculty</option>
-                      <option value="Geomatics Engineering Faculty">Geomatics Engineering Faculty</option>
-                    </select>
-                    {errors.faculty && <p className="mt-1 text-sm text-red-600">{errors.faculty}</p>}
-                  </div>
-                  
-                  <div>
+                <div className="flex gap-4">
+                  <div className="flex-1">
                     <label htmlFor="university_id" className="block text-sm font-medium text-gray-700 mb-2">University ID <span className="text-red-700">*</span></label>
                     <input
                       type="text"
@@ -346,203 +286,271 @@ const VerifiedAlumniRegistration = () => {
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
                         errors.university_id ? 'border-red-500 bg-red-50' : 'border-gray-300'
                       }`}
-                      placeholder="Your university ID"
+                      placeholder="Enter your University ID"
                     />
                     {errors.university_id && <p className="mt-1 text-sm text-red-600">{errors.university_id}</p>}
                   </div>
                   
-                  <div>
-                    <label htmlFor="tazkira_number" className="block text-sm font-medium text-gray-700 mb-2">Tazkira Number <span className="text-red-700">*</span></label>
-                    <input
-                      type="text"
-                      id="tazkira_number"
-                      name="tazkira_number"
-                      value={formData.tazkira_number}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
-                        errors.tazkira_number ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                      placeholder="Your tazkira number"
-                    />
-                    {errors.tazkira_number && <p className="mt-1 text-sm text-red-600">{errors.tazkira_number}</p>}
+                  <div className="flex items-end">
+                    <button
+                      type="button"
+                      onClick={searchStudent}
+                      disabled={searchLoading || !formData.university_id.trim()}
+                      className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                    >
+                      {searchLoading ? (
+                        <span className="flex items-center">
+                          <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Searching...
+                        </span>
+                      ) : 'Search Profile'}
+                    </button>
                   </div>
                 </div>
+                
+                {searchError && (
+                  <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <svg className="h-5 w-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <p className="text-sm text-red-700">{searchError}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
+              
+              {/* Student Profile Display */}
+              {studentData && (
+                <div className="border-b border-gray-200 pb-8">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">👤 Student Profile Found</h2>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Full Name</p>
+                        <p className="text-base font-semibold text-gray-900">{studentData.first_name} {studentData.father_name} {studentData.grandfather_name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">University ID</p>
+                        <p className="text-base font-semibold text-gray-900">{studentData.student_id}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Faculty</p>
+                        <p className="text-base font-semibold text-gray-900">{studentData.department?.faculty?.name || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Graduation Year</p>
+                        <p className="text-base font-semibold text-gray-900">{studentData.graduation_year || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Phone Number</p>
+                        <p className="text-base font-semibold text-gray-900">{studentData.phone_number || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-600">Department</p>
+                        <p className="text-base font-semibold text-gray-900">{studentData.department?.name || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
               
               {/* Account Information Section */}
-              <div className="border-b border-gray-200 pb-8">
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">🔐 Account Information</h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address <span className="text-red-700">*</span></label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
-                        errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                      placeholder="your email address"
-                    />
-                    {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-                  </div>
+              {studentData && (
+                <div className="border-b border-gray-200 pb-8">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">🔐 Account Information</h2>
                   
-                  <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password <span className="text-red-700">*</span></label>
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
-                        errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                      placeholder="your password"
-                    />
-                    {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email Address <span className="text-red-700">*</span></label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
+                          errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                        }`}
+                        placeholder="your email address"
+                      />
+                      {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                    </div>
                     
-                    {formData.password && (
-                      <div className="mt-2">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs text-gray-500">Password Strength:</span>
-                          <span className="text-xs font-medium" style={{ color: passwordStrength.color }}>
-                            {passwordStrength.text}
-                          </span>
+                    <div>
+                      <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">Password <span className="text-red-700">*</span></label>
+                      <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
+                          errors.password ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                        }`}
+                        placeholder="your password"
+                      />
+                      {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password}</p>}
+                      
+                      {formData.password && (
+                        <div className="mt-2">
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs text-gray-500">Password Strength:</span>
+                            <span className="text-xs font-medium" style={{ color: passwordStrength.color }}>
+                              {passwordStrength.text}
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className="h-2 rounded-full transition-all duration-300"
+                              style={{
+                                width: `${passwordStrength.strength}%`,
+                                backgroundColor: passwordStrength.color
+                              }}
+                            />
+                          </div>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
-                          <div
-                            className="h-2 rounded-full transition-all duration-300"
-                            style={{
-                              width: `${passwordStrength.strength}%`,
-                              backgroundColor: passwordStrength.color
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
+                      )}
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700 mb-2">Confirm Password <span className="text-red-700">*</span></label>
+                      <input
+                        type="password"
+                        id="password_confirmation"
+                        name="password_confirmation"
+                        value={formData.password_confirmation}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
+                          errors.password_confirmation ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                        }`}
+                        placeholder="re-enter password"
+                      />
+                      {errors.password_confirmation && <p className="mt-1 text-sm text-red-600">{errors.password_confirmation}</p>}
+                    </div>
                   </div>
                   
-                  <div>
-                    <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700 mb-2">Confirm Password <span className="text-red-700">*</span></label>
-                    <input
-                      type="password"
-                      id="password_confirmation"
-                      name="password_confirmation"
-                      value={formData.password_confirmation}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
-                        errors.password_confirmation ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                      placeholder="re-enter password"
-                    />
-                    {errors.password_confirmation && <p className="mt-1 text-sm text-red-600">{errors.password_confirmation}</p>}
+                  <div className="mt-4 p-3 bg-blue-50 rounded-md">
+                    <p className="text-xs text-blue-800">
+                      <strong>Password Requirements:</strong> At least 8 characters, one capital letter, one number, and one special character (@$!%*?&)
+                    </p>
                   </div>
                 </div>
-                
-                <div className="mt-4 p-3 bg-blue-50 rounded-md">
-                  <p className="text-xs text-blue-800">
-                    <strong>Password Requirements:</strong> At least 8 characters, one capital letter, one number, and one special character (@$!%*?&)
-                  </p>
-                </div>
-              </div>
+              )}
               
               {/* Professional Information Section */}
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-4">💼 Professional Information (Optional)</h2>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900"
-                      placeholder="your phone number"
-                    />
+              {studentData && (
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-4">💼 Professional Information (Optional)</h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label htmlFor="current_job_title" className="block text-sm font-medium text-gray-700 mb-2">Current Job Title</label>
+                      <input
+                        type="text"
+                        id="current_job_title"
+                        name="current_job_title"
+                        value={formData.current_job_title}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900"
+                        placeholder="your current job title"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="current_company" className="block text-sm font-medium text-gray-700 mb-2">Current Company</label>
+                      <input
+                        type="text"
+                        id="current_company"
+                        name="current_company"
+                        value={formData.current_company}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900"
+                        placeholder="your current company"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                      <input
+                        type="text"
+                        id="location"
+                        name="location"
+                        value={formData.location}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900"
+                        placeholder="your location"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="linkedin_profile" className="block text-sm font-medium text-gray-700 mb-2">LinkedIn Profile</label>
+                      <input
+                        type="url"
+                        id="linkedin_profile"
+                        name="linkedin_profile"
+                        value={formData.linkedin_profile}
+                        onChange={handleChange}
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base ${
+                          errors.linkedin_profile ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                        }`}
+                        placeholder="your linkedin profile"
+                      />
+                      {errors.linkedin_profile && <p className="mt-1 text-sm text-red-600">{errors.linkedin_profile}</p>}
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="profile_image" className="block text-sm font-medium text-gray-700 mb-2">Profile Image</label>
+                      <input
+                        type="file"
+                        id="profile_image"
+                        name="profile_image"
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-base text-gray-900"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label htmlFor="cover_image" className="block text-sm font-medium text-gray-700 mb-2">Cover Image</label>
+                      <input
+                        type="file"
+                        id="cover_image"
+                        name="cover_image"
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-base text-gray-900"
+                      />
+                    </div>
                   </div>
                   
-                  <div>
-                    <label htmlFor="current_job_title" className="block text-sm font-medium text-gray-700 mb-2">Current Job Title</label>
-                    <input
-                      type="text"
-                      id="current_job_title"
-                      name="current_job_title"
-                      value={formData.current_job_title}
+                  <div className="mt-6">
+                    <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                    <textarea
+                      id="bio"
+                      name="bio"
+                      value={formData.bio}
                       onChange={handleChange}
+                      rows={4}
+                      maxLength="1000"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900"
-                      placeholder="your current job title"
+                      placeholder="tell us about your journey"
                     />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="current_company" className="block text-sm font-medium text-gray-700 mb-2">Current Company</label>
-                    <input
-                      type="text"
-                      id="current_company"
-                      name="current_company"
-                      value={formData.current_company}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900"
-                      placeholder="your current company"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                    <input
-                      type="text"
-                      id="location"
-                      name="location"
-                      value={formData.location}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900"
-                      placeholder="your location"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="linkedin_profile" className="block text-sm font-medium text-gray-700 mb-2">LinkedIn Profile</label>
-                    <input
-                      type="url"
-                      id="linkedin_profile"
-                      name="linkedin_profile"
-                      value={formData.linkedin_profile}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base ${
-                        errors.linkedin_profile ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                      placeholder="your linkedin profile"
-                    />
-                    {errors.linkedin_profile && <p className="mt-1 text-sm text-red-600">{errors.linkedin_profile}</p>}
                   </div>
                 </div>
-                
-                <div className="mt-6">
-                  <label htmlFor="bio" className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
-                  <textarea
-                    id="bio"
-                    name="bio"
-                    value={formData.bio}
-                    onChange={handleChange}
-                    rows={4}
-                    maxLength="1000"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900"
-                    placeholder="tell us about your journey"
-                  />
-                </div>
-              </div>
+              )}
               
               <div className="pt-6">
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || !studentData}
                   className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 >
                   {loading ? (
@@ -551,15 +559,68 @@ const VerifiedAlumniRegistration = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      {verificationStatus === 'verifying' ? 'Verifying...' : 'Registering...'}
+                      Registering...
                     </span>
-                  ) : 'Register as Verified Alumni'}
+                  ) : 'Complete Registration'}
                 </button>
               </div>
             </form>
           </div>
         </div>
       </div>
+      
+      {/* Tazkira Verification Modal */}
+      {showTazkiraModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">🔍 Verify Your Identity</h3>
+            <p className="text-gray-600 mb-6">Please enter your tazkira number to complete the verification process.</p>
+            
+            <div className="mb-6">
+              <label htmlFor="tazkira_number" className="block text-sm font-medium text-gray-700 mb-2">Tazkira Number <span className="text-red-700">*</span></label>
+              <input
+                type="text"
+                id="tazkira_number"
+                value={tazkiraNumber}
+                onChange={handleTazkiraChange}
+                className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors placeholder-gray-400 placeholder-text-sm text-base text-gray-900 ${
+                  verificationError ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                }`}
+                placeholder="Enter your tazkira number"
+              />
+              {verificationError && <p className="mt-1 text-sm text-red-600">{verificationError}</p>}
+            </div>
+            
+            <div className="flex gap-4">
+              <button
+                onClick={() => {
+                  setShowTazkiraModal(false);
+                  setTazkiraNumber('');
+                  setVerificationError('');
+                }}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={verifyTazkira}
+                disabled={verificationLoading || !tazkiraNumber.trim()}
+                className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                {verificationLoading ? (
+                  <span className="flex items-center justify-center">
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Verifying...
+                  </span>
+                ) : 'Verify & Register'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 };
