@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiCheckCircle, FiCalendar } from 'react-icons/fi';
+import authService from '../services/authService';
 
 const LoginPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -34,10 +38,37 @@ const LoginPage = () => {
     }
   }, [location.pathname]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log('Form submitted:', formData);
+    
+    if (!isLogin) {
+      // Handle signup - redirect to verified registration
+      handleVerifiedRegistration();
+      return;
+    }
+    
+    // Handle login
+    setLoading(true);
+    setError('');
+    
+    try {
+      const response = await authService.login({
+        email: formData.email,
+        password: formData.password,
+        remember: rememberMe
+      });
+      
+      if (response.status === 'success') {
+        navigate('/profile');
+      } else {
+        setError(response.message || 'Login failed');
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'Login failed. Please try again.';
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleVerifiedRegistration = () => {
@@ -275,35 +306,42 @@ const LoginPage = () => {
                   {isLogin && (
                     <div className="flex items-center justify-between">
                       <label className="flex items-center">
-                        <input type="checkbox" className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                        <input 
+                          type="checkbox" 
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
+                        />
                         <span className="ml-2 text-sm text-gray-700">Remember me</span>
                       </label>
                       <a href="#" className="text-sm text-blue-600 hover:text-blue-700">Forgot password?</a>
                     </div>
                   )}
 
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                  >
-                    {isLogin ? 'Sign In' : 'Create Account'}
-                  </button>
-
-                  {isLogin && (
-                    <div className="mt-4">
-                      <button
-                        type="button"
-                        onClick={handleVerifiedRegistration}
-                        className="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center gap-2"
-                      >
-                        <FiCheckCircle />
-                        Register as Verified KPU Alumni
-                      </button>
-                      <p className="text-xs text-gray-600 text-center mt-2">
-                        Get verified with MIS integration • Exclusive benefits
-                      </p>
+                  {/* Error Display */}
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                      <p className="text-sm text-red-600">{error}</p>
                     </div>
                   )}
+
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? (
+                      <span className="flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {isLogin ? 'Signing In...' : 'Creating Account...'}
+                      </span>
+                    ) : (
+                      isLogin ? 'Sign In' : 'Create Account'
+                    )}
+                  </button>
                 </form>
 
                 <div className="mt-8 text-center">
