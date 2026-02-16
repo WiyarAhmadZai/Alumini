@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX } from 'react-icons/fi';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
 import alumniService from '../services/alumniService';
 import authService from '../services/authService';
@@ -13,10 +13,11 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement
+  const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share
   const [editingItem, setEditingItem] = useState(null);
   const [saving, setSaving] = useState(false);
   const [modalError, setModalError] = useState('');
+  const [shareLinkCopied, setShareLinkCopied] = useState(false);
 
   const [experienceAttachment, setExperienceAttachment] = useState(null);
   const [educationAttachment, setEducationAttachment] = useState(null);
@@ -78,6 +79,78 @@ const ProfilePage = () => {
     category: '',
     description: ''
   }), []);
+
+  const shareUrl = useMemo(() => {
+    if (!profile) return '';
+    return `${window.location.origin}/profile/${profile.id}`;
+  }, [profile]);
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setShareLinkCopied(true);
+      setTimeout(() => setShareLinkCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  };
+
+  const sharePlatforms = useMemo(() => [
+    {
+      name: 'WhatsApp',
+      icon: <FiMessageSquare />,
+      color: 'bg-[#25D366]',
+      url: `https://wa.me/?text=${encodeURIComponent(`Check out this profile: ${shareUrl}`)}`
+    },
+    {
+      name: 'IMO',
+      icon: <FiSend />,
+      color: 'bg-[#1DA1F2]',
+      url: `https://imo.im/share?text=${encodeURIComponent(`Check out this profile: ${shareUrl}`)}`
+    },
+    {
+      name: 'Telegram',
+      icon: <FiSend />,
+      color: 'bg-[#0088cc]',
+      url: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${profile?.name}'s profile`)}`
+    },
+    {
+      name: 'Messenger',
+      icon: <FiMessageSquare />,
+      color: 'bg-[#0084FF]',
+      url: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(shareUrl)}&app_id=YOUR_APP_ID`
+    },
+    {
+      name: 'Facebook',
+      icon: <FiFacebook />,
+      color: 'bg-[#1877F2]',
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
+    },
+    {
+      name: 'Snapchat',
+      icon: <FiCamera />,
+      color: 'bg-[#FFFC00]',
+      url: `https://www.snapchat.com/add?text=${encodeURIComponent(`Check out this profile: ${shareUrl}`)}`
+    },
+    {
+      name: 'Twitter',
+      icon: <FiTwitter />,
+      color: 'bg-[#1DA1F2]',
+      url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${profile?.name}'s profile`)}`
+    },
+    {
+      name: 'LinkedIn',
+      icon: <FiLinkedin />,
+      color: 'bg-[#0A66C2]',
+      url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`
+    },
+    {
+      name: 'Email',
+      icon: <FiMail />,
+      color: 'bg-[#EA4335]',
+      url: `mailto:?subject=${encodeURIComponent(`Profile of ${profile?.name}`)}&body=${encodeURIComponent(`I thought you might be interested in this profile: ${shareUrl}`)}`
+    }
+  ], [shareUrl, profile]);
 
   const [experienceForm, setExperienceForm] = useState(emptyExperience);
   const [educationForm, setEducationForm] = useState(emptyEducation);
@@ -586,7 +659,11 @@ const ProfilePage = () => {
                     <FiEdit className="text-sm" />
                     Edit Profile
                   </button>
-                  <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                  <button 
+                    onClick={() => setActiveModal('share')}
+                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                    title="Share Profile"
+                  >
                     <FiShare2 />
                   </button>
                 </div>
@@ -1197,6 +1274,97 @@ const ProfilePage = () => {
                 View Current Attachment
               </a>
             )}
+          </div>
+        </div>
+      </Modal>
+
+      {/* Share Modal */}
+      <Modal
+        isOpen={activeModal === 'share'}
+        title=""
+        onClose={() => setActiveModal(null)}
+        footer={null}
+        className="max-w-md"
+        closeOnClickOutside={true}
+      >
+        <div className="space-y-6">
+          {/* Profile Preview */}
+          <div className="text-center">
+            <div className="relative inline-block">
+              {profile?.profile_image ? (
+                <img 
+                  src={profile.profile_image} 
+                  alt={profile.name}
+                  className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                />
+              ) : (
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 mx-auto flex items-center justify-center text-white text-3xl font-bold border-4 border-white shadow-lg">
+                  {profile?.name?.charAt(0)?.toUpperCase()}
+                </div>
+              )}
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-3 border-white flex items-center justify-center">
+                <FiShare2 className="text-white text-sm" />
+              </div>
+            </div>
+            <h3 className="font-bold text-xl mt-4 text-gray-900">{profile?.name}</h3>
+            <p className="text-gray-600 text-sm mt-1">{profile?.faculty} • Class of {profile?.graduation_year}</p>
+            {profile?.current_job_title && (
+              <p className="text-gray-700 text-sm font-medium mt-2">{profile.current_job_title}</p>
+            )}
+          </div>
+
+          {/* Copy Link Section */}
+          <div className="bg-gray-50 rounded-xl p-4">
+            <label className="block text-sm font-semibold text-gray-700 mb-3">Profile Link</label>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                readOnly
+                value={shareUrl}
+                className="flex-1 px-4 py-3 border border-gray-200 rounded-lg bg-white text-sm font-mono text-black"
+              />
+              <button
+                onClick={handleCopyLink}
+                className={`px-6 py-3 rounded-lg font-medium text-sm transition-all transform hover:scale-105 ${
+                  shareLinkCopied 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                {shareLinkCopied ? (
+                  <span className="flex items-center gap-2">
+                    <FiLink className="text-lg" />
+                    Copied!
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <FiLink className="text-lg" />
+                    Copy
+                  </span>
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Share Platforms */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-4">Share via</label>
+            <div className="grid grid-cols-3 gap-4">
+              {sharePlatforms.map((platform) => (
+                <a
+                  key={platform.name}
+                  href={platform.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <div className={`text-2xl ${platform.name === 'Snapchat' ? 'text-yellow-400' : 'text-gray-600'} hover:scale-110 transition-transform`}>
+                    {platform.icon}
+                  </div>
+                  <span className="text-xs text-black font-medium">{platform.name}</span>
+                </a>
+              ))}
+            </div>
           </div>
         </div>
       </Modal>
