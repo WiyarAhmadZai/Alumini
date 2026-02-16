@@ -53,8 +53,20 @@ const alumniService = {
     }
   },
 
-  createExperience: async (data) => {
+  createExperience: async (data, attachmentFile = null) => {
     try {
+      if (attachmentFile) {
+        const formData = new FormData();
+        Object.entries(data || {}).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append('attachment', attachmentFile);
+        const response = await api.post('/alumini/me/experiences', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+      }
+
       const response = await api.post('/alumini/me/experiences', data);
       return response.data;
     } catch (error) {
@@ -62,8 +74,20 @@ const alumniService = {
     }
   },
 
-  updateExperience: async (id, data) => {
+  updateExperience: async (id, data, attachmentFile = null) => {
     try {
+      if (attachmentFile) {
+        const formData = new FormData();
+        Object.entries(data || {}).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append('attachment', attachmentFile);
+        const response = await api.post(`/alumini/me/experiences/${id}?_method=PUT`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+      }
+
       const response = await api.put(`/alumini/me/experiences/${id}`, data);
       return response.data;
     } catch (error) {
@@ -80,8 +104,20 @@ const alumniService = {
     }
   },
 
-  createEducation: async (data) => {
+  createEducation: async (data, attachmentFile = null) => {
     try {
+      if (attachmentFile) {
+        const formData = new FormData();
+        Object.entries(data || {}).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append('attachment', attachmentFile);
+        const response = await api.post('/alumini/me/educations', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+      }
+
       const response = await api.post('/alumini/me/educations', data);
       return response.data;
     } catch (error) {
@@ -89,8 +125,20 @@ const alumniService = {
     }
   },
 
-  updateEducation: async (id, data) => {
+  updateEducation: async (id, data, attachmentFile = null) => {
     try {
+      if (attachmentFile) {
+        const formData = new FormData();
+        Object.entries(data || {}).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append('attachment', attachmentFile);
+        const response = await api.post(`/alumini/me/educations/${id}?_method=PUT`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+      }
+
       const response = await api.put(`/alumini/me/educations/${id}`, data);
       return response.data;
     } catch (error) {
@@ -107,8 +155,20 @@ const alumniService = {
     }
   },
 
-  createSkill: async (data) => {
+  createSkill: async (data, attachmentFile = null) => {
     try {
+      if (attachmentFile) {
+        const formData = new FormData();
+        Object.entries(data || {}).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append('attachment', attachmentFile);
+        const response = await api.post('/alumini/me/skills', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+      }
+
       const response = await api.post('/alumini/me/skills', data);
       return response.data;
     } catch (error) {
@@ -116,8 +176,20 @@ const alumniService = {
     }
   },
 
-  updateSkill: async (id, data) => {
+  updateSkill: async (id, data, attachmentFile = null) => {
     try {
+      if (attachmentFile) {
+        const formData = new FormData();
+        Object.entries(data || {}).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append('attachment', attachmentFile);
+        const response = await api.post(`/alumini/me/skills/${id}?_method=PUT`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+      }
+
       const response = await api.put(`/alumini/me/skills/${id}`, data);
       return response.data;
     } catch (error) {
@@ -134,8 +206,20 @@ const alumniService = {
     }
   },
 
-  createAchievement: async (data) => {
+  createAchievement: async (data, attachmentFile = null) => {
     try {
+      if (attachmentFile) {
+        const formData = new FormData();
+        Object.entries(data || {}).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append('attachment', attachmentFile);
+        const response = await api.post('/alumini/me/achievements', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+      }
+
       const response = await api.post('/alumini/me/achievements', data);
       return response.data;
     } catch (error) {
@@ -143,8 +227,20 @@ const alumniService = {
     }
   },
 
-  updateAchievement: async (id, data) => {
+  updateAchievement: async (id, data, attachmentFile = null) => {
     try {
+      if (attachmentFile) {
+        const formData = new FormData();
+        Object.entries(data || {}).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append('attachment', attachmentFile);
+        const response = await api.post(`/alumini/me/achievements/${id}?_method=PUT`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        return response.data;
+      }
+
       const response = await api.put(`/alumini/me/achievements/${id}`, data);
       return response.data;
     } catch (error) {
