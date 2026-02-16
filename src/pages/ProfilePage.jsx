@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera } from 'react-icons/fi';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX } from 'react-icons/fi';
+import Cropper from 'react-easy-crop';
 import alumniService from '../services/alumniService';
 import authService from '../services/authService';
 import Modal from '../components/ui/Modal';
@@ -24,6 +25,16 @@ const ProfilePage = () => {
 
   const profileInputRef = useRef(null);
   const coverInputRef = useRef(null);
+
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxSrc, setLightboxSrc] = useState('');
+
+  const [cropOpen, setCropOpen] = useState(false);
+  const [cropTarget, setCropTarget] = useState(null); // 'profile' | 'cover'
+  const [cropImageSrc, setCropImageSrc] = useState('');
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
   const [basicForm, setBasicForm] = useState({
     phone: '',
@@ -114,6 +125,120 @@ const ProfilePage = () => {
     setEducationForm(emptyEducation);
     setSkillForm(emptySkill);
     setAchievementForm(emptyAchievement);
+  };
+
+  const openLightbox = (src) => {
+    if (!src) return;
+    setLightboxSrc(src);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+    setTimeout(() => setLightboxSrc(''), 200);
+  };
+
+  const closeCrop = () => {
+    setCropOpen(false);
+    setCropTarget(null);
+    setCropImageSrc('');
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setCroppedAreaPixels(null);
+  };
+
+  const openCrop = (file, target) => {
+    if (!file) return;
+    const objectUrl = URL.createObjectURL(file);
+    setCropTarget(target);
+    setCropImageSrc(objectUrl);
+    setCrop({ x: 0, y: 0 });
+    setZoom(1);
+    setCroppedAreaPixels(null);
+    setCropOpen(true);
+  };
+
+  const onCropComplete = (_, croppedPixels) => {
+    setCroppedAreaPixels(croppedPixels);
+  };
+
+  const createImage = (url) =>
+    new Promise((resolve, reject) => {
+      const image = new Image();
+      image.addEventListener('load', () => resolve(image));
+      image.addEventListener('error', (error) => reject(error));
+      image.setAttribute('crossOrigin', 'anonymous');
+      image.src = url;
+    });
+
+  const getCenteredCropPixels = (imageWidth, imageHeight, aspect) => {
+    const imageAspect = imageWidth / imageHeight;
+
+    if (imageAspect > aspect) {
+      const cropHeight = imageHeight;
+      const cropWidth = Math.round(cropHeight * aspect);
+      const x = Math.round((imageWidth - cropWidth) / 2);
+      return { x, y: 0, width: cropWidth, height: cropHeight };
+    }
+
+    const cropWidth = imageWidth;
+    const cropHeight = Math.round(cropWidth / aspect);
+    const y = Math.round((imageHeight - cropHeight) / 2);
+    return { x: 0, y, width: cropWidth, height: cropHeight };
+  };
+
+  const getCroppedBlob = async (imageSrc, cropPixels) => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = cropPixels.width;
+    canvas.height = cropPixels.height;
+
+    ctx.drawImage(
+      image,
+      cropPixels.x,
+      cropPixels.y,
+      cropPixels.width,
+      cropPixels.height,
+      0,
+      0,
+      cropPixels.width,
+      cropPixels.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', 0.92);
+    });
+  };
+
+  const handleCropSave = async () => {
+    if (!cropImageSrc || !cropTarget) return;
+
+    try {
+      setSaving(true);
+      const image = await createImage(cropImageSrc);
+      const aspect = cropTarget === 'cover' ? 3 / 1 : 1;
+      const cropPixels = croppedAreaPixels || getCenteredCropPixels(image.naturalWidth || image.width, image.naturalHeight || image.height, aspect);
+
+      const blob = await getCroppedBlob(cropImageSrc, cropPixels);
+      if (!blob) throw new Error('Failed to crop image');
+
+      const file = new File([blob], `${cropTarget}-image.jpg`, { type: 'image/jpeg' });
+
+      if (cropTarget === 'profile') {
+        await alumniService.uploadProfileImage(file);
+      } else {
+        await alumniService.uploadCoverImage(file);
+      }
+
+      await refreshProfile();
+      closeCrop();
+    } catch (e) {
+      setError(e.response?.data?.message || 'Failed to upload image.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const openBasicModal = () => {
@@ -323,28 +448,14 @@ const ProfilePage = () => {
 
   const handleProfileFileSelected = async (file) => {
     if (!file) return;
-    try {
-      setSaving(true);
-      await alumniService.uploadProfileImage(file);
-      await refreshProfile();
-    } catch (e) {
-      setError(e.response?.data?.message || 'Failed to upload profile image.');
-    } finally {
-      setSaving(false);
-    }
+    openCrop(file, 'profile');
+    if (profileInputRef.current) profileInputRef.current.value = '';
   };
 
   const handleCoverFileSelected = async (file) => {
     if (!file) return;
-    try {
-      setSaving(true);
-      await alumniService.uploadCoverImage(file);
-      await refreshProfile();
-    } catch (e) {
-      setError(e.response?.data?.message || 'Failed to upload cover image.');
-    } finally {
-      setSaving(false);
-    }
+    openCrop(file, 'cover');
+    if (coverInputRef.current) coverInputRef.current.value = '';
   };
 
   const experiences = profile?.experiences || [];
@@ -364,6 +475,31 @@ const ProfilePage = () => {
       
 
       <div className="min-h-screen bg-gray-50">
+        <div className={`fixed inset-0 z-[100] ${lightboxOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+          <div
+            className={`absolute inset-0 bg-black/80 transition-opacity duration-200 ${lightboxOpen ? 'opacity-100' : 'opacity-0'}`}
+            onClick={closeLightbox}
+          />
+          <div className={`absolute inset-0 flex items-center justify-center p-4 transition-all duration-200 ${lightboxOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+            <button
+              type="button"
+              onClick={closeLightbox}
+              className="absolute top-4 right-4 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center"
+              aria-label="Close"
+            >
+              <FiX size={20} />
+            </button>
+            {lightboxSrc && (
+              <img
+                src={lightboxSrc}
+                alt="Preview"
+                onClick={closeLightbox}
+                className="max-h-[90vh] max-w-[92vw] rounded-xl shadow-2xl object-contain cursor-zoom-out"
+              />
+            )}
+          </div>
+        </div>
+
         <div className=" h-12 bg-cover bg-center " >
           <div className="absolute inset-0 bg-gradient-to-b from-[#002759]/95  to-blue-500 to-transparent"></div>
           <div className="relative flex items-center justify-center ">
@@ -385,13 +521,17 @@ const ProfilePage = () => {
           {/* Profile Header Card */}
           <div className="bg-primary rounded-xl border border-primary shadow-sm overflow-hidden mb-6">
             {/* Cover Image */}
-            <div className="w-full bg-center bg-no-repeat bg-cover min-h-64 relative" style={{backgroundImage: `url("${coverImage}")`}}>
+            <div className="w-full bg-center bg-no-repeat bg-cover min-h-64 relative cursor-zoom-in" style={{backgroundImage: `url("${coverImage}")`}} onClick={() => openLightbox(coverImage)}>
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
               <button
                 type="button"
-                onClick={() => coverInputRef.current?.click()}
-                className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-900 rounded-lg px-3 py-2 text-sm font-semibold shadow flex items-center gap-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  coverInputRef.current?.click();
+                }}
+                className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-900 rounded-lg px-3 py-2 text-sm font-semibold shadow flex items-center gap-2 cursor-pointer"
                 disabled={saving}
+                onMouseDown={(e) => e.stopPropagation()}
               >
                 <FiCamera />
                 Update Cover
@@ -406,13 +546,17 @@ const ProfilePage = () => {
             </div>
             <div className="bg-primary px-8 pb-8 flex flex-col md:flex-row items-end gap-6 -mt-16 relative z-10">
               <div className="relative">
-                <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-white size-40 shadow-lg" style={{backgroundImage: `url("${avatarImage}")`}}></div>
+                <div className="bg-center bg-no-repeat aspect-square bg-cover rounded-full border-4 border-white size-40 shadow-lg cursor-zoom-in" style={{backgroundImage: `url("${avatarImage}")`}} onClick={() => openLightbox(avatarImage)}></div>
                 <button
                   type="button"
-                  onClick={() => profileInputRef.current?.click()}
-                  className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-white text-gray-900 shadow flex items-center justify-center hover:bg-gray-50"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    profileInputRef.current?.click();
+                  }}
+                  className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-white text-gray-900 shadow flex items-center justify-center hover:bg-gray-50 cursor-pointer"
                   title="Update profile image"
                   disabled={saving}
+                  onMouseDown={(e) => e.stopPropagation()}
                 >
                   <FiCamera />
                 </button>
@@ -425,7 +569,7 @@ const ProfilePage = () => {
                 />
               </div>
               <div className="flex-1 flex flex-col md:flex-row justify-between items-end pb-2">
-                <div className="flex flex-col pt-20">
+                <div className="flex flex-col md:pt-20">
                   <div className="flex items-center gap-2">
                     <h1 className="text-black text-3xl font-bold leading-tight">{profile?.name || '-'}</h1>
                     <span className="material-symbols-outlined text-black fill-1" title="Verified Alumnus">verified</span>
@@ -768,6 +912,53 @@ const ProfilePage = () => {
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-1">Bio</label>
             <textarea className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900 min-h-[120px]" value={basicForm.bio} onChange={(e) => setBasicForm({ ...basicForm, bio: e.target.value })} />
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={cropOpen}
+        title="Crop Image"
+        onClose={() => {
+          if (saving) return;
+          closeCrop();
+        }}
+        footer={
+          <div className="flex justify-end gap-3">
+            <button type="button" className="px-4 py-2 rounded-lg border border-gray-300 text-gray-900" onClick={closeCrop} disabled={saving}>Cancel</button>
+            <button type="button" className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold flex items-center gap-2" onClick={handleCropSave} disabled={saving}>
+              {saving && <span className="w-4 h-4 rounded-full border-2 border-white/60 border-t-white animate-spin" />}
+              {saving ? 'Saving...' : 'Crop & Upload'}
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <div className="relative w-full h-[360px] bg-black/90 rounded-xl overflow-hidden">
+            {cropImageSrc && (
+              <Cropper
+                image={cropImageSrc}
+                crop={crop}
+                zoom={zoom}
+                aspect={cropTarget === 'cover' ? 3 / 1 : 1}
+                onCropChange={setCrop}
+                onZoomChange={setZoom}
+                onCropComplete={onCropComplete}
+                objectFit="cover"
+              />
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-black mb-2">Zoom</label>
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.05}
+              value={zoom}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="w-full"
+            />
           </div>
         </div>
       </Modal>
