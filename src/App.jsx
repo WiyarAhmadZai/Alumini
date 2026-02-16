@@ -11,6 +11,7 @@ import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import VerifiedAlumniRegistration from './components/VerifiedAlumniRegistration';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/guidelines" element={<GivingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<LoginPage />} />
+        <Route path="/register" element={<VerifiedAlumniRegistration />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/about" element={<AboutPage />} />
