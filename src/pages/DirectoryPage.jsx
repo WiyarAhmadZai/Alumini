@@ -28,8 +28,6 @@ const DirectoryPage = () => {
         setLoading(true);
         setError('');
         const response = await alumniService.getAll();
-        console.log('Fetched alumni data:', response.data);
-        console.log('Sample alumnus graduation years:', response.data.slice(0, 3).map(a => ({ name: a.name, graduation_year: a.graduation_year, faculty_name: a.faculty_name })));
         setAlumni(response.data);
       } catch (err) {
         setError('Failed to load alumni directory.');
@@ -41,7 +39,6 @@ const DirectoryPage = () => {
     const fetchGraduationYears = async () => {
       try {
         const response = await alumniService.getGraduationYears();
-        console.log('Fetched years from API:', response.data);
         setAvailableYears(response.data);
       } catch (err) {
         console.error('Failed to load graduation years:', err);
@@ -60,14 +57,7 @@ const DirectoryPage = () => {
       alumnus.bio?.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesFaculty = selectedFilters.faculty.length === 0 || selectedFilters.faculty.includes(alumnus.faculty_name);
-    
-    // Debug graduation year data
-    console.log('Alumnus graduation year:', alumnus.graduation_year, 'Type:', typeof alumnus.graduation_year);
-    console.log('Selected filter year:', selectedFilters.graduationYear, 'Type:', typeof selectedFilters.graduationYear);
-    
     const matchesYear = !selectedFilters.graduationYear || String(alumnus.graduation_year) === String(selectedFilters.graduationYear);
-    
-    console.log('Year match result:', matchesYear);
 
     return matchesSearch && matchesFaculty && matchesYear;
   });
@@ -108,16 +98,10 @@ const DirectoryPage = () => {
   };
 
   const handleYearChange = (year) => {
-    console.log('Year changed to:', year, 'Type:', typeof year);
-    setSelectedFilters(prev => {
-      console.log('Previous filters:', prev);
-      const newFilters = {
-        ...prev,
-        graduationYear: year === 'All' ? '' : year
-      };
-      console.log('New filters:', newFilters);
-      return newFilters;
-    });
+    setSelectedFilters(prev => ({
+      ...prev,
+      graduationYear: year === 'All' ? '' : year
+    }));
   };
 
   const resetFilters = () => {
@@ -157,7 +141,7 @@ const DirectoryPage = () => {
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 39, 89, 0.8) 100%), url("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80")',
+              backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 39, 89, 0.9) 100%), url("/images/hero-bg.jpg")',
               backgroundAttachment: 'fixed',
               backgroundSize: 'cover',
               backgroundPosition: 'center'
@@ -252,7 +236,7 @@ const DirectoryPage = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 39, 89, 0.8) 100%), url("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80")',
+            backgroundImage: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 39, 89, 0.9) 100%), url("/images/hero-bg.jpg")',
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
             backgroundPosition: 'center'
