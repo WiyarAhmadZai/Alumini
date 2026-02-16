@@ -13,7 +13,7 @@ const api = axios.create({
 // Request interceptor to add auth token if available
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('auth_token');
+    const token = localStorage.getItem('alumni_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -32,8 +32,11 @@ api.interceptors.response.use(
   (error) => {
     // Handle unauthorized errors
     if (error.response?.status === 401) {
-      localStorage.removeItem('auth_token');
-      window.location.href = '/login';
+      // Clear stored auth, but do NOT hard-refresh/redirect here.
+      // Login failures also return 401 and should be handled by the calling UI.
+      localStorage.removeItem('alumni_token');
+      localStorage.removeItem('alumni_user');
+      delete api.defaults.headers.common['Authorization'];
     }
     
     // Handle network errors
