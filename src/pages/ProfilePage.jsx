@@ -464,12 +464,25 @@ const ProfilePage = () => {
   };
 
   const handleDeleteExperience = async (id) => {
-    if (!window.confirm('Delete this experience?')) return;
-    try {
-      await alumniService.deleteExperience(id);
-      await refreshProfile();
-    } catch (e) {
-      setError(e.response?.data?.message || 'Failed to delete experience.');
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this experience?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await alumniService.deleteExperience(id);
+        await refreshProfile();
+        Swal.fire('Deleted!', 'Experience has been deleted.', 'success');
+      } catch (e) {
+        Swal.fire('Error', 'Failed to delete experience.', 'error');
+      }
     }
   };
 
@@ -492,12 +505,25 @@ const ProfilePage = () => {
   };
 
   const handleDeleteEducation = async (id) => {
-    if (!window.confirm('Delete this education?')) return;
-    try {
-      await alumniService.deleteEducation(id);
-      await refreshProfile();
-    } catch (e) {
-      setError(e.response?.data?.message || 'Failed to delete education.');
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this education?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await alumniService.deleteEducation(id);
+        await refreshProfile();
+        Swal.fire('Deleted!', 'Education has been deleted.', 'success');
+      } catch (e) {
+        Swal.fire('Error', 'Failed to delete education.', 'error');
+      }
     }
   };
 
