@@ -258,6 +258,38 @@ const alumniService = {
   },
 
   /**
+   * Search student by University ID
+   * @param {string} universityId - University ID to search
+   * @returns {Promise} API response
+   */
+  searchStudent: async (universityId) => {
+    try {
+      const response = await api.get(`/alumini/students/search/${universityId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Verify tazkira number for student
+   * @param {string} universityId - University ID
+   * @param {string} tazkiraNumber - Tazkira number
+   * @returns {Promise} API response
+   */
+  verifyTazkira: async (universityId, tazkiraNumber) => {
+    try {
+      const response = await api.post('/alumini/students/verify-tazkira', {
+        university_id: universityId,
+        tazkira_number: tazkiraNumber
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
    * Register a verified alumni (MIS integration)
    * @param {Object} alumniData - Verified alumni registration data
    * @returns {Promise} API response
