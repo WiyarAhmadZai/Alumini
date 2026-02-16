@@ -136,10 +136,81 @@ const DirectoryPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            <p className="mt-4 text-gray-600">Loading alumni directory...</p>
+        {/* Hero Section */}
+        <section className="relative w-full h-64 sm:h-72 overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 39, 89, 0.8) 100%), url("https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80")',
+              backgroundAttachment: 'fixed',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          ></div>
+          
+          <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
+            <div className="text-center text-white max-w-4xl">
+              <div className="h-8 w-64 bg-gray-300 rounded animate-pulse mx-auto mb-4"></div>
+              <div className="h-6 w-96 bg-gray-300 rounded animate-pulse mx-auto"></div>
+            </div>
+          </div>
+        </section>
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+          {/* Search and Filter Section */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <div className="h-4 bg-gray-300 rounded animate-pulse mb-2"></div>
+                <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+              <div>
+                <div className="h-4 bg-gray-300 rounded animate-pulse mb-2"></div>
+                <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+              <div>
+                <div className="h-4 bg-gray-300 rounded animate-pulse mb-2"></div>
+                <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+              <div>
+                <div className="h-10 bg-gray-200 rounded animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Alumni Grid Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, index) => (
+              <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                {/* Profile Header Skeleton */}
+                <div className="relative flex-shrink-0">
+                  <div className="w-full h-32 bg-gray-200 animate-pulse"></div>
+                  <div className="absolute top-16 left-1/2 transform -translate-x-1/2">
+                    <div className="w-20 h-20 rounded-full border-4 border-white bg-gray-200 animate-pulse"></div>
+                  </div>
+                </div>
+
+                {/* Profile Content Skeleton */}
+                <div className="px-6 pt-12 pb-4 flex-1 flex flex-col">
+                  <div className="text-center flex-1">
+                    <div className="h-6 bg-gray-200 rounded animate-pulse mb-2 mx-auto w-32"></div>
+                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-2 mx-auto w-24"></div>
+                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-2 mx-auto w-28"></div>
+                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-2 mx-auto w-20"></div>
+                    <div className="h-4 bg-gray-200 rounded animate-pulse mb-4 mx-auto w-36"></div>
+                    <div className="h-3 bg-gray-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded animate-pulse w-full"></div>
+                  </div>
+
+                  {/* Action Buttons Skeleton */}
+                  <div className="flex gap-2 mt-auto">
+                    <div className="flex-1 h-10 bg-gray-200 rounded animate-pulse"></div>
+                    <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </Layout>

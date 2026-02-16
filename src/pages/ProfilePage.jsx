@@ -736,8 +736,105 @@ const ProfilePage = () => {
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 mt-12">
           {loading && (
-            <div className="p-6 rounded-xl border border-[#dcdee5] shadow-sm bg-white mb-6">
-              <p className="text-black">Loading profile...</p>
+            <div className="space-y-6">
+              {/* Profile Header Skeleton */}
+              <div className="bg-white rounded-xl border border-[#dcdee5] shadow-sm overflow-hidden">
+                {/* Cover Image Skeleton */}
+                <div className="w-full min-h-64 relative bg-gray-100">
+                  <div className="w-full h-64 bg-gray-200 animate-pulse"></div>
+                  <div className="absolute top-4 right-4 w-32 h-10 bg-gray-200 rounded animate-pulse"></div>
+                </div>
+                <div className="bg-white px-8 pb-8 flex flex-col md:flex-row items-end gap-6 -mt-16 relative z-10">
+                  <div className="relative">
+                    <div className="w-40 h-40 rounded-full border-4 border-white shadow-lg bg-gray-200 animate-pulse"></div>
+                  </div>
+                  <div className="flex-1 flex flex-col md:pt-20">
+                    <div className="h-10 w-64 bg-gray-200 rounded animate-pulse mb-2"></div>
+                    <div className="h-6 w-48 bg-gray-200 rounded animate-pulse mb-1"></div>
+                    <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                  <div className="flex gap-3 mt-4 md:mt-0">
+                    <div className="w-32 h-10 bg-gray-200 rounded animate-pulse"></div>
+                    <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Two Column Layout Skeleton */}
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+                {/* Left Column Skeleton */}
+                <aside className="md:col-span-4 flex flex-col gap-6">
+                  {/* Contact Info Card Skeleton */}
+                  <div className="p-6 rounded-xl border border-[#dcdee5] shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="h-6 w-40 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="w-16 h-8 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                      </div>
+                      <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                        <div className="w-10 h-10 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                </aside>
+
+                {/* Right Column Skeleton */}
+                <div className="md:col-span-8 flex flex-col gap-6">
+                  {/* About Me Skeleton */}
+                  <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+                    <div className="h-7 w-32 bg-gray-200 rounded animate-pulse mb-6"></div>
+                    <div className="bg-gray-50 rounded-lg p-6">
+                      <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 rounded animate-pulse w-3/4"></div>
+                      </div>
+                    </div>
+                  </section>
+
+                  {/* Professional Experience Skeleton */}
+                  <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="h-7 w-48 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="w-16 h-8 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                    <div className="space-y-4">
+                      {[...Array(2)].map((_, index) => (
+                        <div key={index} className="bg-gray-50 rounded-lg p-6">
+                          <div className="h-6 w-40 bg-gray-200 rounded animate-pulse mb-2"></div>
+                          <div className="h-4 w-32 bg-gray-200 rounded animate-pulse mb-1"></div>
+                          <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+
+                  {/* Education Skeleton */}
+                  <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="h-7 w-32 bg-gray-200 rounded animate-pulse"></div>
+                      <div className="w-16 h-8 bg-gray-200 rounded animate-pulse"></div>
+                    </div>
+                    <div className="space-y-4">
+                      {[...Array(2)].map((_, index) => (
+                        <div key={index} className="bg-gray-50 rounded-lg p-6">
+                          <div className="h-6 w-36 bg-gray-200 rounded animate-pulse mb-2"></div>
+                          <div className="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+              </div>
             </div>
           )}
 
