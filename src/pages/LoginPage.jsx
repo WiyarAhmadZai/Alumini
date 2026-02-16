@@ -153,28 +153,82 @@ const LoginPage = () => {
                               required
                             >
                               <option value="">Select graduation year</option>
-                              <option value="2024">2024</option>
-                              <option value="2023">2023</option>
-                              <option value="2022">2022</option>
-                              <option value="2021">2021</option>
-                              <option value="2020">2020</option>
-                              <option value="2019">2019</option>
-                              <option value="2018">2018</option>
-                              <option value="2017">2017</option>
-                              <option value="2016">2016</option>
-                              <option value="2015">2015</option>
-                              <option value="2014">2014</option>
-                              <option value="2013">2013</option>
-                              <option value="2012">2012</option>
-                              <option value="2011">2011</option>
-                              <option value="2010">2010</option>
+                              <option value="1403">1403</option>
+                              <option value="1402">1402</option>
+                              <option value="1401">1401</option>
+                              <option value="1400">1400</option>
+                              <option value="1399">1399</option>
+                              <option value="1398">1398</option>
+                              <option value="1397">1397</option>
+                              <option value="1396">1396</option>
+                              <option value="1395">1395</option>
+                              <option value="1394">1394</option>
+                              <option value="1393">1393</option>
+                              <option value="1392">1392</option>
+                              <option value="1391">1391</option>
+                              <option value="1390">1390</option>
+                              <option value="1389">1389</option>
+                              <option value="1388">1388</option>
+                              <option value="1387">1387</option>
+                              <option value="1386">1386</option>
+                              <option value="1385">1385</option>
+                              <option value="1384">1384</option>
+                              <option value="1383">1383</option>
+                              <option value="1382">1382</option>
+                              <option value="1381">1381</option>
+                              <option value="1380">1380</option>
+                              <option value="1379">1379</option>
+                              <option value="1378">1378</option>
+                              <option value="1377">1377</option>
+                              <option value="1376">1376</option>
+                              <option value="1375">1375</option>
+                              <option value="1374">1374</option>
+                              <option value="1373">1373</option>
+                              <option value="1372">1372</option>
+                              <option value="1371">1371</option>
+                              <option value="1370">1370</option>
+                              <option value="1369">1369</option>
+                              <option value="1368">1368</option>
+                              <option value="1367">1367</option>
+                              <option value="1366">1366</option>
+                              <option value="1365">1365</option>
+                              <option value="1364">1364</option>
+                              <option value="1363">1363</option>
+                              <option value="1362">1362</option>
+                              <option value="1361">1361</option>
+                              <option value="1360">1360</option>
+                              <option value="1359">1359</option>
+                              <option value="1358">1358</option>
+                              <option value="1357">1357</option>
+                              <option value="1356">1356</option>
+                              <option value="1355">1355</option>
+                              <option value="1354">1354</option>
+                              <option value="1353">1353</option>
+                              <option value="1352">1352</option>
+                              <option value="1351">1351</option>
+                              <option value="1350">1350</option>
+                              <option value="1349">1349</option>
+                              <option value="1348">1348</option>
+                              <option value="1347">1347</option>
+                              <option value="1346">1346</option>
+                              <option value="1345">1345</option>
+                              <option value="1344">1344</option>
+                              <option value="1343">1343</option>
+                              <option value="1342">1342</option>
+                              <option value="1341">1341</option>
+                              <option value="1340">1340</option>
+                              <option value="1339">1339</option>
+                              <option value="1338">1338</option>
+                              <option value="1337">1337</option>
+                              <option value="1336">1336</option>
+                              <option value="1335">1335</option>
                             </select>
                           </div>
                         </div>
 
                         <div>
                           <label className="block text-sm font-medium text-gray-900 mb-2">
-                            Department
+                            Faculty
                           </label>
                           <div className="relative">
                             <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
@@ -185,12 +239,15 @@ const LoginPage = () => {
                               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
                               required
                             >
-                              <option value="">Select department</option>
-                              <option value="civil">Civil Engineering</option>
-                              <option value="mechanical">Mechanical Engineering</option>
-                              <option value="electrical">Electrical Engineering</option>
-                              <option value="computer">Computer Science</option>
-                              <option value="architecture">Architecture</option>
+                              <option value="">Select faculty</option>
+                              <option value="civil-engineering">Faculty of Civil Engineering</option>
+                              <option value="mechanical-engineering">Faculty of Mechanical Engineering</option>
+                              <option value="electrical-engineering">Faculty of Electrical Engineering</option>
+                              <option value="computer-science">Faculty of Computer Science</option>
+                              <option value="architecture">Faculty of Architecture and Urban Planning</option>
+                              <option value="geology-mining">Faculty of Geology and Mining</option>
+                              <option value="chemical-engineering">Faculty of Chemical Engineering</option>
+                              <option value="surveying-mapping">Faculty of Surveying and Mapping</option>
                             </select>
                           </div>
                         </div>
