@@ -641,7 +641,7 @@ const MessageConversationPage = () => {
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-black font-medium">
-                    <span className="text-black font-bold">Email:</span> alumni@kpu.edu.af
+                    <span className="text-black font-bold">Email:</span> it.director@kpu.edu.af
                   </p>
                 </div>
               </div>
