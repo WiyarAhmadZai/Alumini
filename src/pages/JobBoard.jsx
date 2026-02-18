@@ -555,11 +555,11 @@ const JobBoard = () => {
                         Showing <span className="font-bold text-gray-900 text-lg">{pagination.total}</span> matching jobs
                       </p>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-600">Show:</span>
+                        <span className="text-sm text-black font-medium">Show:</span>
                         <select 
                           value={recordsPerPage}
                           onChange={(e) => handleRecordsPerPageChange(Number(e.target.value))}
-                          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="border border-gray-300 rounded-lg px-3 py-2 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                           <option value={5}>5</option>
                           <option value={10}>10</option>
