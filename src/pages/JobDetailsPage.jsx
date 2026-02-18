@@ -2,13 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiBriefcase, FiMapPin, FiClock, FiDollarSign, FiArrowLeft, FiCalendar, FiUser, FiExternalLink } from 'react-icons/fi';
+import { useAuth } from '../contexts/AuthContext';
+import Swal from 'sweetalert2';
 import jobService from '../services/jobService';
+import ApplyModal from '../components/job/ApplyModal';
 
 const JobDetailsPage = () => {
   const { id } = useParams();
+  const { user, isAuthenticated } = useAuth();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showApplyModal, setShowApplyModal] = useState(false);
 
   useEffect(() => {
     fetchJobDetails();
@@ -30,6 +35,41 @@ const JobDetailsPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleApplyClick = () => {
+    if (!isAuthenticated()) {
+      Swal.fire({
+        title: 'Login Required',
+        text: 'Please login to apply for this job.',
+        icon: 'warning',
+        confirmButtonColor: '#2563eb',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/login';
+        }
+      });
+      return;
+    }
+    
+    setShowApplyModal(true);
+  };
+
+  const handleApplicationSuccess = () => {
+    Swal.fire({
+      icon: 'success',
+      title: 'Application Submitted!',
+      text: 'Your job application has been submitted successfully.',
+      confirmButtonColor: '#2563eb',
+      confirmButtonText: 'Great!',
+      timer: 3000,
+      timerProgressBar: true,
+      position: 'center',
+      backdrop: 'rgba(0, 0, 0, 0.4)'
+    });
   };
 
   if (loading) {
@@ -144,12 +184,12 @@ const JobDetailsPage = () => {
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Job Not Found</h2>
             <p className="text-gray-600 mb-6">{error || 'The job you\'re looking for doesn\'t exist.'}</p>
             <div className="flex gap-4 justify-center">
-              <Link to="/applications" className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+              <Link to="/jobs" className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
                 <FiArrowLeft className="text-lg" />
-                Back to Applications
+                Back to Jobs
               </Link>
-              <Link to="/jobs" className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-                Browse Jobs
+              <Link to="/applications" className="inline-flex items-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                View Your Applications
               </Link>
             </div>
           </div>
@@ -189,11 +229,11 @@ const JobDetailsPage = () => {
         {/* Back Button */}
         <div className="mb-6">
           <Link 
-            to="/applications"
+            to="/jobs"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
           >
             <FiArrowLeft className="text-lg" />
-            Back to Applications
+            Back to Jobs
           </Link>
         </div>
 
@@ -333,9 +373,15 @@ const JobDetailsPage = () => {
                 <div className="bg-blue-50 rounded-xl p-6">
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
                   <div className="space-y-3">
+                    <button 
+                      onClick={handleApplyClick}
+                      className="block w-full text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-colors font-medium"
+                    >
+                      Apply for This Job
+                    </button>
                     <Link 
                       to="/jobs"
-                      className="block w-full text-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                      className="block w-full text-center px-4 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
                     >
                       Browse Similar Jobs
                     </Link>
@@ -352,6 +398,14 @@ const JobDetailsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Apply Modal */}
+      <ApplyModal 
+        isOpen={showApplyModal}
+        onClose={() => setShowApplyModal(false)}
+        job={job}
+        onApplicationSuccess={handleApplicationSuccess}
+      />
     </Layout>
   );
 };
