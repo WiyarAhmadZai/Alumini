@@ -134,8 +134,8 @@ const ContactPage = () => {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 mb-2">Email</h3>
-                      <p className="text-gray-600 mb-3">alumni@kpu.edu.af</p>
-                      <a href="mailto:alumni@kpu.edu.af" className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center">
+                      <p className="text-gray-600 mb-3">it.director@kpu.edu.af</p>
+                      <a href="mailto:it.director@kpu.edu.af" className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center">
                         <FiSend className="mr-2" />
                         Send Email
                       </a>
