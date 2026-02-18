@@ -1,8 +1,104 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { FiMail, FiPhone, FiMapPin, FiSend, FiClock, FiUsers, FiMessageSquare, FiNavigation, FiCalendar, FiBriefcase, FiUser } from 'react-icons/fi';
+import { useAuth } from '../contexts/AuthContext';
+import Swal from 'sweetalert2';
+import messageService from '../services/messageService';
 
 const ContactPage = () => {
+  const { user, isAuthenticated } = useAuth();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    subject: 'General Inquiry',
+    message: ''
+  });
+  const [loading, setLoading] = useState(false);
+
+  // Update form data when user data changes
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: user?.name?.split(' ')[0] || '',
+        lastName: user?.name?.split(' ').slice(1).join(' ') || '',
+        email: user?.email || ''
+      }));
+    }
+  }, [user]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!isAuthenticated()) {
+      Swal.fire({
+        title: 'Login Required',
+        text: 'Please login to send a message.',
+        icon: 'warning',
+        confirmButtonColor: '#2563eb',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/login';
+        }
+      });
+      return;
+    }
+
+    if (!formData.message.trim()) {
+      Swal.fire({
+        title: 'Validation Error',
+        text: 'Please enter your message.',
+        icon: 'error',
+        confirmButtonColor: '#2563eb'
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await messageService.sendMessage({
+        subject: formData.subject,
+        message: formData.message
+      });
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Message Sent!',
+        text: 'Your message has been sent successfully. We will respond to you soon.',
+        confirmButtonColor: '#2563eb',
+        timer: 3000,
+        timerProgressBar: true
+      });
+
+      // Reset form
+      setFormData(prev => ({
+        ...prev,
+        message: ''
+      }));
+
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to send message. Please try again.',
+        confirmButtonColor: '#dc2626'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Layout>
       {/* Hero Section */}
@@ -128,22 +224,31 @@ const ContactPage = () => {
           </div>
 
           <div className="bg-white rounded-2xl shadow-xl p-8">
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                     placeholder="John"
+                    disabled={!!user?.name}
                   />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                   <input
                     type="text"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                     placeholder="Doe"
+                    disabled={!!user?.last_name}
                   />
                 </div>
               </div>
@@ -152,29 +257,37 @@ const ContactPage = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
                 <input
                   type="email"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                   placeholder="john.doe@example.com"
+                  disabled={!!user?.email}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                <select className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                  <option>General Inquiry</option>
-                  <option>Membership Information</option>
-                  <option>Event Registration</option>
-                  <option>Career Opportunities</option>
-                  <option>Mentorship Program</option>
-                  <option>Other</option>
-                </select>
+                <input
+                  type="text"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
+                  placeholder="Enter subject..."
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
                 <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
                   rows="5"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-black"
                   placeholder="Tell us how we can help you..."
+                  required
                 ></textarea>
               </div>
 
@@ -191,10 +304,20 @@ const ContactPage = () => {
                 </div>
                 <button
                   type="submit"
-                  className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-2"
+                  disabled={loading}
+                  className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <FiMessageSquare />
-                  Send Message
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <FiMessageSquare />
+                      Send Message
+                    </>
+                  )}
                 </button>
               </div>
             </form>
