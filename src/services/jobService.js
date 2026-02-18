@@ -94,9 +94,14 @@ const jobService = {
    * Get user's job applications
    * @returns {Promise} API response
    */
-  getUserApplications: async () => {
+  getUserApplications: async (page = 1, perPage = 10) => {
     try {
-      const response = await api.get('/alumini/applications-list');
+      const response = await api.get('/alumini/applications-list', {
+        params: {
+          page: page,
+          per_page: perPage
+        }
+      });
       return response.data;
     } catch (error) {
       throw error;
