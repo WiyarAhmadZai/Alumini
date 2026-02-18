@@ -397,13 +397,10 @@ const JobBoard = () => {
                 <div className="flex flex-col md:flex-row gap-4">
                   <div className="flex-1">
                     <div className="flex w-full items-stretch rounded-xl h-12 bg-gray-50 border border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
-                      <div className="text-gray-400 flex items-center justify-center pl-4">
-                        <FiSearch className="text-lg" />
-                      </div>
                       <input 
                         ref={searchInputRef}
-                        className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-400 px-4 text-sm font-medium"
-                        placeholder="Job title, company, or keywords..."
+                        className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-500 px-10 text-sm font-medium"
+                        placeholder="🔍 Job title, company, or keywords..."
                         value={searchTerm}
                         onChange={(e) => handleSearchChange(e.target.value)}
                         disabled={loading}
@@ -412,13 +409,10 @@ const JobBoard = () => {
                   </div>
                   <div className="w-full md:w-64">
                     <div className="flex w-full items-stretch rounded-xl h-12 bg-gray-50 border border-gray-200 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 transition-all">
-                      <div className="text-gray-400 flex items-center justify-center pl-4">
-                        <FiMapPin className="text-lg" />
-                      </div>
                       <input 
                         ref={locationInputRef}
-                        className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-400 px-4 text-sm font-medium"
-                        placeholder="Location..."
+                        className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-500 px-10 text-sm font-medium"
+                        placeholder="📍 Location..."
                         value={location}
                         onChange={(e) => handleLocationChange(e.target.value)}
                         disabled={loading}
