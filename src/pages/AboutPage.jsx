@@ -399,6 +399,23 @@ const AboutPage = () => {
                 </div>
               </div>
             </div>
+            
+            <div className="group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <FiMail className="text-orange-600 text-lg" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">Transcript & Diploma Services</h3>
+                  <p className="text-gray-600 text-sm mb-3">For academic documents and transcripts</p>
+                  <p className="text-gray-800 font-medium text-sm mb-3">transcript@kpu.edu.af</p>
+                  <div className="flex items-center text-orange-600 hover:text-orange-700 transition-colors cursor-pointer">
+                    <span className="text-sm font-medium">Request Documents</span>
+                    <FiArrowRight className="ml-1 text-sm" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Contact Form CTA */}
