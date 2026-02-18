@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiMail, FiCalendar, FiTrash2, FiArrowLeft, FiMessageSquare, FiChevronLeft, FiChevronRight, FiSearch, FiFilter, FiEye, FiX } from 'react-icons/fi';
+import { FiMail, FiCalendar, FiTrash2, FiArrowLeft, FiMessageSquare, FiChevronLeft, FiChevronRight, FiSearch, FiFilter, FiEye, FiX, FiExternalLink } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import messageService from '../services/messageService';
 
@@ -406,6 +406,17 @@ const MessagesPage = () => {
                     <p className="text-xs text-gray-600 line-clamp-2">
                       {message.message.substring(0, 80)}...
                     </p>
+                    {message.message.length > 80 && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMessageClick(message);
+                        }}
+                        className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                      >
+                        See More
+                      </button>
+                    )}
                   </div>
 
                   {/* Response section */}
@@ -415,23 +426,49 @@ const MessagesPage = () => {
                       <p className="text-xs text-green-700 line-clamp-2">
                         {message.response.substring(0, 80)}...
                       </p>
+                      {message.response.length > 80 && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleMessageClick(message);
+                          }}
+                          className="text-xs text-green-600 hover:text-green-800 hover:underline font-medium"
+                        >
+                          See More
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <div className="mb-3 p-2 bg-gray-50 rounded-lg border border-gray-200">
                       <p className="text-xs text-gray-500 font-medium mb-1">University Response:</p>
-                      <p className="text-xs text-gray-400 italic">Response will appear here once the university responds to your message.</p>
+                      <p className="text-xs text-gray-400 italic">
+                        {message.status === 'received' 
+                          ? 'We received your message and we will respond you as soon as possible.'
+                          : 'Response will appear here once the university responds to your message.'
+                        }
+                      </p>
                     </div>
                   )}
 
                   {/* Actions section with fixed positioning */}
                   <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-                    <Link 
-                      to="/contact"
-                      className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Send New Message
-                    </Link>
+                    <div className="flex items-center gap-2">
+                      <Link 
+                        to={`/message/${message.id}`}
+                        className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium flex items-center gap-1"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FiExternalLink className="text-sm" />
+                        View Complete
+                      </Link>
+                      <Link 
+                        to="/contact"
+                        className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        Send New Message
+                      </Link>
+                    </div>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -569,9 +606,17 @@ const MessagesPage = () => {
                     Close
                   </button>
                   <Link
+                    to={`/message/${selectedMessage.id}`}
+                    onClick={closeMessageDetail}
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
+                  >
+                    <FiExternalLink className="text-sm" />
+                    View Complete
+                  </Link>
+                  <Link
                     to="/contact"
                     onClick={closeMessageDetail}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                   >
                     Send New Message
                   </Link>
