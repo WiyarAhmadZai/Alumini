@@ -375,7 +375,7 @@ const AboutPage = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-gray-900 mb-2">Phone</h3>
-                  <p className="text-gray-600 text-sm mb-3">+93 20 123 4567</p>
+                  <p className="text-gray-600 text-sm mb-3">0202526364</p>
                   <div className="flex items-center text-emerald-600 hover:text-emerald-700 transition-colors cursor-pointer">
                     <span className="text-sm font-medium">Call Now</span>
                     <FiArrowRight className="ml-1 text-sm" />
