@@ -3,6 +3,8 @@ import authService from '../services/authService';
 
 const AuthContext = createContext();
 
+export { AuthContext }; // Add this export
+
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
