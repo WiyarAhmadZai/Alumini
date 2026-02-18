@@ -3,6 +3,7 @@ import './App.css';
 import HomePage from './pages/HomePage';
 import DirectoryPage from './pages/DirectoryPage';
 import JobBoard from './pages/JobBoard';
+import JobDetailsPage from './pages/JobDetailsPage';
 import MentorshipPage from './pages/MentorshipPage';
 import EventsPage from './pages/EventsPage';
 import GivingPage from './pages/LegalPage';
@@ -23,6 +24,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/directory" element={<DirectoryPage />} />
           <Route path="/jobs" element={<JobBoard />} />
+          <Route path="/job/:id" element={<JobDetailsPage />} />
           <Route path="/mentorship" element={<MentorshipPage />} />
           <Route path="/events" element={<EventsPage />} />
           <Route path="/legal" element={<GivingPage />} />
