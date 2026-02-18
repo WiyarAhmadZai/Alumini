@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar } from 'react-icons/fi';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
 import Swal from 'sweetalert2';
 import alumniService from '../services/alumniService';
 import authService from '../services/authService';
 import jobService from '../services/jobService';
+import messageService from '../services/messageService';
 import Modal from '../components/ui/Modal';
 
 const ProfilePage = () => {
@@ -18,6 +19,8 @@ const ProfilePage = () => {
   const [isOwner, setIsOwner] = useState(false);
   const [appliedJobs, setAppliedJobs] = useState([]);
   const [loadingJobs, setLoadingJobs] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [loadingMessages, setLoadingMessages] = useState(false);
 
   const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact
   const [editingItem, setEditingItem] = useState(null);
@@ -241,6 +244,7 @@ const ProfilePage = () => {
   useEffect(() => {
     if (isOwner && profile) {
       fetchAppliedJobs();
+      fetchMessages();
     }
   }, [isOwner, profile]);
 
@@ -306,6 +310,18 @@ const ProfilePage = () => {
         text: 'Failed to remove application. Please try again.',
         confirmButtonColor: '#dc2626'
       });
+    }
+  };
+
+  const fetchMessages = async () => {
+    try {
+      setLoadingMessages(true);
+      const response = await messageService.getUserMessages(1, 3); // Only get first 3 for profile page
+      setMessages(response.data.messages || []);
+    } catch (error) {
+      console.error('Failed to fetch messages:', error);
+    } finally {
+      setLoadingMessages(false);
     }
   };
 
@@ -1179,6 +1195,89 @@ const ProfilePage = () => {
                         )}
                       </div>
                     )}
+                  </div>
+                </div>
+              )}
+
+              {/* Messages Section - Only for profile owner */}
+              {isOwner && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <FiMail className="text-blue-600" />
+                        Messages
+                      </h3>
+                      <Link 
+                        to="/messages"
+                        className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                      >
+                        View All
+                        <FiExternalLink className="text-sm" />
+                      </Link>
+                    </div>
+                    <div className="space-y-3">
+                      {messages.length === 0 ? (
+                        <div className="text-center py-6">
+                          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <FiMail className="text-gray-400 text-xl" />
+                          </div>
+                          <p className="text-gray-500 text-sm">No messages yet</p>
+                          <Link 
+                            to="/contact"
+                            className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                          >
+                            <FiMail className="text-sm" />
+                            Send Message
+                          </Link>
+                        </div>
+                      ) : (
+                        <>
+                          {messages.slice(0, 3).map((message) => (
+                            <div key={message.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <FiMail className="text-blue-600 text-sm" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-1">
+                                  <h4 className="text-sm font-semibold text-gray-900 truncate">
+                                    {message.subject}
+                                  </h4>
+                                  <span className={`text-xs px-2 py-1 rounded-full ${
+                                    message.status === 'pending' 
+                                      ? 'bg-yellow-100 text-yellow-700' 
+                                      : message.status === 'received'
+                                      ? 'bg-blue-100 text-blue-700'
+                                      : message.status === 'responded'
+                                      ? 'bg-green-100 text-green-700'
+                                      : 'bg-gray-100 text-gray-700'
+                                  }`}>
+                                    {message.status === 'pending' ? 'Pending' : 
+                                     message.status === 'received' ? 'Received' : 
+                                     message.status === 'responded' ? 'Responded' : 'Unknown'}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+                                  {message.message.substring(0, 100)}...
+                                </p>
+                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                  <FiCalendar className="text-gray-400" />
+                                  {new Date(message.created_at).toLocaleDateString()}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                          {messages.length > 3 && (
+                            <Link 
+                              to="/messages"
+                              className="block w-full text-center py-2 text-blue-600 hover:text-blue-700 text-sm font-medium border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+                            >
+                              View All Messages ({messages.length})
+                            </Link>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
