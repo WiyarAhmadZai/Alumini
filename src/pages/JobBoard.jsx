@@ -69,8 +69,8 @@ const JobBoard = () => {
 
   const handleLocationChange = useCallback((value) => {
     setLocation(value);
-    debouncedSearch(searchTerm, value);
-  }, [searchTerm, currentPage, filters]);
+    // Removed debouncedSearch - only search on button click
+  }, []);
 
   // Fetch jobs from API
   const fetchJobs = async () => {
@@ -151,14 +151,14 @@ const JobBoard = () => {
     fetchFilterOptions();
   }, []); // Only fetch filter options once on mount
 
-  // Only debounced search for location (not for searchTerm)
+  // Only debounced search for filters (not for searchTerm or location)
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       fetchJobs();
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [location, currentPage, filters, recordsPerPage]);
+  }, [filters, currentPage, recordsPerPage]);
 
   const handleFilterChange = (category, value) => {
     setFilters(prev => ({
