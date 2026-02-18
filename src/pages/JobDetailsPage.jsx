@@ -37,7 +37,17 @@ const JobDetailsPage = () => {
       <Layout>
         {/* Hero Section Skeleton */}
         <section className="relative w-full h-64 overflow-hidden">
-          <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("/depositphotos_29295323-stock-photo-architect-working-on-blueprint.jpg")',
+              backgroundAttachment: 'fixed',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          >
+            <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
+          </div>
           <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
             <div className="text-center">
               <div className="h-8 bg-gray-300 rounded w-3/4 mx-auto mb-4 animate-pulse"></div>
@@ -110,7 +120,7 @@ const JobDetailsPage = () => {
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("https://images.unsplash.com/photo-1504384308098-c1b7e6b4c324?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")',
+              backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("/depositphotos_205029014-stock-photo-asian-man-civil-engineer-woman.jpg")',
               backgroundAttachment: 'fixed',
               backgroundSize: 'cover',
               backgroundPosition: 'center'
@@ -155,7 +165,7 @@ const JobDetailsPage = () => {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("https://images.unsplash.com/photo-1504384308098-c1b7e6b4c324?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80")',
+            backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("/depositphotos_463234794-stock-photo-engineer-use-digital-tablet-construction.jpg")',
             backgroundAttachment: 'fixed',
             backgroundSize: 'cover',
             backgroundPosition: 'center'
