@@ -34,7 +34,7 @@ const Footer = () => {
             <h4 className="text-lg font-semibold mb-4">Contact Us</h4>
             <ul className="space-y-2">
               <li className="text-gray-400">Email: info@alumini.com</li>
-              <li className="text-gray-400">Phone: +1 (123) 456-7890</li>
+              <li className="text-gray-400">Phone: 0202526364</li>
               <li className="text-gray-400">Address: 123 University Ave, City, State 12345</li>
             </ul>
           </div>
