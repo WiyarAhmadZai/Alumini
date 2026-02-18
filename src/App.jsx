@@ -12,29 +12,32 @@ import AdminDashboard from './pages/AdminDashboard';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import VerifiedAlumniRegistration from './components/VerifiedAlumniRegistration';
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
   return (
     <div className="App">
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/directory" element={<DirectoryPage />} />
-        <Route path="/jobs" element={<JobBoard />} />
-        <Route path="/mentorship" element={<MentorshipPage />} />
-        <Route path="/events" element={<EventsPage />} />
-        <Route path="/legal" element={<GivingPage />} />
-        <Route path="/privacy" element={<GivingPage />} />
-        <Route path="/terms" element={<GivingPage />} />
-        <Route path="/guidelines" element={<GivingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<LoginPage />} />
-        <Route path="/register" element={<VerifiedAlumniRegistration />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/profile/:id" element={<ProfilePage />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/directory" element={<DirectoryPage />} />
+          <Route path="/jobs" element={<JobBoard />} />
+          <Route path="/mentorship" element={<MentorshipPage />} />
+          <Route path="/events" element={<EventsPage />} />
+          <Route path="/legal" element={<GivingPage />} />
+          <Route path="/privacy" element={<GivingPage />} />
+          <Route path="/terms" element={<GivingPage />} />
+          <Route path="/guidelines" element={<GivingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<LoginPage />} />
+          <Route path="/register" element={<VerifiedAlumniRegistration />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/:id" element={<ProfilePage />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+        </Routes>
+      </AuthProvider>
     </div>
   );
 }
