@@ -15,12 +15,12 @@ const ApplicationsPage = () => {
 
   useEffect(() => {
     fetchApplications();
-  }, []);
+  }, [currentPage, recordsPerPage]);
 
   const fetchApplications = async () => {
     try {
       setLoading(true);
-      const response = await jobService.getUserApplications();
+      const response = await jobService.getUserApplications(currentPage, recordsPerPage);
       setApplications(response.data.applications || []);
       setPagination(response.data.pagination || null);
     } catch (error) {
