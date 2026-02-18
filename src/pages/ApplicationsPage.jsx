@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
-import { FiBriefcase, FiCalendar, FiTrash2, FiArrowLeft } from 'react-icons/fi';
+import { FiBriefcase, FiCalendar, FiTrash2, FiArrowLeft, FiExternalLink, FiMapPin, FiClock, FiDollarSign } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import jobService from '../services/jobService';
@@ -126,50 +126,95 @@ const ApplicationsPage = () => {
             </Link>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {applications.map((application) => (
-              <div key={application.id} className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-shadow duration-200">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
-                        <FiBriefcase className="text-white text-xl" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                          {application.job?.title || 'Job Title'}
-                        </h3>
-                        <p className="text-gray-600 mb-3">
-                          {application.job?.company || 'Company'}
-                        </p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <FiCalendar className="text-sm" />
-                            Applied on {new Date(application.created_at).toLocaleDateString()}
-                          </span>
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            application.status === 'pending' 
-                              ? 'bg-yellow-100 text-yellow-700' 
-                              : application.status === 'reviewed'
-                              ? 'bg-blue-100 text-blue-700'
-                              : application.status === 'accepted'
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-gray-100 text-gray-700'
-                          }`}>
-                            {application.status || 'pending'}
-                          </span>
+              <div key={application.id} className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                          <FiBriefcase className="text-white text-xl" />
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold text-gray-900 mb-1">
+                            {application.job?.title || 'Job Title'}
+                          </h3>
+                          <p className="text-blue-600 font-semibold text-base">
+                            {application.job?.company || 'Company'}
+                          </p>
                         </div>
                       </div>
+                      
+                      <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
+                        {application.job?.location && (
+                          <div className="flex items-center gap-2">
+                            <FiMapPin className="text-gray-400" />
+                            <span>{application.job.location}</span>
+                          </div>
+                        )}
+                        {application.job?.type && (
+                          <div className="flex items-center gap-2">
+                            <FiBriefcase className="text-gray-400" />
+                            <span>{application.job.type}</span>
+                          </div>
+                        )}
+                        {application.job?.salary && (
+                          <div className="flex items-center gap-2">
+                            <FiDollarSign className="text-gray-400" />
+                            <span>{application.job.salary}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-4 text-sm">
+                        <span className="flex items-center gap-1 text-gray-500">
+                          <FiCalendar className="text-sm" />
+                          Applied on {new Date(application.created_at).toLocaleDateString()}
+                        </span>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          application.status === 'pending' 
+                            ? 'bg-yellow-100 text-yellow-700' 
+                            : application.status === 'reviewed'
+                            ? 'bg-blue-100 text-blue-700'
+                            : application.status === 'accepted'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}>
+                          {application.status || 'pending'}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2 ml-4">
+                      {application.job?.id && (
+                        <Link 
+                          to={`/job/${application.job.id}`}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm"
+                        >
+                          <FiExternalLink className="text-sm" />
+                          See More Details
+                        </Link>
+                      )}
+                      <button
+                        onClick={() => handleRemoveApplication(application.id, application.job?.title)}
+                        className="p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Remove application"
+                      >
+                        <FiTrash2 size={18} />
+                      </button>
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleRemoveApplication(application.id, application.job?.title)}
-                    className="ml-4 p-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Remove application"
-                  >
-                    <FiTrash2 size={18} />
-                  </button>
                 </div>
+                
+                {/* Quick Job Preview */}
+                {application.job?.description && (
+                  <div className="border-t border-gray-200 px-6 py-4 bg-gray-50">
+                    <p className="text-sm text-gray-600 line-clamp-2">
+                      {application.job.description.substring(0, 150)}...
+                    </p>
+                  </div>
+                )}
               </div>
             ))}
           </div>
