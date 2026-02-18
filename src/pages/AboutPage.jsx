@@ -359,7 +359,7 @@ const AboutPage = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-bold text-gray-900 mb-2">Email</h3>
-                  <p className="text-gray-600 text-sm mb-3">alumni@kpu.edu.af</p>
+                  <p className="text-gray-600 text-sm mb-3">it.director@kpu.edu.af</p>
                   <div className="flex items-center text-blue-600 hover:text-blue-700 transition-colors cursor-pointer">
                     <span className="text-sm font-medium">Send Message</span>
                     <FiArrowRight className="ml-1 text-sm" />
