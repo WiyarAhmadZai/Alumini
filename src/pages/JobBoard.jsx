@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import ApplyModal from '../components/job/ApplyModal';
+import Swal from 'sweetalert2';
 import { 
   FiSearch, 
   FiMapPin, 
@@ -162,8 +163,18 @@ const JobBoard = () => {
   };
 
   const handleApplicationSuccess = () => {
-    // Show success message or redirect
-    alert('Application submitted successfully!');
+    // Show success message with SweetAlert
+    Swal.fire({
+      icon: 'success',
+      title: 'Application Submitted!',
+      text: 'Your job application has been submitted successfully.',
+      confirmButtonColor: '#2563eb',
+      confirmButtonText: 'Great!',
+      timer: 3000,
+      timerProgressBar: true,
+      position: 'center',
+      backdrop: 'rgba(0, 0, 0, 0.4)'
+    });
   };
 
   const getTypeColor = (type) => {
