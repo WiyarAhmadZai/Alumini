@@ -184,6 +184,24 @@ const ContactPage = () => {
                     </div>
                   </div>
                 </div>
+
+                {/* Transcript & Diploma Services */}
+                <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <FiMail className="text-orange-600 text-xl" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">Transcript & Diploma Services</h3>
+                      <p className="text-gray-600 mb-3">For academic documents and transcripts</p>
+                      <p className="text-gray-800 font-medium mb-3">transcript@kpu.edu.af</p>
+                      <a href="mailto:transcript@kpu.edu.af" className="text-orange-600 hover:text-orange-700 font-medium text-sm flex items-center">
+                        <FiSend className="mr-2" />
+                        Request Documents
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
