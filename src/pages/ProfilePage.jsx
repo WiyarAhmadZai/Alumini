@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin } from 'react-icons/fi';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
 import Swal from 'sweetalert2';
 import alumniService from '../services/alumniService';
 import authService from '../services/authService';
+import jobService from '../services/jobService';
 import Modal from '../components/ui/Modal';
 
 const ProfilePage = () => {
@@ -15,6 +16,8 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isOwner, setIsOwner] = useState(false);
+  const [appliedJobs, setAppliedJobs] = useState([]);
+  const [loadingJobs, setLoadingJobs] = useState(false);
 
   const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact
   const [editingItem, setEditingItem] = useState(null);
@@ -235,6 +238,12 @@ const ProfilePage = () => {
     fetchProfile();
   }, [navigate, id]);
 
+  useEffect(() => {
+    if (isOwner && profile) {
+      fetchAppliedJobs();
+    }
+  }, [isOwner, profile]);
+
   const refreshProfile = async () => {
     if (id) {
       const response = await alumniService.getById(id);
@@ -242,6 +251,61 @@ const ProfilePage = () => {
     } else {
       const response = await alumniService.getMe();
       setProfile(response.data);
+    }
+  };
+
+  const fetchAppliedJobs = async () => {
+    if (!isOwner) return;
+    
+    try {
+      setLoadingJobs(true);
+      // Note: This would require a new endpoint in the backend
+      // For now, we'll use a placeholder - you'll need to create this endpoint
+      const response = await jobService.getUserApplications();
+      setAppliedJobs(response.data.applications || []);
+    } catch (error) {
+      console.error('Failed to fetch applied jobs:', error);
+    } finally {
+      setLoadingJobs(false);
+    }
+  };
+
+  const handleRemoveApplication = async (applicationId, jobTitle) => {
+    try {
+      const result = await Swal.fire({
+        title: 'Remove Application?',
+        html: `Are you sure you want to remove your application for <strong>${jobTitle}</strong>?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Yes, remove it',
+        cancelButtonText: 'Cancel'
+      });
+
+      if (result.isConfirmed) {
+        await jobService.removeApplication(applicationId);
+        
+        // Refresh applied jobs list
+        await fetchAppliedJobs();
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Application Removed',
+          text: 'Your job application has been removed successfully.',
+          timer: 2000,
+          timerProgressBar: true,
+          position: 'center',
+          backdrop: 'rgba(0, 0, 0, 0.4)'
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Failed to remove application. Please try again.',
+        confirmButtonColor: '#dc2626'
+      });
     }
   };
 
@@ -1029,6 +1093,87 @@ const ProfilePage = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Applied Jobs Section - Only for profile owner */}
+              {isOwner && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <FiBriefcase className="text-blue-600" />
+                        Applied Jobs
+                      </h3>
+                      <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+                        {appliedJobs.length}
+                      </span>
+                    </div>
+                    
+                    {loadingJobs ? (
+                      <div className="space-y-3">
+                        {Array.from({ length: 3 }, (_, index) => (
+                          <div key={index} className="animate-pulse">
+                            <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : appliedJobs.length === 0 ? (
+                      <div className="text-center py-6">
+                        <FiBriefcase className="text-3xl text-gray-300 mx-auto mb-3" />
+                        <p className="text-gray-500 text-sm">No job applications yet</p>
+                        <Link 
+                          to="/jobs" 
+                          className="inline-flex items-center gap-2 mt-3 text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          Browse Jobs
+                          <FiBriefcase className="text-sm" />
+                        </Link>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {appliedJobs.map((application) => (
+                          <div key={application.id} className="group relative p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="text-sm font-semibold text-gray-900 truncate">
+                                  {application.job?.title || 'Job Title'}
+                                </h4>
+                                <p className="text-xs text-gray-600 truncate">
+                                  {application.job?.company || 'Company'}
+                                </p>
+                                <div className="flex items-center gap-3 mt-1">
+                                  <span className="text-xs text-gray-500 flex items-center gap-1">
+                                    <FiCalendar className="text-xs" />
+                                    {new Date(application.created_at).toLocaleDateString()}
+                                  </span>
+                                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                    application.status === 'pending' 
+                                      ? 'bg-yellow-100 text-yellow-700' 
+                                      : application.status === 'reviewed'
+                                      ? 'bg-blue-100 text-blue-700'
+                                      : application.status === 'accepted'
+                                      ? 'bg-green-100 text-green-700'
+                                      : 'bg-gray-100 text-gray-700'
+                                  }`}>
+                                    {application.status || 'pending'}
+                                  </span>
+                                </div>
+                              </div>
+                              <button
+                                onClick={() => handleRemoveApplication(application.id, application.job?.title)}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded"
+                                title="Remove application"
+                              >
+                                <FiTrash2 size={14} />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
 
             </aside>
 
