@@ -72,6 +72,102 @@ const ApplicationsPage = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <Layout>
+        {/* Hero Section Skeleton */}
+        <section className="relative w-full h-64 overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("/depositphotos_205029014-stock-photo-asian-man-civil-engineer-woman.jpg")',
+              backgroundAttachment: 'fixed',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            }}
+          >
+            <div className="absolute inset-0 bg-gray-200 animate-pulse"></div>
+          </div>
+          <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
+            <div className="text-center">
+              <div className="h-8 bg-gray-300 rounded w-3/4 mx-auto mb-4 animate-pulse"></div>
+              <div className="h-6 bg-gray-300 rounded w-1/2 mx-auto animate-pulse"></div>
+            </div>
+          </div>
+        </section>
+
+        {/* Main Content Skeleton */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Back Button Skeleton */}
+          <div className="mb-6">
+            <div className="h-6 bg-gray-300 rounded w-32 animate-pulse"></div>
+          </div>
+          
+          {/* Applications Grid Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {Array.from({ length: 8 }, (_, index) => (
+              <div key={index} className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 animate-pulse">
+                <div className="h-full flex flex-col">
+                  {/* Header Skeleton */}
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-gray-200 animate-pulse"></div>
+                    <div className="flex-1">
+                      <div className="h-4 bg-gray-200 rounded w-full mb-2 animate-pulse"></div>
+                      <div className="h-3 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Details Skeleton */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <div className="h-3 bg-gray-200 rounded w-16 animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded w-12 animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded w-14 animate-pulse"></div>
+                  </div>
+
+                  {/* Status Skeleton */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
+                    <div className="h-5 bg-gray-200 rounded w-12 animate-pulse"></div>
+                  </div>
+
+                  {/* Description Skeleton */}
+                  <div className="mb-3 flex-1">
+                    <div className="h-3 bg-gray-200 rounded w-full mb-1 animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded w-4/5 animate-pulse"></div>
+                  </div>
+
+                  {/* Actions Skeleton */}
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <div className="h-3 bg-gray-200 rounded w-12 animate-pulse"></div>
+                    <div className="w-6 h-6 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Pagination Skeleton */}
+          <div className="bg-white rounded-2xl shadow-xl p-5 mt-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+                <div className="flex items-center gap-2">
+                  <div className="h-4 bg-gray-200 rounded w-8 animate-pulse"></div>
+                  <div className="h-8 bg-gray-200 rounded w-16 animate-pulse"></div>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                {Array.from({ length: 5 }, (_, index) => (
+                  <div key={index} className="h-10 w-10 bg-gray-200 rounded-xl animate-pulse"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       {/* Hero Section */}
