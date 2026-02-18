@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import ApplyModal from '../components/job/ApplyModal';
 import { 
@@ -47,6 +48,7 @@ const JobBoard = () => {
   const [searchTimeout, setSearchTimeout] = useState(null);
   const searchInputRef = useRef(null);
   const locationInputRef = useRef(null);
+  const [recordsPerPage, setRecordsPerPage] = useState(10);
 
   // Debounced search function
   const debouncedSearch = useCallback((searchValue, locationValue) => {
@@ -78,7 +80,7 @@ const JobBoard = () => {
       
       const params = {
         page: currentPage,
-        per_page: 10,
+        per_page: recordsPerPage,
       };
 
       // Add search filters
@@ -143,7 +145,7 @@ const JobBoard = () => {
 
   useEffect(() => {
     fetchJobs();
-  }, [currentPage, filters]); // Only fetch on page and filter changes
+  }, [currentPage, filters, recordsPerPage]); // Include recordsPerPage
 
   useEffect(() => {
     fetchFilterOptions();
@@ -156,7 +158,7 @@ const JobBoard = () => {
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [location, currentPage, filters]);
+  }, [location, currentPage, filters, recordsPerPage]);
 
   const handleFilterChange = (category, value) => {
     setFilters(prev => ({
@@ -166,6 +168,11 @@ const JobBoard = () => {
         : { ...prev[category], [value]: !prev[category][value] }
     }));
     setCurrentPage(1); // Reset to first page when filters change
+  };
+
+  const handleRecordsPerPageChange = (value) => {
+    setRecordsPerPage(value);
+    setCurrentPage(1); // Reset to first page when changing records per page
   };
 
   const resetFilters = () => {
@@ -470,52 +477,67 @@ const JobBoard = () => {
                   jobs.map((job) => {
                     const Icon = getJobIcon(job.industry);
                     return (
-                      <div key={job.id} className="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-2xl transition-all duration-300 hover:border-blue-200 group">
-                        <div className="flex flex-col md:flex-row gap-5 items-start">
-                          <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br from-${getIndustryColor(job.industry)}-50 to-${getIndustryColor(job.industry)}-100 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                            <Icon className={`text-${getIndustryColor(job.industry)}-600 text-3xl`} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex flex-wrap items-center gap-3 mb-3">
-                              <h3 className="text-gray-900 text-lg font-bold group-hover:text-blue-600 transition-colors">{job.title}</h3>
-                              <span className={`${getTypeColor(job.type)} text-xs font-bold px-3 py-1.5 rounded-full uppercase shadow-sm`}>
-                                {job.type}
-                              </span>
-                              {job.posted_by_alumnus && (
-                                <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full border border-blue-200 shadow-sm">
-                                  <FiBriefcase className="text-sm" />
-                                  Posted by Alumnus
-                                </div>
-                              )}
+                      <div key={job.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-blue-300 transition-all duration-300 group overflow-hidden">
+                        <div className="p-6">
+                          <div className="flex flex-col md:flex-row gap-6 items-start">
+                            <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br from-${getIndustryColor(job.industry)}-50 to-${getIndustryColor(job.industry)}-100 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform duration-300 shadow-md`}>
+                              <Icon className={`text-${getIndustryColor(job.industry)}-600 text-3xl`} />
                             </div>
-                            <p className="text-blue-600 font-semibold text-base mb-3">{job.company}</p>
-                            <div className="flex flex-wrap gap-6 text-gray-600 text-sm">
-                              <div className="flex items-center gap-2">
-                                <FiMapPin className="text-[20px] text-gray-400" />
-                                <span className="font-medium">{job.location}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex flex-wrap items-center gap-3 mb-3">
+                                <Link 
+                                  to={`/job/${job.id}`}
+                                  className="text-gray-900 text-xl font-bold group-hover:text-blue-600 transition-colors hover:underline"
+                                >
+                                  {job.title}
+                                </Link>
+                                <span className={`${getTypeColor(job.type)} text-xs font-bold px-3 py-1.5 rounded-full uppercase shadow-sm`}>
+                                  {job.type}
+                                </span>
+                                {job.posted_by_alumnus && (
+                                  <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full border border-blue-200 shadow-sm">
+                                    <FiBriefcase className="text-sm" />
+                                    Posted by Alumnus
+                                  </div>
+                                )}
                               </div>
-                              <div className="flex items-center gap-2">
-                                <FiClock className="text-[20px] text-gray-400" />
-                                <span className="font-medium">{job.posted_time_ago}</span>
-                              </div>
-                              {job.salary && (
+                              <p className="text-blue-600 font-semibold text-lg mb-3">{job.company}</p>
+                              <div className="flex flex-wrap gap-6 text-gray-600 text-sm mb-4">
                                 <div className="flex items-center gap-2">
-                                  <FiDollarSign className="text-[20px] text-gray-400" />
-                                  <span className="font-medium">{job.salary}</span>
+                                  <FiMapPin className="text-[18px] text-gray-400" />
+                                  <span className="font-medium">{job.location}</span>
                                 </div>
+                                <div className="flex items-center gap-2">
+                                  <FiClock className="text-[18px] text-gray-400" />
+                                  <span className="font-medium">{job.posted_time_ago || 'Recently'}</span>
+                                </div>
+                                {job.salary && (
+                                  <div className="flex items-center gap-2">
+                                    <FiDollarSign className="text-[18px] text-gray-400" />
+                                    <span className="font-medium">{job.salary}</span>
+                                  </div>
+                                )}
+                              </div>
+                              {job.description && (
+                                <p className="text-gray-600 text-sm line-clamp-2 mb-4">
+                                  {job.description.substring(0, 150)}...
+                                </p>
                               )}
                             </div>
-                          </div>
-                          <div className="flex md:flex-col gap-3 w-full md:w-auto">
-                            <button 
-                              onClick={() => handleApplyClick(job)}
-                              className="flex-1 md:w-32 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-bold py-2.5 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                            >
-                              Apply Now
-                            </button>
-                            <button className="p-2.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all duration-300 hover:scale-105">
-                              <FiBookmark className="text-[22px]" />
-                            </button>
+                            <div className="flex md:flex-col gap-3 w-full md:w-auto">
+                              <button 
+                                onClick={() => handleApplyClick(job)}
+                                className="flex-1 md:w-32 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-bold py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                              >
+                                Apply Now
+                              </button>
+                              <Link 
+                                to={`/job/${job.id}`}
+                                className="flex-1 md:w-32 border border-blue-600 text-blue-600 text-sm font-bold py-3 rounded-xl hover:bg-blue-50 transition-all duration-300 text-center"
+                              >
+                                View Details
+                              </Link>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -527,10 +549,26 @@ const JobBoard = () => {
               {/* Pagination */}
               {pagination && pagination.total > 0 && (
                 <div className="bg-white rounded-2xl shadow-xl p-5">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm text-gray-600">
-                      Showing <span className="font-bold text-gray-900 text-lg">{pagination.total}</span> matching jobs
-                    </p>
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <p className="text-sm text-gray-600">
+                        Showing <span className="font-bold text-gray-900 text-lg">{pagination.total}</span> matching jobs
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-600">Show:</span>
+                        <select 
+                          value={recordsPerPage}
+                          onChange={(e) => handleRecordsPerPageChange(Number(e.target.value))}
+                          className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value={5}>5</option>
+                          <option value={10}>10</option>
+                          <option value={20}>20</option>
+                          <option value={50}>50</option>
+                          <option value={999999}>All</option>
+                        </select>
+                      </div>
+                    </div>
                     <div className="flex gap-2">
                       <button 
                         className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 disabled:opacity-50 transition-all duration-300 hover:scale-105"
