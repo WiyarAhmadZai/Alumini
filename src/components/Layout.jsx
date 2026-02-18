@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
+import { AuthContext } from '../contexts/AuthContext';
 import { 
   FiArrowRight, 
   FiMapPin, 
@@ -16,6 +17,7 @@ import {
 } from 'react-icons/fi';
 
 const Layout = ({ children }) => {
+  const { user } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -254,7 +256,23 @@ const Layout = ({ children }) => {
                     aria-haspopup="menu"
                     aria-expanded={isUserMenuOpen}
                   >
-                    <FiUser className="text-white text-sm sm:text-lg" />
+                    {/* Show profile image if available, otherwise show user icon */}
+                    {user?.profile_image ? (
+                      <img 
+                        src={user.profile_image.replace('http://localhost:8000', '')} 
+                        alt="User Profile" 
+                        className="w-full h-full object-cover rounded-lg sm:rounded-xl"
+                        onError={(e) => {
+                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=40`;
+                        }}
+                      />
+                    ) : (
+                      <img 
+                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=40`}
+                        alt="User Profile" 
+                        className="w-full h-full object-cover rounded-lg sm:rounded-xl"
+                      />
+                    )}
                   </button>
 
                   {isUserMenuOpen && (
@@ -456,8 +474,23 @@ const Layout = ({ children }) => {
                       onClick={handleMenuClick}
                       className="flex items-center gap-3 px-4 py-3 hover:bg-[#0a519b] rounded-lg transition-colors"
                     >
-                      <div className="w-10 h-10 rounded-xl border-2 border-white/40 flex items-center justify-center">
-                        <FiUser className="text-white text-lg" />
+                      <div className="w-10 h-10 rounded-xl border-2 border-white/40 flex items-center justify-center overflow-hidden">
+                        {user?.profile_image ? (
+                          <img 
+                            src={user.profile_image.replace('http://localhost:8000', '')} 
+                            alt="User Profile" 
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=002759&color=ffffff&size=40`;
+                            }}
+                          />
+                        ) : (
+                          <img 
+                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=002759&color=ffffff&size=40`}
+                            alt="User Profile" 
+                            className="w-full h-full object-cover"
+                          />
+                        )}
                       </div>
                       <div>
                         <p className="text-white font-medium">Account</p>
