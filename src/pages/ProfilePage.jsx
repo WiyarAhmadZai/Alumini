@@ -1131,7 +1131,7 @@ const ProfilePage = () => {
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        {appliedJobs.map((application) => (
+                        {appliedJobs.slice(0, 3).map((application) => (
                           <div key={application.id} className="group relative p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                             <div className="flex items-start justify-between">
                               <div className="flex-1 min-w-0">
@@ -1169,6 +1169,14 @@ const ProfilePage = () => {
                             </div>
                           </div>
                         ))}
+                        {appliedJobs.length > 3 && (
+                          <Link 
+                            to="/applications"
+                            className="block w-full text-center py-2 text-blue-600 hover:text-blue-700 text-sm font-medium border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+                          >
+                            View All Applications ({appliedJobs.length})
+                          </Link>
+                        )}
                       </div>
                     )}
                   </div>
