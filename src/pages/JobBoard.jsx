@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Layout from '../components/Layout';
 import ApplyModal from '../components/job/ApplyModal';
-import Swal from 'sweetalert2';
 import { 
   FiSearch, 
   FiMapPin, 
@@ -45,6 +44,31 @@ const JobBoard = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [showApplyModal, setShowApplyModal] = useState(false);
   const [filterOptions, setFilterOptions] = useState(null);
+  const [searchTimeout, setSearchTimeout] = useState(null);
+  const searchInputRef = useRef(null);
+  const locationInputRef = useRef(null);
+
+  // Debounced search function
+  const debouncedSearch = useCallback((searchValue, locationValue) => {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    
+    setSearchTimeout(() => {
+      fetchJobs();
+    }, 300); // 300ms delay for better responsiveness
+  }, [currentPage, filters]);
+
+  // Optimized search handlers that don't cause re-renders
+  const handleSearchChange = useCallback((value) => {
+    setSearchTerm(value);
+    // Removed debouncedSearch - only search on button click
+  }, []);
+
+  const handleLocationChange = useCallback((value) => {
+    setLocation(value);
+    debouncedSearch(searchTerm, value);
+  }, [searchTerm, currentPage, filters]);
 
   // Fetch jobs from API
   const fetchJobs = async () => {
@@ -119,8 +143,20 @@ const JobBoard = () => {
 
   useEffect(() => {
     fetchJobs();
+  }, [currentPage, filters]); // Only fetch on page and filter changes
+
+  useEffect(() => {
     fetchFilterOptions();
-  }, [currentPage, searchTerm, location, filters]);
+  }, []); // Only fetch filter options once on mount
+
+  // Only debounced search for location (not for searchTerm)
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchJobs();
+    }, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [location, currentPage, filters]);
 
   const handleFilterChange = (category, value) => {
     setFilters(prev => ({
@@ -149,6 +185,14 @@ const JobBoard = () => {
     setSearchTerm('');
     setLocation('');
     setCurrentPage(1);
+  };
+
+  const handleSearchSubmit = () => {
+    // Immediate search when user clicks search button
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+    fetchJobs();
   };
 
   const handleApplyClick = (job) => {
@@ -357,10 +401,11 @@ const JobBoard = () => {
                         <FiSearch className="text-lg" />
                       </div>
                       <input 
+                        ref={searchInputRef}
                         className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-400 px-4 text-sm font-medium"
                         placeholder="Job title, company, or keywords..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) => handleSearchChange(e.target.value)}
                         disabled={loading}
                       />
                     </div>
@@ -371,16 +416,17 @@ const JobBoard = () => {
                         <FiMapPin className="text-lg" />
                       </div>
                       <input 
+                        ref={locationInputRef}
                         className="w-full border-none bg-transparent focus:ring-0 text-gray-900 placeholder:text-gray-400 px-4 text-sm font-medium"
                         placeholder="Location..."
                         value={location}
-                        onChange={(e) => setLocation(e.target.value)}
+                        onChange={(e) => handleLocationChange(e.target.value)}
                         disabled={loading}
                       />
                     </div>
                   </div>
                   <button 
-                    onClick={fetchJobs}
+                    onClick={handleSearchSubmit}
                     disabled={loading}
                     className="h-12 px-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
