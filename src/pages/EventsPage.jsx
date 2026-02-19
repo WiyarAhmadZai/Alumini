@@ -88,18 +88,18 @@ const EventsPage = () => {
 
       const response = await eventService.getEvents(params);
       
-      // Filter out expired events and events with expired registration deadlines
+      // Filter out completed events and events with expired registration deadlines
       const allEvents = response.data.data;
       const activeEvents = allEvents.filter(event => {
         const eventEndDate = new Date(event.end_date);
         const now = new Date();
         
-        // Don't show events that have already ended
+        // Hide events that have already completed
         if (eventEndDate <= now) {
           return false;
         }
         
-        // Don't show events with expired registration deadlines
+        // Hide events with expired registration deadlines
         if (event.registration_deadline) {
           const deadlineDate = new Date(event.registration_deadline);
           if (deadlineDate <= now) {
@@ -107,7 +107,7 @@ const EventsPage = () => {
           }
         }
         
-        return true; // Show events that are still active and have open registration
+        return true; // Only show events with open registration
       });
       
       setEvents(activeEvents);
@@ -159,16 +159,37 @@ const EventsPage = () => {
     // Find the event from the events list or featured event
     const event = events.find(ev => ev.id === eventId) || featuredEvent;
     
-    // Check if event is expired
-    if (event && new Date(event.end_date) < new Date()) {
-      Swal.fire('Event Ended', 'This event has already ended and registration is no longer available.', 'error');
+    if (!event) {
+      Swal.fire('Event Not Found', 'The requested event could not be found.', 'error');
       return;
     }
     
-    if (event) {
-      setSelectedEvent(event);
-      setShowRegistrationModal(true);
+    const now = new Date();
+    const eventEndDate = new Date(event.end_date);
+    
+    // Check if event has already ended/completed
+    if (eventEndDate <= now) {
+      Swal.fire('Event Completed', 'This event has already happened and registration is no longer available.', 'error');
+      return;
     }
+    
+    // Check if event is full
+    if (event.max_attendees && event.current_attendees >= event.max_attendees) {
+      Swal.fire('Seats Full', 'You cannot register for this event because all the seats are full.', 'warning');
+      return;
+    }
+    
+    // Check if registration deadline has passed
+    if (event.registration_deadline) {
+      const deadlineDate = new Date(event.registration_deadline);
+      if (deadlineDate <= now) {
+        Swal.fire('Registration Closed', 'The registration deadline for this event has passed.', 'warning');
+        return;
+      }
+    }
+    
+    setSelectedEvent(event);
+    setShowRegistrationModal(true);
   };
 
   const handleRegistrationSuccess = () => {
@@ -196,9 +217,19 @@ const EventsPage = () => {
     const status = getUserRegistrationStatus(eventId);
     const event = events.find(ev => ev.id === eventId);
     
-    // Check if event is expired
-    if (event && new Date(event.end_date) < new Date()) {
-      return 'Event Ended';
+    if (!event) return 'Register Now';
+    
+    const now = new Date();
+    const eventEndDate = new Date(event.end_date);
+    
+    // Check if event has already ended/completed
+    if (eventEndDate <= now) {
+      return 'Event Completed';
+    }
+    
+    // Check if event is full
+    if (event.max_attendees && event.current_attendees >= event.max_attendees) {
+      return 'Seats Full';
     }
     
     if (status === 'registered' || status === 'confirmed') {
@@ -214,9 +245,19 @@ const EventsPage = () => {
     const status = getUserRegistrationStatus(eventId);
     const event = events.find(ev => ev.id === eventId);
     
-    // Check if event is expired
-    if (event && new Date(event.end_date) < new Date()) {
+    if (!event) return 'bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors';
+    
+    const now = new Date();
+    const eventEndDate = new Date(event.end_date);
+    
+    // Check if event has already ended/completed
+    if (eventEndDate <= now) {
       return 'bg-gray-400 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
+    }
+    
+    // Check if event is full
+    if (event.max_attendees && event.current_attendees >= event.max_attendees) {
+      return 'bg-orange-500 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
     }
     
     if (status === 'registered' || status === 'confirmed') {
