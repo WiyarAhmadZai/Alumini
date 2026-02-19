@@ -53,14 +53,16 @@ const authService = {
 
   /**
    * Get current user
-   * @returns {Object|null} User data or null
+   * @returns {Promise} API response with user data
    */
-  getCurrentUser: () => {
+  getCurrentUser: async () => {
     try {
+      const response = await api.get('/alumini/me');
+      return response.data.data;
+    } catch (error) {
+      // If API call fails, try to get from localStorage as fallback
       const user = localStorage.getItem('alumni_user');
       return user ? JSON.parse(user) : null;
-    } catch (error) {
-      return null;
     }
   },
 
