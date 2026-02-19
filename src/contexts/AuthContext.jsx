@@ -25,7 +25,6 @@ export const AuthProvider = ({ children }) => {
           const userData = await authService.getCurrentUser();
           setUser(userData);
         } catch (error) {
-          console.error('Failed to get current user:', error);
           authService.logout();
         }
       }
