@@ -112,20 +112,18 @@ const EventDetailPage = () => {
     return colors[eventType] || 'bg-gray-600';
   };
 
-  const getRegistrationStatusBadge = () => {
-    if (!userRegistration) return null;
-
-    const badges = {
-      registered: { color: 'bg-blue-100 text-blue-800', icon: FiClock, text: 'Registered' },
-      confirmed: { color: 'bg-green-100 text-green-800', icon: FiCheck, text: 'Confirmed' },
-      attended: { color: 'bg-purple-100 text-purple-800', icon: FiCheck, text: 'Attended' },
-      cancelled: { color: 'bg-red-100 text-red-800', icon: FiX, text: 'Cancelled' },
-      no_show: { color: 'bg-gray-100 text-gray-800', icon: FiX, text: 'No Show' },
+  const getBadgeIcon = (badgeType) => {
+    const icons = {
+      'type': FiTag,
+      'mode': FiVideo,
+      'capacity': FiUsers,
+      'fee': FiDollarSign,
     };
+    return icons[badgeType] || FiCheck;
+  };
 
-    const badge = badges[userRegistration.status];
+  const renderBadge = (badge) => {
     const Icon = badge.icon;
-
     return (
       <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${badge.color}`}>
         <Icon className="text-xs" />
@@ -134,13 +132,78 @@ const EventDetailPage = () => {
     );
   };
 
+  // Show site structure while loading instead of loader
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading event details...</p>
+        <div className="min-h-screen bg-gray-50">
+          {/* Hero Section with Background Image */}
+          <section className="relative min-h-[400px] overflow-hidden">
+            <div className="absolute inset-0 z-0">
+              <img
+                src="/kari-shea-apcUIqOPEIo-unsplash.jpg"
+                alt="Event Background"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"></div>
+            </div>
+            
+            <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24">
+              <div className="animate-pulse">
+                <div className="h-8 bg-gray-300 rounded w-32 mb-4"></div>
+                <div className="h-12 bg-gray-300 rounded w-3/4 mb-6"></div>
+                <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+              </div>
+            </div>
+          </section>
+
+          {/* Main Content */}
+          <div className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Main Content Area */}
+              <div className="lg:col-span-2 space-y-8">
+                {/* Event Details */}
+                <div className="bg-white rounded-lg p-8 border border-gray-200">
+                  <div className="animate-pulse space-y-4">
+                    <div className="h-8 bg-gray-300 rounded w-1/4"></div>
+                    <div className="h-4 bg-gray-300 rounded w-full"></div>
+                    <div className="h-4 bg-gray-300 rounded w-5/6"></div>
+                    <div className="h-4 bg-gray-300 rounded w-4/6"></div>
+                  </div>
+                </div>
+
+                {/* Event Description */}
+                <div className="bg-white rounded-lg p-8 border border-gray-200">
+                  <div className="animate-pulse space-y-4">
+                    <div className="h-6 bg-gray-300 rounded w-1/3"></div>
+                    <div className="h-4 bg-gray-300 rounded w-full"></div>
+                    <div className="h-4 bg-gray-300 rounded w-full"></div>
+                    <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sidebar */}
+              <div className="space-y-6">
+                {/* Registration Card */}
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <div className="animate-pulse space-y-4">
+                    <div className="h-6 bg-gray-300 rounded w-1/2"></div>
+                    <div className="h-10 bg-gray-300 rounded w-full"></div>
+                    <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                  </div>
+                </div>
+
+                {/* Event Organizer */}
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <div className="animate-pulse space-y-3">
+                    <div className="h-6 bg-gray-300 rounded w-1/3"></div>
+                    <div className="h-4 bg-gray-300 rounded w-2/3"></div>
+                    <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </Layout>
@@ -199,53 +262,53 @@ const EventDetailPage = () => {
           <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24">
             <button
               onClick={() => navigate('/events')}
-              className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors"
+              className="mb-8 inline-flex items-center gap-2 text-white hover:text-gray-200 transition-colors"
             >
-              <FiArrowLeft />
-              Back to Events
+              <FiArrowLeft className="text-xl" />
+              <span>Back to Events</span>
             </button>
             
-            <div className="max-w-3xl">
-              {loading ? (
-                <div className="space-y-4">
-                  <div className="h-8 bg-white/20 rounded w-1/3 animate-pulse"></div>
-                  <div className="h-12 bg-white/20 rounded w-2/3 animate-pulse"></div>
-                  <div className="h-6 bg-white/20 rounded w-1/2 animate-pulse"></div>
+            <div className="text-white">
+              <div className="flex flex-wrap gap-3 mb-6">
+                {event?.event_type && (
+                  <span className={`px-3 py-1 rounded-full text-sm font-bold ${getTypeColor(event.event_type)}`}>
+                    {event.event_type}
+                  </span>
+                )}
+                {event?.mode && (
+                  <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-bold text-white">
+                    {event.mode === 'online' ? 'Online Event' : 'Offline Event'}
+                  </span>
+                )}
+              </div>
+              
+              <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
+                {event?.title || 'Event Title'}
+              </h1>
+              
+              <div className="flex flex-wrap gap-6 text-lg">
+                <div className="flex items-center gap-2">
+                  <FiCalendar className="text-xl" />
+                  <span>{event?.start_date ? new Date(event.start_date).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  }) : 'Date TBD'}</span>
                 </div>
-              ) : event ? (
-                <>
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold text-white ${getTypeColor(event.event_type)}`}>
-                      {event.event_type.replace('_', ' ').toUpperCase()}
-                    </div>
-                    {getRegistrationStatusBadge()}
-                  </div>
-                  
-                  <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4">
-                    {event.title}
-                  </h1>
-                  
-                  <div className="flex flex-wrap gap-4 text-white/90">
-                    <div className="flex items-center gap-2">
-                      <FiCalendar />
-                      <span>{new Date(event.start_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <FiClock />
-                      <span>{new Date(event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - {new Date(event.end_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {event.mode === 'online' ? <FiVideo /> : <FiMapPin />}
-                      <span>{event.location}</span>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <div className="text-white text-center">
-                  <h1 className="text-4xl font-bold mb-4">Event Not Found</h1>
-                  <p className="text-xl">The event you're looking for doesn't exist.</p>
+                <div className="flex items-center gap-2">
+                  <FiClock className="text-xl" />
+                  <span>{event?.start_date ? new Date(event.start_date).toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit', 
+                    hour12: true 
+                  }) : 'Time TBD'} - {event?.end_date ? new Date(event.end_date).toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit', 
+                    hour12: true 
+                  }) : ''} ({event?.time_zone || 'GMT+4:30'})</span>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </section>
@@ -266,22 +329,35 @@ const EventDetailPage = () => {
                   </div>
                 </div>
 
-                {/* Agenda */}
-                {event.agenda && (
-                  <div className="bg-white rounded-lg p-6 border border-gray-200">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Event Agenda</h2>
-                    <div className="prose prose-gray max-w-none">
-                      <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                        {event.agenda}
-                      </p>
-                    </div>
+                {/* Location */}
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">Location</h3>
+                  <div className="flex items-center gap-3 text-gray-700">
+                    {event.location.includes('Online') ? (
+                      <FiVideo className="text-xl text-blue-600" />
+                    ) : (
+                      <FiMapPin className="text-xl text-blue-600" />
+                    )}
+                    <span>{event.location}</span>
                   </div>
-                )}
+                  {event.mode === 'online' && event.meeting_link && (
+                    <div className="mt-3">
+                      <a
+                        href={event.meeting_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-700 underline"
+                      >
+                        Join Meeting →
+                      </a>
+                    </div>
+                  )}
+                </div>
 
                 {/* Requirements */}
                 {event.requirements && (
                   <div className="bg-white rounded-lg p-6 border border-gray-200">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Requirements</h2>
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Requirements</h3>
                     <div className="prose prose-gray max-w-none">
                       <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                         {event.requirements}
@@ -366,27 +442,42 @@ const EventDetailPage = () => {
                           )}
                         </div>
                       ) : (
-                        <button
-                          onClick={handleRegister}
-                          disabled={registering || !isRegistrationOpen || isEventFull || isRegistrationDeadlinePassed || isEventPast}
-                          className="w-full px-4 py-2 font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isEventExpired 
-                            ? 'Event Has Ended' 
-                            : isEventPast 
-                              ? 'Event Ended' 
-                              : registering 
-                                ? 'Registering...' 
-                                : !isRegistrationOpen 
-                                  ? isEventFull 
-                                    ? 'Event Full' 
-                                    : 'Registration Closed'
-                                  : 'Register Now'
-                          }
-                        </button>
+                        <>
+                          {/* Only show register button if registration is open and not expired */}
+                          {isRegistrationOpen && !isRegistrationDeadlinePassed && !isEventExpired ? (
+                            <button
+                              onClick={handleRegister}
+                              disabled={registering || isEventFull}
+                              className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            >
+                              {registering ? 'Registering...' : 'Register Now'}
+                            </button>
+                          ) : (
+                            /* Show appropriate message when registration is not available */
+                            <div className="text-center">
+                              {isEventExpired ? (
+                                <div className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">
+                                  Event has ended
+                                </div>
+                              ) : isRegistrationDeadlinePassed ? (
+                                <div className="px-4 py-2 bg-red-100 text-red-600 rounded-lg">
+                                  Registration deadline has passed
+                                </div>
+                              ) : isEventFull ? (
+                                <div className="px-4 py-2 bg-orange-100 text-orange-600 rounded-lg">
+                                  Event is full
+                                </div>
+                              ) : (
+                                <div className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">
+                                  Registration not available
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </>
                       )}
                       
-                      {!user && !isEventExpired && (
+                      {!user && !isEventExpired && !isRegistrationDeadlinePassed && (
                         <p className="text-xs text-gray-500 text-center mt-2">
                           Please login to register for this event
                         </p>
@@ -395,6 +486,12 @@ const EventDetailPage = () => {
                       {isEventExpired && (
                         <p className="text-xs text-gray-500 text-center mt-2">
                           This event has already ended. Registration is no longer available.
+                        </p>
+                      )}
+                      
+                      {isRegistrationDeadlinePassed && !isEventExpired && (
+                        <p className="text-xs text-gray-500 text-center mt-2">
+                          The registration deadline for this event has passed.
                         </p>
                       )}
                     </div>
@@ -421,24 +518,6 @@ const EventDetailPage = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Tags */}
-                {event.tags && Array.isArray(event.tags) && event.tags.length > 0 && (
-                  <div className="bg-white rounded-lg p-6 border border-gray-200">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">Tags</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {event.tags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                        >
-                          <FiTag className="text-xs" />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </main>
