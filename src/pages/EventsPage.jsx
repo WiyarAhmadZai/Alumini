@@ -1,153 +1,312 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiCalendar, FiClock, FiMapPin, FiVideo, FiSearch, FiFilter, FiChevronLeft, FiChevronRight, FiMail } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiMapPin, FiVideo, FiSearch, FiFilter, FiChevronLeft, FiChevronRight, FiMail, FiUsers, FiDollarSign } from 'react-icons/fi';
+import eventService from '../services/eventService';
+import { useAuth } from '../contexts/AuthContext';
+import Swal from 'sweetalert2';
+import EventRegistrationModal from '../components/event/EventRegistrationModal';
 
 const EventsPage = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  
   const [viewMode, setViewMode] = useState('list');
   const [searchTerm, setSearchTerm] = useState('');
   const [eventFilter, setEventFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('');
+  const [sortBy, setSortBy] = useState('start_date');
+  const [sortOrder, setSortOrder] = useState('asc');
 
-  const events = [
-    {
-      id: 1,
-      title: "Future of Civil Engineering in Afghanistan",
-      date: "MAY 15",
-      time: "10:00 AM - 02:00 PM",
-      location: "KPU Main Hall, Kabul",
-      type: "Workshop",
-      typeColor: "bg-blue-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA0dUWcNiyn3vjWhg_aU4GGrZNqP2W7qXonUCX8rAV7Gq9g2s6NM7WWoULwrrII12ZgCOatOWePZ4jVn2wMvlBYTnjBTRQPnKT4buVUSMNE9rXaedHzziBWP-gwivhk4GjxDhxwZwin8JRgOSdkzQiKVMuzBYCwza_ILhJqG97kkZ8cp6QpmDwplHbO_kcoO-gqpqFG6--UJylVHImpf-_lY0uiqwxpfNqqBu0liHQFMD4WTF2yxXM3tHj2WXthfJAVQokhVRxKte9B"
-    },
-    {
-      id: 2,
-      title: "Global Career Paths for KPU Alumni",
-      date: "MAY 28",
-      time: "04:00 PM (GMT+4:30)",
-      location: "Online via Zoom",
-      type: "Webinar",
-      typeColor: "bg-purple-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBAAbWZJAPyiSzYoUOzTpK228PZtXdYewafrx7Y5zY8sWeNnPkD13g9CBkJErGcgSoYkb8xdVzs2ZJpJziOUGCD-uNECvpx5VUbQ8PpIn2DwMnJBiL6kmzInT9rn73W64K-PiyGbX9bRobs0tR6kWW8QRBfRrhfI1mppU1oTP5tDs0_rAyLhH1p03kRz1toTyOIMJ4UFiZZ2YX5hgWo0WwjTEkBTbN5PJ7iiNTVpwPJKg8EaiDVOX8mJVyzhjgktsAPSVBYZzw8mMlj"
-    },
-    {
-      id: 3,
-      title: "Alumni Sports Meet: Football Final",
-      date: "JUN 05",
-      time: "08:00 AM - 12:00 PM",
-      location: "KPU Sports Complex",
-      type: "Sports",
-      typeColor: "bg-green-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCgpRERhD7Pe6Xw_w9Y3Di452nbjUm5qvhHTppYgtVgfJonvgbV-FaGLgspCUUqikD5OEdh6KxFpOnXN2__l_5_5eLO2TjNfn8NWi65krWP8RTpMIHOxT6gkcq5vcd97tDJOYPnqK87_gHSS2VuXf49Whci3zM_K7AUOXvC2etxKCeP5poLFwTyofUrOg1GT-8SgI3l2OWbIqYSsBUPqomSIimlci7pi2oaDCeUDrIthesrNjic1YsImS8ZXMwfHiZpAPbAuyokFyZX"
-    },
-    {
-      id: 4,
-      title: "Class of 2014: 10th Year Reunion",
-      date: "JUN 12",
-      time: "07:00 PM Onwards",
-      location: "Serena Hotel, Kabul",
-      type: "Reunion",
-      typeColor: "bg-orange-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD4fcqyrHLNTeKVN1yfBP5M70AzhKLfw5RYBl4Ng0vpDTOy2JeNpPH8EvLMVTWLX3oY0ZX8DrDtaMuLwEn6lKJSLx3feN3XtSiLocQ8B8tO-ry-q-ZIeopp7_UOv3tHBCEnLHafxrR2zwdsRBFXAuHNJ3wrWjNZPUFKXKhENUatG3HDQ-sbWP8hxKdVx_2wF-R3kb9jIGOubiWsCLzPuWsfuoOgiSbm4wLHdZlfuvBd3S3tIdelUWeRVypwqnlDCaHnyZ8eMc0n6V4a"
-    },
-    {
-      id: 5,
-      title: "Tech Innovation Summit 2024",
-      date: "JUN 20",
-      time: "09:00 AM - 06:00 PM",
-      location: "KPU Conference Center",
-      type: "Workshop",
-      typeColor: "bg-blue-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA0dUWcNiyn3vjWhg_aU4GGrZNqP2W7qXonUCX8rAV7Gq9g2s6NM7WWoULwrrII12ZgCOatOWePZ4jVn2wMvlBYTnjBTRQPnKT4buVUSMNE9rXaedHzziBWP-gwivhk4GjxDhxwZwin8JRgOSdkzQiKVMuzBYCwza_ILhJqG97kkZ8cp6QpmDwplHbO_kcoO-gqpqFG6--UJylVHImpf-_lY0uiqwxpfNqqBu0liHQFMD4WTF2yxXM3tHj2WXthfJAVQokhVRxKte9B"
-    },
-    {
-      id: 6,
-      title: "Alumni Networking Night",
-      date: "JUN 25",
-      time: "06:00 PM - 09:00 PM",
-      location: "KPU Alumni Center",
-      type: "Reunion",
-      typeColor: "bg-orange-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD4fcqyrHLNTeKVN1yfBP5M70AzhKLfw5RYBl4Ng0vpDTOy2JeNpPH8EvLMVTWLX3oY0ZX8DrDtaMuLwEn6lKJSLx3feN3XtSiLocQ8B8tO-ry-q-ZIeopp7_UOv3tHBCEnLHafxrR2zwdsRBFXAuHNJ3wrWjNZPUFKXKhENUatG3HDQ-sbWP8hxKdVx_2wF-R3kb9jIGOubiWsCLzPuWsfuoOgiSbm4wLHdZlfuvBd3S3tIdelUWeRVypwqnlDCaHnyZ8eMc0n6V4a"
-    },
-    {
-      id: 7,
-      title: "Digital Marketing Masterclass",
-      date: "JUL 02",
-      time: "02:00 PM - 05:00 PM",
-      location: "Online via Zoom",
-      type: "Webinar",
-      typeColor: "bg-purple-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBAAbWZJAPyiSzYoUOzTpK228PZtXdYewafrx7Y5zY8sWeNnPkD13g9CBkJErGcgSoYkb8xdVzs2ZJpJziOUGCD-uNECvpx5VUbQ8PpIn2DwMnJBiL6kmzInT9rn73W64K-PiyGbX9bRobs0tR6kWW8QRBfRrhfI1mppU1oTP5tDs0_rAyLhH1p03kRz1toTyOIMJ4UFiZZ2YX5hgWo0WwjTEkBTbN5PJ7iiNTVpwPJKg8EaiDVOX8mJVyzhjgktsAPSVBYZzw8mMlj"
-    },
-    {
-      id: 8,
-      title: "Annual Alumni Cricket Tournament",
-      date: "JUL 10",
-      time: "07:00 AM - 06:00 PM",
-      location: "KPU Sports Ground",
-      type: "Sports",
-      typeColor: "bg-green-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCgpRERhD7Pe6Xw_w9Y3Di452nbjUm5qvhHTppYgtVgfJonvgbV-FaGLgspCUUqikD5OEdh6KxFpOnXN2__l_5_5eLO2TjNfn8NWi65krWP8RTpMIHOxT6gkcq5vcd97tDJOYPnqK87_gHSS2VuXf49Whci3zM_K7AUOXvC2etxKCeP5poLFwTyofUrOg1GT-8SgI3l2OWbIqYSsBUPqomSIimlci7pi2oaDCeUDrIthesrNjic1YsImS8ZXMwfHiZpAPbAuyokFyZX"
-    },
-    {
-      id: 9,
-      title: "Entrepreneurship Workshop",
-      date: "JUL 15",
-      time: "10:00 AM - 04:00 PM",
-      location: "KPU Business School",
-      type: "Workshop",
-      typeColor: "bg-blue-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuA0dUWcNiyn3vjWhg_aU4GGrZNqP2W7qXonUCX8rAV7Gq9g2s6NM7WWoULwrrII12ZgCOatOWePZ4jVn2wMvlBYTnjBTRQPnKT4buVUSMNE9rXaedHzziBWP-gwivhk4GjxDhxwZwin8JRgOSdkzQiKVMuzBYCwza_ILhJqG97kkZ8cp6QpmDwplHbO_kcoO-gqpqFG6--UJylVHImpf-_lY0uiqwxpfNqqBu0liHQFMD4WTF2yxXM3tHj2WXthfJAVQokhVRxKte9B"
-    },
-    {
-      id: 10,
-      title: "AI and Future Technologies",
-      date: "JUL 22",
-      time: "03:00 PM - 06:00 PM",
-      location: "Online via Zoom",
-      type: "Webinar",
-      typeColor: "bg-purple-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBAAbWZJAPyiSzYoUOzTpK228PZtXdYewafrx7Y5zY8sWeNnPkD13g9CBkJErGcgSoYkb8xdVzs2ZJpJziOUGCD-uNECvpx5VUbQ8PpIn2DwMnJBiL6kmzInT9rn73W64K-PiyGbX9bRobs0tR6kWW8QRBfRrhfI1mppU1oTP5tDs0_rAyLhH1p03kRz1toTyOIMJ4UFiZZ2YX5hgWo0WwjTEkBTbN5PJ7iiNTVpwPJKg8EaiDVOX8mJVyzhjgktsAPSVBYZzw8mMlj"
-    },
-    {
-      id: 11,
-      title: "Class of 2019: 5th Year Reunion",
-      date: "JUL 28",
-      time: "07:00 PM Onwards",
-      location: "Intercontinental Hotel, Kabul",
-      type: "Reunion",
-      typeColor: "bg-orange-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuD4fcqyrHLNTeKVN1yfBP5M70AzhKLfw5RYBl4Ng0vpDTOy2JeNpPH8EvLMVTWLX3oY0ZX8DrDtaMuLwEn6lKJSLx3feN3XtSiLocQ8B8tO-ry-q-ZIeopp7_UOv3tHBCEnLHafxrR2zwdsRBFXAuHNJ3wrWjNZPUFKXKhENUatG3HDQ-sbWP8hxKdVx_2wF-R3kb9jIGOubiWsCLzPuWsfuoOgiSbm4wLHdZlfuvBd3S3tIdelUWeRVypwqnlDCaHnyZ8eMc0n6V4a"
-    },
-    {
-      id: 12,
-      title: "Basketball Championship Finals",
-      date: "AUG 05",
-      time: "04:00 PM - 08:00 PM",
-      location: "KPU Indoor Stadium",
-      type: "Sports",
-      typeColor: "bg-green-600",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCgpRERhD7Pe6Xw_w9Y3Di452nbjUm5qvhHTppYgtVgfJonvgbV-FaGLgspCUUqikD5OEdh6KxFpOnXN2__l_5_5eLO2TjNfn8NWi65krWP8RTpMIHOxT6gkcq5vcd97tDJOYPnqK87_gHSS2VuXf49Whci3zM_K7AUOXvC2etxKCeP5poLFwTyofUrOg1GT-8SgI3l2OWbIqYSsBUPqomSIimlci7pi2oaDCeUDrIthesrNjic1YsImS8ZXMwfHiZpAPbAuyokFyZX"
+  const [events, setEvents] = useState([]);
+  const [featuredEvent, setFeaturedEvent] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    current_page: 1,
+    last_page: 1,
+    per_page: 12,
+    total: 0,
+  });
+
+  const [userRegistrations, setUserRegistrations] = useState([]);
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  useEffect(() => {
+    fetchFeaturedEvent();
+    fetchCategories();
+    fetchEvents();
+    if (user) {
+      fetchUserRegistrations();
     }
-  ];
+  }, []);
 
-  const categories = [
-    { name: "Reunions", count: 12 },
-    { name: "Workshops", count: 8 },
-    { name: "Webinars", count: 24 },
-    { name: "Sports", count: 5 },
-    { name: "Career Fairs", count: 3 }
-  ];
+  useEffect(() => {
+    fetchEvents();
+  }, [searchTerm, eventFilter, dateFilter, sortBy, sortOrder]);
+
+  const fetchFeaturedEvent = async () => {
+    try {
+      const response = await eventService.getFeaturedEvent();
+      setFeaturedEvent(response.data);
+    } catch (error) {
+      console.error('Failed to fetch featured event:', error);
+      // Don't show Swal to prevent infinite loops
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const categories = await eventService.getEventCategories();
+      setCategories(categories);
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+      // Don't show Swal to prevent infinite loops
+    }
+  };
+
+  const fetchEvents = async (page = 1) => {
+    try {
+      setLoading(true);
+      const params = {
+        page,
+        per_page: 12,
+        search: searchTerm || undefined,
+        type: eventFilter === 'all' ? undefined : eventFilter,
+        date: dateFilter || undefined,
+        sort_by: sortBy,
+        sort_order: sortOrder,
+      };
+
+      // Remove undefined values from params
+      Object.keys(params).forEach(key => {
+        if (params[key] === undefined) {
+          delete params[key];
+        }
+      });
+
+      const response = await eventService.getEvents(params);
+      
+      // Filter out expired events and events with expired registration deadlines
+      const allEvents = response.data.data;
+      const activeEvents = allEvents.filter(event => {
+        const eventEndDate = new Date(event.end_date);
+        const now = new Date();
+        
+        // Don't show events that have already ended
+        if (eventEndDate <= now) {
+          return false;
+        }
+        
+        // Don't show events with expired registration deadlines
+        if (event.registration_deadline) {
+          const deadlineDate = new Date(event.registration_deadline);
+          if (deadlineDate <= now) {
+            return false;
+          }
+        }
+        
+        return true; // Show events that are still active and have open registration
+      });
+      
+      setEvents(activeEvents);
+      setPagination({
+        current_page: response.data.current_page,
+        last_page: response.data.last_page,
+        per_page: response.data.per_page,
+        total: activeEvents.length, // Update total to reflect filtered count
+      });
+    } catch (error) {
+      console.error('Failed to fetch events:', error);
+      // Don't show Swal for every error to prevent infinite loops
+      // Only show if it's not a network error or if it's the first attempt
+      if (error.message && !error.message.includes('Failed to load events')) {
+        Swal.fire('Error', 'Failed to load events', 'error');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUserRegistrations = async () => {
+    try {
+      if (!user) {
+        setUserRegistrations([]);
+        return;
+      }
+      const response = await eventService.getMyRegistrations();
+      setUserRegistrations(response.data);
+    } catch (error) {
+      console.error('Failed to fetch user registrations:', error);
+      // Don't show Swal to prevent infinite loops
+      setUserRegistrations([]);
+    }
+  };
+
+  const handleEventClick = (eventId) => {
+    navigate(`/events/${eventId}`);
+  };
+
+  const handleRegister = (eventId, e) => {
+    e.stopPropagation();
+    
+    if (!user) {
+      Swal.fire('Login Required', 'Please login to register for this event', 'info');
+      return;
+    }
+
+    // Find the event from the events list or featured event
+    const event = events.find(ev => ev.id === eventId) || featuredEvent;
+    
+    // Check if event is expired
+    if (event && new Date(event.end_date) < new Date()) {
+      Swal.fire('Event Ended', 'This event has already ended and registration is no longer available.', 'error');
+      return;
+    }
+    
+    if (event) {
+      setSelectedEvent(event);
+      setShowRegistrationModal(true);
+    }
+  };
+
+  const handleRegistrationSuccess = () => {
+    Swal.fire({
+      icon: 'success',
+      title: 'Registration Successful!',
+      text: 'You have been registered for this event successfully.',
+      confirmButtonColor: '#2563eb',
+      confirmButtonText: 'Great!',
+      timer: 3000,
+      timerProgressBar: true,
+      position: 'center',
+      backdrop: 'rgba(0, 0, 0, 0.4)'
+    });
+    fetchEvents();
+    fetchUserRegistrations();
+  };
+
+  const getUserRegistrationStatus = (eventId) => {
+    const registration = userRegistrations.find(reg => reg.alumni_event_id === eventId);
+    return registration?.status;
+  };
+
+  const getRegistrationButtonText = (eventId) => {
+    const status = getUserRegistrationStatus(eventId);
+    const event = events.find(ev => ev.id === eventId);
+    
+    // Check if event is expired
+    if (event && new Date(event.end_date) < new Date()) {
+      return 'Event Ended';
+    }
+    
+    if (status === 'registered' || status === 'confirmed') {
+      return 'Registered';
+    }
+    if (status === 'cancelled') {
+      return 'Register Again';
+    }
+    return 'Register Now';
+  };
+
+  const getRegistrationButtonClass = (eventId) => {
+    const status = getUserRegistrationStatus(eventId);
+    const event = events.find(ev => ev.id === eventId);
+    
+    // Check if event is expired
+    if (event && new Date(event.end_date) < new Date()) {
+      return 'bg-gray-400 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
+    }
+    
+    if (status === 'registered' || status === 'confirmed') {
+      return 'bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition-colors';
+    }
+    return 'bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors';
+  };
+
+  const formatCountdown = (eventDate) => {
+    const now = new Date();
+    const event = new Date(eventDate);
+    const diff = event - now;
+
+    if (diff <= 0) return { days: 0, hours: 0, mins: 0, secs: 0 };
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+    return { days, hours, mins, secs };
+  };
+
+  const [countdown, setCountdown] = useState(null);
+
+  // Live countdown effect
+  useEffect(() => {
+    if (!featuredEvent) return;
+
+    const updateCountdown = () => {
+      const now = new Date();
+      const event = new Date(featuredEvent.start_date);
+      const diff = event - now;
+
+      if (diff <= 0) {
+        setCountdown({ days: 0, hours: 0, mins: 0, secs: 0, months: 0, years: 0 });
+        return;
+      }
+
+      const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+      const months = Math.floor((diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24 * 30));
+      const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+      setCountdown({ years, months, days, hours, mins, secs });
+    };
+
+    updateCountdown();
+    const interval = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(interval);
+  }, [featuredEvent]);
+
+  const getTypeColor = (eventType) => {
+    const colors = {
+      'workshop': 'bg-blue-600',
+      'webinar': 'bg-purple-600',
+      'sports': 'bg-green-600',
+      'reunion': 'bg-orange-600',
+      'career_fair': 'bg-red-600',
+      'conference': 'bg-indigo-600',
+      'seminar': 'bg-pink-600',
+      'networking': 'bg-teal-600',
+    };
+    return colors[eventType] || 'bg-gray-600';
+  };
 
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
-        <section className="relative min-h-[500px] bg-blue-900 overflow-hidden">
-          <div className="max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24">
+        <section className="relative min-h-[350px] overflow-hidden">
+          {featuredEvent?.featured_image ? (
+            <div className="absolute inset-0 z-0">
+              <img
+                src={featuredEvent.featured_image}
+                alt={featuredEvent.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"></div>
+            </div>
+          ) : (
+            <div className="absolute inset-0 z-0 bg-gradient-to-br from-blue-900 to-blue-700"></div>
+          )}
+          <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 py-8 lg:py-12">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Left Content */}
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-6 pt-10">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-semibold text-white w-fit">
                   <span className="relative flex h-2 w-2">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -156,44 +315,135 @@ const EventsPage = () => {
                   Featured Event
                 </div>
                 
-                <h1 className="text-4xl lg:text-5xl font-bold text-white leading-tight">
-                  Annual KPU Alumni
-                  <span className="block text-yellow-400">Gala 2024</span>
+                <h1 className="text-3xl lg:text-4xl font-bold text-white leading-tight">
+                  {featuredEvent ? (
+                    <>
+                      {featuredEvent.title.split(' ').slice(0, 3).join(' ')}
+                      <span className="block text-blue-300">
+                        {featuredEvent.title.split(' ').slice(3).join(' ')}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      Annual KPU Alumni
+                      <span className="block text-blue-300">Gala 2024</span>
+                    </>
+                  )}
                 </h1>
                 
-                <p className="text-lg text-white/90 leading-relaxed">
-                  Join us for an unforgettable evening of celebration, networking, and honoring the achievements of our global alumni community in Kabul.
+                <p className="text-base text-white/80 leading-relaxed">
+                  {featuredEvent 
+                    ? featuredEvent.description.substring(0, 150) + '...'
+                    : 'Join us for an unforgettable evening of celebration, networking, and honoring the achievements of our global alumni community in Kabul.'
+                  }
                 </p>
 
-                <div className="space-y-3">
-                  <p className="text-white/80 font-medium">Event starts in:</p>
-                  <div className="flex gap-4">
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-white">12</div>
-                      <div className="text-xs uppercase font-bold text-white/70">Days</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-white">08</div>
-                      <div className="text-xs uppercase font-bold text-white/70">Hours</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-white">45</div>
-                      <div className="text-xs uppercase font-bold text-white/70">Mins</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-white">19</div>
-                      <div className="text-xs uppercase font-bold text-white/70">Secs</div>
+                {countdown && (
+                  <div className="space-y-2">
+                    <p className="text-white/70 text-sm font-medium">Event starts in:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {countdown.years > 0 && (
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-white">{countdown.years}</div>
+                          <div className="text-xs uppercase font-bold text-white/60">Years</div>
+                        </div>
+                      )}
+                      {countdown.months > 0 && (
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-white">{countdown.months}</div>
+                          <div className="text-xs uppercase font-bold text-white/60">Months</div>
+                        </div>
+                      )}
+                      {countdown.days > 0 && (
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-white">{countdown.days}</div>
+                          <div className="text-xs uppercase font-bold text-white/60">Days</div>
+                        </div>
+                      )}
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-white">{countdown.hours}</div>
+                        <div className="text-xs uppercase font-bold text-white/60">Hours</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-white">{countdown.mins}</div>
+                        <div className="text-xs uppercase font-bold text-white/60">Mins</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-white">{countdown.secs}</div>
+                        <div className="text-xs uppercase font-bold text-white/60">Secs</div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
-                <div className="flex gap-4 pt-4">
-                  <button className="px-8 py-3 bg-yellow-400 text-blue-900 font-bold rounded-lg hover:bg-yellow-300 transition-colors">
-                    Register Now
-                  </button>
-                  <button className="px-8 py-3 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition-colors">
-                    Event Details
-                  </button>
+                {/* Event Details */}
+                {featuredEvent && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-4 text-white/80 text-sm">
+                      <div className="flex items-center gap-2">
+                        <FiCalendar className="text-blue-300" />
+                        <span>{new Date(featuredEvent.start_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 text-white/80 text-sm">
+                      <div className="flex items-center gap-2">
+                        <FiClock className="text-blue-300" />
+                        <span>{new Date(featuredEvent.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - {new Date(featuredEvent.end_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>
+                      </div>
+                      <span className="text-white/60 text-xs">({featuredEvent.time_zone})</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-white/80 text-sm">
+                      {featuredEvent.mode === 'online' ? (
+                        <FiVideo className="text-blue-300" />
+                      ) : (
+                        <FiMapPin className="text-blue-300" />
+                      )}
+                      <span>{featuredEvent.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-bold text-white ${getTypeColor(featuredEvent.event_type)}`}>
+                        {featuredEvent.event_type.replace('_', ' ').toUpperCase()}
+                      </span>
+                      {featuredEvent.registration_fee > 0 && (
+                        <span className="px-2 py-1 rounded-full text-xs font-bold text-white bg-green-600">
+                          ${featuredEvent.registration_fee}
+                        </span>
+                      )}
+                      {featuredEvent.mode === 'online' && (
+                        <span className="px-2 py-1 rounded-full text-xs font-bold text-white bg-blue-600">
+                          ONLINE
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-4">
+                  {featuredEvent ? (
+                    <>
+                      <button 
+                        onClick={(e) => handleRegister(featuredEvent.id, e)}
+                        className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                      >
+                        {getRegistrationButtonText(featuredEvent.id)}
+                      </button>
+                      <button 
+                        onClick={() => handleEventClick(featuredEvent.id)}
+                        className="px-6 py-2 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm"
+                      >
+                        Event Details
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                        Register Now
+                      </button>
+                      <button className="px-6 py-2 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm">
+                        Event Details
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -210,15 +460,21 @@ const EventsPage = () => {
                     <p className="text-white/80">Experience an unforgettable evening with distinguished alumni, faculty, and industry leaders.</p>
                     <div className="flex justify-center gap-6 pt-4">
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-yellow-400">500+</div>
+                        <div className="text-3xl font-bold text-yellow-400">
+                          {featuredEvent?.current_attendees || '0'}
+                        </div>
                         <div className="text-sm text-white/70">Attendees</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-yellow-400">50+</div>
+                        <div className="text-3xl font-bold text-yellow-400">
+                          {featuredEvent?.speakers_count || '0'}
+                        </div>
                         <div className="text-sm text-white/70">Speakers</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-3xl font-bold text-yellow-400">10+</div>
+                        <div className="text-3xl font-bold text-yellow-400">
+                          {featuredEvent?.awards_count || '0'}
+                        </div>
                         <div className="text-sm text-white/70">Awards</div>
                       </div>
                     </div>
@@ -344,40 +600,73 @@ const EventsPage = () => {
               {/* Events Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {events.map((event) => (
-                  <div key={event.id} className="bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow">
-                    <div className="relative h-48">
-                      <img 
-                        alt={event.title} 
-                        className="w-full h-full object-cover" 
-                        src={event.image}
-                      />
+                  <div key={event.id} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 h-[440px] w-full flex flex-col group">
+                    <div className="relative h-48 flex-shrink-0 overflow-hidden">
+                      {event.featured_image ? (
+                        <img 
+                          alt={event.title} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                          src={event.featured_image}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                          <FiCalendar className="text-white text-4xl" />
+                        </div>
+                      )}
                       <div className="absolute top-4 left-4 bg-white px-3 py-2 rounded-lg shadow-md">
-                        <div className="text-blue-600 font-bold text-sm">{event.date.split(' ')[0]}</div>
-                        <div className="text-lg font-bold text-gray-900">{event.date.split(' ')[1]}</div>
+                        <div className="text-blue-600 font-bold text-xs">
+                          {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).split(' ')[0].toUpperCase()}
+                        </div>
+                        <div className="text-base font-bold text-gray-900">
+                          {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).split(' ')[1]}
+                        </div>
                       </div>
-                      <div className={`absolute top-4 right-4 ${event.typeColor} text-white px-3 py-1 rounded-full text-xs font-bold`}>
-                        {event.type}
+                      <div className={`absolute top-4 right-4 ${getTypeColor(event.event_type)} text-white px-3 py-1 rounded-full text-xs font-bold`}>
+                        {event.event_type}
                       </div>
+                      <button
+                        onClick={() => handleEventClick(event.id)}
+                        className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
+                        title="View Event Details"
+                      >
+                        <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                      </button>
                     </div>
-                    <div className="p-4">
-                      <div className="flex items-center gap-2 text-blue-600 font-semibold text-sm mb-2">
-                        <FiClock className="text-[14px]" />
-                        {event.time}
+                    <div className="p-4 flex flex-col flex-1">
+                      <div className="flex items-center gap-2 text-blue-600 font-semibold text-xs mb-2">
+                        <FiClock className="text-[12px]" />
+                        <span className="truncate">
+                          {new Date(event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - {new Date(event.end_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} ({event.time_zone})
+                        </span>
                       </div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2">
+                      <h3 className="text-sm font-bold text-gray-900 mb-2 line-clamp-2 flex-1 leading-tight">
                         {event.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-gray-600 text-sm mb-4">
+                      <div className="flex items-center gap-2 text-gray-600 text-xs mb-4">
                         {event.location.includes('Online') ? (
-                          <FiVideo className="text-[14px]" />
+                          <FiVideo className="text-[12px] flex-shrink-0" />
                         ) : (
-                          <FiMapPin className="text-[14px]" />
+                          <FiMapPin className="text-[12px] flex-shrink-0" />
                         )}
-                        {event.location}
+                        <span className="truncate">{event.location}</span>
                       </div>
-                      <button className="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                        Register Now
-                      </button>
+                      <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                        <span>{event.current_attendees || 0} attending</span>
+                        {event.max_attendees && (
+                          <span>{event.max_attendees - event.current_attendees} spots left</span>
+                        )}
+                      </div>
+                      <div className="mt-auto">
+                        <button 
+                          onClick={(e) => handleRegister(event.id, e)}
+                          className={`w-full font-semibold py-2 px-3 rounded-lg transition-all duration-300 text-sm ${getRegistrationButtonClass(event.id)}`}
+                        >
+                          {getRegistrationButtonText(event.id)}
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -386,15 +675,60 @@ const EventsPage = () => {
               {/* Pagination */}
               <div className="flex items-center justify-between py-6 border-t border-gray-200">
                 <p className="text-sm text-gray-600">
-                  Showing <span className="font-bold text-gray-900">12</span> of 38 events
+                  Showing <span className="font-semibold text-gray-900">{Math.min(pagination.per_page * (pagination.current_page - 1) + 1, pagination.total)}</span> to{' '}
+                  <span className="font-semibold text-gray-900">{Math.min(pagination.per_page * pagination.current_page, pagination.total)}</span> of{' '}
+                  <span className="font-semibold text-gray-900">{pagination.total}</span> events
                 </p>
                 <div className="flex gap-2">
-                  <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-600 transition-colors">
+                  <button 
+                    onClick={() => fetchEvents(pagination.current_page - 1)}
+                    disabled={pagination.current_page <= 1}
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-200 ${
+                      pagination.current_page <= 1 
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                        : 'border border-gray-300 hover:bg-gray-100 text-gray-600'
+                    }`}
+                  >
                     <FiChevronLeft />
                   </button>
-                  <button className="flex h-10 px-4 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-sm">1</button>
-                  <button className="flex h-10 px-4 items-center justify-center rounded-lg hover:bg-gray-100 text-gray-600 font-bold text-sm transition-colors">2</button>
-                  <button className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-300 hover:bg-gray-100 text-gray-600 transition-colors">
+                  
+                  {/* Page Numbers */}
+                  {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
+                    let pageNum;
+                    if (pagination.last_page <= 5) {
+                      pageNum = i + 1;
+                    } else if (pagination.current_page <= 3) {
+                      pageNum = i + 1;
+                    } else if (pagination.current_page >= pagination.last_page - 2) {
+                      pageNum = pagination.last_page - 4 + i;
+                    } else {
+                      pageNum = pagination.current_page - 2 + i;
+                    }
+                    
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => fetchEvents(pageNum)}
+                        className={`flex h-10 px-3 items-center justify-center rounded-lg font-medium text-sm transition-all duration-200 ${
+                          pagination.current_page === pageNum
+                            ? 'bg-blue-600 text-white shadow-md'
+                            : 'border border-gray-300 hover:bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+                  
+                  <button 
+                    onClick={() => fetchEvents(pagination.current_page + 1)}
+                    disabled={pagination.current_page >= pagination.last_page}
+                    className={`flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-200 ${
+                      pagination.current_page >= pagination.last_page 
+                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                        : 'border border-gray-300 hover:bg-gray-100 text-gray-600'
+                    }`}
+                  >
                     <FiChevronRight />
                   </button>
                 </div>
@@ -402,6 +736,14 @@ const EventsPage = () => {
             </div>
           </div>
         </main>
+
+        {/* Event Registration Modal */}
+        <EventRegistrationModal 
+          isOpen={showRegistrationModal}
+          onClose={() => setShowRegistrationModal(false)}
+          event={selectedEvent}
+          onRegistrationSuccess={handleRegistrationSuccess}
+        />
 
       </div>
     </Layout>
