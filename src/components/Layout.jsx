@@ -259,7 +259,10 @@ const Layout = ({ children }) => {
                     {/* Show profile image if available, otherwise show user icon */}
                     {user?.profile_image ? (
                       <img 
-                        src={user.profile_image.replace('http://localhost:8000', '')} 
+                        src={user.profile_image.startsWith('http') 
+                          ? user.profile_image.replace('http://localhost:8000', 'http://localhost:8000')
+                          : `http://localhost:8000/storage/${user.profile_image}`
+                        } 
                         alt="User Profile" 
                         className="w-full h-full object-cover rounded-lg sm:rounded-xl"
                         onError={(e) => {
@@ -477,7 +480,10 @@ const Layout = ({ children }) => {
                       <div className="w-10 h-10 rounded-xl border-2 border-white/40 flex items-center justify-center overflow-hidden">
                         {user?.profile_image ? (
                           <img 
-                            src={user.profile_image.replace('http://localhost:8000', '')} 
+                            src={user.profile_image.startsWith('http') 
+                              ? user.profile_image.replace('http://localhost:8000', 'http://localhost:8000')
+                              : `http://localhost:8000/storage/${user.profile_image}`
+                            } 
                             alt="User Profile" 
                             className="w-full h-full object-cover"
                             onError={(e) => {
