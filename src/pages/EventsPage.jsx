@@ -96,7 +96,7 @@ const EventsPage = () => {
 
       const response = await eventService.getEvents(params);
       
-      // Filter out completed events and events with expired registration deadlines
+      // Filter out completed events but keep events with expired registration deadlines
       const allEvents = response.data.data;
       const activeEvents = allEvents.filter(event => {
         const eventEndDate = new Date(event.end_date);
@@ -107,15 +107,8 @@ const EventsPage = () => {
           return false;
         }
         
-        // Hide events with expired registration deadlines
-        if (event.registration_deadline) {
-          const deadlineDate = new Date(event.registration_deadline);
-          if (deadlineDate <= now) {
-            return false;
-          }
-        }
-        
-        return true; // Only show events with open registration
+        // Keep events with expired registration deadlines (they'll be marked as closed)
+        return true;
       });
       
       // Implement client-side pagination for filtered events
@@ -166,6 +159,20 @@ const EventsPage = () => {
     navigate(`/events/${eventId}`);
   };
 
+  const isRegistrationClosed = (event) => {
+    if (!event) return true;
+    
+    // Use same logic as EventDetailPage
+    const isRegistrationOpen = event.registration_status === 'open';
+    const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
+    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) < new Date();
+    const isEventPast = new Date(event.end_date) < new Date();
+    const isEventExpired = isEventPast;
+    
+    // Registration is closed if any of these conditions are true
+    return !isRegistrationOpen || isEventFull || isRegistrationDeadlinePassed || isEventExpired;
+  };
+
   const handleRegister = (eventId, e) => {
     e.stopPropagation();
     
@@ -212,15 +219,6 @@ const EventsPage = () => {
       return;
     }
     
-    // Check if registration deadline has passed
-    if (event.registration_deadline) {
-      const deadlineDate = new Date(event.registration_deadline);
-      if (deadlineDate <= now) {
-        Swal.fire('Registration Closed', 'The registration deadline for this event has passed.', 'warning');
-        return;
-      }
-    }
-    
     setSelectedEvent(event);
     setShowRegistrationModal(true);
   };
@@ -252,33 +250,35 @@ const EventsPage = () => {
     
     if (!event) return 'Register Now';
     
-    const now = new Date();
-    const eventEndDate = new Date(event.end_date);
+    // Use same logic as EventDetailPage
+    const isRegistrationOpen = event.registration_status === 'open';
+    const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
+    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) < new Date();
+    const isEventPast = new Date(event.end_date) < new Date();
+    const isEventExpired = isEventPast;
     
-    // Check if event has already ended/completed
-    if (eventEndDate <= now) {
-      return 'Event Completed';
-    }
-    
-    // Check if registration deadline has passed
-    if (event.registration_deadline) {
-      const deadlineDate = new Date(event.registration_deadline);
-      if (deadlineDate <= now) {
-        return 'Registration Closed';
-      }
-    }
-    
-    // Check if event is full
-    if (event.max_attendees && event.current_attendees >= event.max_attendees) {
-      return 'Seats Full';
-    }
-    
+    // Check if user is already registered
     if (status === 'registered' || status === 'confirmed') {
       return 'Registered';
     }
     if (status === 'cancelled') {
       return 'Register Again';
     }
+    
+    // Check registration availability
+    if (isEventPast || isEventExpired) {
+      return 'Event Completed';
+    }
+    if (isRegistrationDeadlinePassed) {
+      return 'Registration Closed';
+    }
+    if (isEventFull) {
+      return 'Seats Full';
+    }
+    if (!isRegistrationOpen) {
+      return 'Registration Closed';
+    }
+    
     return 'Register Now';
   };
 
@@ -288,30 +288,23 @@ const EventsPage = () => {
     
     if (!event) return 'bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors';
     
-    const now = new Date();
-    const eventEndDate = new Date(event.end_date);
+    // Use same logic as EventDetailPage
+    const isRegistrationOpen = event.registration_status === 'open';
+    const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
+    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) < new Date();
+    const isEventPast = new Date(event.end_date) < new Date();
+    const isEventExpired = isEventPast;
     
-    // Check if event has already ended/completed
-    if (eventEndDate <= now) {
-      return 'bg-gray-400 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
-    }
-    
-    // Check if registration deadline has passed
-    if (event.registration_deadline) {
-      const deadlineDate = new Date(event.registration_deadline);
-      if (deadlineDate <= now) {
-        return 'bg-gray-400 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
-      }
-    }
-    
-    // Check if event is full
-    if (event.max_attendees && event.current_attendees >= event.max_attendees) {
-      return 'bg-orange-500 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
-    }
-    
+    // Check if user is already registered
     if (status === 'registered' || status === 'confirmed') {
       return 'bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition-colors';
     }
+    
+    // Check registration availability
+    if (isEventPast || isEventExpired || isRegistrationDeadlinePassed || !isRegistrationOpen || isEventFull) {
+      return 'bg-gray-400 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
+    }
+    
     return 'bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors';
   };
 
@@ -472,7 +465,12 @@ const EventsPage = () => {
                     <div className="flex items-center gap-4 text-white/80 text-sm">
                       <div className="flex items-center gap-2">
                         <FiCalendar className="text-blue-300" />
-                        <span>{new Date(featuredEvent.start_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                        <span>{new Date(featuredEvent.start_date).toLocaleDateString('en-GB', { 
+                          weekday: 'short', 
+                          day: '2-digit', 
+                          month: '2-digit', 
+                          year: 'numeric' 
+                        })}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-white/80 text-sm">
@@ -505,6 +503,20 @@ const EventsPage = () => {
                         </span>
                       )}
                     </div>
+                    
+                    {/* Registration Deadline for Featured Event */}
+                    {featuredEvent.registration_deadline && (
+                      <div className="flex items-center justify-between text-white/80 text-sm mt-3">
+                        <span className="font-medium">Registration Deadline</span>
+                        <span className="font-bold">
+                          {new Date(featuredEvent.registration_deadline).toLocaleDateString('en-GB', { 
+                            day: '2-digit', 
+                            month: '2-digit', 
+                            year: '2-digit' 
+                          })}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -512,8 +524,45 @@ const EventsPage = () => {
                   {featuredEvent ? (
                     <>
                       <button 
-                        onClick={(e) => handleRegister(featuredEvent.id, e)}
-                        className={`px-6 py-2 font-semibold rounded-lg transition-colors text-sm ${getRegistrationButtonClass(featuredEvent.id)}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (isRegistrationClosed(featuredEvent)) {
+                            // Show SweetAlert for closed registration
+                            const isRegistrationDeadlinePassed = featuredEvent.registration_deadline && new Date(featuredEvent.registration_deadline) < new Date();
+                            if (isRegistrationDeadlinePassed) {
+                              Swal.fire({
+                                icon: 'warning',
+                                title: 'Registration Closed',
+                                html: 'The registration deadline for this event has passed.<br><br>If you need assistance, please contact the KPU team for more information.',
+                                confirmButtonColor: '#2563eb',
+                                confirmButtonText: 'Contact KPU Team',
+                                showCancelButton: true,
+                                cancelButtonText: 'Close',
+                                position: 'center',
+                                backdrop: 'rgba(0, 0, 0, 0.4)'
+                              }).then((result) => {
+                                if (result.isConfirmed) {
+                                  navigate('/contact');
+                                }
+                              });
+                              return;
+                            }
+                            // For other closed reasons, show a generic message
+                            Swal.fire({
+                              icon: 'info',
+                              title: 'Registration Unavailable',
+                              text: 'Registration is not available for this event.',
+                              confirmButtonColor: '#2563eb',
+                              confirmButtonText: 'Got it',
+                              position: 'center',
+                              backdrop: 'rgba(0, 0, 0, 0.4)'
+                            });
+                            return;
+                          }
+                          handleRegister(featuredEvent.id, e);
+                        }}
+                        disabled={isRegistrationClosed(featuredEvent)}
+                        className={`px-6 py-2 font-semibold rounded-lg transition-colors text-sm ${getRegistrationButtonClass(featuredEvent.id)} ${isRegistrationClosed(featuredEvent) ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                       >
                         {getRegistrationButtonText(featuredEvent.id)}
                       </button>
@@ -705,10 +754,10 @@ const EventsPage = () => {
                       )}
                       <div className="absolute top-4 left-4 bg-white px-3 py-2 rounded-lg shadow-md">
                         <div className="text-blue-600 font-bold text-xs">
-                          {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).split(' ')[0].toUpperCase()}
+                          {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}
                         </div>
                         <div className="text-base font-bold text-gray-900">
-                          {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }).split(' ')[1]}
+                          {new Date(event.start_date).toLocaleDateString('en-US', { day: 'numeric' })}
                         </div>
                       </div>
                       <div className={`absolute top-4 right-4 ${getTypeColor(event.event_type)} text-white px-3 py-1 rounded-full text-xs font-bold`}>
@@ -749,10 +798,61 @@ const EventsPage = () => {
                           <span>{event.max_attendees - event.current_attendees} spots left</span>
                         )}
                       </div>
+                      
+                      {/* Registration Deadline */}
+                      {event.registration_deadline && (
+                        <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
+                          <span className="font-medium">Registration Deadline</span>
+                          <span className="font-bold">
+                            {new Date(event.registration_deadline).toLocaleDateString('en-GB', { 
+                              day: '2-digit', 
+                              month: '2-digit', 
+                              year: '2-digit' 
+                            })}
+                          </span>
+                        </div>
+                      )}
                       <div className="mt-auto">
                         <button 
-                          onClick={(e) => handleRegister(event.id, e)}
-                          className={`w-full font-semibold py-2 px-3 rounded-lg transition-all duration-300 text-sm ${getRegistrationButtonClass(event.id)}`}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (isRegistrationClosed(event)) {
+                              // Show SweetAlert for closed registration
+                              const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) < new Date();
+                              if (isRegistrationDeadlinePassed) {
+                                Swal.fire({
+                                  icon: 'warning',
+                                  title: 'Registration Closed',
+                                  html: 'The registration deadline for this event has passed.<br><br>If you need assistance, please contact the KPU team for more information.',
+                                  confirmButtonColor: '#2563eb',
+                                  confirmButtonText: 'Contact KPU Team',
+                                  showCancelButton: true,
+                                  cancelButtonText: 'Close',
+                                  position: 'center',
+                                  backdrop: 'rgba(0, 0, 0, 0.4)'
+                                }).then((result) => {
+                                  if (result.isConfirmed) {
+                                    navigate('/contact');
+                                  }
+                                });
+                                return;
+                              }
+                              // For other closed reasons, show a generic message
+                              Swal.fire({
+                                icon: 'info',
+                                title: 'Registration Unavailable',
+                                text: 'Registration is not available for this event.',
+                                confirmButtonColor: '#2563eb',
+                                confirmButtonText: 'Got it',
+                                position: 'center',
+                                backdrop: 'rgba(0, 0, 0, 0.4)'
+                              });
+                              return;
+                            }
+                            handleRegister(event.id, e);
+                          }}
+                          disabled={isRegistrationClosed(event)}
+                          className={`w-full font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-sm ${getRegistrationButtonClass(event.id)} ${isRegistrationClosed(event) ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                         >
                           {getRegistrationButtonText(event.id)}
                         </button>

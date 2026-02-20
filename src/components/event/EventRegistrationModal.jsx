@@ -45,7 +45,13 @@ const EventRegistrationModal = ({ isOpen, onClose, event, onRegistrationSuccess 
       onRegistrationSuccess();
       handleClose();
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to register for event');
+      // Show specific error message from backend if available
+      const errorMessage = error.response?.data?.message;
+      if (errorMessage) {
+        setError(errorMessage);
+      } else {
+        setError('Registration failed. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }
