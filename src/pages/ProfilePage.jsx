@@ -8,6 +8,7 @@ import alumniService from '../services/alumniService';
 import authService from '../services/authService';
 import jobService from '../services/jobService';
 import messageService from '../services/messageService';
+import eventService from '../services/eventService';
 import Modal from '../components/ui/Modal';
 
 const ProfilePage = () => {
@@ -21,6 +22,8 @@ const ProfilePage = () => {
   const [loadingJobs, setLoadingJobs] = useState(false);
   const [messages, setMessages] = useState([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
+  const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [loadingEvents, setLoadingEvents] = useState(false);
 
   const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact
   const [editingItem, setEditingItem] = useState(null);
@@ -245,6 +248,7 @@ const ProfilePage = () => {
     if (isOwner && profile) {
       fetchAppliedJobs();
       fetchMessages();
+      fetchRegisteredEvents();
     }
   }, [isOwner, profile]);
 
@@ -322,6 +326,18 @@ const ProfilePage = () => {
       console.error('Failed to fetch messages:', error);
     } finally {
       setLoadingMessages(false);
+    }
+  };
+
+  const fetchRegisteredEvents = async () => {
+    try {
+      setLoadingEvents(true);
+      const response = await eventService.getMyRegistrations();
+      setRegisteredEvents(response.data || []);
+    } catch (error) {
+      console.error('Failed to fetch registered events:', error);
+    } finally {
+      setLoadingEvents(false);
     }
   };
 
@@ -1273,6 +1289,98 @@ const ProfilePage = () => {
                               className="block w-full text-center py-2 text-blue-600 hover:text-blue-700 text-sm font-medium border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
                             >
                               View All Messages ({messages.length})
+                            </Link>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Registered Events Section - Only for profile owner */}
+              {isOwner && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <FiCalendar className="text-blue-600" />
+                        Registered Events
+                      </h3>
+                      <Link 
+                        to="/events/registered"
+                        className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                      >
+                        View All
+                        <FiExternalLink className="text-sm" />
+                      </Link>
+                    </div>
+                    <div className="space-y-3">
+                      {loadingEvents ? (
+                        <div className="space-y-3">
+                          {Array.from({ length: 3 }, (_, index) => (
+                            <div key={index} className="animate-pulse">
+                              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                              <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : registeredEvents.length === 0 ? (
+                        <div className="text-center py-6">
+                          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <FiCalendar className="text-gray-400 text-xl" />
+                          </div>
+                          <p className="text-gray-500 text-sm">No registered events yet</p>
+                          <Link 
+                            to="/events"
+                            className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                          >
+                            <FiCalendar className="text-sm" />
+                            Browse Events
+                          </Link>
+                        </div>
+                      ) : (
+                        <>
+                          {registeredEvents.slice(0, 3).map((registration) => (
+                            <div key={registration.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <FiCalendar className="text-blue-600 text-sm" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-1">
+                                  <h4 className="text-sm font-semibold text-gray-900 truncate">
+                                    {registration.event?.title || 'Event Title'}
+                                  </h4>
+                                  <span className={`text-xs px-2 py-1 rounded-full ${
+                                    registration.status === 'registered' 
+                                      ? 'bg-blue-100 text-blue-700' 
+                                      : registration.status === 'confirmed'
+                                      ? 'bg-green-100 text-green-700'
+                                      : registration.status === 'cancelled'
+                                      ? 'bg-red-100 text-red-700'
+                                      : registration.status === 'attended'
+                                      ? 'bg-purple-100 text-purple-700'
+                                      : 'bg-gray-100 text-gray-700'
+                                  }`}>
+                                    {registration.status || 'registered'}
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-600 line-clamp-2 mb-2">
+                                  {registration.event?.location || 'Location'}
+                                </p>
+                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                  <FiCalendar className="text-gray-400" />
+                                  {new Date(registration.event?.start_date).toLocaleDateString()}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                          {registeredEvents.length > 3 && (
+                            <Link 
+                              to="/events/registered"
+                              className="block w-full text-center py-2 text-blue-600 hover:text-blue-700 text-sm font-medium border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+                            >
+                              View All Events ({registeredEvents.length})
                             </Link>
                           )}
                         </>
