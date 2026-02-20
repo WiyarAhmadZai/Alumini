@@ -1349,7 +1349,7 @@ const ProfilePage = () => {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center justify-between mb-1">
                                   <h4 className="text-sm font-semibold text-gray-900 truncate">
-                                    {registration.event?.title || 'Event Title'}
+                                    {registration.alumni_event?.title || 'Event Title'}
                                   </h4>
                                   <span className={`text-xs px-2 py-1 rounded-full ${
                                     registration.status === 'registered' 
@@ -1366,11 +1366,11 @@ const ProfilePage = () => {
                                   </span>
                                 </div>
                                 <p className="text-xs text-gray-600 line-clamp-2 mb-2">
-                                  {registration.event?.location || 'Location'}
+                                  {registration.alumni_event?.location || 'Location'}
                                 </p>
                                 <div className="flex items-center gap-2 text-xs text-gray-500">
                                   <FiCalendar className="text-gray-400" />
-                                  {new Date(registration.event?.start_date).toLocaleDateString()}
+                                  {registration.alumni_event?.start_date ? new Date(registration.alumni_event.start_date).toLocaleDateString() : 'Date not set'}
                                 </div>
                               </div>
                             </div>
