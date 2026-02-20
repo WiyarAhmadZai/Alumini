@@ -90,18 +90,22 @@ const EventsPage = () => {
       
       // Filter out completed events and events with expired registration deadlines
       const allEvents = response.data.data;
+      const now = new Date();
+      console.log('Current time:', now);
+      
       const activeEvents = allEvents.filter(event => {
         const eventEndDate = new Date(event.end_date);
-        const now = new Date();
         
         // Hide events that have already completed
         if (eventEndDate <= now) {
+          console.log('Event completed:', event.title, 'End date:', eventEndDate);
           return false;
         }
         
         // Hide events with expired registration deadlines
         if (event.registration_deadline) {
           const deadlineDate = new Date(event.registration_deadline);
+          console.log('Event:', event.title, 'Deadline:', deadlineDate, 'Now:', now, 'Is expired:', deadlineDate <= now);
           if (deadlineDate <= now) {
             return false;
           }
@@ -109,6 +113,8 @@ const EventsPage = () => {
         
         return true; // Only show events with open registration
       });
+      
+      console.log('Filtered events count:', activeEvents.length, 'Total events:', allEvents.length);
       
       setEvents(activeEvents);
       setPagination({
