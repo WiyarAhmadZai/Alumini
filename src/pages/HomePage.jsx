@@ -5,13 +5,17 @@ import {
   FiMapPin, 
   FiVideo, 
   FiUser,
-  FiMail
+  FiMail,
+  FiCalendar
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
+import eventService from '../services/eventService';
 
 const HomePage = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const testimonials = [
     {
@@ -93,6 +97,57 @@ const HomePage = () => {
     return () => clearInterval(interval); // Cleanup on unmount
   }, [testimonials.length]);
 
+  // Fetch upcoming events
+  useEffect(() => {
+    const fetchUpcomingEvents = async () => {
+      try {
+        const response = await eventService.getEvents({ per_page: 6 });
+        const allEvents = response.data.data;
+        const now = new Date();
+        
+        // Filter for upcoming events with open registration
+        const activeEvents = allEvents.filter(event => {
+          const eventEndDate = new Date(event.end_date);
+          
+          // Hide events that have already completed
+          if (eventEndDate <= now) {
+            return false;
+          }
+          
+          // Hide events with expired registration deadlines
+          if (event.registration_deadline) {
+            const deadlineDate = new Date(event.registration_deadline);
+            if (deadlineDate <= now) {
+              return false;
+            }
+          }
+          
+          return true; // Only show events with open registration
+        });
+        
+        // Sort by start date (nearest first) and take top 2
+        const nearestEvents = activeEvents
+          .sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
+          .slice(0, 2);
+        
+        setUpcomingEvents(nearestEvents);
+      } catch (error) {
+        // Silently handle error
+      }
+    };
+
+    fetchUpcomingEvents();
+  }, []);
+
+  // Update countdown timer every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const newsItems = [
     {
       id: 1,
@@ -120,29 +175,6 @@ const HomePage = () => {
       date: "Aug 15, 2023",
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCbZs0HKTcPlxNXk6tKWYQOT9Wm0jO0SMma605yZcMwgSAFJ6XQ-WK3HNZtkCXH1FtevWCcC4y8wrFdU2yTCpMEm8ALa1eX9QKXueBFPFESsu_i4OYdidoQfylLxcqlS7n0aFhkNVdNQjZhMKgq4_ceQAH-5ErWzf6kGL-Jo0oND3SPU6VJf8J1r6mou16lOAFf2qlcA3TuFA1lLN_SgGaXiHocSg_zHR_hdgZyzMmJL32ebD3WBG7IsDZ8xZZwU0eEWhSbVbzkfTFX",
       categoryColor: "bg-orange-100 text-orange-700"
-    }
-  ];
-
-  const events = [
-    {
-      id: 1,
-      title: "Annual Alumni Gala 2024",
-      date: "15",
-      month: "Nov",
-      time: "6:00 PM",
-      location: "Main Campus Ballroom",
-      icon: <FiMapPin />,
-      isPrimary: true
-    },
-    {
-      id: 2,
-      title: "Tech Innovation Seminar",
-      date: "02",
-      month: "Dec",
-      time: "2:00 PM",
-      location: "Online Webinar",
-      icon: <FiVideo />,
-      isPrimary: false
     }
   ];
 
@@ -272,26 +304,60 @@ const HomePage = () => {
                 <h2 className="text-sm font-bold uppercase tracking-widest text-white mb-2">Save the Date</h2>
                 <h3 className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight mb-4 text-white">Upcoming Events</h3>
                 <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">Never miss an opportunity to reconnect with your former classmates and expand your network.</p>
-                <button className="h-10 px-4 sm:h-12 border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-[#002759] transition-all">
+                <Link 
+                  to="/events"
+                  className="h-16 px-6 py-3 border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-[#002759] transition-all duration-500 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                >
                   View Calendar
-                </button>
+                </Link>
               </div>
               <div className="lg:w-2/3 flex flex-col gap-3 sm:gap-4">
-                {events.map((event, index) => (
-                  <div key={event.id} className="flex gap-3 sm:gap-6 items-center p-3 sm:p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 hover:border-[#002759]/50 transition-all group animate-scale-in" style={{animationDelay: `${index * 0.1}s`}}>
-                    <div className={`flex flex-col items-center justify-center min-w-[60px] sm:min-w-[70px] h-[60px] sm:h-[70px] ${event.isPrimary ? 'bg-[#002759] text-white' : 'bg-white/20 border border-white/30 rounded-lg'}`}>
-                      <span className="text-lg sm:text-xl font-bold">{event.date}</span>
-                      <span className="text-[10px] uppercase font-medium text-gray-300">{event.month}</span>
+                {upcomingEvents.map((event, index) => {
+                  const eventDate = new Date(event.start_date);
+                  const day = eventDate.getDate();
+                  const month = eventDate.toLocaleDateString('en-US', { month: 'short' });
+                  const time = eventDate.toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit', 
+                    hour12: true 
+                  });
+                  const isOnline = event.mode === 'online';
+                  
+                  // Calculate countdown
+                  const now = new Date();
+                  const timeDiff = eventDate - now;
+                  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                  const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                  const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                  const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+                  
+                  return (
+                    <div key={event.id} className="flex gap-3 sm:gap-6 items-center p-3 sm:p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 hover:border-[#002759]/50 transition-all group animate-scale-in" style={{animationDelay: `${index * 0.1}s`}}>
+                      <div className={`flex flex-col items-center justify-center min-w-[60px] sm:min-w-[70px] h-[60px] sm:h-[70px] ${index === 0 ? 'bg-[#002759] text-white' : 'bg-white/20 border border-white/30 rounded-lg'}`}>
+                        <span className="text-lg sm:text-xl font-bold">{day}</span>
+                        <span className="text-[10px] uppercase font-medium text-gray-300">{month}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-white text-base sm:text-lg font-bold transition-colors">{event.title}</h4>
+                        <p className="text-gray-300 text-xs sm:text-sm flex items-center gap-1">
+                          {isOnline ? <FiVideo /> : <FiMapPin />} {event.location} • {time}
+                        </p>
+                        <p className="text-gray-400 text-xs mt-1">
+                          {days > 0 && `${days}d `}
+                          {hours > 0 && `${hours}h `}
+                          {minutes > 0 && `${minutes}m `}
+                          {seconds >= 0 && `${seconds}s`} left
+                        </p>
+                      </div>
+                      <Link 
+                        to={`/events/${event.id}`}
+                        className="material-symbols-outlined text-gray-400 hover:text-white transition-colors"
+                      >
+                        arrow_forward
+                      </Link>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="text-white text-base sm:text-lg font-bold group-hover:text-[#002759] transition-colors">{event.title}</h4>
-                      <p className="text-gray-300 text-xs sm:text-sm flex items-center gap-1">
-                        {event.icon} {event.location} • {event.time}
-                      </p>
-                    </div>
-                    <button className="material-symbols-outlined text-gray-400 group-hover:text-[#002759]">arrow_forward</button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
