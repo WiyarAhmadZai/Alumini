@@ -46,6 +46,14 @@ const EventsPage = () => {
     fetchEvents();
   }, [searchTerm, eventFilter, dateFilter, sortBy, sortOrder]);
 
+  useEffect(() => {
+    if (user) {
+      fetchUserRegistrations();
+    } else {
+      setUserRegistrations([]);
+    }
+  }, [user]);
+
   const fetchFeaturedEvent = async () => {
     try {
       const response = await eventService.getFeaturedEvent();
@@ -156,11 +164,26 @@ const EventsPage = () => {
       return;
     }
 
-    // Find the event from the events list or featured event
+    // Find event from events list or featured event
     const event = events.find(ev => ev.id === eventId) || featuredEvent;
     
     if (!event) {
       Swal.fire('Event Not Found', 'The requested event could not be found.', 'error');
+      return;
+    }
+    
+    // Check if user is already registered for this event
+    const existingRegistration = userRegistrations.find(reg => reg.alumni_event_id === eventId);
+    if (existingRegistration) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Already Registered',
+        text: 'You are already registered for this event.',
+        confirmButtonColor: '#2563eb',
+        confirmButtonText: 'Got it',
+        position: 'center',
+        backdrop: 'rgba(0, 0, 0, 0.4)'
+      });
       return;
     }
     
@@ -227,6 +250,14 @@ const EventsPage = () => {
       return 'Event Completed';
     }
     
+    // Check if registration deadline has passed
+    if (event.registration_deadline) {
+      const deadlineDate = new Date(event.registration_deadline);
+      if (deadlineDate <= now) {
+        return 'Registration Closed';
+      }
+    }
+    
     // Check if event is full
     if (event.max_attendees && event.current_attendees >= event.max_attendees) {
       return 'Seats Full';
@@ -253,6 +284,14 @@ const EventsPage = () => {
     // Check if event has already ended/completed
     if (eventEndDate <= now) {
       return 'bg-gray-400 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
+    }
+    
+    // Check if registration deadline has passed
+    if (event.registration_deadline) {
+      const deadlineDate = new Date(event.registration_deadline);
+      if (deadlineDate <= now) {
+        return 'bg-gray-400 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
+      }
     }
     
     // Check if event is full
@@ -464,7 +503,7 @@ const EventsPage = () => {
                     <>
                       <button 
                         onClick={(e) => handleRegister(featuredEvent.id, e)}
-                        className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                        className={`px-6 py-2 font-semibold rounded-lg transition-colors text-sm ${getRegistrationButtonClass(featuredEvent.id)}`}
                       >
                         {getRegistrationButtonText(featuredEvent.id)}
                       </button>
