@@ -96,33 +96,13 @@ const EventsPage = () => {
 
       const response = await eventService.getEvents(params);
       
-      // Filter out completed events but keep events with expired registration deadlines
-      const allEvents = response.data.data;
-      const activeEvents = allEvents.filter(event => {
-        const eventEndDate = new Date(event.end_date);
-        const now = new Date();
-        
-        // Hide events that have already completed
-        if (eventEndDate <= now) {
-          return false;
-        }
-        
-        // Keep events with expired registration deadlines (they'll be marked as closed)
-        return true;
-      });
-      
-      // Implement client-side pagination for filtered events
-      const perPage = 12;
-      const startIndex = (page - 1) * perPage;
-      const endIndex = startIndex + perPage;
-      const paginatedEvents = activeEvents.slice(startIndex, endIndex);
-      
-      setEvents(paginatedEvents);
+      // Use server-side pagination data directly
+      setEvents(response.data.data);
       setPagination({
-        current_page: page,
-        last_page: Math.ceil(activeEvents.length / perPage),
-        per_page: perPage,
-        total: activeEvents.length,
+        current_page: response.data.current_page,
+        last_page: response.data.last_page,
+        per_page: response.data.per_page,
+        total: response.data.total,
       });
     } catch (error) {
       console.error('Failed to fetch events:', error);
@@ -165,8 +145,11 @@ const EventsPage = () => {
     // Use same logic as EventDetailPage
     const isRegistrationOpen = event.registration_status === 'open';
     const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
-    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) < new Date();
-    const isEventPast = new Date(event.end_date) < new Date();
+    
+    // Compare exact date and time, not just date
+    const now = new Date();
+    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
+    const isEventPast = new Date(event.end_date) <= now;
     const isEventExpired = isEventPast;
     
     // Registration is closed if any of these conditions are true
@@ -253,8 +236,11 @@ const EventsPage = () => {
     // Use same logic as EventDetailPage
     const isRegistrationOpen = event.registration_status === 'open';
     const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
-    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) < new Date();
-    const isEventPast = new Date(event.end_date) < new Date();
+    
+    // Compare exact date and time, not just date
+    const now = new Date();
+    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
+    const isEventPast = new Date(event.end_date) <= now;
     const isEventExpired = isEventPast;
     
     // Check if user is already registered
@@ -291,8 +277,11 @@ const EventsPage = () => {
     // Use same logic as EventDetailPage
     const isRegistrationOpen = event.registration_status === 'open';
     const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
-    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) < new Date();
-    const isEventPast = new Date(event.end_date) < new Date();
+    
+    // Compare exact date and time, not just date
+    const now = new Date();
+    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
+    const isEventPast = new Date(event.end_date) <= now;
     const isEventExpired = isEventPast;
     
     // Check if user is already registered
@@ -528,7 +517,8 @@ const EventsPage = () => {
                           e.stopPropagation();
                           if (isRegistrationClosed(featuredEvent)) {
                             // Show SweetAlert for closed registration
-                            const isRegistrationDeadlinePassed = featuredEvent.registration_deadline && new Date(featuredEvent.registration_deadline) < new Date();
+                            const now = new Date();
+                            const isRegistrationDeadlinePassed = featuredEvent.registration_deadline && new Date(featuredEvent.registration_deadline) <= now;
                             if (isRegistrationDeadlinePassed) {
                               Swal.fire({
                                 icon: 'warning',
@@ -818,7 +808,8 @@ const EventsPage = () => {
                             e.stopPropagation();
                             if (isRegistrationClosed(event)) {
                               // Show SweetAlert for closed registration
-                              const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) < new Date();
+                              const now = new Date();
+                              const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
                               if (isRegistrationDeadlinePassed) {
                                 Swal.fire({
                                   icon: 'warning',

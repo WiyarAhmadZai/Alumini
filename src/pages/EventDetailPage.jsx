@@ -230,8 +230,11 @@ const EventDetailPage = () => {
 
   const isRegistrationOpen = event.registration_status === 'open';
   const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
-  const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) < new Date();
-  const isEventPast = new Date(event.end_date) < new Date();
+  
+  // Compare exact date and time, not just date
+  const now = new Date();
+  const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
+  const isEventPast = new Date(event.end_date) <= now;
   const isEventExpired = isEventPast;
 
   return (
