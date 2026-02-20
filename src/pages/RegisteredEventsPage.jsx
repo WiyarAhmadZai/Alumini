@@ -32,19 +32,21 @@ const RegisteredEventsPage = () => {
       setLoading(true);
       const response = await eventService.getMyRegistrations();
       
+      // Filter out cancelled registrations
+      const activeRegistrations = (response.data || []).filter(reg => reg.status !== 'cancelled');
+      
       // Simulate pagination on client side since API might not support it
-      const allEvents = response.data || [];
       const perPage = 12;
       const startIndex = (page - 1) * perPage;
       const endIndex = startIndex + perPage;
-      const paginatedEvents = allEvents.slice(startIndex, endIndex);
+      const paginatedEvents = activeRegistrations.slice(startIndex, endIndex);
       
       setRegisteredEvents(paginatedEvents);
       setPagination({
         current_page: page,
-        last_page: Math.ceil(allEvents.length / perPage),
+        last_page: Math.ceil(activeRegistrations.length / perPage),
         per_page: perPage,
-        total: allEvents.length,
+        total: activeRegistrations.length,
       });
     } catch (error) {
       console.error('Failed to fetch registered events:', error);
@@ -95,7 +97,6 @@ const RegisteredEventsPage = () => {
     const colors = {
       'registered': 'bg-blue-100 text-blue-800',
       'confirmed': 'bg-green-100 text-green-800',
-      'cancelled': 'bg-red-100 text-red-800',
       'attended': 'bg-purple-100 text-purple-800',
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
@@ -260,7 +261,7 @@ const RegisteredEventsPage = () => {
                         >
                           View Details
                         </button>
-                        {registration.status === 'registered' || registration.status === 'confirmed' ? (
+                        {(registration.status === 'registered' || registration.status === 'confirmed') && registration.status !== 'cancelled' ? (
                           <button 
                             onClick={(e) => handleCancelRegistration(registration.alumni_event?.id, e)}
                             className="px-3 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors text-sm cursor-pointer"
