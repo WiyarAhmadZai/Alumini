@@ -333,7 +333,11 @@ const ProfilePage = () => {
     try {
       setLoadingEvents(true);
       const response = await eventService.getMyRegistrations();
-      setRegisteredEvents(response.data || []);
+      
+      // Filter out cancelled registrations
+      const activeRegistrations = (response.data || []).filter(reg => reg.status !== 'cancelled');
+      
+      setRegisteredEvents(activeRegistrations);
     } catch (error) {
       console.error('Failed to fetch registered events:', error);
     } finally {
@@ -1356,8 +1360,6 @@ const ProfilePage = () => {
                                       ? 'bg-blue-100 text-blue-700' 
                                       : registration.status === 'confirmed'
                                       ? 'bg-green-100 text-green-700'
-                                      : registration.status === 'cancelled'
-                                      ? 'bg-red-100 text-red-700'
                                       : registration.status === 'attended'
                                       ? 'bg-purple-100 text-purple-700'
                                       : 'bg-gray-100 text-gray-700'
