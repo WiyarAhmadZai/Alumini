@@ -121,9 +121,9 @@ const EventsPage = () => {
       setEvents(activeEvents);
       setPagination({
         current_page: response.data.current_page,
-        last_page: response.data.last_page,
-        per_page: response.data.per_page,
-        total: activeEvents.length, // Update total to reflect filtered count
+        last_page: Math.ceil(activeEvents.length / 12), // Calculate last page based on filtered events
+        per_page: 12,
+        total: activeEvents.length, // Use filtered events count
       });
     } catch (error) {
       console.error('Failed to fetch events:', error);
