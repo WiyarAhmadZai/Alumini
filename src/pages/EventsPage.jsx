@@ -118,12 +118,18 @@ const EventsPage = () => {
         return true; // Only show events with open registration
       });
       
-      setEvents(activeEvents);
+      // Implement client-side pagination for filtered events
+      const perPage = 12;
+      const startIndex = (page - 1) * perPage;
+      const endIndex = startIndex + perPage;
+      const paginatedEvents = activeEvents.slice(startIndex, endIndex);
+      
+      setEvents(paginatedEvents);
       setPagination({
-        current_page: response.data.current_page,
-        last_page: Math.ceil(activeEvents.length / 12), // Calculate last page based on filtered events
-        per_page: 12,
-        total: activeEvents.length, // Use filtered events count
+        current_page: page,
+        last_page: Math.ceil(activeEvents.length / perPage),
+        per_page: perPage,
+        total: activeEvents.length,
       });
     } catch (error) {
       console.error('Failed to fetch events:', error);
@@ -144,7 +150,11 @@ const EventsPage = () => {
         return;
       }
       const response = await eventService.getMyRegistrations();
-      setUserRegistrations(response.data);
+      
+      // Filter out cancelled registrations
+      const activeRegistrations = (response.data || []).filter(reg => reg.status !== 'cancelled');
+      
+      setUserRegistrations(activeRegistrations);
     } catch (error) {
       console.error('Failed to fetch user registrations:', error);
       // Don't show Swal to prevent infinite loops
