@@ -228,14 +228,10 @@ const EventDetailPage = () => {
     );
   }
 
-  const isRegistrationOpen = event.registration_status === 'open';
-  const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
-  
-  // Compare exact date and time, not just date
+  // Use only the deadline to control registration
   const now = new Date();
   const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
-  const isEventPast = new Date(event.end_date) <= now;
-  const isEventExpired = isEventPast;
+  const isRegistrationOpen = !isRegistrationDeadlinePassed;
 
   return (
     <Layout>
@@ -379,17 +375,13 @@ const EventDetailPage = () => {
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-gray-600">Registration Status</span>
                       <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                        isEventExpired 
-                          ? 'bg-gray-100 text-gray-800'
-                          : isRegistrationOpen 
-                            ? 'bg-green-100 text-green-800' 
-                            : 'bg-red-100 text-red-800'
+                        isRegistrationDeadlinePassed 
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-green-100 text-green-800'
                       }`}>
-                        {isEventExpired 
-                          ? 'Event Ended' 
-                          : isRegistrationOpen 
-                            ? 'Open' 
-                            : 'Closed'
+                        {isRegistrationDeadlinePassed 
+                          ? 'Registration Closed' 
+                          : 'Registration Open'
                         }
                       </span>
                     </div>
@@ -418,7 +410,15 @@ const EventDetailPage = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-gray-600">Registration Deadline</span>
                         <span className="text-sm font-bold text-gray-900">
-                          {new Date(event.registration_deadline).toLocaleDateString()}
+                          {new Date(event.registration_deadline).toLocaleDateString('en-GB', { 
+                            day: '2-digit', 
+                            month: '2-digit', 
+                            year: '2-digit' 
+                          })} {new Date(event.registration_deadline).toLocaleTimeString('en-US', { 
+                            hour: 'numeric', 
+                            minute: '2-digit', 
+                            hour12: true 
+                          })}
                         </span>
                       </div>
                     )}
@@ -446,53 +446,36 @@ const EventDetailPage = () => {
                         </div>
                       ) : (
                         <>
-                          {/* Only show register button if registration is open and not expired */}
-                          {isRegistrationOpen && !isRegistrationDeadlinePassed && !isEventExpired ? (
+                          {/* Only show register button if registration deadline has not passed */}
+                          {isRegistrationOpen ? (
                             <button
                               onClick={handleRegister}
-                              disabled={registering || isEventFull}
+                              disabled={registering}
                               className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
                               {registering ? 'Registering...' : 'Register Now'}
                             </button>
                           ) : (
-                            /* Show appropriate message when registration is not available */
+                            /* Show appropriate message when registration deadline has passed */
                             <div className="text-center">
-                              {isEventExpired ? (
-                                <div className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">
-                                  Event has ended
-                                </div>
-                              ) : isRegistrationDeadlinePassed ? (
-                                <div className="px-4 py-2 bg-red-100 text-red-600 rounded-lg">
-                                  Registration deadline has passed
-                                </div>
-                              ) : isEventFull ? (
-                                <div className="px-4 py-2 bg-orange-100 text-orange-600 rounded-lg">
-                                  Event is full
-                                </div>
-                              ) : (
-                                <div className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg">
-                                  Registration not available
-                                </div>
-                              )}
+                              <div className="px-4 py-2 bg-red-100 text-red-600 rounded-lg">
+                                Registration deadline has passed
+                              </div>
+                              <p className="text-xs text-gray-500 text-center mt-2">
+                                Deadline passed. Contact the KPU team <a href="/contact" style="color: #2563eb; text-decoration: underline;">if you want to participate</a>.
+                              </p>
                             </div>
                           )}
                         </>
                       )}
                       
-                      {!user && !isEventExpired && !isRegistrationDeadlinePassed && (
+                      {!user && isRegistrationOpen && (
                         <p className="text-xs text-gray-500 text-center mt-2">
                           Please login to register for this event
                         </p>
                       )}
                       
-                      {isEventExpired && (
-                        <p className="text-xs text-gray-500 text-center mt-2">
-                          This event has already ended. Registration is no longer available.
-                        </p>
-                      )}
-                      
-                      {isRegistrationDeadlinePassed && !isEventExpired && (
+                      {isRegistrationDeadlinePassed && (
                         <p className="text-xs text-gray-500 text-center mt-2">
                           The registration deadline for this event has passed.
                         </p>

@@ -142,18 +142,12 @@ const EventsPage = () => {
   const isRegistrationClosed = (event) => {
     if (!event) return true;
     
-    // Use same logic as EventDetailPage
-    const isRegistrationOpen = event.registration_status === 'open';
-    const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
-    
-    // Compare exact date and time, not just date
+    // Use only the deadline to control registration
     const now = new Date();
     const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
-    const isEventPast = new Date(event.end_date) <= now;
-    const isEventExpired = isEventPast;
     
-    // Registration is closed if any of these conditions are true
-    return !isRegistrationOpen || isEventFull || isRegistrationDeadlinePassed || isEventExpired;
+    // Registration is closed only if the deadline has passed
+    return isRegistrationDeadlinePassed;
   };
 
   const handleRegister = (eventId, e) => {
@@ -233,15 +227,9 @@ const EventsPage = () => {
     
     if (!event) return 'Register Now';
     
-    // Use same logic as EventDetailPage
-    const isRegistrationOpen = event.registration_status === 'open';
-    const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
-    
-    // Compare exact date and time, not just date
+    // Use only the deadline to control registration
     const now = new Date();
     const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
-    const isEventPast = new Date(event.end_date) <= now;
-    const isEventExpired = isEventPast;
     
     // Check if user is already registered
     if (status === 'registered' || status === 'confirmed') {
@@ -251,17 +239,8 @@ const EventsPage = () => {
       return 'Register Again';
     }
     
-    // Check registration availability
-    if (isEventPast || isEventExpired) {
-      return 'Event Completed';
-    }
+    // Check registration availability based only on deadline
     if (isRegistrationDeadlinePassed) {
-      return 'Registration Closed';
-    }
-    if (isEventFull) {
-      return 'Seats Full';
-    }
-    if (!isRegistrationOpen) {
       return 'Registration Closed';
     }
     
@@ -274,23 +253,17 @@ const EventsPage = () => {
     
     if (!event) return 'bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors';
     
-    // Use same logic as EventDetailPage
-    const isRegistrationOpen = event.registration_status === 'open';
-    const isEventFull = event.current_attendees >= event.max_attendees && event.max_attendees > 0;
-    
-    // Compare exact date and time, not just date
+    // Use only the deadline to control registration
     const now = new Date();
     const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
-    const isEventPast = new Date(event.end_date) <= now;
-    const isEventExpired = isEventPast;
     
     // Check if user is already registered
     if (status === 'registered' || status === 'confirmed') {
       return 'bg-green-600 text-white font-semibold py-2 rounded-lg hover:bg-green-700 transition-colors';
     }
     
-    // Check registration availability
-    if (isEventPast || isEventExpired || isRegistrationDeadlinePassed || !isRegistrationOpen || isEventFull) {
+    // Check registration availability based only on deadline
+    if (isRegistrationDeadlinePassed) {
       return 'bg-gray-400 text-white font-semibold py-2 rounded-lg cursor-not-allowed opacity-75';
     }
     
@@ -523,7 +496,7 @@ const EventsPage = () => {
                               Swal.fire({
                                 icon: 'warning',
                                 title: 'Registration Closed',
-                                html: 'The registration deadline for this event has passed.<br><br>If you need assistance, please contact the KPU team for more information.',
+                                html: 'Deadline passed. Contact the KPU team <a href="/contact" style="color: #2563eb; text-decoration: underline;">if you want to participate</a>.',
                                 confirmButtonColor: '#2563eb',
                                 confirmButtonText: 'Contact KPU Team',
                                 showCancelButton: true,
@@ -798,6 +771,10 @@ const EventsPage = () => {
                               day: '2-digit', 
                               month: '2-digit', 
                               year: '2-digit' 
+                            })} {new Date(event.registration_deadline).toLocaleTimeString('en-US', { 
+                              hour: 'numeric', 
+                              minute: '2-digit', 
+                              hour12: true 
                             })}
                           </span>
                         </div>
@@ -814,7 +791,7 @@ const EventsPage = () => {
                                 Swal.fire({
                                   icon: 'warning',
                                   title: 'Registration Closed',
-                                  html: 'The registration deadline for this event has passed.<br><br>If you need assistance, please contact the KPU team for more information.',
+                                  html: 'Deadline passed. Contact the KPU team <a href="/contact" style="color: #2563eb; text-decoration: underline;">if you want to participate</a>.',
                                   confirmButtonColor: '#2563eb',
                                   confirmButtonText: 'Contact KPU Team',
                                   showCancelButton: true,
