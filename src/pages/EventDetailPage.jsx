@@ -232,6 +232,7 @@ const EventDetailPage = () => {
   const now = new Date();
   const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
   const isRegistrationOpen = !isRegistrationDeadlinePassed;
+  const isEventExpired = event.end_date ? new Date(event.end_date) < now : false;
 
   return (
     <Layout>
@@ -462,7 +463,7 @@ const EventDetailPage = () => {
                                 Registration deadline has passed
                               </div>
                               <p className="text-xs text-gray-500 text-center mt-2">
-                                Deadline passed. Contact the KPU team <a href="/contact" style="color: #2563eb; text-decoration: underline;">if you want to participate</a>.
+                                Deadline passed. Contact the KPU team <a href="/contact" style={{color: '#2563eb', textDecoration: 'underline'}}>if you want to participate</a>.
                               </p>
                             </div>
                           )}
