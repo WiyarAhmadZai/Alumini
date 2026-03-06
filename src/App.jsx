@@ -31,8 +31,8 @@ function App() {
           <Route path="/job/:id" element={<JobDetailsPage />} />
           <Route path="/mentorship" element={<MentorshipPage />} />
           <Route path="/events" element={<EventsPage />} />
-          <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/events/registered" element={<RegisteredEventsPage />} />
+          <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/legal" element={<GivingPage />} />
           <Route path="/privacy" element={<GivingPage />} />
           <Route path="/terms" element={<GivingPage />} />
