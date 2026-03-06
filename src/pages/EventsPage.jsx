@@ -442,18 +442,15 @@ const EventsPage = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="relative min-h-[350px] overflow-hidden">
-          {featuredEvent?.featured_image ? (
-            <div className="absolute inset-0 z-0">
-              <img
-                src={featuredEvent.featured_image}
-                alt={featuredEvent.title}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"></div>
-            </div>
-          ) : (
-            <div className="absolute inset-0 z-0 bg-gradient-to-br from-blue-900 to-blue-700"></div>
-          )}
+          <div className="absolute inset-0 z-0">
+            <img
+              src={featuredEvent?.featured_image || '/images/hero-bg.jpg'}
+              alt={featuredEvent?.title || 'Events'}
+              className="w-full h-full object-cover"
+              onError={(e) => { e.target.src = '/images/hero-bg.jpg'; }}
+            />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.82) 100%)' }}></div>
+          </div>
           <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 py-8 lg:py-12">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Left Content */}
