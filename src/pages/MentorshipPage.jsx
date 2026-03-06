@@ -32,6 +32,10 @@ const MentorshipPage = () => {
   const [experienceLevel, setExperienceLevel] = useState('all');
   const [selectedExpertise, setSelectedExpertise] = useState([]);
 
+  // Get current logged-in user ID to detect own card
+  const storedUser = localStorage.getItem('alumni_user');
+  const currentUserId = storedUser ? JSON.parse(storedUser)?.id : null;
+
   const handleRequestMentorship = async (mentor) => {
     const isLoggedIn = authService.isLoggedIn?.() ?? !!localStorage.getItem('alumni_token');
     if (!isLoggedIn) {
@@ -260,7 +264,7 @@ const MentorshipPage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {mentors.map(mentor => (
-                <MentorCard key={mentor.id} mentor={mentor} onRequest={handleRequestMentorship} requesting={requestingId === mentor.id} navigate={navigate} />
+                <MentorCard key={mentor.id} mentor={mentor} onRequest={handleRequestMentorship} requesting={requestingId === mentor.id} navigate={navigate} currentUserId={currentUserId} />
               ))}
             </div>
           )}
@@ -308,8 +312,9 @@ const MentorshipPage = () => {
   );
 };
 
-const MentorCard = ({ mentor, onRequest, requesting, navigate }) => {
+const MentorCard = ({ mentor, onRequest, requesting, navigate, currentUserId }) => {
   const profileImg = mentor.profile_image;
+  const isOwnCard = currentUserId && String(currentUserId) === String(mentor.alumni_student_id);
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col gap-4 hover:shadow-xl transition-all relative overflow-hidden">
@@ -379,13 +384,22 @@ const MentorCard = ({ mentor, onRequest, requesting, navigate }) => {
           )}
         </div>
 
-        <button
-          onClick={() => onRequest(mentor)}
-          disabled={requesting}
-          className="w-full bg-blue-600 text-white text-sm font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-lg mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          {requesting ? 'Sending…' : 'Request Mentorship'}
-        </button>
+        {isOwnCard ? (
+          <button
+            onClick={() => navigate('/profile')}
+            className="w-full bg-gray-100 text-gray-700 text-sm font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors mt-2 border border-gray-200"
+          >
+            This is your mentor profile — Edit
+          </button>
+        ) : (
+          <button
+            onClick={() => onRequest(mentor)}
+            disabled={requesting}
+            className="w-full bg-blue-600 text-white text-sm font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-lg mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {requesting ? 'Sending…' : 'Request Mentorship'}
+          </button>
+        )}
       </div>
     </div>
   );
