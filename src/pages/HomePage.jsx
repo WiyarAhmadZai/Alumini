@@ -15,6 +15,7 @@ const HomePage = () => {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [latestEvents, setLatestEvents] = useState([]);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const testimonials = [
@@ -139,6 +140,24 @@ const HomePage = () => {
     fetchUpcomingEvents();
   }, []);
 
+  // Fetch latest 3 events for news section
+  useEffect(() => {
+    const fetchLatestEvents = async () => {
+      try {
+        const response = await eventService.getEvents({ per_page: 10 });
+        const allEvents = response.data.data;
+        // Sort by start_date descending to get most recent first, take top 3
+        const sorted = [...allEvents]
+          .sort((a, b) => new Date(b.start_date) - new Date(a.start_date))
+          .slice(0, 3);
+        setLatestEvents(sorted);
+      } catch {
+        // silently ignore
+      }
+    };
+    fetchLatestEvents();
+  }, []);
+
   // Update countdown timer every second
   useEffect(() => {
     const interval = setInterval(() => {
@@ -147,36 +166,6 @@ const HomePage = () => {
 
     return () => clearInterval(interval);
   }, []);
-
-  const newsItems = [
-    {
-      id: 1,
-      title: "New Engineering Research Lab Opens",
-      excerpt: "The university has unveiled a state-of-the-art facility for civil and structural engineering research...",
-      category: "Research",
-      date: "Oct 12, 2023",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6",
-      categoryColor: "bg-primary/10 text-primary"
-    },
-    {
-      id: 2,
-      title: "2023 Graduation Highlights",
-      excerpt: "Relive the proud moments from this year's convocation ceremony as we welcomed new alumni...",
-      category: "Event",
-      date: "Sep 28, 2023",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDVohtH1gLp5WAJrlgReHjFK4bcxbaKExtmpDy1ddOFn43bBT3qxvxGyxeWK8rgUxc2WSB-oTdim3H3s_Wbux3NuIZpRy_nRWKG8WudjGPZSUyThUcvs3JH_vT483tyT74PZ49c6ks7QwWUJyRYkiz9kPgKtBcRNPt5J2oTEEQwn3MecGPMc39f7d__iXaRM87cMUs9kZQDq8XIppsbkxUr5mrUDLFHfwiLAawH4zgMRMerxMwtmcQGiblMLofVGU9ViCf5O95tPuAr",
-      categoryColor: "bg-green-100 text-green-700"
-    },
-    {
-      id: 3,
-      title: "KPU Partners with Global Tech Firms",
-      excerpt: "Expanding opportunities for our Computer Science graduates through international internships...",
-      category: "Global",
-      date: "Aug 15, 2023",
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCbZs0HKTcPlxNXk6tKWYQOT9Wm0jO0SMma605yZcMwgSAFJ6XQ-WK3HNZtkCXH1FtevWCcC4y8wrFdU2yTCpMEm8ALa1eX9QKXueBFPFESsu_i4OYdidoQfylLxcqlS7n0aFhkNVdNQjZhMKgq4_ceQAH-5ErWzf6kGL-Jo0oND3SPU6VJf8J1r6mou16lOAFf2qlcA3TuFA1lLN_SgGaXiHocSg_zHR_hdgZyzMmJL32ebD3WBG7IsDZ8xZZwU0eEWhSbVbzkfTFX",
-      categoryColor: "bg-orange-100 text-orange-700"
-    }
-  ];
 
   return (
     <Layout>
@@ -232,61 +221,111 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Latest News Section */}
+      {/* Latest Events / News Section */}
       <section className="w-full max-w-[1200px] mx-auto px-2 sm:px-4 md:px-8 lg:px-10 py-8 sm:py-12 md:py-16 bg-gradient-to-br from-gray-50 to-white">
         <div className="flex flex-col lg:flex-row items-center justify-between mb-6 sm:mb-8 lg:mb-12 gap-4">
           <div>
             <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#002759] mb-1 sm:mb-2">Stay Updated</h2>
-            <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900">Latest News</h3>
+            <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900">Latest Events</h3>
           </div>
-          <a className="group flex items-center gap-1 sm:gap-2 text-[#002759] font-semibold hover:text-[#0a519b] transition-all duration-300" href="#">
-            View All 
+          <Link
+            to="/events"
+            className="group flex items-center gap-1 sm:gap-2 text-[#002759] font-semibold hover:text-[#194ce6] transition-all duration-300"
+          >
+            View All
             <FiArrowRight className="text-xs sm:text-sm transform group-hover:translate-x-1 transition-transform duration-300" />
-          </a>
+          </Link>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 px-4 sm:px-6 md:px-0">
-          {newsItems.map((item, index) => (
-            <article key={item.id} className="group cursor-pointer bg-white rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100">
-              <div className="relative h-32 sm:h-40 md:h-48 lg:h-56 overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10"></div>
-                <img 
-                  src={item.image} 
-                  alt={item.title}
-                  className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-20">
-                  <span className={`${item.categoryColor} text-xs font-bold px-1 sm:px-2 py-0.5 sm:py-1 rounded-full shadow-md`}>
-                    {item.category}
-                  </span>
-                </div>
-                <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 z-20">
-                  <span className="text-white text-xs font-medium bg-black/50 backdrop-blur-sm px-1 sm:px-2 py-0.5 rounded">
-                    {item.date}
-                  </span>
+
+        {latestEvents.length === 0 ? (
+          /* Skeleton while loading */
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm animate-pulse">
+                <div className="h-48 bg-gray-200" />
+                <div className="p-5 space-y-3">
+                  <div className="h-4 bg-gray-200 rounded w-3/4" />
+                  <div className="h-3 bg-gray-100 rounded" />
+                  <div className="h-3 bg-gray-100 rounded w-4/5" />
                 </div>
               </div>
-              <div className="p-3 sm:p-4 md:p-6">
-                <h3 className="text-sm sm:text-base md:text-lg lg:text-xl font-bold leading-tight text-gray-900 mb-1 sm:mb-2 md:mb-3 group-hover:text-[#002759] transition-colors duration-300">
-                  {item.title}
-                </h3>
-                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-3 md:mb-4">
-                  {item.excerpt}
-                </p>
-                <div className="flex items-center justify-between">
-                  <a href="#" className="inline-flex items-center gap-1 sm:gap-2 text-[#002759] font-medium text-xs sm:text-sm hover:text-[#0a519b] transition-colors duration-300">
-                    Read More
-                    <FiArrowRight className="text-xs transform group-hover:translate-x-1 transition-transform duration-300" />
-                  </a>
-                  <div className="flex gap-0.5 sm:gap-1">
-                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-400"></span>
-                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-500"></span>
-                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-600"></span>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 px-4 sm:px-6 md:px-0">
+            {latestEvents.map((event) => {
+              const eventDate = new Date(event.start_date);
+              const formattedDate = eventDate.toLocaleDateString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric'
+              });
+              const category = event.type || event.event_type || 'Event';
+              const image = event.image || event.cover_image || event.thumbnail;
+
+              return (
+                <article key={event.id} className="group cursor-pointer bg-white rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100">
+                  <div className="relative h-32 sm:h-40 md:h-48 lg:h-56 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
+                    {image ? (
+                      <img
+                        src={image}
+                        alt={event.title}
+                        className="w-full h-full object-cover transform scale-100 group-hover:scale-110 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center"
+                        style={{ background: 'linear-gradient(135deg, #0f2d8a 0%, #194ce6 100%)' }}>
+                        <FiCalendar className="text-white/40 text-5xl" />
+                      </div>
+                    )}
+                    <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-20">
+                      <span className="text-xs font-bold px-2 py-0.5 sm:py-1 rounded-full shadow-md capitalize"
+                        style={{ background: '#eef1fd', color: '#194ce6' }}>
+                        {category}
+                      </span>
+                    </div>
+                    <div className="absolute bottom-2 sm:bottom-3 right-2 sm:right-3 z-20">
+                      <span className="text-white text-xs font-medium bg-black/50 backdrop-blur-sm px-1 sm:px-2 py-0.5 rounded">
+                        {formattedDate}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+
+                  <div className="p-3 sm:p-4 md:p-6">
+                    <h3 className="text-sm sm:text-base md:text-lg font-bold leading-tight text-gray-900 mb-1 sm:mb-2 md:mb-3 group-hover:text-[#194ce6] transition-colors duration-300 line-clamp-2">
+                      {event.title}
+                    </h3>
+                    {event.description && (
+                      <p className="text-gray-600 text-xs sm:text-sm leading-relaxed line-clamp-2 sm:line-clamp-3 mb-2 sm:mb-3 md:mb-4">
+                        {event.description}
+                      </p>
+                    )}
+                    {event.location && (
+                      <p className="text-gray-400 text-xs flex items-center gap-1 mb-3">
+                        <FiMapPin className="text-xs flex-shrink-0" />
+                        {event.location}
+                      </p>
+                    )}
+                    <div className="flex items-center justify-between">
+                      <Link
+                        to={`/events/${event.id}`}
+                        className="inline-flex items-center gap-1 sm:gap-2 font-medium text-xs sm:text-sm transition-colors duration-300"
+                        style={{ color: '#194ce6' }}
+                      >
+                        Read More
+                        <FiArrowRight className="text-xs transform group-hover:translate-x-1 transition-transform duration-300" />
+                      </Link>
+                      <div className="flex gap-0.5 sm:gap-1">
+                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ background: '#194ce6', opacity: 0.4 }} />
+                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ background: '#194ce6', opacity: 0.7 }} />
+                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full" style={{ background: '#194ce6' }} />
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        )}
       </section>
 
         {/* Upcoming Events */}
