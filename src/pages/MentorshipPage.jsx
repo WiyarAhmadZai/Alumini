@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import {
   FiChevronLeft,
   FiChevronRight,
   FiUser,
+  FiSearch,
+  FiX,
 } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import mentorService from '../services/mentorService';
@@ -31,6 +33,26 @@ const MentorshipPage = () => {
   const [selectedFaculty, setSelectedFaculty] = useState({});
   const [experienceLevel, setExperienceLevel] = useState('all');
   const [selectedExpertise, setSelectedExpertise] = useState([]);
+
+  const [searchInput, setSearchInput] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const debounceRef = useRef(null);
+
+  // Debounce: update searchQuery 400ms after user stops typing
+  const handleSearchChange = (value) => {
+    setSearchInput(value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setSearchQuery(value.trim());
+      setPage(1);
+    }, 400);
+  };
+
+  const clearSearch = () => {
+    setSearchInput('');
+    setSearchQuery('');
+    setPage(1);
+  };
 
   // Get current logged-in user ID to detect own card
   const storedUser = localStorage.getItem('alumni_user');
@@ -94,6 +116,8 @@ const MentorshipPage = () => {
     try {
       const params = { page };
 
+      if (searchQuery) params.q = searchQuery;
+
       const activeFaculties = Object.entries(selectedFaculty)
         .filter(([, v]) => v)
         .map(([k]) => k);
@@ -112,7 +136,7 @@ const MentorshipPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, selectedFaculty, experienceLevel, selectedExpertise]);
+  }, [page, searchQuery, selectedFaculty, experienceLevel, selectedExpertise]);
 
   useEffect(() => {
     fetchMentors();
@@ -134,6 +158,8 @@ const MentorshipPage = () => {
     setSelectedFaculty({});
     setExperienceLevel('all');
     setSelectedExpertise([]);
+    setSearchInput('');
+    setSearchQuery('');
     setPage(1);
   };
 
@@ -149,7 +175,7 @@ const MentorshipPage = () => {
           }}
         />
         <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
-          <div className="text-center text-white max-w-4xl">
+          <div className="text-center text-white max-w-3xl w-full">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-4">
               KPU Alumni Mentorship Hub
             </h1>
@@ -168,6 +194,23 @@ const MentorshipPage = () => {
             <div>
               <h2 className="text-gray-900 text-lg font-bold">Filter Mentors</h2>
               <p className="text-gray-600 text-sm">Find your perfect match</p>
+            </div>
+
+            {/* Search inside sidebar */}
+            <div className="relative">
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none" />
+              <input
+                type="text"
+                value={searchInput}
+                onChange={e => handleSearchChange(e.target.value)}
+                placeholder="Search mentors…"
+                className="w-full pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              {searchInput && (
+                <button onClick={clearSearch} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                  <FiX size={13} />
+                </button>
+              )}
             </div>
 
             <div className="flex flex-col gap-3">
@@ -233,9 +276,24 @@ const MentorshipPage = () => {
         <div className="flex-1 flex flex-col gap-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Featured Mentors</h2>
-              <p className="text-gray-600">Alumni who have volunteered to guide the next generation</p>
+              <h2 className="text-2xl font-bold text-gray-900">
+                {searchQuery ? `Results for "${searchQuery}"` : 'Featured Mentors'}
+              </h2>
+              <p className="text-gray-600">
+                {searchQuery
+                  ? `${pagination.total} mentor${pagination.total !== 1 ? 's' : ''} found`
+                  : 'Alumni who have volunteered to guide the next generation'}
+              </p>
             </div>
+            {searchQuery && (
+              <button
+                onClick={clearSearch}
+                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
+              >
+                <FiX size={13} />
+                Clear search
+              </button>
+            )}
           </div>
 
           {loading ? (
@@ -270,7 +328,7 @@ const MentorshipPage = () => {
           )}
 
           {/* Pagination */}
-          {!loading && pagination.last_page > 1 && (
+          {!loading && mentors.length > 0 && (
             <div className="flex items-center justify-between py-6 border-t border-gray-200 mt-4">
               <p className="text-sm text-gray-600">
                 Showing <span className="font-bold text-gray-900">{pagination.total}</span> mentors
