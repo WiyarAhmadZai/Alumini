@@ -1,437 +1,329 @@
 import React from 'react';
 import Layout from '../components/Layout';
-import { FiMail, FiPhone, FiMapPin, FiLinkedin, FiTwitter, FiFacebook, FiAward, FiUsers, FiTarget, FiGlobe, FiArrowRight } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiLinkedin, FiAward, FiUsers, FiTarget, FiGlobe, FiArrowRight } from 'react-icons/fi';
+
+const BRAND = '#194ce6';
+const BRAND_DARK = '#1340c4';
+const BRAND_BG = '#eef1fd';
+const BRAND_BORDER = '#c5ccf7';
+
+const SectionLabel = ({ children }) => (
+  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border mb-4"
+    style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
+    {children}
+  </div>
+);
+
+const SectionHeading = ({ label, title, subtitle }) => (
+  <div className="text-center mb-12">
+    <SectionLabel>{label}</SectionLabel>
+    <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">{title}</h2>
+    {subtitle && <p className="text-gray-500 max-w-xl mx-auto text-sm sm:text-base">{subtitle}</p>}
+    <div className="w-12 h-1 mx-auto mt-5 rounded-full" style={{ background: BRAND }} />
+  </div>
+);
+
+const boardMembers = [
+  {
+    name: 'Eng. Mohammad Hassan',
+    role: 'President',
+    dept: 'Civil Engineering, Class of 1995',
+    img: '/1teacher.jpg',
+  },
+  {
+    name: 'Dr. Sarah Ahmadzai',
+    role: 'Vice President',
+    dept: 'Electrical Engineering, Class of 2000',
+    img: '/teacher.jpg',
+  },
+  {
+    name: 'Ahmad Wali Karimi',
+    role: 'Secretary',
+    dept: 'Mechanical Engineering, Class of 2008',
+    img: '/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg',
+  },
+  {
+    name: 'Fatima Noori',
+    role: 'Treasurer',
+    dept: 'Computer Engineering, Class of 2012',
+    img: '/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg',
+  },
+];
+
+const contactItems = [
+  {
+    icon: <FiMail />,
+    title: 'Email',
+    detail: 'it.director@kpu.edu.af',
+    cta: 'Send Message',
+  },
+  {
+    icon: <FiPhone />,
+    title: 'Phone',
+    detail: '0202526364',
+    cta: 'Call Now',
+  },
+  {
+    icon: <FiMapPin />,
+    title: 'Address',
+    detail: 'Kabul Polytechnic University\nKabul, Afghanistan',
+    cta: 'Get Directions',
+  },
+  {
+    icon: <FiMail />,
+    title: 'Transcript & Diploma Services',
+    detail: 'transcript@kpu.edu.af',
+    cta: 'Request Documents',
+  },
+];
 
 const AboutPage = () => {
   return (
     <Layout>
-      {/* Hero Section */}
-      <div className="relative h-[400px] md:h-[500px] lg:h-[600px] bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/kpu1.jpg")'}}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/30 to-black/20"></div>
-        <div className="relative z-10 h-full flex items-center justify-center text-center px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white mb-4 sm:mb-6 lg:mb-8 leading-tight tracking-tight">
-              About KPU Alumni Association
-            </h1>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 max-w-3xl mx-auto leading-relaxed font-light">
-              Building lifelong connections and fostering professional growth for Kabul Polytechnic University graduates worldwide
-            </p>
-          </div>
-        </div>
-      </div>
 
-      {/* Mission & History Section */}
-      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Foundation</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">The principles and journey that guide our alumni community</p>
-            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-4"></div>
+      {/* ── Hero ── */}
+      <section className="relative h-[400px] md:h-[500px] bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.82) 100%), url("/kpu1.jpg")' }}>
+        <div className="h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-6 text-white/90">
+            <FiAward className="text-white/70" />
+            Kabul Polytechnic University
           </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-            {/* Mission Card */}
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group">
-              <div className="h-2 bg-gradient-to-r from-blue-600 to-blue-400"></div>
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                    <FiTarget className="text-blue-600 text-xl" />
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-5 max-w-4xl">
+            About KPU Alumni Association
+          </h1>
+          <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">
+            Building lifelong connections and fostering professional growth for graduates worldwide.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Mission & History ── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#f6f6f8]">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeading label="Who We Are" title="Our Foundation" subtitle="The principles and journey that guide our alumni community" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Mission */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300 group">
+              <div className="h-1 w-full" style={{ background: BRAND }} />
+              <div className="p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: BRAND_BG }}>
+                    <FiTarget className="text-xl" style={{ color: BRAND }} />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Our Mission</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Our Mission</h3>
                 </div>
-                <div className="space-y-4">
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-                    To create a vibrant network of Kabul Polytechnic University alumni, fostering professional development, 
-                    knowledge sharing, and collaborative opportunities that contribute to the advancement of our members 
-                    and the engineering community in Afghanistan and beyond.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-                    We strive to maintain strong connections between graduates and the university, facilitating mentorship, 
-                    career opportunities, and continuous learning while celebrating the achievements of our alumni community.
-                  </p>
+                <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
+                  <p>To create a vibrant network of Kabul Polytechnic University alumni, fostering professional development, knowledge sharing, and collaborative opportunities that contribute to the advancement of our members and the engineering community in Afghanistan and beyond.</p>
+                  <p>We strive to maintain strong connections between graduates and the university, facilitating mentorship, career opportunities, and continuous learning while celebrating the achievements of our alumni community.</p>
                 </div>
-                <div className="mt-6 flex items-center text-blue-600 font-medium text-sm hover:text-blue-700 transition-colors cursor-pointer">
-                  <span>Learn more about our mission</span>
-                  <FiArrowRight className="ml-2" />
+                <div className="mt-6 inline-flex items-center gap-1 text-sm font-semibold transition-colors" style={{ color: BRAND }}>
+                  Learn more about our mission <FiArrowRight />
                 </div>
               </div>
             </div>
 
-            {/* History Card */}
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden group">
-              <div className="h-2 bg-gradient-to-r from-emerald-600 to-emerald-400"></div>
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-lg flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
-                    <FiGlobe className="text-emerald-600 text-xl" />
+            {/* History */}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300 group">
+              <div className="h-1 w-full" style={{ background: BRAND }} />
+              <div className="p-8">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: BRAND_BG }}>
+                    <FiGlobe className="text-xl" style={{ color: BRAND }} />
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900">Our History</h3>
+                  <h3 className="text-xl font-bold text-gray-900">Our History</h3>
                 </div>
-                <div className="space-y-4">
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-                    Founded in 2010, the KPU Alumni Association began as a small initiative by dedicated graduates who 
-                    recognized the need for a structured network to connect Kabul Polytechnic University alumni across 
-                    various engineering disciplines and geographical locations.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-                    Over the past decade, we have grown from a handful of members to a thriving community of over 
-                    5,000 alumni, establishing chapters in major cities and organizing numerous events that bring 
-                    our community together.
-                  </p>
-                  <p className="text-gray-700 leading-relaxed text-sm sm:text-base">
-                    Today, we stand as a testament to the excellence of KPU's engineering education and the remarkable 
-                    achievements of our graduates in shaping Afghanistan's infrastructure and technological advancement.
-                  </p>
+                <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
+                  <p>Founded in 2010, the KPU Alumni Association began as a small initiative by dedicated graduates who recognized the need for a structured network to connect Kabul Polytechnic University alumni across various engineering disciplines and geographical locations.</p>
+                  <p>Over the past decade, we have grown from a handful of members to a thriving community of over 5,000 alumni, establishing chapters in major cities and organizing numerous events that bring our community together.</p>
+                  <p>Today, we stand as a testament to the excellence of KPU's engineering education and the remarkable achievements of our graduates.</p>
                 </div>
-                <div className="mt-6 flex items-center text-emerald-600 font-medium text-sm hover:text-emerald-700 transition-colors cursor-pointer">
-                  <span>Explore our journey</span>
-                  <FiArrowRight className="ml-2" />
+                <div className="mt-6 inline-flex items-center gap-1 text-sm font-semibold transition-colors" style={{ color: BRAND }}>
+                  Explore our journey <FiArrowRight />
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Message from Chancellor Section */}
-      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* ── Chancellor Message ── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full mb-4">
-              <FiAward className="text-white text-2xl" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3">Leadership Message</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">Words of wisdom from our esteemed Chancellor</p>
-          </div>
-          
-          <div className="max-w-5xl mx-auto">
-            <div className="bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden">
-              <div className="p-8 sm:p-10 lg:p-12">
-                <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-center">
-                  {/* Chancellor Image */}
-                  <div className="flex-shrink-0">
-                    <div className="relative">
-                      <div className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48 rounded-2xl overflow-hidden shadow-lg">
-                        <img src="/chanceler.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
-                      </div>
-                      <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full flex items-center justify-center shadow-lg">
-                        <FiAward className="text-white text-lg" />
-                      </div>
-                    </div>
+          <SectionHeading label="Leadership" title="Chancellor's Message" subtitle="Words of wisdom from our esteemed Chancellor" />
+
+          <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-8 sm:p-10 lg:p-12">
+              <div className="flex flex-col lg:flex-row gap-10 items-center lg:items-start">
+                {/* Photo */}
+                <div className="flex-shrink-0 relative">
+                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden shadow-md border-4 border-white"
+                    style={{ outline: `3px solid ${BRAND_BORDER}` }}>
+                    <img src="/chanceler.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
                   </div>
-                  
-                  {/* Content */}
-                  <div className="flex-1 text-center lg:text-left">
-                    <div className="mb-6">
-                      <span className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
-                        Chancellor's Vision
-                      </span>
+                  <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-md"
+                    style={{ background: BRAND }}>
+                    <FiAward className="text-white text-sm" />
+                  </div>
+                </div>
+
+                {/* Text */}
+                <div className="flex-1 text-center lg:text-left">
+                  <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-5 border"
+                    style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
+                    Chancellor's Vision
+                  </span>
+                  <blockquote className="text-gray-700 text-base sm:text-lg leading-relaxed mb-6 italic">
+                    "The KPU Alumni Association represents the pride of our institution. Our graduates continue to make significant contributions to Afghanistan's development, and this association serves as a bridge between our past achievements and future aspirations. I encourage all alumni to actively participate in this vibrant community."
+                  </blockquote>
+                  <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4">
+                    <div>
+                      <p className="text-lg font-bold text-gray-900">Dr. Ahmad Zia Massoud</p>
+                      <p className="text-sm text-gray-500">Chancellor, Kabul Polytechnic University</p>
                     </div>
-                    
-                    <div className="text-gray-700 leading-relaxed mb-8 text-base sm:text-lg font-normal">
-                      The KPU Alumni Association represents the pride of our institution. Our graduates continue to 
-                      make significant contributions to Afghanistan's development, and this association serves as a 
-                      bridge between our past achievements and future aspirations. I encourage all alumni to actively 
-                      participate in this vibrant community.
-                    </div>
-                    
-                    <div className="flex flex-col sm:flex-row items-center gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="text-left">
-                          <h4 className="text-xl font-bold text-gray-900">Dr. Ahmad Zia Massoud</h4>
-                          <p className="text-gray-600 text-sm sm:text-base">Chancellor</p>
-                          <p className="text-blue-600 text-sm">Kabul Polytechnic University</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex gap-3 mt-4 sm:mt-0">
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
-                          <FiMail className="text-blue-600 text-sm" />
-                        </div>
-                        <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
-                          <FiLinkedin className="text-blue-600 text-sm" />
-                        </div>
-                      </div>
+                    <div className="flex gap-2 sm:ml-auto">
+                      <button className="w-9 h-9 rounded-xl flex items-center justify-center border transition-colors"
+                        style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
+                        <FiMail className="text-sm" />
+                      </button>
+                      <button className="w-9 h-9 rounded-xl flex items-center justify-center border transition-colors"
+                        style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
+                        <FiLinkedin className="text-sm" />
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
-              
-              {/* Footer Bar */}
-              <div className="bg-gradient-to-r from-blue-600 to-blue-400 px-8 py-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-white text-sm font-medium">
-                    Leading Excellence in Engineering Education Since 2010
-                  </div>
-                  <div className="flex items-center text-white/80 hover:text-white transition-colors cursor-pointer">
-                    <span className="text-sm mr-2">Read Full Message</span>
-                    <FiArrowRight className="text-sm" />
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Meet the Board Section */}
-      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Leadership Team</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">Dedicated leaders guiding our alumni community</p>
-            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-4"></div>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {/* Board Member 1 */}
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
-              <div className="h-2 bg-gradient-to-r from-blue-600 to-blue-400"></div>
-              <div className="p-6 text-center">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
-                  <img src="/1teacher.jpg" alt="Mohammad Hassan" className="w-full h-full object-cover" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Eng. Mohammad Hassan</h3>
-                <div className="w-12 h-1 bg-blue-600 mx-auto mb-3"></div>
-                <p className="text-blue-600 font-semibold text-sm mb-3">President</p>
-                <p className="text-gray-500 text-xs mb-4">Civil Engineering, Class of 1995</p>
-                <div className="flex justify-center gap-3">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
-                    <FiLinkedin className="text-blue-600 text-sm" />
-                  </div>
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center hover:bg-blue-200 transition-colors cursor-pointer">
-                    <FiMail className="text-blue-600 text-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Board Member 2 */}
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
-              <div className="h-2 bg-gradient-to-r from-emerald-600 to-emerald-400"></div>
-              <div className="p-6 text-center">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
-                  <img src="/teacher.jpg" alt="Sarah Ahmadzai" className="w-full h-full object-cover" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Dr. Sarah Ahmadzai</h3>
-                <div className="w-12 h-1 bg-emerald-600 mx-auto mb-3"></div>
-                <p className="text-emerald-600 font-semibold text-sm mb-3">Vice President</p>
-                <p className="text-gray-500 text-xs mb-4">Electrical Engineering, Class of 2000</p>
-                <div className="flex justify-center gap-3">
-                  <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center hover:bg-emerald-200 transition-colors cursor-pointer">
-                    <FiLinkedin className="text-emerald-600 text-sm" />
-                  </div>
-                  <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center hover:bg-emerald-200 transition-colors cursor-pointer">
-                    <FiMail className="text-emerald-600 text-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Board Member 3 */}
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
-              <div className="h-2 bg-gradient-to-r from-purple-600 to-purple-400"></div>
-              <div className="p-6 text-center">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
-                  <img src="/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg" alt="Ahmad Wali Karimi" className="w-full h-full object-cover" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Ahmad Wali Karimi</h3>
-                <div className="w-12 h-1 bg-purple-600 mx-auto mb-3"></div>
-                <p className="text-purple-600 font-semibold text-sm mb-3">Secretary</p>
-                <p className="text-gray-500 text-xs mb-4">Mechanical Engineering, Class of 2008</p>
-                <div className="flex justify-center gap-3">
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center hover:bg-purple-200 transition-colors cursor-pointer">
-                    <FiLinkedin className="text-purple-600 text-sm" />
-                  </div>
-                  <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center hover:bg-purple-200 transition-colors cursor-pointer">
-                    <FiMail className="text-purple-600 text-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Board Member 4 */}
-            <div className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 overflow-hidden group">
-              <div className="h-2 bg-gradient-to-r from-orange-600 to-orange-400"></div>
-              <div className="p-6 text-center">
-                <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center shadow-lg overflow-hidden group-hover:scale-105 transition-transform">
-                  <img src="/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg" alt="Fatima Noori" className="w-full h-full object-cover" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">Fatima Noori</h3>
-                <div className="w-12 h-1 bg-orange-600 mx-auto mb-3"></div>
-                <p className="text-orange-600 font-semibold text-sm mb-3">Treasurer</p>
-                <p className="text-gray-500 text-xs mb-4">Computer Engineering, Class of 2012</p>
-                <div className="flex justify-center gap-3">
-                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center hover:bg-orange-200 transition-colors cursor-pointer">
-                    <FiLinkedin className="text-orange-600 text-sm" />
-                  </div>
-                  <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center hover:bg-orange-200 transition-colors cursor-pointer">
-                    <FiMail className="text-orange-600 text-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Board Stats */}
-          <div className="mt-12 bg-white rounded-2xl shadow-lg p-6 sm:p-8">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-              <div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">15+</div>
-                <div className="text-sm text-gray-600">Years Combined Experience</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">4</div>
-                <div className="text-sm text-gray-600">Engineering Disciplines</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">100+</div>
-                <div className="text-sm text-gray-600">Projects Led</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">50+</div>
-                <div className="text-sm text-gray-600">Awards & Recognitions</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Ready to Reconnect Section */}
-      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-700 relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full"></div>
-          <div className="absolute bottom-10 right-10 w-48 h-48 bg-white rounded-full"></div>
-          <div className="absolute top-1/2 left-1/4 w-24 h-24 bg-white rounded-full"></div>
-        </div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full mb-4">
-              <FiUsers className="text-white text-2xl" />
-            </div>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
-              Ready to reconnect with your alma mater?
-            </h2>
-            <div className="w-16 h-1 bg-white mx-auto"></div>
-          </div>
-          
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <p className="text-lg sm:text-xl text-white/95 leading-relaxed font-light">
-              Join thousands of KPU graduates who are already making a difference through our alumni network. 
-              Whether you're looking to mentor current students, find career opportunities, or simply stay connected 
-              with old friends, we're here to help you succeed.
-            </p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
-            <button className="group px-8 py-4 bg-white text-blue-900 font-bold text-base sm:text-lg rounded-xl hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 flex items-center justify-center">
-              <span>Join Alumni Network</span>
-              <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </button>
-            <button className="group px-8 py-4 bg-transparent border-2 border-white text-white font-bold text-base sm:text-lg rounded-xl hover:bg-white/10 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 flex items-center justify-center">
-              <span>Learn More</span>
-              <FiArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Contact Section */}
-      <div className="py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6 md:px-8 lg:px-16 xl:px-20 bg-gradient-to-br from-gray-50 to-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-400 rounded-full mb-4">
-              <FiMail className="text-white text-2xl" />
-            </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">Get in Touch</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base">We'd love to hear from you</p>
-            <div className="w-16 h-1 bg-gradient-to-r from-blue-600 to-blue-400 mx-auto mt-4"></div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            <div className="group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <FiMail className="text-blue-600 text-lg" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Email</h3>
-                  <p className="text-gray-600 text-sm mb-3">it.director@kpu.edu.af</p>
-                  <div className="flex items-center text-blue-600 hover:text-blue-700 transition-colors cursor-pointer">
-                    <span className="text-sm font-medium">Send Message</span>
-                    <FiArrowRight className="ml-1 text-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <FiPhone className="text-emerald-600 text-lg" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Phone</h3>
-                  <p className="text-gray-600 text-sm mb-3">0202526364</p>
-                  <div className="flex items-center text-emerald-600 hover:text-emerald-700 transition-colors cursor-pointer">
-                    <span className="text-sm font-medium">Call Now</span>
-                    <FiArrowRight className="ml-1 text-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <FiMapPin className="text-purple-600 text-lg" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Address</h3>
-                  <p className="text-gray-600 text-sm mb-3">Kabul Polytechnic University<br />Kabul, Afghanistan</p>
-                  <div className="flex items-center text-purple-600 hover:text-purple-700 transition-colors cursor-pointer">
-                    <span className="text-sm font-medium">Get Directions</span>
-                    <FiArrowRight className="ml-1 text-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="group bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-6 border border-gray-100">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                  <FiMail className="text-orange-600 text-lg" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">Transcript & Diploma Services</h3>
-                  <p className="text-gray-600 text-sm mb-3">For academic documents and transcripts</p>
-                  <p className="text-gray-800 font-medium text-sm mb-3">transcript@kpu.edu.af</p>
-                  <div className="flex items-center text-orange-600 hover:text-orange-700 transition-colors cursor-pointer">
-                    <span className="text-sm font-medium">Request Documents</span>
-                    <FiArrowRight className="ml-1 text-sm" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Form CTA */}
-          <div className="mt-12 text-center">
-            <div className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-xl p-6 sm:p-8 shadow-lg">
-              <h3 className="text-xl sm:text-2xl font-bold text-white mb-3">Have Questions?</h3>
-              <p className="text-white/90 mb-6 max-w-2xl mx-auto text-sm sm:text-base">
-                Our team is here to help you with any inquiries about membership, events, or opportunities.
-              </p>
-              <button className="px-6 py-2 sm:px-8 sm:py-3 bg-white text-blue-900 font-bold rounded-lg hover:bg-gray-50 transition-colors shadow-md hover:shadow-lg transform hover:-translate-y-1 text-sm sm:text-base">
-                Contact Support Team
+            <div className="px-8 py-3.5 flex items-center justify-between text-sm" style={{ background: BRAND }}>
+              <span className="text-white/80 font-medium">Leading Excellence in Engineering Education Since 2010</span>
+              <button className="flex items-center gap-1 text-white/80 hover:text-white transition-colors font-medium">
+                Read Full Message <FiArrowRight className="text-xs" />
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* ── Leadership Team ── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#f6f6f8]">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeading label="The Board" title="Leadership Team" subtitle="Dedicated leaders guiding our alumni community" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {boardMembers.map((m) => (
+              <div key={m.name}
+                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
+                <div className="h-1 w-full" style={{ background: BRAND }} />
+                <div className="p-6 text-center">
+                  <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden shadow-md border-4 border-white group-hover:scale-105 transition-transform"
+                    style={{ outline: `2px solid ${BRAND_BORDER}` }}>
+                    <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">{m.name}</h3>
+                  <div className="w-8 h-0.5 mx-auto mb-2 rounded-full" style={{ background: BRAND }} />
+                  <p className="text-sm font-semibold mb-1" style={{ color: BRAND }}>{m.role}</p>
+                  <p className="text-xs text-gray-400 mb-4">{m.dept}</p>
+                  <div className="flex justify-center gap-2">
+                    <button className="w-8 h-8 rounded-lg flex items-center justify-center border transition-colors"
+                      style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
+                      <FiLinkedin className="text-xs" />
+                    </button>
+                    <button className="w-8 h-8 rounded-lg flex items-center justify-center border transition-colors"
+                      style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
+                      <FiMail className="text-xs" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Stats bar */}
+          <div className="mt-10 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-x divide-gray-100">
+              {[
+                { value: '15+', label: 'Years Combined Experience' },
+                { value: '4', label: 'Engineering Disciplines' },
+                { value: '100+', label: 'Projects Led' },
+                { value: '50+', label: 'Awards & Recognitions' },
+              ].map((s) => (
+                <div key={s.label} className="px-4">
+                  <div className="text-2xl font-extrabold mb-1" style={{ color: BRAND }}>{s.value}</div>
+                  <div className="text-xs text-gray-500 leading-snug">{s.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA Band ── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
+        style={{ background: BRAND }}>
+        <div className="absolute inset-0 opacity-[0.06]"
+          style={{ backgroundImage: 'radial-gradient(circle, white 1.5px, transparent 1.5px)', backgroundSize: '32px 32px' }} />
+        <div className="relative z-10 max-w-4xl mx-auto text-center">
+          <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6 bg-white/15 border border-white/20">
+            <FiUsers className="text-white text-2xl" />
+          </div>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-5 leading-tight">
+            Ready to reconnect with your alma mater?
+          </h2>
+          <p className="text-lg text-white/75 leading-relaxed mb-10 max-w-2xl mx-auto">
+            Join thousands of KPU graduates who are already making a difference through our alumni network —
+            mentor students, find opportunities, and stay connected.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="group px-8 py-3.5 bg-white font-bold text-sm sm:text-base rounded-xl hover:bg-gray-50 transition-all shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2"
+              style={{ color: BRAND }}>
+              Join Alumni Network
+              <FiArrowRight className="group-hover:translate-x-0.5 transition-transform" />
+            </button>
+            <button className="group px-8 py-3.5 bg-transparent border-2 border-white text-white font-bold text-sm sm:text-base rounded-xl hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+              Learn More
+              <FiArrowRight className="group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Contact ── */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeading label="Reach Us" title="Get in Touch" subtitle="We'd love to hear from you" />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {contactItems.map((c) => (
+              <div key={c.title}
+                className="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-6">
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 border"
+                  style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
+                  {c.icon}
+                </div>
+                <h3 className="text-sm font-bold text-gray-900 mb-1">{c.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed mb-3 whitespace-pre-line">{c.detail}</p>
+                <button className="inline-flex items-center gap-1 text-xs font-semibold transition-colors" style={{ color: BRAND }}>
+                  {c.cta} <FiArrowRight className="text-[10px]" />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 rounded-2xl p-8 sm:p-10 text-center" style={{ background: BRAND }}>
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Have Questions?</h3>
+            <p className="text-white/75 mb-7 max-w-xl mx-auto text-sm sm:text-base">
+              Our team is here to help you with any inquiries about membership, events, or opportunities.
+            </p>
+            <button className="px-7 py-3 bg-white font-bold rounded-xl text-sm hover:bg-gray-50 transition-colors shadow-md hover:-translate-y-0.5"
+              style={{ color: BRAND }}>
+              Contact Support Team
+            </button>
+          </div>
+        </div>
+      </section>
+
     </Layout>
   );
 };
