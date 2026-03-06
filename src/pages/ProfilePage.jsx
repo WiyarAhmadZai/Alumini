@@ -10,6 +10,7 @@ import jobService from '../services/jobService';
 import messageService from '../services/messageService';
 import eventService from '../services/eventService';
 import Modal from '../components/ui/Modal';
+import mentorService from '../services/mentorService';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -25,7 +26,18 @@ const ProfilePage = () => {
   const [registeredEvents, setRegisteredEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
 
-  const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact
+  const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact | mentor
+
+  const [myMentor, setMyMentor] = useState(null);
+  const [mentorForm, setMentorForm] = useState({
+    title: '',
+    company: '',
+    bio: '',
+    expertise: [],
+    faculty: '',
+    years_of_experience: '',
+  });
+  const [mentorExpertiseInput, setMentorExpertiseInput] = useState('');
   const [editingItem, setEditingItem] = useState(null);
   const [saving, setSaving] = useState(false);
   const [modalError, setModalError] = useState('');
@@ -249,6 +261,9 @@ const ProfilePage = () => {
       fetchAppliedJobs();
       fetchMessages();
       fetchRegisteredEvents();
+      mentorService.getMyMentor().then(res => {
+        if (res.data) setMyMentor(res.data);
+      }).catch(() => {});
     }
   }, [isOwner, profile]);
 
@@ -551,6 +566,80 @@ const ProfilePage = () => {
       location: profile?.location || ''
     });
     setActiveModal('contact');
+  };
+
+  const openMentorModal = () => {
+    setModalError('');
+    setMentorExpertiseInput('');
+    if (myMentor) {
+      setMentorForm({
+        title: myMentor.title || profile?.current_job_title || '',
+        company: myMentor.company || profile?.current_company || '',
+        bio: myMentor.bio || profile?.bio || '',
+        expertise: myMentor.expertise || [],
+        faculty: myMentor.faculty || profile?.faculty || '',
+        years_of_experience: myMentor.years_of_experience ?? '',
+      });
+    } else {
+      setMentorForm({
+        title: profile?.current_job_title || '',
+        company: profile?.current_company || '',
+        bio: profile?.bio || '',
+        expertise: [],
+        faculty: profile?.faculty || '',
+        years_of_experience: '',
+      });
+    }
+    setActiveModal('mentor');
+  };
+
+  const handleSaveMentor = async () => {
+    try {
+      setSaving(true);
+      setModalError('');
+      const res = await mentorService.save({
+        ...mentorForm,
+        years_of_experience: mentorForm.years_of_experience !== '' ? Number(mentorForm.years_of_experience) : null,
+      });
+      setMyMentor(res.data);
+      closeModal();
+      Swal.fire({ icon: 'success', title: 'Mentor profile saved!', timer: 1800, showConfirmButton: false });
+    } catch (e) {
+      setModalError(e.response?.data?.message || 'Failed to save mentor profile.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleRemoveMentor = async () => {
+    const result = await Swal.fire({
+      title: 'Remove mentor profile?',
+      text: 'You will no longer appear in the mentorship directory.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'Yes, remove',
+    });
+    if (!result.isConfirmed) return;
+    try {
+      await mentorService.remove();
+      setMyMentor(null);
+      closeModal();
+    } catch (e) {
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to remove mentor profile.' });
+    }
+  };
+
+  const addMentorExpertise = () => {
+    const tag = mentorExpertiseInput.trim();
+    if (tag && !mentorForm.expertise.includes(tag)) {
+      setMentorForm(prev => ({ ...prev, expertise: [...prev.expertise, tag] }));
+    }
+    setMentorExpertiseInput('');
+  };
+
+  const removeMentorExpertise = (tag) => {
+    setMentorForm(prev => ({ ...prev, expertise: prev.expertise.filter(e => e !== tag) }));
   };
 
   const handleSaveBasic = async () => {
@@ -1041,14 +1130,25 @@ const ProfilePage = () => {
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-3 mt-4 md:mt-0">
+                <div className="flex gap-3 mt-4 md:mt-0 flex-wrap">
                   {isOwner && (
                     <button type="button" onClick={openBasicModal} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2">
                       <FiEdit className="text-sm" />
                       Edit Profile
                     </button>
                   )}
-                  <button 
+                  {isOwner && (
+                    <button
+                      type="button"
+                      onClick={openMentorModal}
+                      className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium flex items-center gap-2"
+                      title={myMentor ? 'Edit Mentor Profile' : 'Become a Mentor'}
+                    >
+                      <FiPlus className="text-sm" />
+                      {myMentor ? 'Edit Mentor Profile' : 'Be a Mentor'}
+                    </button>
+                  )}
+                  <button
                     onClick={() => setActiveModal('share')}
                     className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                     title="Share Profile"
@@ -2145,6 +2245,165 @@ const ProfilePage = () => {
                   </div>
                   <span className="text-xs text-black font-medium">{platform.name}</span>
                 </a>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Mentor Modal */}
+      <Modal
+        isOpen={activeModal === 'mentor'}
+        title={myMentor ? 'Edit Mentor Profile' : 'Become a Mentor'}
+        onClose={() => setActiveModal(null)}
+        footer={
+          <div className="flex justify-between items-center w-full gap-3">
+            {myMentor && (
+              <button
+                type="button"
+                onClick={handleRemoveMentor}
+                className="px-4 py-2 text-red-600 border border-red-200 rounded-lg hover:bg-red-50 text-sm font-medium"
+              >
+                Remove Mentor Profile
+              </button>
+            )}
+            <div className="flex gap-3 ml-auto">
+              <button
+                type="button"
+                onClick={() => setActiveModal(null)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveMentor}
+                disabled={saving}
+                className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-semibold disabled:opacity-60"
+              >
+                {saving ? 'Saving…' : 'Save'}
+              </button>
+            </div>
+          </div>
+        }
+        className="max-w-lg"
+      >
+        {modalError && (
+          <p className="mb-4 text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{modalError}</p>
+        )}
+
+        {/* Profile image preview (read-only, from profile) */}
+        <div className="flex items-center gap-4 mb-5 p-3 bg-blue-50 rounded-xl">
+          {profile?.profile_image || profile?.student_photo ? (
+            <img
+              src={profile.profile_image || profile.student_photo}
+              alt="Profile"
+              className="w-14 h-14 rounded-full object-cover border-2 border-white shadow"
+            />
+          ) : (
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold border-2 border-white shadow">
+              {profile?.name?.charAt(0)?.toUpperCase()}
+            </div>
+          )}
+          <div>
+            <p className="font-semibold text-gray-900">{profile?.name}</p>
+            <p className="text-xs text-gray-500">Profile image will be shown in the mentorship directory</p>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
+              <input
+                type="text"
+                value={mentorForm.title}
+                onChange={e => setMentorForm(p => ({ ...p, title: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g. Senior Engineer"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Company / Organization</label>
+              <input
+                type="text"
+                value={mentorForm.company}
+                onChange={e => setMentorForm(p => ({ ...p, company: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g. Kabul Tech"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Faculty</label>
+              <select
+                value={mentorForm.faculty}
+                onChange={e => setMentorForm(p => ({ ...p, faculty: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              >
+                <option value="">Select faculty</option>
+                <option value="Civil Engineering">Civil Engineering</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Electromechanics">Electromechanics</option>
+                <option value="Geomatics">Geomatics</option>
+                <option value="Architecture">Architecture</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Years of Experience</label>
+              <input
+                type="number"
+                min="0"
+                max="60"
+                value={mentorForm.years_of_experience}
+                onChange={e => setMentorForm(p => ({ ...p, years_of_experience: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g. 5"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Mentor Bio</label>
+            <textarea
+              rows={3}
+              value={mentorForm.bio}
+              onChange={e => setMentorForm(p => ({ ...p, bio: e.target.value }))}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+              placeholder="Tell mentees what you can help with..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Expertise Areas</label>
+            <div className="flex gap-2 mb-2">
+              <input
+                type="text"
+                value={mentorExpertiseInput}
+                onChange={e => setMentorExpertiseInput(e.target.value)}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addMentorExpertise(); } }}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g. Machine Learning"
+              />
+              <button
+                type="button"
+                onClick={addMentorExpertise}
+                className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
+              >
+                Add
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {mentorForm.expertise.map(tag => (
+                <span key={tag} className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                  {tag}
+                  <button type="button" onClick={() => removeMentorExpertise(tag)} className="hover:text-red-500">
+                    <FiX size={12} />
+                  </button>
+                </span>
               ))}
             </div>
           </div>
