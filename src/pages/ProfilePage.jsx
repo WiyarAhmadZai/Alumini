@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink } from 'react-icons/fi';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
 import Swal from 'sweetalert2';
 import alumniService from '../services/alumniService';
@@ -29,6 +29,11 @@ const ProfilePage = () => {
   const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact | mentor
 
   const [myMentor, setMyMentor] = useState(null);
+  const [viewedProfileMentor, setViewedProfileMentor] = useState(null);
+  const [requestingMentorship, setRequestingMentorship] = useState(false);
+  const [myApplications, setMyApplications] = useState([]);
+  const [loadingApplications, setLoadingApplications] = useState(false);
+
   const [mentorForm, setMentorForm] = useState({
     title: '',
     company: '',
@@ -221,26 +226,31 @@ const ProfilePage = () => {
         setLoading(true);
         setError('');
 
-        const currentUser = authService.getCurrentUser();
-        
         if (id) {
-          // Viewing another user's profile
+          // Viewing a profile by ID — load it first, then determine ownership
           const response = await alumniService.getById(id);
           setProfile(response.data);
-          
-          // Check if current user is the owner
-          if (currentUser && currentUser.id === parseInt(id)) {
-            setIsOwner(true);
+
+          // If authenticated, compare the viewed ID against the logged-in user's ID
+          if (authService.isAuthenticated()) {
+            const storedUser = localStorage.getItem('alumni_user');
+            const currentUser = storedUser ? JSON.parse(storedUser) : null;
+            if (currentUser && String(currentUser.id) === String(id)) {
+              // This is their own profile accessed by ID — treat as owner
+              setIsOwner(true);
+            } else {
+              setIsOwner(false);
+            }
           } else {
             setIsOwner(false);
           }
         } else {
-          // Viewing own profile
+          // No ID in URL — must be authenticated to view own profile
           if (!authService.isAuthenticated()) {
             navigate('/login');
             return;
           }
-          
+
           const response = await alumniService.getMe();
           setProfile(response.data);
           setIsOwner(true);
@@ -256,13 +266,37 @@ const ProfilePage = () => {
     fetchProfile();
   }, [navigate, id]);
 
+  const [mentorRequests, setMentorRequests] = useState([]);
+  const [loadingMentorRequests, setLoadingMentorRequests] = useState(false);
+
   useEffect(() => {
     if (isOwner && profile) {
       fetchAppliedJobs();
       fetchMessages();
       fetchRegisteredEvents();
+      // Load own mentor profile
       mentorService.getMyMentor().then(res => {
-        if (res.data) setMyMentor(res.data);
+        if (res.data) {
+          setMyMentor(res.data);
+          setLoadingMentorRequests(true);
+          mentorService.getRequests().then(r => {
+            setMentorRequests(r.data || []);
+          }).catch(() => {}).finally(() => setLoadingMentorRequests(false));
+        }
+      }).catch(() => {});
+      // Load own mentor applications (requests sent to others)
+      setLoadingApplications(true);
+      mentorService.getMyApplications().then(res => {
+        setMyApplications(res.data || []);
+      }).catch(() => {}).finally(() => setLoadingApplications(false));
+    }
+  }, [isOwner, profile]);
+
+  // When viewing someone else's profile, check if they're a mentor
+  useEffect(() => {
+    if (!isOwner && profile?.id) {
+      mentorService.getByAlumni(profile.id).then(res => {
+        if (res.data) setViewedProfileMentor(res.data);
       }).catch(() => {});
     }
   }, [isOwner, profile]);
@@ -640,6 +674,44 @@ const ProfilePage = () => {
 
   const removeMentorExpertise = (tag) => {
     setMentorForm(prev => ({ ...prev, expertise: prev.expertise.filter(e => e !== tag) }));
+  };
+
+  const handleRequestMentorshipFromProfile = async () => {
+    const { value: formValues, isConfirmed } = await Swal.fire({
+      title: 'Request Mentorship',
+      html: `<p style="color:#4b5563;font-size:13px;margin-bottom:12px">Send a request to <strong>${profile?.name}</strong></p>
+             <input id="swal-wa" class="swal2-input" placeholder="WhatsApp number (optional)" style="font-size:13px;" />
+             <textarea id="swal-msg" class="swal2-textarea" placeholder="Introduce yourself and explain what you'd like guidance on... (optional)" style="font-size:13px;resize:none;height:80px;"></textarea>`,
+      showCancelButton: true,
+      confirmButtonText: 'Send Request',
+      confirmButtonColor: '#2563eb',
+      cancelButtonText: 'Cancel',
+      preConfirm: () => ({
+        message: document.getElementById('swal-msg')?.value || '',
+        whatsapp_number: document.getElementById('swal-wa')?.value || '',
+      }),
+    });
+    if (!isConfirmed) return;
+    setRequestingMentorship(true);
+    try {
+      await mentorService.requestMentorship(viewedProfileMentor.id, formValues?.message, formValues?.whatsapp_number);
+      Swal.fire({
+        icon: 'success',
+        title: 'Request Sent!',
+        text: `Your mentorship request has been sent to ${profile?.name}. They will get back to you soon.`,
+        timer: 3000,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      const alreadySent = err.response?.data?.status === 'already_requested';
+      Swal.fire({
+        icon: alreadySent ? 'info' : 'error',
+        title: alreadySent ? 'Already Requested' : 'Error',
+        text: err.response?.data?.message || 'Failed to send request.',
+      });
+    } finally {
+      setRequestingMentorship(false);
+    }
   };
 
   const handleSaveBasic = async () => {
@@ -1148,6 +1220,17 @@ const ProfilePage = () => {
                       {myMentor ? 'Edit Mentor Profile' : 'Be a Mentor'}
                     </button>
                   )}
+                  {!isOwner && viewedProfileMentor && (
+                    <button
+                      type="button"
+                      onClick={handleRequestMentorshipFromProfile}
+                      disabled={requestingMentorship}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 disabled:opacity-60"
+                    >
+                      <FiUsers className="text-sm" />
+                      {requestingMentorship ? 'Sending…' : 'Request Mentorship'}
+                    </button>
+                  )}
                   <button
                     onClick={() => setActiveModal('share')}
                     className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
@@ -1486,6 +1569,169 @@ const ProfilePage = () => {
                             </Link>
                           )}
                         </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Mentorship Requests - only shown to mentors */}
+              {isOwner && myMentor && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <FiUsers className="text-blue-600" />
+                        Mentorship Requests
+                      </h3>
+                      {mentorRequests.length > 0 && (
+                        <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                          {mentorRequests.length}
+                        </span>
+                      )}
+                    </div>
+                    <div className="space-y-3">
+                      {loadingMentorRequests ? (
+                        Array.from({ length: 2 }, (_, i) => (
+                          <div key={i} className="animate-pulse flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0" />
+                            <div className="flex-1 space-y-1">
+                              <div className="h-3 bg-gray-200 rounded w-3/4" />
+                              <div className="h-3 bg-gray-200 rounded w-1/2" />
+                            </div>
+                          </div>
+                        ))
+                      ) : mentorRequests.length === 0 ? (
+                        <div className="text-center py-6">
+                          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <FiUser className="text-gray-400 text-xl" />
+                          </div>
+                          <p className="text-gray-500 text-sm">No mentorship requests yet</p>
+                        </div>
+                      ) : (
+                        mentorRequests.slice(0, 5).map(req => (
+                          <div key={req.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <Link to={`/profile/${req.requester_id}`} className="flex-shrink-0">
+                              {req.profile_image ? (
+                                <img
+                                  src={req.profile_image}
+                                  alt={req.name}
+                                  className="w-10 h-10 rounded-full object-cover border-2 border-white shadow hover:opacity-90 transition-opacity"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow">
+                                  {req.name?.charAt(0)?.toUpperCase()}
+                                </div>
+                              )}
+                            </Link>
+                            <div className="flex-1 min-w-0">
+                              <Link to={`/profile/${req.requester_id}`} className="font-semibold text-sm text-gray-900 hover:text-blue-600 transition-colors">
+                                {req.name}
+                              </Link>
+                              {req.title && <p className="text-xs text-gray-500 truncate">{req.title}</p>}
+                              {req.whatsapp_number && (
+                                <p className="text-xs text-green-600 font-medium flex items-center gap-1 mt-0.5">
+                                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                  {req.whatsapp_number}
+                                </p>
+                              )}
+                              {req.message && (
+                                <p className="text-xs text-gray-600 mt-1 line-clamp-2 italic">"{req.message}"</p>
+                              )}
+                              <div className="flex items-center justify-between mt-1">
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                  req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                  req.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                                  'bg-red-100 text-red-700'
+                                }`}>
+                                  {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
+                                </span>
+                                <span className="text-[10px] text-gray-400">
+                                  {new Date(req.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* My Mentor Applications - requests the owner sent to others */}
+              {isOwner && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <FiTrendingUp className="text-blue-600" />
+                        My Mentor Applications
+                      </h3>
+                      {myApplications.length > 0 && (
+                        <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                          {myApplications.length}
+                        </span>
+                      )}
+                    </div>
+                    <div className="space-y-3">
+                      {loadingApplications ? (
+                        Array.from({ length: 2 }, (_, i) => (
+                          <div key={i} className="animate-pulse flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0" />
+                            <div className="flex-1 space-y-1">
+                              <div className="h-3 bg-gray-200 rounded w-3/4" />
+                              <div className="h-3 bg-gray-200 rounded w-1/2" />
+                            </div>
+                          </div>
+                        ))
+                      ) : myApplications.length === 0 ? (
+                        <div className="text-center py-6">
+                          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <FiTrendingUp className="text-gray-400 text-xl" />
+                          </div>
+                          <p className="text-gray-500 text-sm">No applications sent yet</p>
+                          <Link to="/mentorship" className="text-blue-600 text-xs hover:underline mt-1 inline-block">
+                            Browse Mentors
+                          </Link>
+                        </div>
+                      ) : (
+                        myApplications.slice(0, 5).map(app => (
+                          <div key={app.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                            <Link to={`/profile/${app.alumni_student_id}`} className="flex-shrink-0">
+                              {app.profile_image ? (
+                                <img
+                                  src={app.profile_image}
+                                  alt={app.name}
+                                  className="w-10 h-10 rounded-full object-cover border-2 border-white shadow hover:opacity-90 transition-opacity"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow">
+                                  {app.name?.charAt(0)?.toUpperCase()}
+                                </div>
+                              )}
+                            </Link>
+                            <div className="flex-1 min-w-0">
+                              <Link to={`/profile/${app.alumni_student_id}`} className="font-semibold text-sm text-gray-900 hover:text-blue-600 transition-colors">
+                                {app.name}
+                              </Link>
+                              {app.title && <p className="text-xs text-gray-500 truncate">{app.title}</p>}
+                              {app.company && <p className="text-xs text-gray-400 truncate">At {app.company}</p>}
+                              <div className="flex items-center justify-between mt-1">
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                  app.status === 'pending'  ? 'bg-yellow-100 text-yellow-700' :
+                                  app.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                                  'bg-red-100 text-red-700'
+                                }`}>
+                                  {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
+                                </span>
+                                <span className="text-[10px] text-gray-400">
+                                  {new Date(app.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))
                       )}
                     </div>
                   </div>
