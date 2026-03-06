@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import {
-  FiSearch,
   FiChevronLeft,
   FiChevronRight,
   FiUser,
 } from 'react-icons/fi';
+import Swal from 'sweetalert2';
 import mentorService from '../services/mentorService';
+import authService from '../services/authService';
 
 const FACULTY_OPTIONS = [
   { key: 'Civil Engineering',  label: 'Civil Engineering' },
@@ -19,14 +21,69 @@ const FACULTY_OPTIONS = [
 const EXPERTISE_OPTIONS = ['Structural', 'Hydraulics', 'AI/ML', 'Project Mgmt', 'GIS', 'Python', 'Machine Learning'];
 
 const MentorshipPage = () => {
+  const navigate = useNavigate();
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0 });
   const [page, setPage] = useState(1);
+  const [requestingId, setRequestingId] = useState(null);
 
   const [selectedFaculty, setSelectedFaculty] = useState({});
   const [experienceLevel, setExperienceLevel] = useState('all');
   const [selectedExpertise, setSelectedExpertise] = useState([]);
+
+  const handleRequestMentorship = async (mentor) => {
+    const isLoggedIn = authService.isLoggedIn?.() ?? !!localStorage.getItem('alumni_token');
+    if (!isLoggedIn) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Login Required',
+        text: 'Please log in to request mentorship.',
+        confirmButtonText: 'Go to Login',
+        confirmButtonColor: '#2563eb',
+      }).then(r => { if (r.isConfirmed) navigate('/login'); });
+      return;
+    }
+
+    const { value: formValues, isConfirmed } = await Swal.fire({
+      title: `Request Mentorship`,
+      html: `<p style="color:#4b5563;font-size:13px;margin-bottom:12px">Send a request to <strong>${mentor.name}</strong></p>
+             <input id="swal-wa" class="swal2-input" placeholder="WhatsApp number (optional)" style="font-size:13px;" />
+             <textarea id="swal-msg" class="swal2-textarea" placeholder="Introduce yourself and explain what you'd like guidance on... (optional)" style="font-size:13px;resize:none;height:80px;"></textarea>`,
+      showCancelButton: true,
+      confirmButtonText: 'Send Request',
+      confirmButtonColor: '#2563eb',
+      cancelButtonText: 'Cancel',
+      preConfirm: () => ({
+        message: document.getElementById('swal-msg')?.value || '',
+        whatsapp_number: document.getElementById('swal-wa')?.value || '',
+      }),
+    });
+
+    if (!isConfirmed) return;
+
+    setRequestingId(mentor.id);
+    try {
+      await mentorService.requestMentorship(mentor.id, formValues?.message, formValues?.whatsapp_number);
+      Swal.fire({
+        icon: 'success',
+        title: 'Request Sent!',
+        text: `Your mentorship request has been sent to ${mentor.name}. They will get back to you soon.`,
+        timer: 3000,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to send request.';
+      const alreadySent = err.response?.data?.status === 'already_requested';
+      Swal.fire({
+        icon: alreadySent ? 'info' : 'error',
+        title: alreadySent ? 'Already Requested' : 'Error',
+        text: msg,
+      });
+    } finally {
+      setRequestingId(null);
+    }
+  };
 
   const fetchMentors = useCallback(async () => {
     setLoading(true);
@@ -203,7 +260,7 @@ const MentorshipPage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {mentors.map(mentor => (
-                <MentorCard key={mentor.id} mentor={mentor} />
+                <MentorCard key={mentor.id} mentor={mentor} onRequest={handleRequestMentorship} requesting={requestingId === mentor.id} navigate={navigate} />
               ))}
             </div>
           )}
@@ -251,7 +308,7 @@ const MentorshipPage = () => {
   );
 };
 
-const MentorCard = ({ mentor }) => {
+const MentorCard = ({ mentor, onRequest, requesting, navigate }) => {
   const profileImg = mentor.profile_image;
 
   return (
@@ -259,21 +316,30 @@ const MentorCard = ({ mentor }) => {
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-50" />
       <div className="relative z-10">
         <div className="flex gap-4">
-          <div className="relative flex-shrink-0">
+          <div
+            className="relative flex-shrink-0 cursor-pointer"
+            onClick={() => navigate(`/profile/${mentor.alumni_student_id}`)}
+            title="View profile"
+          >
             {profileImg ? (
               <img
                 src={profileImg}
                 alt={mentor.name}
-                className="w-20 h-20 rounded-xl border-2 border-blue-600/20 object-cover"
+                className="w-20 h-20 rounded-xl border-2 border-blue-600/20 object-cover hover:opacity-90 transition-opacity"
               />
             ) : (
-              <div className="w-20 h-20 rounded-xl border-2 border-blue-600/20 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold">
+              <div className="w-20 h-20 rounded-xl border-2 border-blue-600/20 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold hover:opacity-90 transition-opacity">
                 {mentor.name?.charAt(0)?.toUpperCase()}
               </div>
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-lg font-bold text-gray-900 truncate">{mentor.name}</h3>
+            <h3
+              className="text-lg font-bold text-gray-900 truncate cursor-pointer hover:text-blue-600 transition-colors"
+              onClick={() => navigate(`/profile/${mentor.alumni_student_id}`)}
+            >
+              {mentor.name}
+            </h3>
             {mentor.title && <p className="text-blue-600 text-sm font-semibold truncate">{mentor.title}</p>}
             {mentor.company && <p className="text-gray-600 text-xs truncate">At {mentor.company}</p>}
             {mentor.expertise?.length > 0 && (
@@ -313,8 +379,12 @@ const MentorCard = ({ mentor }) => {
           )}
         </div>
 
-        <button className="w-full bg-blue-600 text-white text-sm font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-lg mt-2">
-          Request Mentorship
+        <button
+          onClick={() => onRequest(mentor)}
+          disabled={requesting}
+          className="w-full bg-blue-600 text-white text-sm font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-lg mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {requesting ? 'Sending…' : 'Request Mentorship'}
         </button>
       </div>
     </div>
