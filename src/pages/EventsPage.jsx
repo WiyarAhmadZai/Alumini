@@ -622,16 +622,35 @@ const EventsPage = () => {
                 {/* Categories */}
                 <div className="bg-white p-6 rounded-lg border border-gray-200">
                   <h2 className="text-gray-900 text-lg font-bold mb-4">Popular Categories</h2>
-                  <div className="space-y-3">
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => setEventFilter('all')}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        eventFilter === 'all'
+                          ? 'bg-blue-600 text-white'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span>All Events</span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${eventFilter === 'all' ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-600'}`}>
+                        {categories.reduce((sum, c) => sum + c.count, 0)}
+                      </span>
+                    </button>
                     {categories.map((category, index) => (
-                      <a key={index} className="flex items-center justify-between group py-2 hover:text-blue-600 transition-colors" href="#">
-                        <span className="text-sm font-medium text-gray-700">
-                          {category.name}
-                        </span>
-                        <span className="px-2 py-1 bg-blue-100 text-blue-600 rounded-full text-xs font-bold">
+                      <button
+                        key={index}
+                        onClick={() => setEventFilter(category.type)}
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          eventFilter === category.type
+                            ? 'bg-blue-600 text-white'
+                            : 'text-gray-700 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span>{category.name}</span>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${eventFilter === category.type ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-600'}`}>
                           {category.count}
                         </span>
-                      </a>
+                      </button>
                     ))}
                   </div>
                 </div>
