@@ -148,14 +148,14 @@ const eventService = {
       const stats = statsResponse.data;
       
       const categories = [
-        { name: 'Reunions', count: stats.by_type?.reunion || 0 },
-        { name: 'Workshops', count: stats.by_type?.workshop || 0 },
-        { name: 'Webinars', count: stats.by_type?.webinar || 0 },
-        { name: 'Sports', count: stats.by_type?.sports || 0 },
-        { name: 'Career Fairs', count: stats.by_type?.career_fair || 0 },
-        { name: 'Conferences', count: stats.by_type?.conference || 0 },
-        { name: 'Seminars', count: stats.by_type?.seminar || 0 },
-        { name: 'Networking', count: stats.by_type?.networking || 0 },
+        { name: 'Reunions', type: 'reunion', count: stats.by_type?.reunion || 0 },
+        { name: 'Workshops', type: 'workshop', count: stats.by_type?.workshop || 0 },
+        { name: 'Webinars', type: 'webinar', count: stats.by_type?.webinar || 0 },
+        { name: 'Sports', type: 'sports', count: stats.by_type?.sports || 0 },
+        { name: 'Career Fairs', type: 'career_fair', count: stats.by_type?.career_fair || 0 },
+        { name: 'Conferences', type: 'conference', count: stats.by_type?.conference || 0 },
+        { name: 'Seminars', type: 'seminar', count: stats.by_type?.seminar || 0 },
+        { name: 'Networking', type: 'networking', count: stats.by_type?.networking || 0 },
       ];
 
       return categories.filter(cat => cat.count > 0);
