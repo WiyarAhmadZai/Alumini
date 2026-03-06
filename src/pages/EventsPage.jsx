@@ -7,6 +7,109 @@ import { useAuth } from '../contexts/AuthContext';
 import Swal from 'sweetalert2';
 import EventRegistrationModal from '../components/event/EventRegistrationModal';
 
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const CalendarView = ({ events, calendarDate, setCalendarDate, onDayClick, onEventClick }) => {
+  const year = calendarDate.getFullYear();
+  const month = calendarDate.getMonth();
+
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const today = new Date();
+
+  // Map events to their date string (YYYY-MM-DD)
+  const eventsByDate = {};
+  events.forEach(ev => {
+    const d = ev.start_date ? ev.start_date.slice(0, 10) : null;
+    if (d) {
+      if (!eventsByDate[d]) eventsByDate[d] = [];
+      eventsByDate[d].push(ev);
+    }
+  });
+
+  const prevMonth = () => setCalendarDate(new Date(year, month - 1, 1));
+  const nextMonth = () => setCalendarDate(new Date(year, month + 1, 1));
+
+  const cells = [];
+  for (let i = 0; i < firstDay; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-8">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+        <button onClick={prevMonth} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <FiChevronLeft className="text-gray-600" />
+        </button>
+        <h3 className="text-lg font-bold text-gray-900">
+          {calendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+        </h3>
+        <button onClick={nextMonth} className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <FiChevronRight className="text-gray-600" />
+        </button>
+      </div>
+
+      {/* Day-of-week headers */}
+      <div className="grid grid-cols-7 border-b border-gray-100">
+        {DAYS.map(d => (
+          <div key={d} className="text-center text-xs font-semibold text-gray-500 py-2">{d}</div>
+        ))}
+      </div>
+
+      {/* Calendar grid */}
+      <div className="grid grid-cols-7">
+        {cells.map((day, idx) => {
+          if (!day) return <div key={`empty-${idx}`} className="min-h-[90px] border-b border-r border-gray-100 bg-gray-50/50" />;
+          const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          const dayEvents = eventsByDate[dateStr] || [];
+          const isToday = today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
+          return (
+            <div
+              key={day}
+              onClick={() => dayEvents.length > 0 && onDayClick(dateStr)}
+              className={`min-h-[90px] border-b border-r border-gray-100 p-1 ${dayEvents.length > 0 ? 'cursor-pointer hover:bg-blue-50' : ''} transition-colors`}
+            >
+              <div className={`text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full mb-1 ${
+                isToday ? 'bg-blue-600 text-white' : 'text-gray-700'
+              }`}>
+                {day}
+              </div>
+              <div className="space-y-0.5">
+                {dayEvents.slice(0, 2).map(ev => (
+                  <div
+                    key={ev.id}
+                    onClick={(e) => { e.stopPropagation(); onEventClick(ev.id); }}
+                    className="text-[10px] leading-tight bg-blue-600 text-white rounded px-1 py-0.5 truncate cursor-pointer hover:bg-blue-700"
+                    title={ev.title}
+                  >
+                    {ev.title}
+                  </div>
+                ))}
+                {dayEvents.length > 2 && (
+                  <div className="text-[10px] text-blue-600 font-semibold px-1">+{dayEvents.length - 2} more</div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Legend */}
+      <div className="px-6 py-3 border-t border-gray-100 flex items-center gap-4 text-xs text-gray-500">
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
+          Event
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="w-3 h-3 rounded-full bg-blue-600 text-white flex items-center justify-center text-[8px] font-bold inline-block"></span>
+          Today
+        </span>
+        <span className="ml-auto text-gray-400">Click a day with events to filter the list view</span>
+      </div>
+    </div>
+  );
+};
+
 const EventsPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -14,9 +117,11 @@ const EventsPage = () => {
   const [viewMode, setViewMode] = useState('list');
   const [searchTerm, setSearchTerm] = useState('');
   const [eventFilter, setEventFilter] = useState('all');
-  const [dateFilter, setDateFilter] = useState('');
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [sortBy, setSortBy] = useState('start_date');
   const [sortOrder, setSortOrder] = useState('asc');
+  const [calendarDate, setCalendarDate] = useState(new Date());
 
   const [events, setEvents] = useState([]);
   const [featuredEvent, setFeaturedEvent] = useState(null);
@@ -44,7 +149,7 @@ const EventsPage = () => {
 
   useEffect(() => {
     fetchEvents();
-  }, [searchTerm, eventFilter, dateFilter, sortBy, sortOrder]);
+  }, [searchTerm, eventFilter, dateFrom, dateTo, sortBy, sortOrder]);
 
   useEffect(() => {
     if (user) {
@@ -82,7 +187,8 @@ const EventsPage = () => {
         per_page: 12,
         search: searchTerm || undefined,
         type: eventFilter === 'all' ? undefined : eventFilter,
-        date: dateFilter || undefined,
+        date_from: dateFrom || undefined,
+        date_to: dateTo || undefined,
         sort_by: sortBy,
         sort_order: sortOrder,
       };
@@ -595,22 +701,27 @@ const EventsPage = () => {
               <div className="sticky top-8 flex flex-col gap-8">
                 {/* View Toggle */}
                 <div className="bg-white p-1 rounded-lg border border-gray-200 flex">
-                  <button 
+                  <button
                     onClick={() => setViewMode('list')}
                     className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-colors ${
-                      viewMode === 'list' 
-                        ? 'bg-blue-600 text-white' 
+                      viewMode === 'list'
+                        ? 'bg-blue-600 text-white'
                         : 'text-gray-600 hover:bg-gray-100'
                     }`}
                   >
-                    <FiCalendar className="text-[16px]" />
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
                     List View
                   </button>
-                  <button 
-                    onClick={() => setViewMode('calendar')}
+                  <button
+                    onClick={() => {
+                      setViewMode('calendar');
+                      setCalendarDate(dateFrom ? new Date(dateFrom) : new Date());
+                    }}
                     className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-colors ${
-                      viewMode === 'calendar' 
-                        ? 'bg-blue-600 text-white' 
+                      viewMode === 'calendar'
+                        ? 'bg-blue-600 text-white'
                         : 'text-gray-600 hover:bg-gray-100'
                     }`}
                   >
@@ -689,38 +800,99 @@ const EventsPage = () => {
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
-                  <div className="flex gap-3">
-                    <select 
+                  <div className="flex flex-wrap gap-3">
+                    <select
                       className="px-4 py-2 text-sm rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                       value={eventFilter}
                       onChange={(e) => setEventFilter(e.target.value)}
                     >
                       <option value="all">All Types</option>
-                      <option value="reunions">Reunions</option>
-                      <option value="workshops">Workshops</option>
-                      <option value="webinars">Webinars</option>
+                      <option value="reunion">Reunions</option>
+                      <option value="workshop">Workshops</option>
+                      <option value="webinar">Webinars</option>
+                      <option value="sports">Sports</option>
+                      <option value="career_fair">Career Fairs</option>
+                      <option value="conference">Conferences</option>
+                      <option value="seminar">Seminars</option>
+                      <option value="networking">Networking</option>
                     </select>
-                    <input 
-                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600" 
-                      type="date"
-                      value={dateFilter}
-                      onChange={(e) => setDateFilter(e.target.value)}
-                    />
+                    <div className="flex items-center gap-2">
+                      <input
+                        className="px-3 py-2 text-sm rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                        type="date"
+                        value={dateFrom}
+                        onChange={(e) => setDateFrom(e.target.value)}
+                        title="From date"
+                      />
+                      <span className="text-gray-400 text-sm">to</span>
+                      <input
+                        className="px-3 py-2 text-sm rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                        type="date"
+                        value={dateTo}
+                        onChange={(e) => setDateTo(e.target.value)}
+                        title="To date"
+                      />
+                      {(dateFrom || dateTo) && (
+                        <button
+                          onClick={() => { setDateFrom(''); setDateTo(''); }}
+                          className="text-gray-400 hover:text-gray-600 text-lg leading-none"
+                          title="Clear dates"
+                        >×</button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Results Header */}
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Upcoming Events</h2>
-                <div className="text-sm text-gray-600">
-                  Sort by: <span className="text-blue-600 font-bold cursor-pointer">Date Ascending</span>
-                </div>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {viewMode === 'calendar' ? 'Event Calendar' : 'Upcoming Events'}
+                </h2>
+                {viewMode === 'list' && (
+                  <div className="text-sm text-gray-600">
+                    Sort by: <span className="text-blue-600 font-bold cursor-pointer">Date Ascending</span>
+                  </div>
+                )}
               </div>
 
-              {/* Events Grid */}
+              {/* Calendar View */}
+              {viewMode === 'calendar' && (
+                <CalendarView
+                  events={events}
+                  calendarDate={calendarDate}
+                  setCalendarDate={setCalendarDate}
+                  onDayClick={(dateStr) => {
+                    setDateFrom(dateStr);
+                    setDateTo(dateStr);
+                    setViewMode('list');
+                  }}
+                  onEventClick={handleEventClick}
+                />
+              )}
+
+              {/* Events Grid (List View) */}
+              {viewMode === 'list' && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {events.map((event) => (
+                {loading ? (
+                  Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="bg-white rounded-xl overflow-hidden border border-gray-200 h-[440px] animate-pulse">
+                      <div className="h-48 bg-gray-200" />
+                      <div className="p-4 space-y-3">
+                        <div className="h-4 bg-gray-200 rounded w-3/4" />
+                        <div className="h-4 bg-gray-200 rounded w-1/2" />
+                        <div className="h-4 bg-gray-200 rounded w-2/3" />
+                        <div className="h-10 bg-gray-200 rounded mt-auto" />
+                      </div>
+                    </div>
+                  ))
+                ) : events.length === 0 ? (
+                  <div className="col-span-3 text-center py-16 text-gray-500">
+                    <FiCalendar className="text-5xl mx-auto mb-4 text-gray-300" />
+                    <p className="text-lg font-medium">No events found</p>
+                    <p className="text-sm mt-1">Try adjusting your filters</p>
+                  </div>
+                ) : events.map((event) => (
                   <div key={event.id} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 h-[440px] w-full flex flex-col group">
                     <div className="relative h-48 flex-shrink-0 overflow-hidden">
                       {event.featured_image ? (
@@ -848,8 +1020,10 @@ const EventsPage = () => {
                   </div>
                 ))}
               </div>
+              )}
 
-              {/* Pagination */}
+              {/* Pagination (list view only) */}
+              {viewMode === 'list' && (
               <div className="flex items-center justify-between py-6 border-t border-gray-200">
                 <p className="text-sm text-gray-600">
                   Showing <span className="font-semibold text-gray-900">{Math.min(pagination.per_page * (pagination.current_page - 1) + 1, pagination.total)}</span> to{' '}
@@ -910,6 +1084,7 @@ const EventsPage = () => {
                   </button>
                 </div>
               </div>
+              )}
             </div>
           </div>
         </main>
