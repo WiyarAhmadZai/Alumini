@@ -22,7 +22,7 @@ const SectionHeading = ({ label, title, subtitle }) => (
     <div className="w-12 h-1 mx-auto mt-5 rounded-full" style={{ background: BRAND }} />
   </div>
 );
-
+//drkdjkd
 const boardMembers = [
   {
     name: 'Eng. Mohammad Hassan',
