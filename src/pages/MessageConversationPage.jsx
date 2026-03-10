@@ -24,28 +24,34 @@ const MessageConversationPage = () => {
   const fetchMessageDetails = async () => {
     try {
       setLoading(true);
-      const response = await messageService.getUserMessages(1, 100);
-      const foundMessage = response.data.messages.find(msg => msg.id === parseInt(id));
+      const response = await messageService.getMessage(id);
+      const foundMessage = response.data.message;
       
       if (foundMessage) {
         setMessage(foundMessage);
         
-        // Only show replies if there's an actual university response
+        // Prepare thread from original message and response
+        const thread = [];
+        
+        // Add original message
+        thread.push({
+          id: 'orig-' + foundMessage.id,
+          sender: 'user',
+          content: foundMessage.message,
+          created_at: foundMessage.created_at
+        });
+
+        // Add university response if it exists
         if (foundMessage.response) {
-          setReplies([
-            {
-              id: 1,
-              message_id: foundMessage.id,
-              sender: 'university',
-              content: foundMessage.response,
-              created_at: foundMessage.responded_at || foundMessage.created_at,
-              parent_id: null,
-              replies: []
-            }
-          ]);
-        } else {
-          setReplies([]);
+          thread.push({
+            id: 'resp-' + foundMessage.id,
+            sender: 'university',
+            content: foundMessage.response,
+            created_at: foundMessage.responded_at || foundMessage.created_at
+          });
         }
+        
+        setReplies(thread);
       } else {
         throw new Error('Message not found');
       }
@@ -77,53 +83,21 @@ const MessageConversationPage = () => {
     try {
       setSendingReply(true);
       
-      // In a real implementation, this would save to database with parent_id
-      const newReplyData = {
-        id: Date.now(),
-        message_id: message.id,
-        sender: 'user',
-        content: newReply,
-        created_at: new Date().toISOString(),
-        parent_id: replyingTo?.id || null,
-        replies: []
-      };
-
-      // Add reply to the appropriate parent
-      if (replyingTo) {
-        // Add as nested reply
-        const addToParent = (replies, targetId, newReply) => {
-          return replies.map(reply => {
-            if (reply.id === targetId) {
-              return {
-                ...reply,
-                replies: [...reply.replies, newReply]
-              };
-            } else if (reply.replies && reply.replies.length > 0) {
-              return {
-                ...reply,
-                replies: addToParent(reply.replies, targetId, newReply)
-              };
-            }
-            return reply;
-          });
-        };
-        
-        setReplies(prevReplies => addToParent(prevReplies, replyingTo.id, newReplyData));
-      } else {
-        // Add as top-level reply
-        setReplies([...replies, newReplyData]);
-      }
-
-      setNewReply('');
-      setReplyingTo(null);
+      await messageService.sendReply(id, { message: newReply });
 
       Swal.fire({
         icon: 'success',
         title: 'Reply Sent!',
-        text: 'Your reply has been sent successfully.',
+        text: 'Your reply has been sent as a new follow-up message.',
         timer: 2000,
         timerProgressBar: true
       });
+
+      setNewReply('');
+      setReplyingTo(null);
+      
+      // Refresh to show the new message thread or navigate back
+      navigate('/messages');
 
     } catch (error) {
       Swal.fire({

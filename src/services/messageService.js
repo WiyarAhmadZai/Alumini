@@ -51,6 +51,35 @@ const messageService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  /**
+   * Get a single message by ID
+   * @param {number} messageId - Message ID
+   * @returns {Promise} API response
+   */
+  getMessage: async (messageId) => {
+    try {
+      const response = await api.get(`/alumini/messages/${messageId}`);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Send a reply to a message
+   * @param {number} messageId - Parent message ID
+   * @param {Object} replyData - Reply content
+   * @returns {Promise} API response
+   */
+  sendReply: async (messageId, replyData) => {
+    try {
+      const response = await api.post(`/alumini/messages/${messageId}/reply`, replyData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
