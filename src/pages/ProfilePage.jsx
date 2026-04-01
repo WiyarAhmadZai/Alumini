@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink } from 'react-icons/fi';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink, FiBell } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
 import Swal from 'sweetalert2';
 import alumniService from '../services/alumniService';
@@ -11,6 +11,7 @@ import messageService from '../services/messageService';
 import eventService from '../services/eventService';
 import Modal from '../components/ui/Modal';
 import mentorService from '../services/mentorService';
+import notificationService from '../services/notificationService';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -268,6 +269,8 @@ const ProfilePage = () => {
 
   const [mentorRequests, setMentorRequests] = useState([]);
   const [loadingMentorRequests, setLoadingMentorRequests] = useState(false);
+  const [profileNotifications, setProfileNotifications] = useState([]);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
 
   useEffect(() => {
     if (isOwner && profile) {
@@ -289,6 +292,12 @@ const ProfilePage = () => {
       mentorService.getMyApplications().then(res => {
         setMyApplications(res.data || []);
       }).catch(() => {}).finally(() => setLoadingApplications(false));
+      // Load notifications
+      setLoadingNotifications(true);
+      notificationService.getAll().then(res => {
+        const statusNotifs = (res.data?.data || []).filter(n => n.type === 'status_change');
+        setProfileNotifications(statusNotifs);
+      }).catch(() => {}).finally(() => setLoadingNotifications(false));
     }
   }, [isOwner, profile]);
 
@@ -1570,6 +1579,41 @@ const ProfilePage = () => {
                           )}
                         </>
                       )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Status Notifications - only for profile owner */}
+              {isOwner && profileNotifications.length > 0 && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <div className="p-5">
+                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
+                      <FiBell className="text-blue-600" />
+                      Account Notifications
+                    </h3>
+                    <div className="space-y-3">
+                      {profileNotifications.map(n => (
+                        <div
+                          key={n.id}
+                          className={`p-3 rounded-lg border ${
+                            n.title?.includes('Approved') ? 'bg-green-50 border-green-200' :
+                            n.title?.includes('Rejected') ? 'bg-red-50 border-red-200' :
+                            'bg-yellow-50 border-yellow-200'
+                          }`}
+                        >
+                          <p className={`text-sm font-semibold ${
+                            n.title?.includes('Approved') ? 'text-green-800' :
+                            n.title?.includes('Rejected') ? 'text-red-800' :
+                            'text-yellow-800'
+                          }`}>{n.title}</p>
+                          <p className="text-xs text-gray-600 mt-1">{n.message}</p>
+                          {n.reason && (
+                            <p className="text-xs text-red-600 mt-1 font-medium italic">Reason: {n.reason}</p>
+                          )}
+                          <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleString()}</p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
