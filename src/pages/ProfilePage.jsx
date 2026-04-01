@@ -1202,13 +1202,34 @@ const ProfilePage = () => {
                 <div className="flex flex-col md:pt-20">
                   <div className="flex items-center gap-2">
                     <h1 className="text-black text-3xl font-bold leading-tight">{profile?.name || '-'}</h1>
-                    <span className="material-symbols-outlined text-black fill-1" title="Verified Alumnus">verified</span>
+                    {profile?.is_verified && (
+                      <span title="Verified Alumnus" className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 flex-shrink-0">
+                        <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                      </span>
+                    )}
                   </div>
                   <p className="text-black text-lg font-medium">Class of {profile?.graduation_year || '-'} • {profile?.faculty_name || '-'}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
-                      Verified Alumnus
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                      profile?.is_verified
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {profile?.is_verified ? 'Verified Alumnus' : 'Pending Verification'}
                     </span>
+                    {isOwner && !profile?.is_verified && profileNotifications.length > 0 && (() => {
+                      const latest = profileNotifications[0];
+                      return (
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                          latest.title?.includes('Rejected') ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                        }`}>
+                          {latest.title?.includes('Rejected') ? 'Rejected' : 'Pending'}
+                          {latest.reason && ` — ${latest.reason}`}
+                        </span>
+                      );
+                    })()}
                   </div>
                 </div>
                 <div className="flex gap-3 mt-4 md:mt-0 flex-wrap">
