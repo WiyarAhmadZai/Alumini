@@ -1,19 +1,21 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import authService from '../services/authService';
+import notificationService from '../services/notificationService';
 import { AuthContext } from '../contexts/AuthContext';
-import { 
-  FiArrowRight, 
-  FiMapPin, 
-  FiVideo, 
-  FiChevronLeft, 
+import {
+  FiArrowRight,
+  FiMapPin,
+  FiVideo,
+  FiChevronLeft,
   FiChevronRight,
   FiMenu,
   FiX,
   FiMail,
   FiLinkedin,
   FiFacebook,
-  FiUser
+  FiUser,
+  FiBell
 } from 'react-icons/fi';
 
 const Layout = ({ children }) => {
@@ -22,8 +24,12 @@ const Layout = ({ children }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(authService.isAuthenticated());
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const sidebarRef = useRef(null);
   const userMenuRef = useRef(null);
+  const notifRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -83,6 +89,46 @@ const Layout = ({ children }) => {
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
+
+  // Fetch notifications
+  const fetchUnreadCount = useCallback(async () => {
+    if (!authService.isAuthenticated()) return;
+    try {
+      const res = await notificationService.getUnreadCount();
+      setUnreadCount(res.data?.count || 0);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    fetchUnreadCount();
+    const interval = setInterval(fetchUnreadCount, 30000);
+    return () => clearInterval(interval);
+  }, [fetchUnreadCount, isAuthenticated]);
+
+  const handleOpenNotifications = async () => {
+    setNotifOpen(prev => !prev);
+    if (!notifOpen) {
+      try {
+        const res = await notificationService.getAll();
+        setNotifications(res.data?.data || []);
+        if (unreadCount > 0) {
+          await notificationService.markAllRead();
+          setUnreadCount(0);
+        }
+      } catch {}
+    }
+  };
+
+  // Close notification dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (notifOpen && notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [notifOpen]);
 
   const handleLogout = async () => {
     try {
@@ -243,6 +289,61 @@ const Layout = ({ children }) => {
                 >
                   Login
                 </Link>
+              )}
+
+              {isAuthenticated && (
+                <div className="relative" ref={notifRef}>
+                  <button
+                    onClick={handleOpenNotifications}
+                    className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl flex items-center justify-center text-white/90 hover:bg-white/10 transition-all"
+                  >
+                    <FiBell size={18} />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  {notifOpen && (
+                    <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white">Notifications</h3>
+                      </div>
+                      <div className="max-h-80 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <div className="px-4 py-8 text-center text-sm text-gray-500">No notifications</div>
+                        ) : (
+                          notifications.map(n => (
+                            <div
+                              key={n.id}
+                              onClick={() => {
+                                setNotifOpen(false);
+                                navigate('/profile');
+                              }}
+                              className={`px-4 py-3 border-b border-gray-50 dark:border-gray-700/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${!n.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}
+                            >
+                              <div className="flex items-start gap-2">
+                                <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${
+                                  n.type === 'status_change' && n.title?.includes('Approved') ? 'bg-green-500'
+                                  : n.type === 'status_change' && n.title?.includes('Rejected') ? 'bg-red-500'
+                                  : 'bg-yellow-500'
+                                }`} />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{n.title}</p>
+                                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2">{n.message}</p>
+                                  {n.reason && (
+                                    <p className="text-xs text-red-600 dark:text-red-400 mt-1 italic">Reason: {n.reason}</p>
+                                  )}
+                                  <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               )}
 
               {isAuthenticated && (
