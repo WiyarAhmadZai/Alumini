@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { FiX, FiUpload, FiUser, FiMail, FiPhone, FiFileText } from 'react-icons/fi';
+import Swal from 'sweetalert2';
 
 const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
   const { user } = useAuth();
@@ -67,8 +68,17 @@ const ApplyModal = ({ isOpen, onClose, job, onApplicationSuccess }) => {
       
       onApplicationSuccess();
       handleClose();
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to submit application');
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Failed to submit application';
+      const isAlreadyApplied = err.response?.data?.error_code === 'ALREADY_APPLIED';
+      handleClose();
+      Swal.fire({
+        icon: isAlreadyApplied ? 'info' : 'error',
+        title: isAlreadyApplied ? 'Already Applied' : 'Error',
+        text: msg,
+        confirmButtonColor: '#2563eb',
+      });
+      return;
     } finally {
       setLoading(false);
     }
