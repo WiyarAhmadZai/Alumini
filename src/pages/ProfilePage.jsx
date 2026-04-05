@@ -366,10 +366,11 @@ const ProfilePage = () => {
         });
       }
     } catch (error) {
+      console.error('Remove application error:', error?.response?.data || error);
       Swal.fire({
         icon: 'error',
         title: 'Error',
-        text: 'Failed to remove application. Please try again.',
+        text: error?.response?.data?.message || 'Failed to remove application. Please try again.',
         confirmButtonColor: '#dc2626'
       });
     }
