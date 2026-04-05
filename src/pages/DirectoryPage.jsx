@@ -25,9 +25,12 @@ const DirectoryPage = () => {
       try {
         setLoading(true);
         setError('');
-        const response = await alumniService.getAll();
-        setAlumni(response.data);
+        const response = await alumniService.getAll({ status: 'verified' });
+        // API returns: { response_code, status, message, data: { alumni: Array, pagination: {...} } }
+        const alumniData = response.data?.alumni;
+        setAlumni(Array.isArray(alumniData) ? alumniData : []);
       } catch (err) {
+        console.error('Fetch error:', err);
         setError('Failed to load alumni directory.');
       } finally {
         setLoading(false);
@@ -37,9 +40,18 @@ const DirectoryPage = () => {
     const fetchGraduationYears = async () => {
       try {
         const response = await alumniService.getGraduationYears();
-        setAvailableYears(response.data);
+        // Handle different response structures
+        const yearsData = response.data?.data || response.data || [];
+        setAvailableYears(Array.isArray(yearsData) ? yearsData : []);
       } catch (err) {
         console.error('Failed to load graduation years:', err);
+        // Set default years as fallback
+        const currentYear = new Date().getFullYear();
+        const defaultYears = [];
+        for (let year = currentYear; year >= currentYear - 50; year--) {
+          defaultYears.push(year);
+        }
+        setAvailableYears(defaultYears);
       }
     };
 
@@ -47,7 +59,7 @@ const DirectoryPage = () => {
     fetchGraduationYears();
   }, []);
 
-  const filteredAlumni = alumni.filter(alumnus => {
+  const filteredAlumni = Array.isArray(alumni) ? alumni.filter(alumnus => {
     const matchesSearch = !searchTerm ||
       alumnus.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       alumnus.current_job_title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -58,7 +70,7 @@ const DirectoryPage = () => {
     const matchesYear = !selectedFilters.graduationYear || String(alumnus.graduation_year) === String(selectedFilters.graduationYear);
 
     return matchesSearch && matchesFaculty && matchesYear;
-  });
+  }) : [];
 
   const faculties = [
     'Engineering',
