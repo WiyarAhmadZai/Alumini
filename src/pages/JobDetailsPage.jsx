@@ -14,9 +14,11 @@ const JobDetailsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showApplyModal, setShowApplyModal] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
 
   useEffect(() => {
     fetchJobDetails();
+    checkIfApplied();
   }, [id]);
 
   const fetchJobDetails = async () => {
@@ -35,6 +37,15 @@ const JobDetailsPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const checkIfApplied = async () => {
+    if (!isAuthenticated()) return;
+    try {
+      const res = await jobService.getUserApplications(1, 100);
+      const apps = res?.data?.applications || [];
+      setHasApplied(apps.some(a => String(a.job_id) === String(id)));
+    } catch {}
   };
 
   const handleApplyClick = () => {
@@ -59,6 +70,7 @@ const JobDetailsPage = () => {
   };
 
   const handleApplicationSuccess = () => {
+    setHasApplied(true);
     Swal.fire({
       icon: 'success',
       title: 'Application Submitted!',
@@ -373,12 +385,21 @@ const JobDetailsPage = () => {
                 <div className="bg-blue-50 rounded-xl p-6">
                   <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
                   <div className="space-y-3">
-                    <button 
-                      onClick={handleApplyClick}
-                      className="block w-full text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-colors font-medium"
-                    >
-                      Apply for This Job
-                    </button>
+                    {hasApplied ? (
+                      <button
+                        disabled
+                        className="block w-full text-center px-4 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed opacity-70 font-medium"
+                      >
+                        Already Applied
+                      </button>
+                    ) : (
+                      <button
+                        onClick={handleApplyClick}
+                        className="block w-full text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-colors font-medium"
+                      >
+                        Apply for This Job
+                      </button>
+                    )}
                     <Link 
                       to="/jobs"
                       className="block w-full text-center px-4 py-3 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium"
