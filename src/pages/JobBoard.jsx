@@ -19,9 +19,10 @@ import {
   FiLoader
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
+import Swal from 'sweetalert2';
 
 const JobBoard = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [location, setLocation] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -49,6 +50,7 @@ const JobBoard = () => {
   const searchInputRef = useRef(null);
   const locationInputRef = useRef(null);
   const [recordsPerPage, setRecordsPerPage] = useState(10);
+  const [appliedJobIds, setAppliedJobIds] = useState([]);
 
   // Debounced search function
   const debouncedSearch = useCallback((searchValue, locationValue) => {
@@ -149,7 +151,21 @@ const JobBoard = () => {
 
   useEffect(() => {
     fetchFilterOptions();
-  }, []); // Only fetch filter options once on mount
+  }, []);
+
+  // Fetch user's applied job IDs
+  useEffect(() => {
+    const fetchApplied = async () => {
+      if (!user || !isAuthenticated()) return;
+      try {
+        const { default: jobService } = await import('../services/jobService');
+        const res = await jobService.getUserApplications(1, 100);
+        const apps = res?.data?.applications || [];
+        setAppliedJobIds(apps.map(a => a.job_id));
+      } catch {}
+    };
+    fetchApplied();
+  }, [user]);
 
   // Only debounced search for filters (not for searchTerm or location)
   useEffect(() => {
@@ -204,17 +220,19 @@ const JobBoard = () => {
 
   const handleApplyClick = (job) => {
     if (!isAuthenticated()) {
-      // Redirect to login or show login modal
       window.location.href = '/login';
       return;
     }
-    
+    if (appliedJobIds.includes(job.id)) {
+      Swal.fire({ icon: 'info', title: 'Already Applied', text: 'You have already applied for this job.', confirmButtonColor: '#2563eb' });
+      return;
+    }
     setSelectedJob(job);
     setShowApplyModal(true);
   };
 
   const handleApplicationSuccess = () => {
-    // Show success message with SweetAlert
+    if (selectedJob) setAppliedJobIds(prev => [...prev, selectedJob.id]);
     Swal.fire({
       icon: 'success',
       title: 'Application Submitted!',
@@ -525,12 +543,21 @@ const JobBoard = () => {
                               )}
                             </div>
                             <div className="flex md:flex-col gap-3 w-full md:w-auto">
-                              <button 
-                                onClick={() => handleApplyClick(job)}
-                                className="flex-1 md:w-32 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-bold py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-                              >
-                                Apply Now
-                              </button>
+                              {appliedJobIds.includes(job.id) ? (
+                                <button
+                                  disabled
+                                  className="flex-1 md:w-32 bg-gray-400 text-white text-sm font-bold py-3 rounded-xl cursor-not-allowed opacity-70"
+                                >
+                                  Already Applied
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleApplyClick(job)}
+                                  className="flex-1 md:w-32 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm font-bold py-3 rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                                >
+                                  Apply Now
+                                </button>
+                              )}
                               <Link 
                                 to={`/job/${job.id}`}
                                 className="flex-1 md:w-32 border border-blue-600 text-blue-600 text-sm font-bold py-3 rounded-xl hover:bg-blue-50 transition-all duration-300 text-center"
