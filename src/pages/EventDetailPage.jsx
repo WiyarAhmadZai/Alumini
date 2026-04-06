@@ -238,11 +238,11 @@ const EventDetailPage = () => {
     );
   }
 
-  // Use only the deadline to control registration
   const now = new Date();
-  const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
+  const deadlineEnd = event.registration_deadline ? new Date(new Date(event.registration_deadline).setHours(23, 59, 59, 999)) : null;
+  const isRegistrationDeadlinePassed = deadlineEnd && now > deadlineEnd;
   const isRegistrationOpen = !isRegistrationDeadlinePassed;
-  const isEventExpired = event.end_date ? new Date(event.end_date) < now : false;
+  const isEventExpired = event.start_date ? new Date(event.start_date) < now : false;
 
   return (
     <Layout>
