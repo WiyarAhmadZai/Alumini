@@ -14,6 +14,23 @@ import Modal from '../components/ui/Modal';
 import mentorService from '../services/mentorService';
 import notificationService from '../services/notificationService';
 
+const timeAgo = (dateStr) => {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const seconds = Math.floor((now - date) / 1000);
+  if (seconds < 60) return 'Just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo ago`;
+  const years = Math.floor(months / 12);
+  return `${years}y ago`;
+};
+
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -1652,7 +1669,7 @@ const ProfilePage = () => {
                           {n.reason && (
                             <p className="text-xs text-red-600 mt-1 font-medium italic">Reason: {n.reason}</p>
                           )}
-                          <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleString()}</p>
+                          <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
                         </div>
                       ))}
                     </div>
