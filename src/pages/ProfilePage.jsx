@@ -299,8 +299,8 @@ const ProfilePage = () => {
       // Load notifications
       setLoadingNotifications(true);
       notificationService.getAll().then(res => {
-        const statusNotifs = (res.data?.data || []).filter(n => n.type === 'status_change');
-        setProfileNotifications(statusNotifs);
+        const notifs = (res.data?.data || []).filter(n => n.type === 'status_change' || n.type === 'event_registration');
+        setProfileNotifications(notifs);
       }).catch(() => {}).finally(() => setLoadingNotifications(false));
     }
   }, [isOwner, profile]);
@@ -1636,12 +1636,14 @@ const ProfilePage = () => {
                         <div
                           key={n.id}
                           className={`p-3 rounded-lg border ${
+                            n.type === 'event_registration' ? 'bg-blue-50 border-blue-200' :
                             n.title?.includes('Approved') ? 'bg-green-50 border-green-200' :
                             n.title?.includes('Rejected') ? 'bg-red-50 border-red-200' :
                             'bg-yellow-50 border-yellow-200'
                           }`}
                         >
                           <p className={`text-sm font-semibold ${
+                            n.type === 'event_registration' ? 'text-blue-800' :
                             n.title?.includes('Approved') ? 'text-green-800' :
                             n.title?.includes('Rejected') ? 'text-red-800' :
                             'text-yellow-800'
@@ -2743,7 +2745,7 @@ const ProfilePage = () => {
         isOpen={showEventCard}
         onClose={() => setShowEventCard(false)}
         event={cardEventData}
-        user={user}
+        user={profile}
         registration={cardRegData}
         onCardDownloaded={() => {
           setShowEventCard(false);
