@@ -318,13 +318,18 @@ const Layout = ({ children }) => {
                               key={n.id}
                               onClick={() => {
                                 setNotifOpen(false);
-                                navigate('/profile');
+                                if (n.type === 'event_registration') {
+                                  navigate('/events');
+                                } else {
+                                  navigate('/profile');
+                                }
                               }}
                               className={`px-4 py-3 border-b border-gray-50 dark:border-gray-700/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${!n.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}
                             >
                               <div className="flex items-start gap-2">
                                 <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${
-                                  n.type === 'status_change' && n.title?.includes('Approved') ? 'bg-green-500'
+                                  n.type === 'event_registration' ? 'bg-blue-500'
+                                  : n.type === 'status_change' && n.title?.includes('Approved') ? 'bg-green-500'
                                   : n.type === 'status_change' && n.title?.includes('Rejected') ? 'bg-red-500'
                                   : 'bg-yellow-500'
                                 }`} />
