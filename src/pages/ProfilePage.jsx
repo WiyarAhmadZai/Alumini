@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink, FiBell } from 'react-icons/fi';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink, FiBell, FiDownload } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
 import Swal from 'sweetalert2';
 import alumniService from '../services/alumniService';
@@ -9,6 +9,7 @@ import authService from '../services/authService';
 import jobService from '../services/jobService';
 import messageService from '../services/messageService';
 import eventService from '../services/eventService';
+import EventCardModal from '../components/event/EventCardModal';
 import Modal from '../components/ui/Modal';
 import mentorService from '../services/mentorService';
 import notificationService from '../services/notificationService';
@@ -25,6 +26,9 @@ const ProfilePage = () => {
   const [messages, setMessages] = useState([]);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [registeredEvents, setRegisteredEvents] = useState([]);
+  const [showEventCard, setShowEventCard] = useState(false);
+  const [cardEventData, setCardEventData] = useState(null);
+  const [cardRegData, setCardRegData] = useState(null);
   const [loadingEvents, setLoadingEvents] = useState(false);
 
   const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact | mentor
@@ -1584,9 +1588,22 @@ const ProfilePage = () => {
                                 <p className="text-xs text-gray-600 line-clamp-2 mb-2">
                                   {registration.alumni_event?.location || 'Location'}
                                 </p>
-                                <div className="flex items-center gap-2 text-xs text-gray-500">
-                                  <FiCalendar className="text-gray-400" />
-                                  {registration.alumni_event?.start_date ? new Date(registration.alumni_event.start_date).toLocaleDateString() : 'Date not set'}
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-2 text-xs text-gray-500">
+                                    <FiCalendar className="text-gray-400" />
+                                    {registration.alumni_event?.start_date ? new Date(registration.alumni_event.start_date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'Date not set'}
+                                  </div>
+                                  <button
+                                    onClick={() => {
+                                      setCardEventData(registration.alumni_event);
+                                      setCardRegData(registration);
+                                      setShowEventCard(true);
+                                    }}
+                                    className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#002759] bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                                  >
+                                    <FiDownload size={12} />
+                                    {registration.card_downloaded ? 'View Card' : 'Card'}
+                                  </button>
                                 </div>
                               </div>
                             </div>
@@ -2721,6 +2738,18 @@ const ProfilePage = () => {
           </div>
         </div>
       </Modal>
+      {/* Event Card Modal */}
+      <EventCardModal
+        isOpen={showEventCard}
+        onClose={() => setShowEventCard(false)}
+        event={cardEventData}
+        user={user}
+        registration={cardRegData}
+        onCardDownloaded={() => {
+          setShowEventCard(false);
+          fetchRegisteredEvents();
+        }}
+      />
     </Layout>
   );
 };
