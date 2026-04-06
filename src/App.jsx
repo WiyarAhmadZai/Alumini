@@ -8,6 +8,7 @@ import MentorshipPage from './pages/MentorshipPage';
 import EventsPage from './pages/EventsPage';
 import EventDetailPage from './pages/EventDetailPage';
 import RegisteredEventsPage from './pages/RegisteredEventsPage';
+import VerifyCardPage from './pages/VerifyCardPage';
 import GivingPage from './pages/LegalPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
@@ -33,6 +34,7 @@ function App() {
           <Route path="/events" element={<EventsPage />} />
           <Route path="/events/registered" element={<RegisteredEventsPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
+          <Route path="/verify-card/:eventId/:userId" element={<VerifyCardPage />} />
           <Route path="/legal" element={<GivingPage />} />
           <Route path="/privacy" element={<GivingPage />} />
           <Route path="/terms" element={<GivingPage />} />
