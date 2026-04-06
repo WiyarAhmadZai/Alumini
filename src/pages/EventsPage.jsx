@@ -220,13 +220,9 @@ const EventsPage = () => {
 
       const response = await eventService.getEvents(params);
 
-      // Filter out events whose registration deadline has passed
-      const now = new Date();
-      const filtered = (response.data.data || []).filter(ev => {
-        if (ev.registration_deadline && new Date(ev.registration_deadline) < now) return false;
-        return true;
-      });
-      setEvents(filtered);
+      // Show upcoming events (start_date in future), don't filter by registration deadline
+      // Events with closed registration still show but with disabled register button
+      setEvents(response.data.data || []);
       setPagination({
         current_page: response.data.current_page,
         last_page: response.data.last_page,
@@ -270,13 +266,16 @@ const EventsPage = () => {
 
   const isRegistrationClosed = (event) => {
     if (!event) return true;
-    
-    // Use only the deadline to control registration
     const now = new Date();
-    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
-    
-    // Registration is closed only if the deadline has passed
-    return isRegistrationDeadlinePassed;
+    // Deadline means end of that day — registration is open until 23:59:59 of deadline date
+    if (event.registration_deadline) {
+      const deadline = new Date(event.registration_deadline);
+      deadline.setHours(23, 59, 59, 999);
+      if (now > deadline) return true;
+    }
+    // Also closed if event already started
+    if (event.start_date && new Date(event.start_date) <= now) return true;
+    return false;
   };
 
   const handleRegister = (eventId, e) => {
@@ -296,7 +295,7 @@ const EventsPage = () => {
     }
     
     // Check if user is already registered for this event
-    const existingRegistration = userRegistrations.find(reg => reg.alumni_event_id === eventId);
+    const existingRegistration = userRegistrations.find(reg => Number(reg.alumni_event_id) === Number(eventId));
     if (existingRegistration) {
       Swal.fire({
         icon: 'info',
@@ -346,7 +345,7 @@ const EventsPage = () => {
   };
 
   const getUserRegistration = (eventId) => {
-    return userRegistrations.find(reg => reg.alumni_event_id === eventId);
+    return userRegistrations.find(reg => Number(reg.alumni_event_id) === Number(eventId));
   };
 
   const getUserRegistrationStatus = (eventId) => {
@@ -369,7 +368,8 @@ const EventsPage = () => {
     
     // Use only the deadline to control registration
     const now = new Date();
-    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
+    const deadlineEnd = event.registration_deadline ? new Date(new Date(event.registration_deadline).setHours(23, 59, 59, 999)) : null;
+    const isRegistrationDeadlinePassed = deadlineEnd && now > deadlineEnd;
     
     // Check if user is already registered
     if (status === 'registered' || status === 'confirmed') {
@@ -395,7 +395,8 @@ const EventsPage = () => {
     
     // Use only the deadline to control registration
     const now = new Date();
-    const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
+    const deadlineEnd = event.registration_deadline ? new Date(new Date(event.registration_deadline).setHours(23, 59, 59, 999)) : null;
+    const isRegistrationDeadlinePassed = deadlineEnd && now > deadlineEnd;
     
     // Check if user is already registered
     if (status === 'registered' || status === 'confirmed') {
@@ -1003,7 +1004,8 @@ const EventsPage = () => {
                             if (isRegistrationClosed(event)) {
                               // Show SweetAlert for closed registration
                               const now = new Date();
-                              const isRegistrationDeadlinePassed = event.registration_deadline && new Date(event.registration_deadline) <= now;
+                              const deadlineEnd = event.registration_deadline ? new Date(new Date(event.registration_deadline).setHours(23, 59, 59, 999)) : null;
+    const isRegistrationDeadlinePassed = deadlineEnd && now > deadlineEnd;
                               if (isRegistrationDeadlinePassed) {
                                 Swal.fire({
                                   icon: 'warning',
