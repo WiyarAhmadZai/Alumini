@@ -89,6 +89,22 @@ const eventService = {
     return response.json();
   },
 
+  // Mark event card as downloaded
+  async markCardDownloaded(eventId) {
+    const response = await fetch(`/api/alumini/events/${eventId}/mark-card-downloaded`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authService.getToken()}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to mark card as downloaded');
+    }
+    return response.json();
+  },
+
   // Get user's event registrations
   async getMyRegistrations() {
     const response = await fetch('/api/alumini/events/my-registrations', {
