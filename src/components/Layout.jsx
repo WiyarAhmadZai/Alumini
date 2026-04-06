@@ -18,6 +18,23 @@ import {
   FiBell
 } from 'react-icons/fi';
 
+const timeAgo = (dateStr) => {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const seconds = Math.floor((now - date) / 1000);
+  if (seconds < 60) return 'Just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo ago`;
+  const years = Math.floor(months / 12);
+  return `${years}y ago`;
+};
+
 const Layout = ({ children }) => {
   const { user } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -318,7 +335,9 @@ const Layout = ({ children }) => {
                               key={n.id}
                               onClick={() => {
                                 setNotifOpen(false);
-                                if (n.type === 'event_registration') {
+                                if (n.type === 'event_registration' && n.reason) {
+                                  navigate(`/events/${n.reason}`);
+                                } else if (n.type === 'event_registration') {
                                   navigate('/events');
                                 } else {
                                   navigate('/profile');
@@ -339,7 +358,7 @@ const Layout = ({ children }) => {
                                   {n.reason && (
                                     <p className="text-xs text-red-600 dark:text-red-400 mt-1 italic">Reason: {n.reason}</p>
                                   )}
-                                  <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
+                                  <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
                                 </div>
                               </div>
                             </div>
