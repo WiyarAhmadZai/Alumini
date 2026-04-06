@@ -162,10 +162,15 @@ const EventsPage = () => {
   const fetchFeaturedEvent = async () => {
     try {
       const response = await eventService.getFeaturedEvent();
-      setFeaturedEvent(response.data);
+      const ev = response.data;
+      // Don't show featured event if registration deadline passed
+      if (ev && ev.registration_deadline && new Date(ev.registration_deadline) < new Date()) {
+        setFeaturedEvent(null);
+      } else {
+        setFeaturedEvent(ev);
+      }
     } catch (error) {
       console.error('Failed to fetch featured event:', error);
-      // Don't show Swal to prevent infinite loops
     }
   };
 
@@ -177,6 +182,14 @@ const EventsPage = () => {
       console.error('Failed to fetch categories:', error);
       // Don't show Swal to prevent infinite loops
     }
+  };
+
+  const resolveImage = (img) => {
+    if (!img) return null;
+    if (img.startsWith('http')) return img;
+    if (img.startsWith('/storage/')) return `http://localhost:8000${img}`;
+    if (img.startsWith('storage/')) return `http://localhost:8000/${img}`;
+    return `http://localhost:8000/storage/${img}`;
   };
 
   const fetchEvents = async (page = 1) => {
@@ -191,6 +204,7 @@ const EventsPage = () => {
         date_to: dateTo || undefined,
         sort_by: sortBy,
         sort_order: sortOrder,
+        status: 'upcoming',
       };
 
       // Remove undefined values from params
@@ -201,9 +215,14 @@ const EventsPage = () => {
       });
 
       const response = await eventService.getEvents(params);
-      
-      // Use server-side pagination data directly
-      setEvents(response.data.data);
+
+      // Filter out events whose registration deadline has passed
+      const now = new Date();
+      const filtered = (response.data.data || []).filter(ev => {
+        if (ev.registration_deadline && new Date(ev.registration_deadline) < now) return false;
+        return true;
+      });
+      setEvents(filtered);
       setPagination({
         current_page: response.data.current_page,
         last_page: response.data.last_page,
@@ -444,7 +463,7 @@ const EventsPage = () => {
         <section className="relative min-h-[350px] overflow-hidden">
           <div className="absolute inset-0 z-0">
             <img
-              src={featuredEvent?.featured_image || '/images/hero-bg.jpg'}
+              src={resolveImage(featuredEvent?.featured_image) || '/images/hero-bg.jpg'}
               alt={featuredEvent?.title || 'Events'}
               className="w-full h-full object-cover"
               onError={(e) => { e.target.src = '/images/hero-bg.jpg'; }}
@@ -530,18 +549,17 @@ const EventsPage = () => {
                     <div className="flex items-center gap-4 text-white/80 text-sm">
                       <div className="flex items-center gap-2">
                         <FiCalendar className="text-blue-300" />
-                        <span>{new Date(featuredEvent.start_date).toLocaleDateString('en-GB', { 
-                          weekday: 'short', 
-                          day: '2-digit', 
-                          month: '2-digit', 
-                          year: 'numeric' 
+                        <span>{new Date(featuredEvent.start_date).toLocaleDateString('en-GB', {
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric'
                         })}</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-4 text-white/80 text-sm">
                       <div className="flex items-center gap-2">
                         <FiClock className="text-blue-300" />
-                        <span>{new Date(featuredEvent.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - {new Date(featuredEvent.end_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>
+                        <span>{new Date(featuredEvent.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}</span>
                       </div>
                       <span className="text-white/60 text-xs">({featuredEvent.time_zone})</span>
                     </div>
@@ -574,10 +592,10 @@ const EventsPage = () => {
                       <div className="flex items-center justify-between text-white/80 text-sm mt-3">
                         <span className="font-medium">Registration Deadline</span>
                         <span className="font-bold">
-                          {new Date(featuredEvent.registration_deadline).toLocaleDateString('en-GB', { 
-                            day: '2-digit', 
-                            month: '2-digit', 
-                            year: '2-digit' 
+                          {new Date(featuredEvent.registration_deadline).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
                           })}
                         </span>
                       </div>
@@ -893,16 +911,16 @@ const EventsPage = () => {
                   <div key={event.id} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 h-[440px] w-full flex flex-col group">
                     <div className="relative h-48 flex-shrink-0 overflow-hidden">
                       {event.featured_image ? (
-                        <img 
-                          alt={event.title} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
-                          src={event.featured_image}
+                        <img
+                          alt={event.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          src={resolveImage(event.featured_image)}
+                          onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling && (e.target.nextElementSibling.style.display = 'flex'); }}
                         />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                          <FiCalendar className="text-white text-4xl" />
-                        </div>
-                      )}
+                      ) : null}
+                      <div className={`w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 items-center justify-center ${event.featured_image ? 'hidden' : 'flex'}`}>
+                        <FiCalendar className="text-white text-4xl" />
+                      </div>
                       <div className="absolute top-4 left-4 bg-white px-3 py-2 rounded-lg shadow-md">
                         <div className="text-blue-600 font-bold text-xs">
                           {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}
@@ -929,7 +947,7 @@ const EventsPage = () => {
                       <div className="flex items-center gap-2 text-blue-600 font-semibold text-xs mb-2">
                         <FiClock className="text-[12px]" />
                         <span className="truncate">
-                          {new Date(event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - {new Date(event.end_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} ({event.time_zone})
+                          {new Date(event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} ({event.time_zone})
                         </span>
                       </div>
                       <h3 className="text-sm font-bold text-gray-900 mb-2 line-clamp-2 flex-1 leading-tight">
@@ -955,14 +973,10 @@ const EventsPage = () => {
                         <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
                           <span className="font-medium">Registration Deadline</span>
                           <span className="font-bold">
-                            {new Date(event.registration_deadline).toLocaleDateString('en-GB', { 
-                              day: '2-digit', 
-                              month: '2-digit', 
-                              year: '2-digit' 
-                            })} {new Date(event.registration_deadline).toLocaleTimeString('en-US', { 
-                              hour: 'numeric', 
-                              minute: '2-digit', 
-                              hour12: true 
+                            {new Date(event.registration_deadline).toLocaleDateString('en-GB', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric'
                             })}
                           </span>
                         </div>
