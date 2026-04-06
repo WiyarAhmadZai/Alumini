@@ -6,11 +6,19 @@ import eventService from '../services/eventService';
 import { useAuth } from '../contexts/AuthContext';
 import Swal from 'sweetalert2';
 
+const resolveImage = (img) => {
+  if (!img) return null;
+  if (img.startsWith('http')) return img;
+  if (img.startsWith('/storage/')) return `http://localhost:8000${img}`;
+  if (img.startsWith('storage/')) return `http://localhost:8000/${img}`;
+  return `http://localhost:8000/storage/${img}`;
+};
+
 const EventDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [registering, setRegistering] = useState(false);
@@ -239,25 +247,15 @@ const EventDetailPage = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section with Featured Image */}
         <section className="relative min-h-[400px] overflow-hidden">
-          {event?.featured_image ? (
-            <div className="absolute inset-0 z-0">
-              <img
-                src={event.featured_image}
-                alt={event?.title || 'Event'}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"></div>
-            </div>
-          ) : (
-            <div className="absolute inset-0 z-0">
-              <img
-                src="/kari-shea-apcUIqOPEIo-unsplash.jpg"
-                alt="Event Background"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"></div>
-            </div>
-          )}
+          <div className="absolute inset-0 z-0">
+            <img
+              src={resolveImage(event?.featured_image) || '/kari-shea-apcUIqOPEIo-unsplash.jpg'}
+              alt={event?.title || 'Event'}
+              className="w-full h-full object-cover"
+              onError={(e) => { e.target.src = '/kari-shea-apcUIqOPEIo-unsplash.jpg'; }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"></div>
+          </div>
           
           <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 py-16 lg:py-24">
             <button
@@ -298,15 +296,11 @@ const EventDetailPage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <FiClock className="text-xl" />
-                  <span>{event?.start_date ? new Date(event.start_date).toLocaleTimeString('en-US', { 
-                    hour: 'numeric', 
-                    minute: '2-digit', 
-                    hour12: true 
-                  }) : 'Time TBD'} - {event?.end_date ? new Date(event.end_date).toLocaleTimeString('en-US', { 
-                    hour: 'numeric', 
-                    minute: '2-digit', 
-                    hour12: true 
-                  }) : ''} ({event?.time_zone || 'GMT+4:30'})</span>
+                  <span>{event?.start_date ? new Date(event.start_date).toLocaleTimeString('en-US', {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                  }) : 'Time TBD'} ({event?.time_zone || 'GMT+4:30'})</span>
                 </div>
               </div>
             </div>
@@ -411,14 +405,10 @@ const EventDetailPage = () => {
                       <div className="flex items-center justify-between">
                         <span className="text-sm font-medium text-gray-600">Registration Deadline</span>
                         <span className="text-sm font-bold text-gray-900">
-                          {new Date(event.registration_deadline).toLocaleDateString('en-GB', { 
-                            day: '2-digit', 
-                            month: '2-digit', 
-                            year: '2-digit' 
-                          })} {new Date(event.registration_deadline).toLocaleTimeString('en-US', { 
-                            hour: 'numeric', 
-                            minute: '2-digit', 
-                            hour12: true 
+                          {new Date(event.registration_deadline).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
                           })}
                         </span>
                       </div>
