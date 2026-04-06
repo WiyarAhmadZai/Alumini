@@ -144,8 +144,8 @@ ${profileImg ? `<img src="${profileImg}" alt=""/>` : `<div class="ph">${(user.na
 <div class="uid">${user.university_id || ''}</div>
 </div>
 <div class="info">
-<div class="box"><div class="lbl">${t.facultyLabel}</div><div class="val">${user.faculty_name || user.faculty || '-'}</div></div>
-<div class="box"><div class="lbl">${t.departmentLabel}</div><div class="val">${user.department_name || '-'}</div></div>
+<div class="box"><div class="lbl">${t.facultyLabel}</div><div class="val">${user.faculty_name || user.department?.faculty?.name || user.faculty || '-'}</div></div>
+<div class="box"><div class="lbl">${t.departmentLabel}</div><div class="val">${user.department_name || user.department?.name || '-'}</div></div>
 <div class="box"><div class="lbl">${t.dateLabel}</div><div class="val">${formattedDate}</div></div>
 <div class="box"><div class="lbl">${t.dayLabel} / ${t.timeLabel}</div><div class="val">${dayName} - ${formattedTime}</div></div>
 <div class="box wide"><div class="lbl">${t.locationLabel}</div><div class="val">${event.location}</div></div>
@@ -217,8 +217,8 @@ ${profileImg ? `<img src="${profileImg}" alt=""/>` : `<div class="ph">${(user.na
                   <div style={{ fontSize: '8px', color: '#64748b', marginTop: '1px' }}>{user.university_id}</div>
                 </div>
                 <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
-                  <MiniBox label={t.facultyLabel} value={user.faculty_name || user.faculty || '-'} />
-                  <MiniBox label={t.departmentLabel} value={user.department_name || '-'} />
+                  <MiniBox label={t.facultyLabel} value={user.faculty_name || user.department?.faculty?.name || user.faculty || '-'} />
+                  <MiniBox label={t.departmentLabel} value={user.department_name || user.department?.name || '-'} />
                   <MiniBox label={t.dateLabel} value={formattedDate} />
                   <MiniBox label={`${t.dayLabel} / ${t.timeLabel}`} value={`${dayName} - ${formattedTime}`} />
                   <MiniBox label={t.locationLabel} value={event.location} wide />
