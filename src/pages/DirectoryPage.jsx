@@ -27,7 +27,7 @@ const DirectoryPage = () => {
         setError('');
         const response = await alumniService.getAll({ status: 'verified' });
         // API returns: { response_code, status, message, data: { alumni: Array, pagination: {...} } }
-        const alumniData = response.data?.alumni;
+        const alumniData = response?.data?.alumni || response?.alumni || [];
         setAlumni(Array.isArray(alumniData) ? alumniData : []);
       } catch (err) {
         console.error('Fetch error:', err);
