@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiCalendar, FiClock, FiMapPin, FiVideo, FiSearch, FiFilter, FiChevronLeft, FiChevronRight, FiMail, FiUsers, FiDollarSign } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiMapPin, FiVideo, FiSearch, FiFilter, FiChevronLeft, FiChevronRight, FiMail, FiUsers, FiDollarSign, FiDownload } from 'react-icons/fi';
 import eventService from '../services/eventService';
 import { useAuth } from '../contexts/AuthContext';
 import Swal from 'sweetalert2';
 import EventRegistrationModal from '../components/event/EventRegistrationModal';
+import EventCardModal from '../components/event/EventCardModal';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -137,6 +138,9 @@ const EventsPage = () => {
   const [userRegistrations, setUserRegistrations] = useState([]);
   const [showRegistrationModal, setShowRegistrationModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showCardModal, setShowCardModal] = useState(false);
+  const [cardEvent, setCardEvent] = useState(null);
+  const [cardRegistration, setCardRegistration] = useState(null);
 
   useEffect(() => {
     fetchFeaturedEvent();
@@ -341,9 +345,20 @@ const EventsPage = () => {
     fetchUserRegistrations();
   };
 
+  const getUserRegistration = (eventId) => {
+    return userRegistrations.find(reg => reg.alumni_event_id === eventId);
+  };
+
   const getUserRegistrationStatus = (eventId) => {
-    const registration = userRegistrations.find(reg => reg.alumni_event_id === eventId);
-    return registration?.status;
+    return getUserRegistration(eventId)?.status;
+  };
+
+  const openCardModal = (event, e) => {
+    if (e) e.stopPropagation();
+    const reg = getUserRegistration(event.id);
+    setCardEvent(event);
+    setCardRegistration(reg);
+    setShowCardModal(true);
   };
 
   const getRegistrationButtonText = (eventId) => {
@@ -1026,6 +1041,15 @@ const EventsPage = () => {
                         >
                           {getRegistrationButtonText(event.id)}
                         </button>
+                        {(getUserRegistrationStatus(event.id) === 'registered' || getUserRegistrationStatus(event.id) === 'confirmed') && (
+                          <button
+                            onClick={(e) => openCardModal(event, e)}
+                            className="w-full flex items-center justify-center gap-2 mt-2 py-2 px-4 bg-[#002759] text-white font-semibold rounded-lg hover:bg-[#003580] transition-colors text-sm"
+                          >
+                            <FiDownload size={14} />
+                            {getUserRegistration(event.id)?.card_downloaded ? 'View Card' : 'Download Card'}
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -1101,11 +1125,23 @@ const EventsPage = () => {
         </main>
 
         {/* Event Registration Modal */}
-        <EventRegistrationModal 
+        <EventRegistrationModal
           isOpen={showRegistrationModal}
           onClose={() => setShowRegistrationModal(false)}
           event={selectedEvent}
           onRegistrationSuccess={handleRegistrationSuccess}
+        />
+
+        <EventCardModal
+          isOpen={showCardModal}
+          onClose={() => setShowCardModal(false)}
+          event={cardEvent}
+          user={user}
+          registration={cardRegistration}
+          onCardDownloaded={() => {
+            setShowCardModal(false);
+            fetchUserRegistrations();
+          }}
         />
 
       </div>
