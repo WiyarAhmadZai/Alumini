@@ -8,6 +8,7 @@ export default defineConfig({
     postcss: './postcss.config.js',
   },
   server: {
+    host: true,
     hmr: {
       overlay: false
     },
