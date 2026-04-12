@@ -339,6 +339,10 @@ const Layout = ({ children }) => {
                                   navigate(`/events/${n.reason}`);
                                 } else if (n.type === 'event_registration') {
                                   navigate('/events');
+                                } else if (n.type?.startsWith('mentor_request') || n.type === 'mentor_review') {
+                                  navigate('/profile');
+                                } else if (n.type === 'mentor_profile_created' && n.reason) {
+                                  navigate(`/mentorship/${n.reason}`);
                                 } else {
                                   navigate('/profile');
                                 }
