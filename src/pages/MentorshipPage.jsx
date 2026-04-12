@@ -7,17 +7,22 @@ import {
   FiUser,
   FiSearch,
   FiX,
+  FiStar,
+  FiEye,
 } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import mentorService from '../services/mentorService';
 import authService from '../services/authService';
 
 const FACULTY_OPTIONS = [
-  { key: 'Civil Engineering',  label: 'Civil Engineering' },
-  { key: 'Computer Science',   label: 'Computer Science' },
-  { key: 'Electromechanics',   label: 'Electromechanics' },
-  { key: 'Geomatics',          label: 'Geomatics' },
-  { key: 'Architecture',       label: 'Architecture' },
+  { key: 'Civil Engineering',         label: 'Civil Engineering' },
+  { key: 'Computer Science',          label: 'Computer Science' },
+  { key: 'Electromechanics',          label: 'Electromechanics' },
+  { key: 'Geomatics & Cadastre',      label: 'Geomatics & Cadastre' },
+  { key: 'Architecture',              label: 'Architecture' },
+  { key: 'Chemical Technology',       label: 'Chemical Technology' },
+  { key: 'Geology & Mines',           label: 'Geology & Mines' },
+  { key: 'Environmental Engineering', label: 'Environmental Engineering' },
 ];
 
 const EXPERTISE_OPTIONS = ['Structural', 'Hydraulics', 'AI/ML', 'Project Mgmt', 'GIS', 'Python', 'Machine Learning'];
@@ -58,54 +63,105 @@ const MentorshipPage = () => {
   const storedUser = localStorage.getItem('alumni_user');
   const currentUserId = storedUser ? JSON.parse(storedUser)?.id : null;
 
-  const handleRequestMentorship = async (mentor) => {
-    const isLoggedIn = authService.isLoggedIn?.() ?? !!localStorage.getItem('alumni_token');
-    if (!isLoggedIn) {
+  // My applications: map of mentor_id → { status, rejection_count, can_request_again }
+  const [myApplicationMap, setMyApplicationMap] = useState({});
+
+  const fetchMyApplications = async () => {
+    if (!authService.isAuthenticated()) return;
+    try {
+      const res = await mentorService.getMyApplications();
+      // Backend already returns ONE record per mentor (most recent)
+      const map = {};
+      (res.data || []).forEach(a => {
+        map[a.mentor_id] = {
+          id: a.id,
+          status: a.status,
+          rejection_count: a.rejection_count || 0,
+          can_request_again: a.can_request_again || false,
+        };
+      });
+      setMyApplicationMap(map);
+    } catch {}
+  };
+
+  useEffect(() => {
+    fetchMyApplications();
+  }, []);
+
+  const [requestModalMentor, setRequestModalMentor] = useState(null);
+
+  const handleCancelRequest = async (requestId, mentor) => {
+    const confirm = await Swal.fire({
+      icon: 'warning',
+      title: 'Cancel Request?',
+      text: `Cancel your mentorship request to ${mentor.name}?`,
+      showCancelButton: true,
+      confirmButtonText: 'Yes, cancel',
+      confirmButtonColor: '#dc2626',
+      cancelButtonText: 'No',
+    });
+    if (!confirm.isConfirmed) return;
+    try {
+      await mentorService.cancelRequest(requestId);
+      setMyApplicationMap(prev => {
+        const copy = { ...prev };
+        delete copy[mentor.id];
+        return copy;
+      });
+      Swal.fire({ icon: 'success', title: 'Cancelled', timer: 1500, showConfirmButton: false });
+    } catch (err) {
+      Swal.fire({ icon: 'error', title: 'Error', text: err.response?.data?.message || 'Failed to cancel.' });
+    }
+  };
+
+  const openRequestModal = (mentor) => {
+    if (!authService.isAuthenticated()) {
       Swal.fire({
         icon: 'info',
         title: 'Login Required',
         text: 'Please log in to request mentorship.',
         confirmButtonText: 'Go to Login',
-        confirmButtonColor: '#2563eb',
+        confirmButtonColor: '#002759',
       }).then(r => { if (r.isConfirmed) navigate('/login'); });
       return;
     }
+    setRequestModalMentor(mentor);
+  };
 
-    const { value: formValues, isConfirmed } = await Swal.fire({
-      title: `Request Mentorship`,
-      html: `<p style="color:#4b5563;font-size:13px;margin-bottom:12px">Send a request to <strong>${mentor.name}</strong></p>
-             <input id="swal-wa" class="swal2-input" placeholder="WhatsApp number (optional)" style="font-size:13px;" />
-             <textarea id="swal-msg" class="swal2-textarea" placeholder="Introduce yourself and explain what you'd like guidance on... (optional)" style="font-size:13px;resize:none;height:80px;"></textarea>`,
-      showCancelButton: true,
-      confirmButtonText: 'Send Request',
-      confirmButtonColor: '#2563eb',
-      cancelButtonText: 'Cancel',
-      preConfirm: () => ({
-        message: document.getElementById('swal-msg')?.value || '',
-        whatsapp_number: document.getElementById('swal-wa')?.value || '',
-      }),
-    });
-
-    if (!isConfirmed) return;
-
+  const submitRequest = async ({ message, whatsapp_number }) => {
+    if (!requestModalMentor) return;
+    const mentor = requestModalMentor;
     setRequestingId(mentor.id);
     try {
-      await mentorService.requestMentorship(mentor.id, formValues?.message, formValues?.whatsapp_number);
+      await mentorService.requestMentorship(mentor.id, message, whatsapp_number);
+      // Refetch to get the new request id (needed for cancel)
+      await fetchMyApplications();
+      setRequestModalMentor(null);
       Swal.fire({
         icon: 'success',
-        title: 'Request Sent!',
-        text: `Your mentorship request has been sent to ${mentor.name}. They will get back to you soon.`,
-        timer: 3000,
+        title: 'Request Sent',
+        text: `Your request has been sent to ${mentor.name}.`,
+        timer: 2500,
         showConfirmButton: false,
       });
     } catch (err) {
-      const msg = err.response?.data?.message || 'Failed to send request.';
-      const alreadySent = err.response?.data?.status === 'already_requested';
-      Swal.fire({
-        icon: alreadySent ? 'info' : 'error',
-        title: alreadySent ? 'Already Requested' : 'Error',
-        text: msg,
-      });
+      const data = err.response?.data || {};
+      setRequestModalMentor(null);
+      if (data.status === 'already_requested') {
+        setMyApplicationMap(prev => ({
+          ...prev,
+          [mentor.id]: { status: 'pending', rejection_count: prev[mentor.id]?.rejection_count || 0, can_request_again: false },
+        }));
+        Swal.fire({ icon: 'info', title: 'Already Requested', text: data.message });
+      } else if (data.status === 'cooldown') {
+        setMyApplicationMap(prev => ({
+          ...prev,
+          [mentor.id]: { status: 'rejected', rejection_count: data.rejection_count || 3, can_request_again: false },
+        }));
+        Swal.fire({ icon: 'warning', title: 'Cooldown Active', text: data.message });
+      } else {
+        Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to send request.' });
+      }
     } finally {
       setRequestingId(null);
     }
@@ -121,9 +177,10 @@ const MentorshipPage = () => {
       const activeFaculties = Object.entries(selectedFaculty)
         .filter(([, v]) => v)
         .map(([k]) => k);
-      if (activeFaculties.length === 1) params.faculty = activeFaculties[0];
+      // Send first active faculty (backend only supports single-value filter)
+      if (activeFaculties.length > 0) params.faculty = activeFaculties[0];
 
-      if (selectedExpertise.length === 1) params.expertise = selectedExpertise[0];
+      if (selectedExpertise.length > 0) params.expertise = selectedExpertise[0];
 
       const minYears = { 'all': null, '5-10': 5, '10-15': 10, '15+': 15 }[experienceLevel];
       if (minYears) params.years_of_experience = minYears;
@@ -322,7 +379,16 @@ const MentorshipPage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {mentors.map(mentor => (
-                <MentorCard key={mentor.id} mentor={mentor} onRequest={handleRequestMentorship} requesting={requestingId === mentor.id} navigate={navigate} currentUserId={currentUserId} />
+                <MentorCard
+                  key={mentor.id}
+                  mentor={mentor}
+                  onRequest={openRequestModal}
+                  onCancel={handleCancelRequest}
+                  requesting={requestingId === mentor.id}
+                  navigate={navigate}
+                  currentUserId={currentUserId}
+                  application={myApplicationMap[mentor.id] || null}
+                />
               ))}
             </div>
           )}
@@ -345,11 +411,12 @@ const MentorshipPage = () => {
                   <button
                     key={p}
                     onClick={() => setPage(p)}
-                    className={`flex h-10 px-4 items-center justify-center rounded-lg font-bold text-sm ${
+                    className={`flex h-10 px-4 items-center justify-center rounded-lg font-semibold text-sm ${
                       p === pagination.current_page
-                        ? 'bg-blue-600 text-white'
+                        ? 'text-white'
                         : 'hover:bg-gray-50 text-gray-900'
                     }`}
+                    style={p === pagination.current_page ? { backgroundColor: '#002759' } : {}}
                   >
                     {p}
                   </button>
@@ -366,23 +433,150 @@ const MentorshipPage = () => {
           )}
         </div>
       </main>
+
+      {/* Request Mentorship Modal */}
+      <RequestMentorshipModal
+        mentor={requestModalMentor}
+        open={!!requestModalMentor}
+        loading={!!requestingId}
+        onClose={() => setRequestModalMentor(null)}
+        onSubmit={submitRequest}
+      />
     </Layout>
   );
 };
 
-const MentorCard = ({ mentor, onRequest, requesting, navigate, currentUserId }) => {
-  const profileImg = mentor.profile_image;
-  const isOwnCard = currentUserId && String(currentUserId) === String(mentor.alumni_student_id);
+// ─────────── Request Mentorship Modal ───────────
+const PHONE_REGEX = /^[+\d][\d\s\-()]{6,29}$/;
+
+const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) => {
+  const [message, setMessage] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (open) { setMessage(''); setWhatsapp(''); setError(''); }
+  }, [open]);
+
+  const handleSend = () => {
+    if (whatsapp && !PHONE_REGEX.test(whatsapp.trim())) {
+      setError('Please enter a valid phone number (digits, +, -, ( ) only).');
+      return;
+    }
+    setError('');
+    onSubmit({ message, whatsapp_number: whatsapp });
+  };
+
+  if (!open || !mentor) return null;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col gap-4 hover:shadow-xl transition-all relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
+      <div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4" style={{ backgroundColor: '#002759' }}>
+          <div className="flex items-center gap-3 min-w-0">
+            {mentor.profile_image ? (
+              <img src={mentor.profile_image} alt="" className="w-11 h-11 rounded-lg object-cover border-2 border-white/20 flex-shrink-0" />
+            ) : (
+              <div className="w-11 h-11 rounded-lg bg-white/10 flex items-center justify-center text-white font-bold flex-shrink-0">
+                {mentor.name?.charAt(0)?.toUpperCase()}
+              </div>
+            )}
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-wider text-white/70 font-semibold">Request Mentorship</p>
+              <h3 className="text-base font-bold text-white truncate">{mentor.name}</h3>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-white/80 hover:text-white p-1 flex-shrink-0">
+            <FiX size={20} />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="p-5 space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+              WhatsApp Number <span className="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <input
+              type="tel"
+              value={whatsapp}
+              onChange={(e) => { setWhatsapp(e.target.value); if (error) setError(''); }}
+              placeholder="+93 700 000 000"
+              className={`w-full px-3 py-2.5 bg-white border rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none focus:ring-1 transition ${
+                error ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-gray-200 focus:border-[#002759] focus:ring-[#002759]'
+              }`}
+            />
+            {error && <p className="text-[11px] text-red-600 mt-1">{error}</p>}
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+              Introduction Message
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={4}
+              maxLength={500}
+              placeholder="Tell the mentor what you'd like guidance on…"
+              className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#002759] focus:ring-1 focus:ring-[#002759] transition resize-none"
+            />
+            <p className="text-[10px] text-gray-400 mt-1 text-right">{message.length}/500</p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-2 px-5 py-3 bg-gray-50 border-t border-gray-100">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSend}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white rounded-lg transition disabled:opacity-60"
+            style={{ backgroundColor: '#002759' }}
+            onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = '#0a519b')}
+            onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = '#002759')}
+          >
+            {loading ? (
+              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>Send Request</>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MentorCard = ({ mentor, onRequest, onCancel, requesting, navigate, currentUserId, application }) => {
+  const applicationStatus = application?.status || null;
+  const canRequestAgain = application?.can_request_again || false;
+  const rejectionCount = application?.rejection_count || 0;
+  const applicationId = application?.id || null;
+  const profileImg = mentor.profile_image;
+  const isOwnCard = currentUserId && String(currentUserId) === String(mentor.alumni_student_id);
+  const avg = Number(mentor.reviews_avg || 0);
+  const reviewsCount = mentor.reviews_count || 0;
+
+  const goToDetail = () => navigate(`/mentorship/${mentor.id}`);
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col gap-4 hover:shadow-xl transition-all relative overflow-hidden group">
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-50" />
       <div className="relative z-10">
         <div className="flex gap-4">
           <div
             className="relative flex-shrink-0 cursor-pointer"
-            onClick={() => navigate(`/profile/${mentor.alumni_student_id}`)}
-            title="View profile"
+            onClick={goToDetail}
+            title="View mentor"
           >
             {profileImg ? (
               <img
@@ -399,12 +593,28 @@ const MentorCard = ({ mentor, onRequest, requesting, navigate, currentUserId }) 
           <div className="flex-1 min-w-0">
             <h3
               className="text-lg font-bold text-gray-900 truncate cursor-pointer hover:text-blue-600 transition-colors"
-              onClick={() => navigate(`/profile/${mentor.alumni_student_id}`)}
+              onClick={goToDetail}
             >
               {mentor.name}
             </h3>
             {mentor.title && <p className="text-blue-600 text-sm font-semibold truncate">{mentor.title}</p>}
             {mentor.company && <p className="text-gray-600 text-xs truncate">At {mentor.company}</p>}
+
+            {/* Rating */}
+            {reviewsCount > 0 ? (
+              <div className="flex items-center gap-1.5 mt-1.5">
+                <div className="flex items-center gap-0.5">
+                  {[1,2,3,4,5].map(n => (
+                    <FiStar key={n} size={11} className={n <= Math.round(avg) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} />
+                  ))}
+                </div>
+                <span className="text-xs font-bold text-gray-700">{avg.toFixed(1)}</span>
+                <span className="text-[10px] text-gray-500">({reviewsCount})</span>
+              </div>
+            ) : (
+              <p className="text-[11px] text-gray-400 mt-1.5">No reviews yet</p>
+            )}
+
             {mentor.expertise?.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-1">
                 {mentor.expertise.slice(0, 3).map(skill => (
@@ -442,22 +652,54 @@ const MentorCard = ({ mentor, onRequest, requesting, navigate, currentUserId }) 
           )}
         </div>
 
-        {isOwnCard ? (
+        <div className="flex gap-2 mt-2">
           <button
-            onClick={() => navigate('/profile')}
-            className="w-full bg-gray-100 text-gray-700 text-sm font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors mt-2 border border-gray-200"
+            onClick={goToDetail}
+            className="flex-1 flex items-center justify-center gap-1.5 bg-gray-100 text-gray-900 text-sm font-semibold py-2.5 rounded-lg hover:bg-gray-200 transition-colors border border-gray-200"
           >
-            This is your mentor profile — Edit
+            <FiEye size={14} /> View
           </button>
-        ) : (
-          <button
-            onClick={() => onRequest(mentor)}
-            disabled={requesting}
-            className="w-full bg-blue-600 text-white text-sm font-bold py-3 rounded-xl hover:bg-blue-700 transition-colors shadow-lg mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {requesting ? 'Sending…' : 'Request Mentorship'}
-          </button>
-        )}
+          {isOwnCard ? (
+            <button
+              onClick={() => navigate('/profile')}
+              className="flex-1 bg-gray-100 text-gray-700 text-sm font-semibold py-2.5 rounded-lg hover:bg-gray-200 transition-colors border border-gray-200"
+            >
+              Edit
+            </button>
+          ) : applicationStatus === 'accepted' ? (
+            <button disabled className="flex-1 text-sm font-semibold py-2.5 rounded-lg border bg-green-50 text-green-700 border-green-200">
+              ✓ Accepted
+            </button>
+          ) : applicationStatus === 'pending' ? (
+            <div className="flex-1 flex gap-1">
+              <button disabled className="flex-1 text-sm font-semibold py-2.5 rounded-lg border bg-yellow-50 text-yellow-700 border-yellow-200">
+                ⏱ Pending
+              </button>
+              <button
+                onClick={() => applicationId && onCancel && onCancel(applicationId, mentor)}
+                title="Cancel request"
+                className="px-3 py-2.5 rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition"
+              >
+                <FiX size={14} />
+              </button>
+            </div>
+          ) : applicationStatus === 'rejected' && !canRequestAgain ? (
+            <button disabled className="flex-1 text-sm font-semibold py-2.5 rounded-lg border bg-red-50 text-red-700 border-red-200" title="Cooldown: try again later">
+              ✗ Rejected ({rejectionCount}/3)
+            </button>
+          ) : (
+            <button
+              onClick={() => onRequest(mentor)}
+              disabled={requesting}
+              className="flex-1 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-60"
+              style={{ backgroundColor: '#002759' }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0a519b'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#002759'}
+            >
+              {requesting ? 'Sending…' : (applicationStatus === 'rejected' ? `Request Again (${rejectionCount}/3)` : 'Request')}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
