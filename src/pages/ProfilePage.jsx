@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink, FiBell, FiDownload } from 'react-icons/fi';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink, FiBell, FiDownload, FiCheckCircle, FiXCircle } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
 import Swal from 'sweetalert2';
 import alumniService from '../services/alumniService';
@@ -290,6 +290,8 @@ const ProfilePage = () => {
 
   const [mentorRequests, setMentorRequests] = useState([]);
   const [loadingMentorRequests, setLoadingMentorRequests] = useState(false);
+  const [myMentees, setMyMentees] = useState([]);
+  const [totalMentees, setTotalMentees] = useState(0);
   const [profileNotifications, setProfileNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
 
@@ -306,6 +308,11 @@ const ProfilePage = () => {
           mentorService.getRequests().then(r => {
             setMentorRequests(r.data || []);
           }).catch(() => {}).finally(() => setLoadingMentorRequests(false));
+          // Load preview of mentees (limit 3)
+          mentorService.getMyMentees(3).then(r => {
+            setMyMentees(r.data?.mentees || []);
+            setTotalMentees(r.data?.total || 0);
+          }).catch(() => {});
         }
       }).catch(() => {});
       // Load own mentor applications (requests sent to others)
@@ -1640,39 +1647,55 @@ const ProfilePage = () => {
                 </div>
               )}
 
-              {/* Status Notifications - only for profile owner */}
-              {isOwner && profileNotifications.length > 0 && (
+              {/* My Mentees - only shown to mentors (preview, 3 records + see more) */}
+              {isOwner && myMentor && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="p-5">
-                    <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-4">
-                      <FiBell className="text-blue-600" />
-                      Account Notifications
-                    </h3>
-                    <div className="space-y-3">
-                      {profileNotifications.map(n => (
-                        <div
-                          key={n.id}
-                          className={`p-3 rounded-lg border ${
-                            n.type === 'event_registration' ? 'bg-blue-50 border-blue-200' :
-                            n.title?.includes('Approved') ? 'bg-green-50 border-green-200' :
-                            n.title?.includes('Rejected') ? 'bg-red-50 border-red-200' :
-                            'bg-yellow-50 border-yellow-200'
-                          }`}
-                        >
-                          <p className={`text-sm font-semibold ${
-                            n.type === 'event_registration' ? 'text-blue-800' :
-                            n.title?.includes('Approved') ? 'text-green-800' :
-                            n.title?.includes('Rejected') ? 'text-red-800' :
-                            'text-yellow-800'
-                          }`}>{n.title}</p>
-                          <p className="text-xs text-gray-600 mt-1">{n.message}</p>
-                          {n.reason && (
-                            <p className="text-xs text-red-600 mt-1 font-medium italic">Reason: {n.reason}</p>
-                          )}
-                          <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
-                        </div>
-                      ))}
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <FiUsers className="text-green-600" />
+                        My Mentees
+                      </h3>
+                      {totalMentees > 0 && (
+                        <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                          {totalMentees}
+                        </span>
+                      )}
                     </div>
+                    {myMentees.length === 0 ? (
+                      <div className="text-center py-6">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <FiUsers className="text-gray-400 text-xl" />
+                        </div>
+                        <p className="text-gray-500 text-sm">No mentees yet</p>
+                        <p className="text-[11px] text-gray-400 mt-0.5">Accept mentorship requests to start mentoring</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {myMentees.map(m => (
+                          <Link key={m.id} to={`/profile/${m.requester_id}`} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition group">
+                            {m.profile_image ? (
+                              <img src={m.profile_image} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-white shadow" />
+                            ) : (
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-white shadow">
+                                {m.name?.charAt(0) || '?'}
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="font-semibold text-sm text-gray-900 truncate group-hover:text-blue-600">{m.name}</p>
+                              {(m.faculty || m.department) && (
+                                <p className="text-[11px] text-gray-500 truncate">{m.faculty}{m.department ? ` — ${m.department}` : ''}</p>
+                              )}
+                            </div>
+                          </Link>
+                        ))}
+                        {totalMentees > 3 && (
+                          <Link to="/mentorship/my/mentees" className="block text-center mt-3 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold text-xs rounded-lg transition">
+                            See all {totalMentees} mentees →
+                          </Link>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -1686,11 +1709,14 @@ const ProfilePage = () => {
                         <FiUsers className="text-blue-600" />
                         Mentorship Requests
                       </h3>
-                      {mentorRequests.length > 0 && (
-                        <span className="bg-blue-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                          {mentorRequests.length}
-                        </span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {mentorRequests.filter(r => r.status === 'pending').length > 0 && (
+                          <span className="bg-yellow-100 text-yellow-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                            {mentorRequests.filter(r => r.status === 'pending').length} pending
+                          </span>
+                        )}
+                        <Link to="/mentorship/my/requests" className="text-blue-600 text-xs font-semibold hover:underline">View all →</Link>
+                      </div>
                     </div>
                     <div className="space-y-3">
                       {loadingMentorRequests ? (
@@ -1752,6 +1778,80 @@ const ProfilePage = () => {
                                   {new Date(req.created_at).toLocaleDateString()}
                                 </span>
                               </div>
+                              {/* Accept/Reject buttons for pending requests */}
+                              {req.status === 'pending' && (
+                                <div className="flex gap-1.5 mt-2">
+                                  <button
+                                    onClick={async (e) => {
+                                      e.preventDefault();
+                                      // Prompt for mentorship end date
+                                      const today = new Date();
+                                      const defaultEnd = new Date(today);
+                                      defaultEnd.setMonth(defaultEnd.getMonth() + 3);
+                                      const defaultEndStr = defaultEnd.toISOString().split('T')[0];
+                                      const minEndStr = new Date(today.getTime() + 86400000).toISOString().split('T')[0];
+                                      const { value: endDate, isConfirmed } = await Swal.fire({
+                                        title: 'Accept Mentorship',
+                                        html: `<p style="color:#4b5563;font-size:13px;margin-bottom:10px">Set the mentorship end date. After this date, <strong>${req.name}</strong> will need to request again.</p>`,
+                                        input: 'date',
+                                        inputValue: defaultEndStr,
+                                        inputAttributes: { min: minEndStr },
+                                        showCancelButton: true,
+                                        confirmButtonText: 'Accept',
+                                        confirmButtonColor: '#002759',
+                                        cancelButtonText: 'Cancel',
+                                        inputValidator: (value) => {
+                                          if (!value) return 'Please pick an end date';
+                                          if (value <= today.toISOString().split('T')[0]) return 'End date must be in the future';
+                                        },
+                                      });
+                                      if (!isConfirmed) return;
+                                      try {
+                                        await mentorService.updateRequestStatus(req.id, 'accepted', endDate);
+                                        const r = await mentorService.getRequests();
+                                        setMentorRequests(r.data || []);
+                                        const m = await mentorService.getMyMentees(3);
+                                        setMyMentees(m.data?.mentees || []);
+                                        setTotalMentees(m.data?.total || 0);
+                                        Swal.fire({ icon: 'success', title: 'Accepted', text: `Mentorship active until ${endDate}`, timer: 2000, showConfirmButton: false });
+                                      } catch (err) {
+                                        Swal.fire({ icon: 'error', title: 'Error', text: err.response?.data?.message || 'Failed' });
+                                      }
+                                    }}
+                                    className="flex-1 flex items-center justify-center gap-1 px-2 py-1 bg-green-600 text-white text-[10px] font-bold rounded hover:bg-green-700 transition"
+                                  >
+                                    <FiCheckCircle size={10} /> Accept
+                                  </button>
+                                  <button
+                                    onClick={async (e) => {
+                                      e.preventDefault();
+                                      try {
+                                        await mentorService.updateRequestStatus(req.id, 'rejected');
+                                        const r = await mentorService.getRequests();
+                                        setMentorRequests(r.data || []);
+                                        Swal.fire({ icon: 'success', title: 'Rejected', timer: 1500, showConfirmButton: false });
+                                      } catch (err) {
+                                        Swal.fire({ icon: 'error', title: 'Error', text: err.response?.data?.message || 'Failed' });
+                                      }
+                                    }}
+                                    className="flex-1 flex items-center justify-center gap-1 px-2 py-1 bg-red-600 text-white text-[10px] font-bold rounded hover:bg-red-700 transition"
+                                  >
+                                    <FiXCircle size={10} /> Reject
+                                  </button>
+                                </div>
+                              )}
+                              {/* WhatsApp contact after acceptance */}
+                              {req.status === 'accepted' && req.whatsapp_number && (
+                                <a
+                                  href={`https://wa.me/${req.whatsapp_number.replace(/[^0-9]/g, '')}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="mt-2 flex items-center justify-center gap-1 px-2 py-1 bg-green-500 text-white text-[10px] font-bold rounded hover:bg-green-600 transition"
+                                >
+                                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                                  Contact on WhatsApp
+                                </a>
+                              )}
                             </div>
                           </div>
                         ))
@@ -1770,11 +1870,14 @@ const ProfilePage = () => {
                         <FiTrendingUp className="text-blue-600" />
                         My Mentor Applications
                       </h3>
-                      {myApplications.length > 0 && (
-                        <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">
-                          {myApplications.length}
-                        </span>
-                      )}
+                      <div className="flex items-center gap-2">
+                        {myApplications.length > 0 && (
+                          <span className="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                            {myApplications.length}
+                          </span>
+                        )}
+                        <Link to="/mentorship/my/applications" className="text-blue-600 text-xs font-semibold hover:underline">View all →</Link>
+                      </div>
                     </div>
                     <div className="space-y-3">
                       {loadingApplications ? (
