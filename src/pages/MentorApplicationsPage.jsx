@@ -71,7 +71,7 @@ const MentorApplicationsPage = () => {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage:
-              'linear-gradient(rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.85) 100%), url("https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&q=80")',
+              'linear-gradient(rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.7) 100%), url("https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1600&q=80")',
           }}
         />
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pt-16">
