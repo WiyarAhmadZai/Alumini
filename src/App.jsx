@@ -14,6 +14,7 @@ import EventDetailPage from './pages/EventDetailPage';
 import RegisteredEventsPage from './pages/RegisteredEventsPage';
 import VerifyCardPage from './pages/VerifyCardPage';
 import GivingPage from './pages/LegalPage';
+import CompletedDonorsPage from './pages/CompletedDonorsPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import ApplicationsPage from './pages/ApplicationsPage';
@@ -44,6 +45,7 @@ function App() {
           <Route path="/events/:id" element={<EventDetailPage />} />
           <Route path="/verify-card/:eventId/:userId" element={<VerifyCardPage />} />
           <Route path="/legal" element={<GivingPage />} />
+          <Route path="/donors" element={<CompletedDonorsPage />} />
           <Route path="/privacy" element={<GivingPage />} />
           <Route path="/terms" element={<GivingPage />} />
           <Route path="/guidelines" element={<GivingPage />} />
