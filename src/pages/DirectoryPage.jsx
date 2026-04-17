@@ -7,11 +7,12 @@ import alumniService from '../services/alumniService';
 const DirectoryPage = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedFilters, setSelectedFilters] = useState({ faculty: [], graduationYear: '' });
+  const [selectedFilters, setSelectedFilters] = useState({ faculty: '', graduationYear: '' });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [alumni, setAlumni] = useState([]);
   const [availableYears, setAvailableYears] = useState([]);
+  const [faculties, setFaculties] = useState([]);
 
   useEffect(() => {
     const fetchAlumni = async () => {
@@ -26,6 +27,7 @@ const DirectoryPage = () => {
         setLoading(false);
       }
     };
+
     const fetchGraduationYears = async () => {
       try {
         const response = await alumniService.getGraduationYears();
@@ -36,23 +38,45 @@ const DirectoryPage = () => {
         setAvailableYears(Array.from({ length: 51 }, (_, i) => currentYear - i));
       }
     };
+
+    const fetchFaculties = async () => {
+      try {
+        const response = await alumniService.getFaculties();
+        const facultyData = response?.data || {};
+        // Dropdown returns { id: name } object — convert to array
+        if (Array.isArray(facultyData)) {
+          setFaculties(facultyData);
+        } else if (typeof facultyData === 'object') {
+          const arr = Object.entries(facultyData).map(([id, name]) => ({ id, name }));
+          setFaculties(arr);
+        } else {
+          setFaculties([]);
+        }
+      } catch {
+        setFaculties([]);
+      }
+    };
+
     fetchAlumni();
     fetchGraduationYears();
+    fetchFaculties();
   }, []);
 
   const filteredAlumni = Array.isArray(alumni) ? alumni.filter(a => {
     const s = searchTerm.toLowerCase();
     const matchesSearch = !searchTerm || a.name?.toLowerCase().includes(s) || a.current_job_title?.toLowerCase().includes(s) || a.current_company?.toLowerCase().includes(s) || a.bio?.toLowerCase().includes(s);
-    const matchesFaculty = selectedFilters.faculty.length === 0 || selectedFilters.faculty.includes(a.faculty_name);
+    const matchesFaculty = !selectedFilters.faculty || a.faculty_name === selectedFilters.faculty;
     const matchesYear = !selectedFilters.graduationYear || String(a.graduation_year) === String(selectedFilters.graduationYear);
     return matchesSearch && matchesFaculty && matchesYear;
   }) : [];
 
-  const faculties = ['Engineering', 'Computer Science', 'Geomatics', 'Electromechanics', 'Architecture', 'Business Administration', 'Law', 'Pharmacy'];
-  const handleFacultyChange = (f) => setSelectedFilters(p => ({ ...p, faculty: f === '' ? [] : [f] }));
+  const handleFacultyChange = (f) => setSelectedFilters(p => ({ ...p, faculty: f }));
   const handleYearChange = (y) => setSelectedFilters(p => ({ ...p, graduationYear: y }));
-  const resetFilters = () => { setSearchTerm(''); setSelectedFilters({ faculty: [], graduationYear: '' }); };
-  const hasActiveFilters = searchTerm || selectedFilters.faculty.length > 0 || selectedFilters.graduationYear;
+  const resetFilters = () => { setSearchTerm(''); setSelectedFilters({ faculty: '', graduationYear: '' }); };
+  const hasActiveFilters = searchTerm || selectedFilters.faculty || selectedFilters.graduationYear;
+
+  // Find the display name for the selected faculty
+  const selectedFacultyName = selectedFilters.faculty || '';
 
   // ─── Hero ───
   const HeroSection = ({ isLoading }) => (
@@ -80,7 +104,7 @@ const DirectoryPage = () => {
                 </div>
                 <div className="w-px bg-white/12" />
                 <div className="px-6 py-3 text-center">
-                  <div className="text-2xl font-bold">{faculties.length}</div>
+                  <div className="text-2xl font-bold">{faculties.length || 8}</div>
                   <div className="text-[10px] text-white/40 uppercase tracking-widest mt-0.5">Faculties</div>
                 </div>
                 <div className="w-px bg-white/12" />
@@ -96,7 +120,7 @@ const DirectoryPage = () => {
     </section>
   );
 
-  // ─── Filter (white card, half-overlap) ───
+  // ─── Filter (white card, half-overlap hero) ───
   const FilterBar = () => (
     <section className="relative z-20 -mt-7 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg border border-gray-100 p-3 md:p-4">
@@ -106,9 +130,9 @@ const DirectoryPage = () => {
             <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search by name, company, or role..." className="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-gray-900 placeholder-gray-400 text-sm" />
             {searchTerm && <button onClick={() => setSearchTerm('')} className="text-gray-400 hover:text-gray-600 ml-2"><FiX className="w-3.5 h-3.5" /></button>}
           </div>
-          <select value={selectedFilters.faculty[0] || ''} onChange={(e) => handleFacultyChange(e.target.value)} className="px-3 py-2 bg-gray-50 border-none rounded-lg text-sm text-gray-700 focus:ring-2 ring-gray-900/10 cursor-pointer w-full md:w-auto min-w-[140px]">
+          <select value={selectedFilters.faculty} onChange={(e) => handleFacultyChange(e.target.value)} className="px-3 py-2 bg-gray-50 border-none rounded-lg text-sm text-gray-700 focus:ring-2 ring-gray-900/10 cursor-pointer w-full md:w-auto min-w-[180px]">
             <option value="">All Faculties</option>
-            {faculties.map(f => <option key={f} value={f}>{f}</option>)}
+            {faculties.map(f => <option key={f.id || f.code} value={f.name}>{f.name}</option>)}
           </select>
           <select value={selectedFilters.graduationYear} onChange={(e) => handleYearChange(e.target.value)} className="px-3 py-2 bg-gray-50 border-none rounded-lg text-sm text-gray-700 focus:ring-2 ring-gray-900/10 cursor-pointer w-full md:w-auto min-w-[110px]">
             <option value="">All Years</option>
@@ -126,14 +150,22 @@ const DirectoryPage = () => {
           </span>
           {hasActiveFilters && (
             <div className="flex flex-wrap gap-1.5 ml-auto">
-              {selectedFilters.faculty.map(f => (
-                <span key={f} className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full" style={{ background: '#eef1fd', color: '#194ce6' }}>
-                  {f} <button onClick={() => handleFacultyChange('')} className="opacity-60 hover:opacity-100"><FiX className="w-2.5 h-2.5" /></button>
+              {selectedFilters.faculty && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full" style={{ background: '#eef1fd', color: '#194ce6' }}>
+                  <FiBookOpen className="w-2.5 h-2.5" /> {selectedFilters.faculty}
+                  <button onClick={() => handleFacultyChange('')} className="opacity-60 hover:opacity-100"><FiX className="w-2.5 h-2.5" /></button>
                 </span>
-              ))}
+              )}
               {selectedFilters.graduationYear && (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full" style={{ background: '#eef1fd', color: '#194ce6' }}>
-                  {selectedFilters.graduationYear} <button onClick={() => handleYearChange('')} className="opacity-60 hover:opacity-100"><FiX className="w-2.5 h-2.5" /></button>
+                  <FiAward className="w-2.5 h-2.5" /> {selectedFilters.graduationYear}
+                  <button onClick={() => handleYearChange('')} className="opacity-60 hover:opacity-100"><FiX className="w-2.5 h-2.5" /></button>
+                </span>
+              )}
+              {searchTerm && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full" style={{ background: '#eef1fd', color: '#194ce6' }}>
+                  "{searchTerm}"
+                  <button onClick={() => setSearchTerm('')} className="opacity-60 hover:opacity-100"><FiX className="w-2.5 h-2.5" /></button>
                 </span>
               )}
             </div>
@@ -146,11 +178,11 @@ const DirectoryPage = () => {
   // ─── Skeleton ───
   const SkeletonCard = () => (
     <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
-      <div className="h-32 bg-gray-200 animate-pulse" />
-      <div className="p-3 space-y-2">
-        <div className="h-3.5 w-20 bg-gray-200 rounded animate-pulse" />
-        <div className="h-3 w-28 bg-gray-100 rounded animate-pulse" />
-        <div className="h-3 w-full bg-gray-100 rounded animate-pulse" />
+      <div className="h-28 bg-gray-200 animate-pulse" />
+      <div className="p-2.5 space-y-1.5">
+        <div className="h-3 w-16 bg-gray-200 rounded animate-pulse" />
+        <div className="h-2.5 w-24 bg-gray-100 rounded animate-pulse" />
+        <div className="h-2.5 w-full bg-gray-100 rounded animate-pulse" />
       </div>
     </div>
   );
@@ -163,14 +195,14 @@ const DirectoryPage = () => {
           <div className="max-w-6xl mx-auto bg-white rounded-2xl shadow-lg border border-gray-100 p-3 md:p-4">
             <div className="flex flex-col md:flex-row gap-2">
               <div className="flex-grow h-9 bg-gray-100 rounded-lg animate-pulse" />
-              <div className="h-9 w-32 bg-gray-100 rounded-lg animate-pulse" />
+              <div className="h-9 w-40 bg-gray-100 rounded-lg animate-pulse" />
               <div className="h-9 w-24 bg-gray-100 rounded-lg animate-pulse" />
               <div className="h-9 w-24 bg-gray-200 rounded-lg animate-pulse" />
             </div>
           </div>
         </section>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {[...Array(12)].map((_, i) => <SkeletonCard key={i} />)}
           </div>
         </div>
@@ -212,15 +244,15 @@ const DirectoryPage = () => {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {filteredAlumni.map((alumnus) => (
               <div key={alumnus.id} className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-200 cursor-pointer" onClick={() => navigate(`/profile/${alumnus.id}`)}>
-                {/* Image — fixed short height */}
-                <div className="relative h-36 bg-gray-100">
+                {/* Image — compact fixed height */}
+                <div className="relative h-28 bg-gray-100">
                   {alumnus.profile_image || alumnus.student_photo ? (
                     <img src={alumnus.profile_image || alumnus.student_photo} alt={alumnus.name} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white text-3xl font-bold" style={{ background: 'linear-gradient(135deg, #0f2d8a, #194ce6)' }}>
+                    <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold" style={{ background: 'linear-gradient(135deg, #0f2d8a, #194ce6)' }}>
                       {alumnus.name?.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -248,8 +280,8 @@ const DirectoryPage = () => {
                     </p>
                   )}
                   {alumnus.faculty_name && (
-                    <p className="text-[9px] text-gray-300 mt-1 flex items-center gap-0.5">
-                      <FiBookOpen className="w-2 h-2" />{alumnus.faculty_name}
+                    <p className="text-[9px] text-gray-300 mt-1 flex items-center gap-0.5 line-clamp-1">
+                      <FiBookOpen className="w-2 h-2 flex-shrink-0" />{alumnus.faculty_name}
                     </p>
                   )}
                   <div className="mt-2">
@@ -262,7 +294,7 @@ const DirectoryPage = () => {
             ))}
 
             {/* Join */}
-            <div className="flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors group h-36" onClick={() => navigate('/register')} style={{ minHeight: 220 }}>
+            <div className="flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors group" style={{ minHeight: 200 }} onClick={() => navigate('/register')}>
               <div className="text-center">
                 <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-1.5">
                   <FiPlus className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
