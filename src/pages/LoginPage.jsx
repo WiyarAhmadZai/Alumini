@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Layout from '../components/Layout';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiArrowRight, FiCheckCircle, FiCalendar } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import { FiMail, FiLock, FiEye, FiEyeOff, FiCheckCircle } from 'react-icons/fi';
 import authService from '../services/authService';
 
 const LoginPage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -15,11 +13,6 @@ const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    fullName: '',
-    confirmPassword: '',
-    graduationYear: '',
-    department: '',
-    universityId: ''
   });
 
   const handleInputChange = (e) => {
@@ -29,35 +22,18 @@ const LoginPage = () => {
     });
   };
 
-  useEffect(() => {
-    // Set mode based on URL
-    if (location.pathname === '/signup') {
-      setIsLogin(false);
-    } else {
-      setIsLogin(true);
-    }
-  }, [location.pathname]);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!isLogin) {
-      // Handle signup - redirect to verified registration
-      handleVerifiedRegistration();
-      return;
-    }
-    
-    // Handle login
     setLoading(true);
     setError('');
-    
+
     try {
       const response = await authService.login({
         email: formData.email,
         password: formData.password,
         remember: rememberMe
       });
-      
+
       if (response.status === 'success') {
         navigate('/profile');
       } else {
@@ -71,24 +47,20 @@ const LoginPage = () => {
     }
   };
 
-  const handleVerifiedRegistration = () => {
-    navigate('/register');
-  };
-
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
         <section className="relative min-h-[600px] overflow-hidden">
           <div className="absolute inset-0">
-            <img 
+            <img
               src="/kpu2.jpg"
               alt="KPU Campus"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-black/50"></div>
           </div>
-          
+
           <div className="relative max-w-7xl mx-auto px-4 lg:px-8 py-20 lg:py-32">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               {/* Left Content */}
@@ -113,15 +85,12 @@ const LoginPage = () => {
                   </div>
                 </div>
                 <h1 className="text-4xl lg:text-5xl font-bold leading-tight mb-6">
-                  {isLogin ? 'Welcome Back to KPU Alumni' : 'Join KPU Alumni Network'}
+                  Welcome Back to KPU Alumni
                 </h1>
                 <p className="text-xl text-white/90 leading-relaxed mb-8">
-                  {isLogin 
-                    ? 'Connect with fellow graduates, access exclusive resources, and stay updated with alumni events and opportunities.'
-                    : 'Become part of our growing community of successful graduates and build lasting professional connections.'
-                  }
+                  Connect with fellow graduates, access exclusive resources, and stay updated with alumni events and opportunities.
                 </p>
-                
+
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
                     <FiCheckCircle className="text-yellow-400 text-xl" />
@@ -146,10 +115,10 @@ const LoginPage = () => {
               <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-2xl p-8 lg:p-10">
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                    {isLogin ? 'Sign In' : 'Create Account'}
+                    Sign In
                   </h2>
                   <p className="text-gray-700">
-                    {isLogin ? 'Enter your credentials to access your account' : 'Fill in your details to get started'}
+                    Enter your credentials to access your account
                   </p>
                 </div>
 
@@ -168,92 +137,6 @@ const LoginPage = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {!isLogin && (
-                    <>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          Full Name
-                        </label>
-                        <div className="relative">
-                          <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                          <input
-                            type="text"
-                            name="fullName"
-                            value={formData.fullName}
-                            onChange={handleInputChange}
-                            placeholder="Enter your full name"
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black placeholder-gray-700 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-900 mb-2">
-                            Graduation Year
-                          </label>
-                          <div className="relative">
-                            <FiCalendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                            <input
-                              type="text"
-                              name="graduationYear"
-                              value={formData.graduationYear || ''}
-                              onChange={handleInputChange}
-                              placeholder="Graduation Year"
-                              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black placeholder-gray-700 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
-                              required
-                            />
-                          </div>
-                        </div>
-
-                        <div>
-                          <label className="block text-sm font-medium text-gray-900 mb-2">
-                            Faculty
-                          </label>
-                          <div className="relative">
-                            <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                            <select
-                              name="department"
-                              value={formData.department || ''}
-                              onChange={handleInputChange}
-                              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
-                              required
-                            >
-                              <option value="">Select faculty</option>
-                              <option value="civil-engineering">Faculty of Civil Engineering</option>
-                              <option value="mechanical-engineering">Faculty of Mechanical Engineering</option>
-                              <option value="electrical-engineering">Faculty of Electrical Engineering</option>
-                              <option value="computer-science">Faculty of Computer Science</option>
-                              <option value="architecture">Faculty of Architecture and Urban Planning</option>
-                              <option value="geology-mining">Faculty of Geology and Mining</option>
-                              <option value="chemical-engineering">Faculty of Chemical Engineering</option>
-                              <option value="surveying-mapping">Faculty of Surveying and Mapping</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-900 mb-2">
-                          University ID
-                        </label>
-                        <div className="relative">
-                          <FiUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                          <input
-                            type="text"
-                            name="universityId"
-                            value={formData.universityId || ''}
-                            onChange={handleInputChange}
-                            placeholder="Enter your university ID"
-                            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black placeholder-gray-700 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
-                            required
-                          />
-                        </div>
-                      </div>
-                    </>
-                  )}
-
                   <div>
                     <label className="block text-sm font-medium text-gray-900 mb-2">
                       Email Address
@@ -297,46 +180,24 @@ const LoginPage = () => {
                     </div>
                   </div>
 
-                  {!isLogin && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-900 mb-2">
-                        Confirm Password
-                      </label>
-                      <div className="relative">
-                        <FiLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                        <input
-                          type="password"
-                          name="confirmPassword"
-                          value={formData.confirmPassword}
-                          onChange={handleInputChange}
-                          placeholder="Confirm your password"
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white/50 text-black placeholder-gray-700 focus:ring-2 focus:ring-blue-600 focus:border-blue-600 focus:bg-white"
-                          required
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  {isLogin && (
-                    <div className="flex items-center justify-between">
-                      <label className="flex items-center">
-                        <input 
-                          type="checkbox" 
-                          checked={rememberMe}
-                          onChange={(e) => setRememberMe(e.target.checked)}
-                          className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
-                        />
-                        <span className="ml-2 text-sm text-gray-700">Remember me</span>
-                      </label>
-                      <button
-                        type="button"
-                        onClick={(e) => e.preventDefault()}
-                        className="text-sm text-blue-600 hover:text-blue-700"
-                      >
-                        Forgot password?
-                      </button>
-                    </div>
-                  )}
+                  <div className="flex items-center justify-between">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Remember me</span>
+                    </label>
+                    <button
+                      type="button"
+                      onClick={(e) => e.preventDefault()}
+                      className="text-sm text-blue-600 hover:text-blue-700"
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
 
                   <button
                     type="submit"
@@ -349,30 +210,28 @@ const LoginPage = () => {
                           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        {isLogin ? 'Signing In...' : 'Creating Account...'}
+                        Signing In...
                       </span>
                     ) : (
-                      isLogin ? 'Sign In' : 'Create Account'
+                      'Sign In'
                     )}
                   </button>
                 </form>
 
                 <div className="mt-8 text-center">
                   <p className="text-gray-700">
-                    {isLogin ? "Don't have an account?" : "Already have an account?"}
+                    Don't have an account?
                     <button
                       type="button"
-                      onClick={() => isLogin ? handleVerifiedRegistration() : setIsLogin(!isLogin)}
+                      onClick={() => navigate('/register')}
                       className="text-blue-600 hover:text-blue-700 font-medium ml-1"
                     >
-                      {isLogin ? 'Create Verified Account' : 'Sign In'}
+                      Create Verified Account
                     </button>
                   </p>
-                  {isLogin && (
-                    <p className="text-gray-600 text-sm mt-2">
-                      Get verified as a KPU graduate with MIS integration
-                    </p>
-                  )}
+                  <p className="text-gray-600 text-sm mt-2">
+                    Get verified as a KPU graduate with MIS integration
+                  </p>
                 </div>
               </div>
             </div>
