@@ -374,6 +374,19 @@ const alumniService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  /**
+   * Get all faculties from database
+   * @returns {Promise} API response
+   */
+  getFaculties: async () => {
+    try {
+      const response = await api.get('/faculties/dropdown');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
