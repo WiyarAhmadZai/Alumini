@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiMail, FiCalendar, FiArrowLeft, FiSend, FiUser, FiMessageSquare, FiX, FiClock, FiCheckCircle, FiAlertCircle, FiPaperclip, FiSmile, FiThumbsUp } from 'react-icons/fi';
+import { FiMail, FiCalendar, FiArrowLeft, FiSend, FiUser, FiMessageSquare, FiX, FiClock, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import messageService from '../services/messageService';
 import { AuthContext } from '../contexts/AuthContext';
@@ -24,27 +24,44 @@ const MessageConversationPage = () => {
   const fetchMessageDetails = async () => {
     try {
       setLoading(true);
-      const response = await messageService.getUserMessages(1, 100);
-      const foundMessage = response.data.messages.find(msg => msg.id === parseInt(id));
-      
+      // Try to get the message with replies from the show endpoint
+      let foundMessage = null;
+      let fetchedReplies = [];
+
+      try {
+        const response = await messageService.getMessage(id);
+        foundMessage = response.data.message;
+        fetchedReplies = foundMessage.top_level_replies || [];
+      } catch {
+        // Fallback: search from list
+        const response = await messageService.getUserMessages(1, 100);
+        foundMessage = response.data.messages.find(msg => msg.id === parseInt(id));
+      }
+
       if (foundMessage) {
         setMessage(foundMessage);
-        
-        // Only show replies if there's an actual university response
-        if (foundMessage.response) {
+
+        // If we got real replies from DB, use them
+        if (fetchedReplies.length > 0) {
+          setReplies(fetchedReplies);
+        } else if (foundMessage.response && (!foundMessage.replies || foundMessage.replies.length === 0)) {
+          // Legacy: show old response field as a reply if no real replies exist
           setReplies([
             {
-              id: 1,
-              message_id: foundMessage.id,
-              sender: 'university',
+              id: 'legacy-response',
+              alumni_message_id: foundMessage.id,
+              sender_type: 'admin',
+              sender_id: null,
               content: foundMessage.response,
               created_at: foundMessage.responded_at || foundMessage.created_at,
               parent_id: null,
-              replies: []
+              all_children: [],
+              sender_name: 'University',
+              sender_image: null,
             }
           ]);
         } else {
-          setReplies([]);
+          setReplies(foundMessage.replies || []);
         }
       } else {
         throw new Error('Message not found');
@@ -76,46 +93,14 @@ const MessageConversationPage = () => {
 
     try {
       setSendingReply(true);
-      
-      // In a real implementation, this would save to database with parent_id
-      const newReplyData = {
-        id: Date.now(),
-        message_id: message.id,
-        sender: 'user',
-        content: newReply,
-        created_at: new Date().toISOString(),
-        parent_id: replyingTo?.id || null,
-        replies: []
-      };
-
-      // Add reply to the appropriate parent
-      if (replyingTo) {
-        // Add as nested reply
-        const addToParent = (replies, targetId, newReply) => {
-          return replies.map(reply => {
-            if (reply.id === targetId) {
-              return {
-                ...reply,
-                replies: [...reply.replies, newReply]
-              };
-            } else if (reply.replies && reply.replies.length > 0) {
-              return {
-                ...reply,
-                replies: addToParent(reply.replies, targetId, newReply)
-              };
-            }
-            return reply;
-          });
-        };
-        
-        setReplies(prevReplies => addToParent(prevReplies, replyingTo.id, newReplyData));
-      } else {
-        // Add as top-level reply
-        setReplies([...replies, newReplyData]);
-      }
+      const parentId = replyingTo?.id && replyingTo.id !== 'legacy-response' ? replyingTo.id : null;
+      await messageService.replyToMessage(message.id, newReply, parentId);
 
       setNewReply('');
       setReplyingTo(null);
+
+      // Refresh replies from DB
+      await fetchMessageDetails();
 
       Swal.fire({
         icon: 'success',
@@ -138,8 +123,13 @@ const MessageConversationPage = () => {
   };
 
   const handleReplyTo = (reply) => {
-    setReplyingTo(reply);
-    setNewReply('');
+    if (replyingTo?.id === reply.id) {
+      setReplyingTo(null);
+      setNewReply('');
+    } else {
+      setReplyingTo(reply);
+      setNewReply('');
+    }
   };
 
   const cancelReply = () => {
@@ -159,116 +149,96 @@ const MessageConversationPage = () => {
   // Nested reply component
   const ReplyItem = ({ reply, depth = 0, onReplyTo, replyingTo }) => {
     const isReplying = replyingTo?.id === reply.id;
-    
-    // University profile image - using a simple SVG icon as fallback for now
-    // You can replace this with an actual university logo path
-    const universityProfileImage = null; // Set to actual path when available
-    
+    const isAlumni = reply.sender_type === 'alumni';
+    const senderName = reply.sender_name || (isAlumni ? 'You' : 'University');
+    const senderImage = reply.sender_image;
+    const children = reply.all_children || reply.children || [];
+
     return (
-      <div className={`flex items-start gap-4 ${depth > 0 ? 'ml-8' : ''}`}>
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden ${
-          reply.sender === 'user' 
-            ? 'border-2 border-gray-300 bg-gray-100' 
-            : 'border-2 border-green-600 bg-green-50'
-        }`}>
-          {reply.sender === 'user' ? (
-            <>
-              {/* Check for actual uploaded profile image first */}
-              {user?.profile_image ? (
-                <img 
-                  src={user.profile_image} 
-                  alt="User Profile" 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    // If profile image fails, try UI avatar
-                    e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`;
-                  }}
-                />
-              ) : (
-                // Fallback to UI avatar if no profile image
-                <img 
-                  src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`}
-                  alt="User Profile" 
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
-                />
-              )}
-              <div className="w-full h-full flex items-center justify-center" style={{display: 'none'}}>
-                <FiUser className="text-gray-400 text-lg" />
+      <div className={`${depth > 0 ? 'ml-8' : ''}`}>
+        <div className="flex items-start gap-4">
+          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden ${
+            isAlumni
+              ? 'border-2 border-gray-300 bg-gray-100'
+              : 'border-2 border-green-600 bg-green-50'
+          }`}>
+            {isAlumni ? (
+              <>
+                {user?.profile_image ? (
+                  <img
+                    src={user.profile_image}
+                    alt="User Profile"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`;
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`}
+                    alt="User Profile"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
+              </>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-100 to-green-200">
+                <div className="text-green-700 font-bold text-xs flex flex-col items-center">
+                  <div className="text-lg mb-1">🏛️</div>
+                  <div className="text-xs leading-tight text-center">KPU</div>
+                </div>
               </div>
-            </>
-          ) : (
-            // University profile - use icon with university styling
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-100 to-green-200">
-              <div className="text-green-700 font-bold text-xs flex flex-col items-center">
-                <div className="text-lg mb-1">🏛️</div>
-                <div className="text-xs leading-tight text-center">KPU</div>
+            )}
+          </div>
+          <div className="flex-1 max-w-2xl">
+            <div className={`inline-block px-4 py-3 rounded-2xl ${
+              isAlumni
+                ? 'bg-gray-100 border-gray-300 text-black'
+                : 'bg-green-50 border-green-200 text-green-800'
+            } shadow-sm`}>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-sm font-bold">
+                  {isAlumni ? 'You' : senderName}
+                </p>
+                <span className="text-xs text-gray-600 ml-4">
+                  {new Date(reply.created_at).toLocaleDateString()} at {new Date(reply.created_at).toLocaleTimeString()}
+                </span>
               </div>
-            </div>
-          )}
-        </div>
-        <div className={`flex-1 max-w-2xl ${reply.sender === 'user' ? 'flex-row-reverse' : ''}`}>
-          <div className={`inline-block px-4 py-3 rounded-2xl ${
-            reply.sender === 'user'
-              ? 'bg-gray-100 border-gray-300 text-black'
-              : 'bg-green-50 border-green-200 text-green-800'
-          } shadow-sm`}>
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-bold">
-                {reply.sender === 'user' ? 'You' : 'University'}
-              </p>
-              <span className="text-xs text-gray-600">
-                {new Date(reply.created_at).toLocaleDateString()} at {new Date(reply.created_at).toLocaleTimeString()}
-              </span>
-            </div>
-            <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
-            
-            {/* Reply button */}
-            {reply.sender === 'university' && (
-              <div className="flex items-end">
+              <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
+
+              <div className="flex items-end mt-1">
                 <button
                   onClick={() => onReplyTo(reply)}
                   className={`text-xs px-1 py-0.5 rounded transition-all duration-200 ${
-                    isReplying 
-                      ? 'bg-blue-600 text-white' 
+                    isReplying
+                      ? 'bg-blue-600 text-white'
                       : 'text-gray-600 hover:text-white hover:bg-blue-600'
                   }`}
                 >
                   {isReplying ? 'Cancel' : 'Reply'}
                 </button>
               </div>
-            )}
+            </div>
           </div>
         </div>
-      </div>
-    );
-  };
-
-  const ConversationThread = ({ replies, onReplyTo, replyingTo, depth = 0 }) => {
-    return (
-      <>
-        {replies.map((reply) => (
-          <div key={reply.id}>
-            <ReplyItem 
-              reply={reply} 
-              depth={depth}
-              onReplyTo={onReplyTo}
-              replyingTo={replyingTo}
-            />
-            {reply.replies && reply.replies.length > 0 && (
-              <ConversationThread 
-                replies={reply.replies}
+        {/* Render nested children */}
+        {children.length > 0 && (
+          <div className="mt-2">
+            {children.map((child) => (
+              <ReplyItem
+                key={child.id}
+                reply={child}
+                depth={depth + 1}
                 onReplyTo={onReplyTo}
                 replyingTo={replyingTo}
-                depth={depth + 1}
               />
-            )}
+            ))}
           </div>
-        ))}
-      </>
+        )}
+      </div>
     );
   };
 
@@ -284,9 +254,8 @@ const MessageConversationPage = () => {
   if (loading) {
     return (
       <Layout>
-        {/* Hero Section Skeleton */}
         <section className="relative w-full h-80 overflow-hidden">
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%), url("/depositphotos_463234794-stock-photo-engineer-use-digital-tablet-construction.jpg")',
@@ -304,8 +273,6 @@ const MessageConversationPage = () => {
             </div>
           </div>
         </section>
-
-        {/* Main Content Skeleton */}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
@@ -334,9 +301,8 @@ const MessageConversationPage = () => {
   if (!message) {
     return (
       <Layout>
-        {/* Hero Section */}
         <section className="relative w-full h-80 overflow-hidden">
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%), url("/depositphotos_463234794-stock-photo-engineer-use-digital-tablet-construction.jpg")',
@@ -345,7 +311,6 @@ const MessageConversationPage = () => {
               backgroundPosition: 'center'
             }}
           />
-          
           <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
             <div className="text-center text-white max-w-4xl">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-4">
@@ -357,8 +322,6 @@ const MessageConversationPage = () => {
             </div>
           </div>
         </section>
-
-        {/* Main Content */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -366,7 +329,7 @@ const MessageConversationPage = () => {
             </div>
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Message Not Found</h3>
             <p className="text-gray-600 mb-8 text-lg">The message you're looking for could not be found.</p>
-            <Link 
+            <Link
               to="/messages"
               className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
@@ -383,7 +346,7 @@ const MessageConversationPage = () => {
     <Layout>
       {/* Hero Section */}
       <section className="relative w-full h-80 overflow-hidden">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 100%), url("/depositphotos_463234794-stock-photo-engineer-use-digital-tablet-construction.jpg")',
@@ -392,7 +355,6 @@ const MessageConversationPage = () => {
             backgroundPosition: 'center'
           }}
         />
-        
         <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
           <div className="text-center text-white max-w-4xl">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-4">
@@ -409,7 +371,7 @@ const MessageConversationPage = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Back Button */}
         <div className="mb-8">
-          <Link 
+          <Link
             to="/messages"
             className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-gray-700 hover:bg-white/20 rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
           >
@@ -429,8 +391,8 @@ const MessageConversationPage = () => {
                     <h3 className="text-xl font-bold text-black mb-2">{message.subject}</h3>
                     <div className="flex items-center gap-4">
                       <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
-                        message.status === 'pending' 
-                          ? 'bg-yellow-400 text-yellow-900' 
+                        message.status === 'pending'
+                          ? 'bg-yellow-400 text-yellow-900'
                           : message.status === 'received'
                           ? 'bg-orange-400 text-orange-900'
                           : message.status === 'responded'
@@ -451,34 +413,25 @@ const MessageConversationPage = () => {
                 <div className="p-6">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center flex-shrink-0 overflow-hidden bg-gray-100">
-                      <>
-                      {/* Check for actual uploaded profile image first */}
                       {user?.profile_image ? (
-                        <img 
-                          src={user.profile_image} 
-                          alt="User Profile" 
+                        <img
+                          src={user.profile_image}
+                          alt="User Profile"
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            // If profile image fails, try UI avatar
                             e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`;
                           }}
                         />
                       ) : (
-                        // Fallback to UI avatar if no profile image
-                        <img 
+                        <img
                           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`}
-                          alt="User Profile" 
+                          alt="User Profile"
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.style.display = 'none';
-                            e.target.nextSibling.style.display = 'flex';
                           }}
                         />
                       )}
-                      <div className="w-full h-full flex items-center justify-center" style={{display: 'none'}}>
-                        <FiUser className="text-gray-400 text-xl" />
-                      </div>
-                    </>
                     </div>
                     <div className="flex-1">
                       <p className="text-black font-medium mb-2">Your Message:</p>
@@ -490,7 +443,7 @@ const MessageConversationPage = () => {
                 </div>
               </div>
 
-              {/* Conversation Thread - Always show */}
+              {/* Conversation Thread */}
               <div className="p-6 border-t border-gray-200">
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-bold text-black flex items-center gap-2">
@@ -501,25 +454,35 @@ const MessageConversationPage = () => {
                     {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
                   </span>
                 </div>
-                
+
                 <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
-                  <ConversationThread 
-                    replies={replies}
-                    onReplyTo={handleReplyTo}
-                    replyingTo={replyingTo}
-                    depth={0}
-                  />
+                  {replies.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <FiMessageSquare className="mx-auto text-3xl mb-2 text-gray-300" />
+                      <p className="text-sm">No replies yet. The university will respond soon.</p>
+                    </div>
+                  ) : (
+                    replies.map((reply) => (
+                      <ReplyItem
+                        key={reply.id}
+                        reply={reply}
+                        depth={0}
+                        onReplyTo={handleReplyTo}
+                        replyingTo={replyingTo}
+                      />
+                    ))
+                  )}
                 </div>
 
-                {/* Reply Input - Always show */}
-                <div className="border-t border-gray-200 p-3">
+                {/* Reply Input */}
+                <div className="border-t border-gray-200 p-3 mt-4">
                   {replyingTo && (
                     <div className="mb-2 p-2 bg-gray-50 rounded border border-gray-200">
                       <p className="text-xs text-black mb-1">
-                        Replying to <span className="font-semibold">{replyingTo.sender === 'user' ? 'your message' : "university's message"}</span>:
+                        Replying to <span className="font-semibold">{replyingTo.sender_type === 'alumni' ? 'your message' : (replyingTo.sender_name || "university's message")}</span>:
                       </p>
                       <p className="text-xs text-gray-600 italic">
-                        "{replyingTo.content.substring(0, 100)}..."
+                        "{(replyingTo.content || '').substring(0, 100)}{(replyingTo.content || '').length > 100 ? '...' : ''}"
                       </p>
                       <button
                         onClick={cancelReply}
@@ -535,7 +498,13 @@ const MessageConversationPage = () => {
                         type="text"
                         value={newReply}
                         onChange={(e) => setNewReply(e.target.value)}
-                        placeholder={replyingTo ? `Reply to ${replyingTo.sender === 'user' ? 'your message' : "university's message"}...` : "Type your reply here..."}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey && newReply.trim()) {
+                            e.preventDefault();
+                            handleSendReply();
+                          }
+                        }}
+                        placeholder={replyingTo ? `Reply to ${replyingTo.sender_type === 'alumni' ? 'your message' : "university's message"}...` : "Type your reply here..."}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-200 text-black text-sm"
                       />
                     </div>
@@ -574,8 +543,8 @@ const MessageConversationPage = () => {
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <span className="text-sm text-black">Status:</span>
                   <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
-                    message.status === 'pending' 
-                      ? 'bg-yellow-400 text-yellow-900' 
+                    message.status === 'pending'
+                      ? 'bg-yellow-400 text-yellow-900'
                       : message.status === 'received'
                       ? 'bg-orange-400 text-orange-900'
                       : message.status === 'responded'
