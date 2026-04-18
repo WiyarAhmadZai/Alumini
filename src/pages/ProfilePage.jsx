@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink, FiBell, FiDownload, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink, FiBell, FiDownload, FiCheckCircle, FiXCircle, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
 import Swal from 'sweetalert2';
 import alumniService from '../services/alumniService';
@@ -82,6 +82,13 @@ const ProfilePage = () => {
 
   const profileInputRef = useRef(null);
   const coverInputRef = useRef(null);
+  const tabsScrollRef = useRef(null);
+
+  const scrollTabs = (direction) => {
+    if (!tabsScrollRef.current) return;
+    const amount = direction === 'left' ? -200 : 200;
+    tabsScrollRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+  };
 
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxSrc, setLightboxSrc] = useState('');
@@ -997,10 +1004,10 @@ const ProfilePage = () => {
 
   return (
     <Layout>
-      {/* Top branded band — gives separation from navbar */}
-      <div className="h-32 w-full" style={{ background: 'linear-gradient(135deg, #0f2d8a 0%, #194ce6 100%)' }}></div>
+      {/* Background Gradient Section — original restored */}
+      <div className="fixed top-0 left-0 right-0 h-screen bg-gradient-to-b from-[#002759]/80 via-[#002759]/40 to-[#002759]/10 -z-10"></div>
 
-      <div className="min-h-screen bg-gray-50 -mt-20">
+      <div className="min-h-screen">
         <div className={`fixed inset-0 z-[100] ${lightboxOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
           <div
             className={`absolute inset-0 bg-black/80 transition-opacity duration-200 ${lightboxOpen ? 'opacity-100' : 'opacity-0'}`}
@@ -1026,7 +1033,7 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-8">
           {loading && (
             <div className="space-y-6">
               {/* Profile Header Skeleton */}
@@ -1137,7 +1144,7 @@ const ProfilePage = () => {
           )}
 
           {/* Profile Header Card */}
-          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
+          <div className="rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6 bg-white mt-6">
             {/* Cover Image */}
             <div className="w-full h-56 sm:h-64 relative bg-gray-100">
               {profile?.cover_image ? (
@@ -1182,7 +1189,7 @@ const ProfilePage = () => {
             </div>
 
             {/* Profile info row */}
-            <div className="px-6 sm:px-8 pb-6 flex flex-col md:flex-row md:items-end gap-5 -mt-16 md:-mt-20 relative z-10">
+            <div className="px-6 sm:px-8 pb-6 pt-4 flex flex-col md:flex-row md:items-end gap-5 -mt-16 md:-mt-20 relative z-10">
               <div className="relative flex-shrink-0">
                 <div className="relative size-32 sm:size-36 md:size-40">
                   {profile?.profile_image || profile?.student_photo ? (
@@ -1268,9 +1275,9 @@ const ProfilePage = () => {
                   {isOwner && (
                     <button type="button" onClick={openBasicModal}
                       className="px-4 py-2 text-white rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition-colors"
-                      style={{ background: '#0f2d8a' }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#091d5e'}
-                      onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
+                      style={{ background: '#002759' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#001a3d'}
+                      onMouseLeave={e => e.currentTarget.style.background = '#002759'}>
                       <FiEdit className="text-xs" />
                       Edit Profile
                     </button>
@@ -1293,7 +1300,7 @@ const ProfilePage = () => {
                       onClick={handleRequestMentorshipFromProfile}
                       disabled={requestingMentorship}
                       className="px-4 py-2 text-white rounded-lg text-sm font-semibold flex items-center gap-2 disabled:opacity-60 transition-colors"
-                      style={{ background: '#0f2d8a' }}
+                      style={{ background: '#002759' }}
                     >
                       <FiUsers className="text-xs" />
                       {requestingMentorship ? 'Sending…' : 'Request Mentorship'}
@@ -1313,8 +1320,26 @@ const ProfilePage = () => {
 
           {/* Profile Tabs — only for owner */}
           {isOwner && (
-            <div className="mb-6 bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
-              <div className="flex items-center gap-1 p-2 min-w-max">
+            <div className="mb-6 bg-white rounded-xl border border-gray-200 shadow-sm relative">
+              {/* Left arrow (mobile only) */}
+              <button
+                type="button"
+                onClick={() => scrollTabs('left')}
+                className="md:hidden absolute left-0 top-0 bottom-0 z-10 px-2 bg-gradient-to-r from-white via-white to-transparent flex items-center"
+                aria-label="Scroll left"
+              >
+                <span className="w-7 h-7 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600">
+                  <FiChevronLeft className="text-sm" />
+                </span>
+              </button>
+
+              {/* Tabs container */}
+              <div
+                ref={tabsScrollRef}
+                className="flex items-center gap-1 p-2 overflow-x-auto md:overflow-visible scrollbar-hide md:px-2 px-9"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                <style>{`.scrollbar-hide::-webkit-scrollbar { display: none; }`}</style>
                 {[
                   { key: 'overview', label: 'Overview', icon: <FiUser /> },
                   { key: 'jobs', label: 'Applied Jobs', icon: <FiBriefcase />, count: appliedJobs.length },
@@ -1332,10 +1357,10 @@ const ProfilePage = () => {
                       key={tab.key}
                       type="button"
                       onClick={() => setActiveTab(tab.key)}
-                      className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                      className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 ${
                         active ? 'text-white' : 'text-gray-600 hover:bg-gray-50'
                       }`}
-                      style={active ? { background: '#0f2d8a' } : {}}
+                      style={active ? { background: '#002759' } : {}}
                     >
                       <span className="text-sm">{tab.icon}</span>
                       {tab.label}
@@ -1350,6 +1375,18 @@ const ProfilePage = () => {
                   );
                 })}
               </div>
+
+              {/* Right arrow (mobile only) */}
+              <button
+                type="button"
+                onClick={() => scrollTabs('right')}
+                className="md:hidden absolute right-0 top-0 bottom-0 z-10 px-2 bg-gradient-to-l from-white via-white to-transparent flex items-center"
+                aria-label="Scroll right"
+              >
+                <span className="w-7 h-7 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600">
+                  <FiChevronRight className="text-sm" />
+                </span>
+              </button>
             </div>
           )}
 
