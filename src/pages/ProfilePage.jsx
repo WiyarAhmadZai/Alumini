@@ -49,6 +49,7 @@ const ProfilePage = () => {
   const [loadingEvents, setLoadingEvents] = useState(false);
 
   const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact | mentor
+  const [activeTab, setActiveTab] = useState('overview'); // overview | jobs | messages | events | mentees | requests | applications
 
   const [myMentor, setMyMentor] = useState(null);
   const [viewedProfileMentor, setViewedProfileMentor] = useState(null);
@@ -996,10 +997,10 @@ const ProfilePage = () => {
 
   return (
     <Layout>
-      {/* Background Gradient Section */}
-      <div className="fixed top-0 left-0 right-0 h-screen bg-gradient-to-b from-[#0f2d8a]/10 via-[#0f2d8a]/3 to-transparent -z-10"></div>
+      {/* Top branded band — gives separation from navbar */}
+      <div className="h-32 w-full" style={{ background: 'linear-gradient(135deg, #0f2d8a 0%, #194ce6 100%)' }}></div>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 -mt-20">
         <div className={`fixed inset-0 z-[100] ${lightboxOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
           <div
             className={`absolute inset-0 bg-black/80 transition-opacity duration-200 ${lightboxOpen ? 'opacity-100' : 'opacity-0'}`}
@@ -1310,6 +1311,48 @@ const ProfilePage = () => {
             </div>
           </div>
 
+          {/* Profile Tabs — only for owner */}
+          {isOwner && (
+            <div className="mb-6 bg-white rounded-xl border border-gray-200 shadow-sm overflow-x-auto">
+              <div className="flex items-center gap-1 p-2 min-w-max">
+                {[
+                  { key: 'overview', label: 'Overview', icon: <FiUser /> },
+                  { key: 'jobs', label: 'Applied Jobs', icon: <FiBriefcase />, count: appliedJobs.length },
+                  { key: 'messages', label: 'Messages', icon: <FiMail />, count: messages.length },
+                  { key: 'events', label: 'Events', icon: <FiCalendar />, count: registeredEvents.length },
+                  ...(myMentor ? [
+                    { key: 'mentees', label: 'My Mentees', icon: <FiUsers />, count: totalMentees },
+                    { key: 'requests', label: 'Requests', icon: <FiUsers />, count: (mentorRequests || []).filter(r => r.status === 'pending').length },
+                  ] : []),
+                  { key: 'applications', label: 'My Applications', icon: <FiTrendingUp />, count: myApplications.length },
+                ].map(tab => {
+                  const active = activeTab === tab.key;
+                  return (
+                    <button
+                      key={tab.key}
+                      type="button"
+                      onClick={() => setActiveTab(tab.key)}
+                      className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap ${
+                        active ? 'text-white' : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                      style={active ? { background: '#0f2d8a' } : {}}
+                    >
+                      <span className="text-sm">{tab.icon}</span>
+                      {tab.label}
+                      {typeof tab.count === 'number' && tab.count > 0 && (
+                        <span className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
+                          active ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {tab.count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Two Column Layout */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
             {/* Left Column (Sidebar) */}
@@ -1386,7 +1429,7 @@ const ProfilePage = () => {
               </div>
 
               {/* Applied Jobs Section - Only for profile owner */}
-              {isOwner && (
+              {isOwner && (activeTab === 'overview' || activeTab === 'jobs') && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
@@ -1475,7 +1518,7 @@ const ProfilePage = () => {
               )}
 
               {/* Messages Section - Only for profile owner */}
-              {isOwner && (
+              {isOwner && (activeTab === 'overview' || activeTab === 'messages') && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
@@ -1558,7 +1601,7 @@ const ProfilePage = () => {
               )}
 
               {/* Registered Events Section - Only for profile owner */}
-              {isOwner && (
+              {isOwner && (activeTab === 'overview' || activeTab === 'events') && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
@@ -1661,7 +1704,7 @@ const ProfilePage = () => {
               )}
 
               {/* My Mentees - only shown to mentors (preview, 3 records + see more) */}
-              {isOwner && myMentor && (
+              {isOwner && myMentor && (activeTab === 'overview' || activeTab === 'mentees') && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
@@ -1962,8 +2005,8 @@ const ProfilePage = () => {
             <div className="md:col-span-8 flex flex-col gap-6">
               {/* About Me */}
               <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                <h3 className="text-black text-xl font-bold mb-6 flex items-center gap-2">
-                  <FiUser className="text-primary" />
+                <h3 className="text-gray-900 text-lg font-bold mb-4 flex items-center gap-2">
+                  <FiUser style={{ color: '#194ce6' }} />
                   About Me
                 </h3>
                 <div className="bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg p-6 border border-gray-200">
