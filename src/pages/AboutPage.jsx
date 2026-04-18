@@ -235,26 +235,23 @@ const AboutPage = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {boardMembers.map((m) => (
-              <div key={m.name} className="group bg-white rounded-xl overflow-hidden border border-gray-100 hover:shadow-sm transition-all">
-                <div className="relative overflow-hidden aspect-square">
+              <div key={m.name} className="bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-all p-3 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full overflow-hidden border-2 mb-2"
+                  style={{ borderColor: BRAND_BORDER }}>
                   <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
                 </div>
-                <div className="p-3">
-                  <div className="text-[9px] font-bold uppercase tracking-widest mb-0.5" style={{ color: BRAND }}>
-                    {m.role}
-                  </div>
-                  <h3 className="text-xs font-bold text-gray-900 mb-0.5 line-clamp-1">{m.name}</h3>
-                  <p className="text-[10px] text-gray-400 line-clamp-1">{m.dept}</p>
-                  <div className="flex gap-1 mt-2.5">
-                    <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
-                      style={{ background: BRAND_BG, color: BRAND }}>
-                      <FiLinkedin className="text-[10px]" />
-                    </button>
-                    <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
-                      style={{ background: BRAND_BG, color: BRAND }}>
-                      <FiMail className="text-[10px]" />
-                    </button>
-                  </div>
+                <h3 className="text-xs font-bold text-gray-900 line-clamp-1">{m.name}</h3>
+                <p className="text-[10px] font-semibold line-clamp-1 mt-0.5" style={{ color: BRAND }}>{m.role}</p>
+                <p className="text-[9px] text-gray-400 line-clamp-1 mt-0.5">{m.dept}</p>
+                <div className="flex justify-center gap-1 mt-2">
+                  <button className="w-5 h-5 rounded flex items-center justify-center hover:opacity-80 transition"
+                    style={{ background: BRAND_BG, color: BRAND }}>
+                    <FiLinkedin className="text-[9px]" />
+                  </button>
+                  <button className="w-5 h-5 rounded flex items-center justify-center hover:opacity-80 transition"
+                    style={{ background: BRAND_BG, color: BRAND }}>
+                    <FiMail className="text-[9px]" />
+                  </button>
                 </div>
               </div>
             ))}
