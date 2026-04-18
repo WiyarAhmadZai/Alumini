@@ -997,10 +997,7 @@ const ProfilePage = () => {
   return (
     <Layout>
       {/* Background Gradient Section */}
-      <div className="fixed top-0 left-0 right-0 h-screen bg-gradient-to-b from-[#002759]/80 via-[#002759]/40 to-[#002759]/10 -z-10"></div>
-      
-      {/* Hero Section */}
-      
+      <div className="fixed top-0 left-0 right-0 h-screen bg-gradient-to-b from-[#0f2d8a]/10 via-[#0f2d8a]/3 to-transparent -z-10"></div>
 
       <div className="min-h-screen bg-gray-50">
         <div className={`fixed inset-0 z-[100] ${lightboxOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
@@ -1028,12 +1025,7 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        <div className=" h-12 bg-cover bg-center " >
-          <div className="absolute inset-0 bg-gradient-to-b from-[#002759]/95  to-blue-500 to-transparent"></div>
-          <div className="relative flex items-center justify-center ">
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {loading && (
             <div className="space-y-6">
               {/* Profile Header Skeleton */}
@@ -1089,7 +1081,7 @@ const ProfilePage = () => {
                 {/* Right Column Skeleton */}
                 <div className="md:col-span-8 flex flex-col gap-6">
                   {/* About Me Skeleton */}
-                  <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+                  <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <div className="h-7 w-32 bg-gray-200 rounded animate-pulse mb-6"></div>
                     <div className="bg-gray-50 rounded-lg p-6">
                       <div className="space-y-2">
@@ -1101,7 +1093,7 @@ const ProfilePage = () => {
                   </section>
 
                   {/* Professional Experience Skeleton */}
-                  <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+                  <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                       <div className="h-7 w-48 bg-gray-200 rounded animate-pulse"></div>
                       <div className="w-16 h-8 bg-gray-200 rounded animate-pulse"></div>
@@ -1118,7 +1110,7 @@ const ProfilePage = () => {
                   </section>
 
                   {/* Education Skeleton */}
-                  <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+                  <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                       <div className="h-7 w-32 bg-gray-200 rounded animate-pulse"></div>
                       <div className="w-16 h-8 bg-gray-200 rounded animate-pulse"></div>
@@ -1144,24 +1136,25 @@ const ProfilePage = () => {
           )}
 
           {/* Profile Header Card */}
-          <div className="bg-primary rounded-xl border border-primary shadow-sm overflow-hidden mb-6">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6">
             {/* Cover Image */}
-            <div className="w-full min-h-64 relative bg-gray-100">
+            <div className="w-full h-56 sm:h-64 relative bg-gray-100">
               {profile?.cover_image ? (
                 <>
                   <img
                     src={profile.cover_image}
                     alt="Cover"
-                    className="w-full h-64 object-cover cursor-zoom-in"
+                    className="w-full h-full object-cover cursor-zoom-in"
                     onClick={() => openLightbox(profile.cover_image)}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none"></div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
                 </>
               ) : (
-                <div className="w-full h-64 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-dashed border-blue-300">
-                  <FiCamera className="text-4xl text-blue-400 mb-3" />
-                  <p className="text-blue-600 font-medium">Add Cover Photo</p>
-                  <p className="text-blue-500 text-sm mt-1">Click to upload</p>
+                <div className="w-full h-full flex flex-col items-center justify-center"
+                  style={{ background: 'linear-gradient(135deg, #eef1fd 0%, #c5ccf7 100%)' }}>
+                  <FiCamera className="text-3xl mb-2" style={{ color: '#194ce6' }} />
+                  <p className="font-medium text-sm" style={{ color: '#0f2d8a' }}>Add Cover Photo</p>
+                  <p className="text-xs mt-0.5" style={{ color: '#194ce6' }}>Click to upload</p>
                 </div>
               )}
               <button
@@ -1170,12 +1163,12 @@ const ProfilePage = () => {
                   e.stopPropagation();
                   coverInputRef.current?.click();
                 }}
-                className="absolute top-4 right-4 bg-white/90 hover:bg-white text-gray-900 rounded-lg px-3 py-2 text-sm font-semibold shadow flex items-center gap-2 cursor-pointer"
+                className="absolute top-4 right-4 bg-white/95 hover:bg-white text-gray-900 rounded-lg px-3 py-1.5 text-xs font-semibold shadow-md flex items-center gap-1.5 cursor-pointer backdrop-blur-sm"
                 disabled={saving}
                 onMouseDown={(e) => e.stopPropagation()}
                 style={{ display: isOwner ? 'flex' : 'none' }}
               >
-                <FiCamera />
+                <FiCamera className="text-xs" />
                 {profile?.cover_image ? 'Update' : 'Add'} Cover
               </button>
               <input
@@ -1186,21 +1179,24 @@ const ProfilePage = () => {
                 onChange={(e) => handleCoverFileSelected(e.target.files?.[0] || null)}
               />
             </div>
-            <div className="bg-primary px-8 pb-8 flex flex-col md:flex-row items-end gap-6 -mt-16 relative z-10">
-              <div className="relative">
-                <div className="relative size-40">
+
+            {/* Profile info row */}
+            <div className="px-6 sm:px-8 pb-6 flex flex-col md:flex-row md:items-end gap-5 -mt-16 md:-mt-20 relative z-10">
+              <div className="relative flex-shrink-0">
+                <div className="relative size-32 sm:size-36 md:size-40">
                   {profile?.profile_image || profile?.student_photo ? (
                     <img
                       src={profile.profile_image || profile.student_photo}
                       alt="Profile"
-                      className="size-40 rounded-full border-4 border-white shadow-lg object-cover cursor-zoom-in"
+                      className="size-32 sm:size-36 md:size-40 rounded-full border-4 border-white shadow-lg object-cover cursor-zoom-in bg-white"
                       onClick={() => openLightbox(profile.profile_image || profile.student_photo)}
                     />
                   ) : (
-                    <div className="size-40 rounded-full border-4 border-white shadow-lg flex flex-col items-center justify-center bg-gradient-to-br from-purple-50 to-pink-100 border-dashed cursor-pointer hover:from-purple-100 hover:to-pink-200 transition-colors"
+                    <div className="size-32 sm:size-36 md:size-40 rounded-full border-4 border-white shadow-lg flex flex-col items-center justify-center cursor-pointer transition-colors"
+                         style={{ background: 'linear-gradient(135deg, #0f2d8a, #194ce6)' }}
                          onClick={() => isOwner && profileInputRef.current?.click()}>
-                      <FiUser className="text-3xl text-purple-400 mb-2" />
-                      <p className="text-xs text-purple-600 font-medium">Add Photo</p>
+                      <FiUser className="text-3xl text-white/90 mb-1" />
+                      <p className="text-[10px] text-white/80 font-medium">Add Photo</p>
                     </div>
                   )}
                 </div>
@@ -1211,12 +1207,12 @@ const ProfilePage = () => {
                       e.stopPropagation();
                       profileInputRef.current?.click();
                     }}
-                    className="absolute bottom-2 right-2 w-10 h-10 rounded-full bg-white text-gray-900 shadow flex items-center justify-center hover:bg-gray-50 cursor-pointer"
+                    className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-white text-gray-900 shadow-md flex items-center justify-center hover:bg-gray-50 cursor-pointer border border-gray-200"
                     title="Update profile image"
                     disabled={saving}
                     onMouseDown={(e) => e.stopPropagation()}
                   >
-                    <FiCamera />
+                    <FiCamera className="text-sm" />
                   </button>
                 )}
                 <input
@@ -1227,32 +1223,38 @@ const ProfilePage = () => {
                   onChange={(e) => handleProfileFileSelected(e.target.files?.[0] || null)}
                 />
               </div>
-              <div className="flex-1 flex flex-col md:flex-row justify-between items-end pb-2">
-                <div className="flex flex-col md:pt-20">
-                  <div className="flex items-center gap-2">
-                    <h1 className="text-black text-3xl font-bold leading-tight">{profile?.name || '-'}</h1>
+
+              <div className="flex-1 flex flex-col md:flex-row justify-between md:items-end gap-4 md:pb-2">
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className="text-gray-900 text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight">{profile?.name || '-'}</h1>
                     {profile?.is_verified && (
-                      <span title="Verified Alumnus" className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-blue-500 flex-shrink-0">
-                        <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <span title="Verified Alumnus" className="inline-flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0" style={{ background: '#194ce6' }}>
+                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       </span>
                     )}
                   </div>
-                  <p className="text-black text-lg font-medium">Class of {profile?.graduation_year || '-'} • {profile?.faculty_name || '-'}</p>
-                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                  {profile?.current_job_title && (
+                    <p className="text-sm font-semibold mt-1" style={{ color: '#194ce6' }}>
+                      {profile.current_job_title}{profile?.current_company ? ` · ${profile.current_company}` : ''}
+                    </p>
+                  )}
+                  <p className="text-gray-500 text-sm font-medium mt-1">Class of {profile?.graduation_year || '-'} · {profile?.faculty_name || '-'}</p>
+                  <div className="flex items-center gap-2 mt-2 flex-wrap">
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                       profile?.is_verified
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
+                        ? 'bg-green-50 text-green-700 border border-green-200'
+                        : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
                     }`}>
-                      {profile?.is_verified ? 'Verified Alumnus' : 'Pending Verification'}
+                      {profile?.is_verified ? 'Verified' : 'Pending Verification'}
                     </span>
                     {isOwner && !profile?.is_verified && profileNotifications.length > 0 && (() => {
                       const latest = profileNotifications[0];
                       return (
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
-                          latest.title?.includes('Rejected') ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                          latest.title?.includes('Rejected') ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
                         }`}>
                           {latest.title?.includes('Rejected') ? 'Rejected' : 'Pending'}
                           {latest.reason && ` — ${latest.reason}`}
@@ -1261,10 +1263,14 @@ const ProfilePage = () => {
                     })()}
                   </div>
                 </div>
-                <div className="flex gap-3 mt-4 md:mt-0 flex-wrap">
+                <div className="flex gap-2 flex-wrap">
                   {isOwner && (
-                    <button type="button" onClick={openBasicModal} className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2">
-                      <FiEdit className="text-sm" />
+                    <button type="button" onClick={openBasicModal}
+                      className="px-4 py-2 text-white rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition-colors"
+                      style={{ background: '#0f2d8a' }}
+                      onMouseEnter={e => e.currentTarget.style.background = '#091d5e'}
+                      onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
+                      <FiEdit className="text-xs" />
                       Edit Profile
                     </button>
                   )}
@@ -1272,11 +1278,12 @@ const ProfilePage = () => {
                     <button
                       type="button"
                       onClick={openMentorModal}
-                      className="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-medium flex items-center gap-2"
+                      className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors border"
+                      style={{ background: '#eef1fd', color: '#194ce6', borderColor: '#c5ccf7' }}
                       title={myMentor ? 'Edit Mentor Profile' : 'Become a Mentor'}
                     >
-                      <FiPlus className="text-sm" />
-                      {myMentor ? 'Edit Mentor Profile' : 'Be a Mentor'}
+                      <FiPlus className="text-xs" />
+                      {myMentor ? 'Edit Mentor' : 'Be a Mentor'}
                     </button>
                   )}
                   {!isOwner && viewedProfileMentor && (
@@ -1284,24 +1291,22 @@ const ProfilePage = () => {
                       type="button"
                       onClick={handleRequestMentorshipFromProfile}
                       disabled={requestingMentorship}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 disabled:opacity-60"
+                      className="px-4 py-2 text-white rounded-lg text-sm font-semibold flex items-center gap-2 disabled:opacity-60 transition-colors"
+                      style={{ background: '#0f2d8a' }}
                     >
-                      <FiUsers className="text-sm" />
+                      <FiUsers className="text-xs" />
                       {requestingMentorship ? 'Sending…' : 'Request Mentorship'}
                     </button>
                   )}
                   <button
                     onClick={() => setActiveModal('share')}
-                    className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                    className="px-3 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors"
                     title="Share Profile"
                   >
-                    <FiShare2 />
+                    <FiShare2 className="text-sm" />
                   </button>
                 </div>
               </div>
-            </div>
-            <div className="bg-white px-8 pb-8 pt-8">
-              {/* Main content will go here */}
             </div>
           </div>
 
@@ -1310,28 +1315,35 @@ const ProfilePage = () => {
             {/* Left Column (Sidebar) */}
             <aside className="md:col-span-4 flex flex-col gap-6">
               {/* Contact Info Card */}
-              <div className="p-6 rounded-xl border border-[#dcdee5] shadow-sm">
+              <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-black text-lg font-bold">Contact Information</h3>
+                  <h3 className="text-gray-900 text-base font-bold flex items-center gap-2">
+                    <FiMail style={{ color: '#194ce6' }} />
+                    Contact Information
+                  </h3>
                   {isOwner && (
-                    <button type="button" onClick={openContactModal} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
-                      <FiEdit size={14} />
+                    <button type="button" onClick={openContactModal}
+                      className="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors border"
+                      style={{ background: '#eef1fd', color: '#194ce6', borderColor: '#c5ccf7' }}>
+                      <FiEdit size={12} />
                       Edit
                     </button>
                   )}
                 </div>
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md">
-                      <FiMail className="text-white" />
+                <div className="flex flex-col gap-2.5">
+                  <div className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
+                      style={{ background: '#eef1fd', color: '#194ce6' }}>
+                      <FiMail className="text-sm" />
                     </div>
-                    <span className="text-black text-sm font-medium">{profile?.email || '-'}</span>
+                    <span className="text-gray-700 text-xs font-medium break-all line-clamp-1">{profile?.email || '-'}</span>
                   </div>
-                  <div className="group relative flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md">
-                      <FiPhone className="text-white" />
+                  <div className="group relative flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
+                      style={{ background: '#eef1fd', color: '#194ce6' }}>
+                      <FiPhone className="text-sm" />
                     </div>
-                    <span className="text-black text-sm font-medium">{profile?.phone || 'Not added'}</span>
+                    <span className="text-gray-700 text-xs font-medium">{profile?.phone || 'Not added'}</span>
                     {profile?.phone && isOwner && (
                       <button
                         type="button"
@@ -1339,15 +1351,16 @@ const ProfilePage = () => {
                         className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto"
                         title="Delete phone"
                       >
-                        <FiTrash2 className="text-red-600 hover:text-red-700" size={14} />
+                        <FiTrash2 className="text-red-500 hover:text-red-700" size={12} />
                       </button>
                     )}
                   </div>
-                  <div className="group relative flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="size-10 flex items-center justify-center rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 text-white shadow-md">
-                      <FiMapPin className="text-white" />
+                  <div className="group relative flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
+                      style={{ background: '#eef1fd', color: '#194ce6' }}>
+                      <FiMapPin className="text-sm" />
                     </div>
-                    <span className="text-black text-sm font-medium">{profile?.location || 'Not added'}</span>
+                    <span className="text-gray-700 text-xs font-medium">{profile?.location || 'Not added'}</span>
                     {profile?.location && isOwner && (
                       <button
                         type="button"
@@ -1355,20 +1368,20 @@ const ProfilePage = () => {
                         className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto"
                         title="Delete location"
                       >
-                        <FiTrash2 className="text-red-600 hover:text-red-700" size={14} />
+                        <FiTrash2 className="text-red-500 hover:text-red-700" size={12} />
                       </button>
                     )}
                   </div>
-                </div>
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="flex gap-3">
-                    <button type="button" className="size-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 border border-blue-400" title="Website">
-                      <FiLink className="text-xl" />
-                    </button>
-                    <button type="button" className="size-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:scale-105 border border-emerald-400" title="Email">
-                      <FiMail className="text-xl" />
-                    </button>
-                  </div>
+                  {profile?.linkedin_profile && (
+                    <a href={profile.linkedin_profile} target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
+                        style={{ background: '#eef1fd', color: '#194ce6' }}>
+                        <FiLink className="text-sm" />
+                      </div>
+                      <span className="text-gray-700 text-xs font-medium truncate">LinkedIn Profile</span>
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -1948,7 +1961,7 @@ const ProfilePage = () => {
             {/* Right Column (Main Content) */}
             <div className="md:col-span-8 flex flex-col gap-6">
               {/* About Me */}
-              <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <h3 className="text-black text-xl font-bold mb-6 flex items-center gap-2">
                   <FiUser className="text-primary" />
                   About Me
@@ -1961,14 +1974,14 @@ const ProfilePage = () => {
               </section>
 
               {/* Professional Experience */}
-              <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-black text-xl font-bold flex items-center gap-2">
-                    <FiBriefcase className="text-primary" />
+                  <h3 className="text-gray-900 text-lg font-bold flex items-center gap-2">
+                    <FiBriefcase style={{ color: '#194ce6' }} />
                     Professional Experience
                   </h3>
                   {isOwner && (
-                    <button type="button" onClick={() => openExperienceModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                    <button type="button" onClick={() => openExperienceModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
                       <FiPlus />
                       Add
                     </button>
@@ -2022,14 +2035,14 @@ const ProfilePage = () => {
               </section>
 
               {/* Education */}
-              <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-black text-xl font-bold flex items-center gap-2">
                     <FiBookOpen className="text-primary" />
                     Education
                   </h3>
                   {isOwner && (
-                    <button type="button" onClick={() => openEducationModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                    <button type="button" onClick={() => openEducationModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
                       <FiPlus />
                       Add
                     </button>
@@ -2082,14 +2095,14 @@ const ProfilePage = () => {
               </section>
 
               {/* Skills & Expertise */}
-              <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-black text-xl font-bold flex items-center gap-2">
                     <FiSettings className="text-primary" />
                     Skills & Expertise
                   </h3>
                   {isOwner && (
-                    <button type="button" onClick={() => openSkillModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                    <button type="button" onClick={() => openSkillModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
                       <FiPlus />
                       Add
                     </button>
@@ -2150,14 +2163,14 @@ const ProfilePage = () => {
               </section>
 
               {/* Achievements & Awards */}
-              <section className="p-8 rounded-xl border border-[#dcdee5] shadow-sm">
+              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-black text-xl font-bold flex items-center gap-2">
                     <FiAward className="text-primary" />
                     Achievements & Awards
                   </h3>
                   {isOwner && (
-                    <button type="button" onClick={() => openAchievementModal(null)} className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 flex items-center gap-2">
+                    <button type="button" onClick={() => openAchievementModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
                       <FiPlus />
                       Add
                     </button>
