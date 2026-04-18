@@ -99,7 +99,7 @@ const ContactPage = () => {
     <Layout>
       {/* ═══ HERO (dark overlay with image) ═════════════════════ */}
       <section className="relative h-[400px] md:h-[500px] bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.88) 100%), url("/kpu5.jpg")' }}>
+        style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.60) 100%), url("/kpu5.jpg")' }}>
         <div className="h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-6 text-white/90">
             <FiMessageSquare className="text-white/70" />
