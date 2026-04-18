@@ -2698,86 +2698,76 @@ const ProfilePage = () => {
       {/* Share Modal */}
       <Modal
         isOpen={activeModal === 'share'}
-        title=""
+        title="Share Profile"
         onClose={() => setActiveModal(null)}
         footer={null}
         className="max-w-md"
         closeOnClickOutside={true}
       >
-        <div className="space-y-6">
-          {/* Profile Preview */}
-          <div className="text-center">
-            <div className="relative inline-block">
-              {profile?.profile_image ? (
-                <img
-                  src={profile.profile_image}
-                  alt={profile.name}
-                  className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
-                />
-              ) : (
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 mx-auto flex items-center justify-center text-white text-3xl font-bold border-4 border-white shadow-lg">
-                  {profile?.name?.charAt(0)?.toUpperCase()}
-                </div>
-              )}
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-3 border-white flex items-center justify-center">
-                <FiShare2 className="text-white text-sm" />
+        <div className="space-y-5">
+          {/* Profile summary row */}
+          <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+            {profile?.profile_image ? (
+              <img
+                src={profile.profile_image}
+                alt={profile.name}
+                className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-lg font-bold flex-shrink-0">
+                {profile?.name?.charAt(0)?.toUpperCase()}
               </div>
-            </div>
-            <h3 className="font-bold text-xl mt-4 text-gray-900">{profile?.name}</h3>
-            <p className="text-gray-600 text-sm mt-1">{profile?.faculty} • Class of {profile?.graduation_year}</p>
-            {profile?.current_job_title && (
-              <p className="text-gray-700 text-sm font-medium mt-2">{profile.current_job_title}</p>
             )}
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-gray-900 truncate">{profile?.name || '-'}</p>
+              <p className="text-xs text-gray-500 truncate">
+                Class of {profile?.graduation_year || '-'} · {profile?.faculty_name || profile?.faculty || '-'}
+              </p>
+            </div>
           </div>
 
-          {/* Copy Link Section */}
-          <div className="bg-gray-50 rounded-xl p-4">
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Profile Link</label>
-            <div className="flex gap-2">
+          {/* Copy Link */}
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-2">Profile link</label>
+            <div className="flex items-center gap-2">
               <input
                 type="text"
                 readOnly
                 value={shareUrl}
-                className="flex-1 px-4 py-3 border border-gray-200 rounded-lg bg-white text-sm font-mono text-black"
+                onClick={(e) => e.target.select()}
+                className="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-xs text-gray-700 focus:outline-none focus:border-gray-300"
               />
               <button
                 onClick={handleCopyLink}
-                className={`px-6 py-3 rounded-lg font-medium text-sm transition-all transform hover:scale-105 ${shareLinkCopied
+                className={`px-4 py-2 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 flex-shrink-0 ${
+                  shareLinkCopied
                     ? 'bg-green-600 text-white'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                  }`}
+                    : 'bg-gray-900 text-white hover:bg-gray-800'
+                }`}
               >
-                {shareLinkCopied ? (
-                  <span className="flex items-center gap-2">
-                    <FiLink className="text-lg" />
-                    Copied!
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    <FiLink className="text-lg" />
-                    Copy
-                  </span>
-                )}
+                {shareLinkCopied ? <FiCheckCircle /> : <FiLink />}
+                {shareLinkCopied ? 'Copied' : 'Copy'}
               </button>
             </div>
           </div>
 
           {/* Share Platforms */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-4">Share via</label>
-            <div className="grid grid-cols-3 gap-4">
+            <label className="block text-xs font-semibold text-gray-700 mb-3">Share via</label>
+            <div className="grid grid-cols-4 sm:grid-cols-5 gap-1">
               {sharePlatforms.map((platform) => (
                 <a
                   key={platform.name}
                   href={platform.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-gray-50 transition-colors"
+                  title={`Share via ${platform.name}`}
                 >
-                  <div className="hover:scale-110 transition-transform">
+                  <div className="w-9 h-9 flex items-center justify-center">
                     {platform.icon}
                   </div>
-                  <span className="text-xs text-black font-medium">{platform.name}</span>
+                  <span className="text-[10px] text-gray-600 font-medium line-clamp-1">{platform.name}</span>
                 </a>
               ))}
             </div>
