@@ -183,38 +183,39 @@ const AboutPage = () => {
             subtitle="Words from our esteemed Chancellor."
           />
 
-          <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-            <div className="grid grid-cols-1 md:grid-cols-5">
-              {/* Photo */}
-              <div className="md:col-span-2 relative h-56 md:h-auto">
-                <img src="/chanceler.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
-                <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1 shadow">
-                  <FiAward className="text-[10px]" style={{ color: BRAND }} />
-                  <span className="text-[10px] font-bold" style={{ color: BRAND_DARK }}>Chancellor</span>
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 sm:p-5">
+            <div className="flex items-start gap-4">
+              {/* Small circular photo */}
+              <div className="relative flex-shrink-0">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2"
+                  style={{ borderColor: BRAND_BORDER }}>
+                  <img src="/chanceler.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
+                </div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center shadow"
+                  style={{ background: BRAND }}>
+                  <FiAward className="text-white text-[9px]" />
                 </div>
               </div>
 
               {/* Text */}
-              <div className="md:col-span-3 p-6">
-                <blockquote className="text-gray-700 text-sm leading-relaxed mb-4 italic font-light">
+              <div className="flex-1 min-w-0">
+                <blockquote className="text-gray-600 text-xs sm:text-sm leading-relaxed italic font-light mb-3">
                   "The KPU Alumni Association represents the pride of our institution. Our graduates continue to make
-                  significant contributions to Afghanistan's development, and this association serves as a bridge
-                  between our past achievements and future aspirations."
+                  significant contributions to Afghanistan's development — a bridge between past achievements and future aspirations."
                 </blockquote>
-
-                <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                  <div>
-                    <p className="text-sm font-bold text-gray-900">Dr. Ahmad Zia Massoud</p>
-                    <p className="text-[11px] text-gray-500">Chancellor, KPU</p>
+                <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-gray-100">
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-gray-900 truncate">Dr. Ahmad Zia Massoud</p>
+                    <p className="text-[10px] text-gray-500">Chancellor, KPU</p>
                   </div>
-                  <div className="flex gap-1.5">
-                    <button className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 transition"
+                  <div className="flex gap-1 flex-shrink-0">
+                    <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
                       style={{ background: BRAND_BG, color: BRAND }}>
-                      <FiMail className="text-xs" />
+                      <FiMail className="text-[10px]" />
                     </button>
-                    <button className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 transition"
+                    <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
                       style={{ background: BRAND_BG, color: BRAND }}>
-                      <FiLinkedin className="text-xs" />
+                      <FiLinkedin className="text-[10px]" />
                     </button>
                   </div>
                 </div>
