@@ -163,7 +163,7 @@ const ProfilePage = () => {
       name: 'WhatsApp',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="#25D366"/>
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" fill="#25D366" />
         </svg>
       ),
       url: `https://wa.me/?text=${encodeURIComponent(`Check out this profile: ${shareUrl}`)}`
@@ -172,8 +172,8 @@ const ProfilePage = () => {
       name: 'IMO',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" fill="#1DA1F2"/>
-          <path d="M8 12h8M12 8v8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+          <circle cx="12" cy="12" r="10" fill="#1DA1F2" />
+          <path d="M8 12h8M12 8v8" stroke="white" strokeWidth="2" strokeLinecap="round" />
         </svg>
       ),
       url: `https://imo.im/share?text=${encodeURIComponent(`Check out this profile: ${shareUrl}`)}`
@@ -182,8 +182,8 @@ const ProfilePage = () => {
       name: 'Telegram',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" fill="#0088cc"/>
-          <path d="M9.5 14.5l2-2 2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="12" cy="12" r="10" fill="#0088cc" />
+          <path d="M9.5 14.5l2-2 2 2 4-4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       ),
       url: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${profile?.name}'s profile`)}`
@@ -192,7 +192,7 @@ const ProfilePage = () => {
       name: 'Messenger',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 6L12 10.5 8.5 8 11 5.5l2.5 2.5L16 8l-2.5 2.5L16 13.5 13.5 16 11 13.5 8.5 16 6 13.5l2.5-2.5L6 8l2.5-2.5L11 8l2.5-2.5z" fill="#0084FF"/>
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.5 6L12 10.5 8.5 8 11 5.5l2.5 2.5L16 8l-2.5 2.5L16 13.5 13.5 16 11 13.5 8.5 16 6 13.5l2.5-2.5L6 8l2.5-2.5L11 8l2.5-2.5z" fill="#0084FF" />
         </svg>
       ),
       url: `https://www.facebook.com/dialog/send?link=${encodeURIComponent(shareUrl)}&app_id=YOUR_APP_ID`
@@ -201,7 +201,7 @@ const ProfilePage = () => {
       name: 'Facebook',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/>
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2" />
         </svg>
       ),
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`
@@ -210,8 +210,8 @@ const ProfilePage = () => {
       name: 'Snapchat',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#FFFC00"/>
-          <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" fill="#FFFC00"/>
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="#FFFC00" />
+          <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z" fill="#FFFC00" />
         </svg>
       ),
       url: `https://www.snapchat.com/add?text=${encodeURIComponent(`Check out this profile: ${shareUrl}`)}`
@@ -220,7 +220,7 @@ const ProfilePage = () => {
       name: 'Twitter',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" fill="#1DA1F2"/>
+          <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z" fill="#1DA1F2" />
         </svg>
       ),
       url: `https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`Check out ${profile?.name}'s profile`)}`
@@ -229,7 +229,7 @@ const ProfilePage = () => {
       name: 'LinkedIn',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" fill="#0A66C2"/>
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" fill="#0A66C2" />
         </svg>
       ),
       url: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`
@@ -238,7 +238,7 @@ const ProfilePage = () => {
       name: 'Email',
       icon: (
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#EA4335"/>
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="#EA4335" />
         </svg>
       ),
       url: `mailto:?subject=${encodeURIComponent(`Profile of ${profile?.name}`)}&body=${encodeURIComponent(`I thought you might be interested in this profile: ${shareUrl}`)}`
@@ -315,25 +315,25 @@ const ProfilePage = () => {
           setLoadingMentorRequests(true);
           mentorService.getRequests().then(r => {
             setMentorRequests(r.data || []);
-          }).catch(() => {}).finally(() => setLoadingMentorRequests(false));
+          }).catch(() => { }).finally(() => setLoadingMentorRequests(false));
           // Load preview of mentees (limit 3)
           mentorService.getMyMentees(3).then(r => {
             setMyMentees(r.data?.mentees || []);
             setTotalMentees(r.data?.total || 0);
-          }).catch(() => {});
+          }).catch(() => { });
         }
-      }).catch(() => {});
+      }).catch(() => { });
       // Load own mentor applications (requests sent to others)
       setLoadingApplications(true);
       mentorService.getMyApplications().then(res => {
         setMyApplications(res.data || []);
-      }).catch(() => {}).finally(() => setLoadingApplications(false));
+      }).catch(() => { }).finally(() => setLoadingApplications(false));
       // Load notifications
       setLoadingNotifications(true);
       notificationService.getAll().then(res => {
         const notifs = (res.data?.data || []).filter(n => n.type === 'status_change' || n.type === 'event_registration');
         setProfileNotifications(notifs);
-      }).catch(() => {}).finally(() => setLoadingNotifications(false));
+      }).catch(() => { }).finally(() => setLoadingNotifications(false));
     }
   }, [isOwner, profile]);
 
@@ -342,7 +342,7 @@ const ProfilePage = () => {
     if (!isOwner && profile?.id) {
       mentorService.getByAlumni(profile.id).then(res => {
         if (res.data) setViewedProfileMentor(res.data);
-      }).catch(() => {});
+      }).catch(() => { });
     }
   }, [isOwner, profile]);
 
@@ -358,7 +358,7 @@ const ProfilePage = () => {
 
   const fetchAppliedJobs = async () => {
     if (!isOwner) return;
-    
+
     try {
       setLoadingJobs(true);
       // Note: This would require a new endpoint in the backend
@@ -387,10 +387,10 @@ const ProfilePage = () => {
 
       if (result.isConfirmed) {
         await jobService.removeApplication(applicationId);
-        
+
         // Refresh applied jobs list
         await fetchAppliedJobs();
-        
+
         Swal.fire({
           icon: 'success',
           title: 'Application Removed',
@@ -428,10 +428,10 @@ const ProfilePage = () => {
     try {
       setLoadingEvents(true);
       const response = await eventService.getMyRegistrations();
-      
+
       // Filter out cancelled registrations
       const activeRegistrations = (response.data || []).filter(reg => reg.status !== 'cancelled');
-      
+
       setRegisteredEvents(activeRegistrations);
     } catch (error) {
       console.error('Failed to fetch registered events:', error);
@@ -950,7 +950,7 @@ const ProfilePage = () => {
     try {
       setSaving(true);
       setModalError('');
-      
+
       await alumniService.updateProfile(contactForm);
       await refreshProfile();
       setActiveModal(null);
@@ -1188,8 +1188,9 @@ const ProfilePage = () => {
               />
             </div>
 
-            {/* Profile info row */}
-            <div className="px-6 sm:px-8 pb-6 pt-4 flex flex-col md:flex-row md:items-end gap-5 -mt-16 md:-mt-20 relative z-10">
+            {/* Profile info row — dark band so white name is readable */}
+            <div className="px-6 sm:px-8 pb-6 pt-4 flex flex-col md:flex-row md:items-end gap-5 -mt-16 md:-mt-20 relative z-10"
+              style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(0,39,89,0.85) 35%, #002759 100%)' }}>
               <div className="relative flex-shrink-0">
                 <div className="relative size-32 sm:size-36 md:size-40">
                   {profile?.profile_image || profile?.student_photo ? (
@@ -1201,8 +1202,8 @@ const ProfilePage = () => {
                     />
                   ) : (
                     <div className="size-32 sm:size-36 md:size-40 rounded-full border-4 border-white shadow-lg flex flex-col items-center justify-center cursor-pointer transition-colors"
-                         style={{ background: 'linear-gradient(135deg, #0f2d8a, #194ce6)' }}
-                         onClick={() => isOwner && profileInputRef.current?.click()}>
+                      style={{ background: 'linear-gradient(135deg, #0f2d8a, #194ce6)' }}
+                      onClick={() => isOwner && profileInputRef.current?.click()}>
                       <FiUser className="text-3xl text-white/90 mb-1" />
                       <p className="text-[10px] text-white/80 font-medium">Add Photo</p>
                     </div>
@@ -1235,35 +1236,33 @@ const ProfilePage = () => {
               <div className="flex-1 flex flex-col md:flex-row justify-between md:items-end gap-4 md:pb-2">
                 <div className="flex flex-col">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="text-gray-900 text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight">{profile?.name || '-'}</h1>
+                    <h1 className="text-white text-2xl sm:text-3xl font-extrabold leading-tight tracking-tight drop-shadow-sm">{profile?.name || '-'}</h1>
                     {profile?.is_verified && (
-                      <span title="Verified Alumnus" className="inline-flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0" style={{ background: '#194ce6' }}>
-                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                      <span title="Verified Alumnus" className="inline-flex items-center justify-center w-5 h-5 rounded-full flex-shrink-0 bg-white">
+                        <svg className="w-3 h-3" style={{ color: '#002759' }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       </span>
                     )}
                   </div>
                   {profile?.current_job_title && (
-                    <p className="text-sm font-semibold mt-1" style={{ color: '#194ce6' }}>
+                    <p className="text-sm font-semibold mt-1 text-white/95">
                       {profile.current_job_title}{profile?.current_company ? ` · ${profile.current_company}` : ''}
                     </p>
                   )}
-                  <p className="text-gray-500 text-sm font-medium mt-1">Class of {profile?.graduation_year || '-'} · {profile?.faculty_name || '-'}</p>
+                  <p className="text-white/70 text-sm font-medium mt-1">Class of {profile?.graduation_year || '-'} · {profile?.faculty_name || '-'}</p>
                   <div className="flex items-center gap-2 mt-2 flex-wrap">
-                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                      profile?.is_verified
-                        ? 'bg-green-50 text-green-700 border border-green-200'
-                        : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
-                    }`}>
+                    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${profile?.is_verified
+                        ? 'bg-green-500/20 text-green-200 border border-green-400/30'
+                        : 'bg-yellow-500/20 text-yellow-200 border border-yellow-400/30'
+                      }`}>
                       {profile?.is_verified ? 'Verified' : 'Pending Verification'}
                     </span>
                     {isOwner && !profile?.is_verified && profileNotifications.length > 0 && (() => {
                       const latest = profileNotifications[0];
                       return (
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                          latest.title?.includes('Rejected') ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
-                        }`}>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${latest.title?.includes('Rejected') ? 'bg-red-500/20 text-red-200 border border-red-400/30' : 'bg-yellow-500/20 text-yellow-200 border border-yellow-400/30'
+                          }`}>
                           {latest.title?.includes('Rejected') ? 'Rejected' : 'Pending'}
                           {latest.reason && ` — ${latest.reason}`}
                         </span>
@@ -1274,10 +1273,7 @@ const ProfilePage = () => {
                 <div className="flex gap-2 flex-wrap">
                   {isOwner && (
                     <button type="button" onClick={openBasicModal}
-                      className="px-4 py-2 text-white rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition-colors"
-                      style={{ background: '#002759' }}
-                      onMouseEnter={e => e.currentTarget.style.background = '#001a3d'}
-                      onMouseLeave={e => e.currentTarget.style.background = '#002759'}>
+                      className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors bg-white text-gray-900 hover:bg-gray-100">
                       <FiEdit className="text-xs" />
                       Edit Profile
                     </button>
@@ -1286,8 +1282,7 @@ const ProfilePage = () => {
                     <button
                       type="button"
                       onClick={openMentorModal}
-                      className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors border"
-                      style={{ background: '#eef1fd', color: '#194ce6', borderColor: '#c5ccf7' }}
+                      className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors border border-white/30 text-white bg-white/10 hover:bg-white/20"
                       title={myMentor ? 'Edit Mentor Profile' : 'Become a Mentor'}
                     >
                       <FiPlus className="text-xs" />
@@ -1299,8 +1294,7 @@ const ProfilePage = () => {
                       type="button"
                       onClick={handleRequestMentorshipFromProfile}
                       disabled={requestingMentorship}
-                      className="px-4 py-2 text-white rounded-lg text-sm font-semibold flex items-center gap-2 disabled:opacity-60 transition-colors"
-                      style={{ background: '#002759' }}
+                      className="px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 disabled:opacity-60 transition-colors bg-white text-gray-900 hover:bg-gray-100"
                     >
                       <FiUsers className="text-xs" />
                       {requestingMentorship ? 'Sending…' : 'Request Mentorship'}
@@ -1308,7 +1302,7 @@ const ProfilePage = () => {
                   )}
                   <button
                     onClick={() => setActiveModal('share')}
-                    className="px-3 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 hover:border-gray-300 transition-colors"
+                    className="px-3 py-2 border border-white/30 text-white rounded-lg hover:bg-white/10 transition-colors"
                     title="Share Profile"
                   >
                     <FiShare2 className="text-sm" />
@@ -1357,17 +1351,15 @@ const ProfilePage = () => {
                       key={tab.key}
                       type="button"
                       onClick={() => setActiveTab(tab.key)}
-                      className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 ${
-                        active ? 'text-white' : 'text-gray-600 hover:bg-gray-50'
-                      }`}
+                      className={`px-4 py-2 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors whitespace-nowrap flex-shrink-0 ${active ? 'text-white' : 'text-gray-600 hover:bg-gray-50'
+                        }`}
                       style={active ? { background: '#002759' } : {}}
                     >
                       <span className="text-sm">{tab.icon}</span>
                       {tab.label}
                       {typeof tab.count === 'number' && tab.count > 0 && (
-                        <span className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold ${
-                          active ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'
-                        }`}>
+                        <span className={`ml-0.5 px-1.5 py-0.5 rounded-full text-[9px] font-bold ${active ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-600'
+                          }`}>
                           {tab.count}
                         </span>
                       )}
@@ -1396,75 +1388,75 @@ const ProfilePage = () => {
             <aside className={`${isOwner && activeTab !== 'overview' ? 'md:col-span-12' : 'md:col-span-4'} flex flex-col gap-6`}>
               {/* Contact Info Card — hide on non-overview tabs for owner */}
               {(!isOwner || activeTab === 'overview') && (
-              <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-gray-900 text-base font-bold flex items-center gap-2">
-                    <FiMail style={{ color: '#194ce6' }} />
-                    Contact Information
-                  </h3>
-                  {isOwner && (
-                    <button type="button" onClick={openContactModal}
-                      className="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors border"
-                      style={{ background: '#eef1fd', color: '#194ce6', borderColor: '#c5ccf7' }}>
-                      <FiEdit size={12} />
-                      Edit
-                    </button>
-                  )}
-                </div>
-                <div className="flex flex-col gap-2.5">
-                  <div className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
-                      style={{ background: '#eef1fd', color: '#194ce6' }}>
-                      <FiMail className="text-sm" />
-                    </div>
-                    <span className="text-gray-700 text-xs font-medium break-all line-clamp-1">{profile?.email || '-'}</span>
-                  </div>
-                  <div className="group relative flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
-                      style={{ background: '#eef1fd', color: '#194ce6' }}>
-                      <FiPhone className="text-sm" />
-                    </div>
-                    <span className="text-gray-700 text-xs font-medium">{profile?.phone || 'Not added'}</span>
-                    {profile?.phone && isOwner && (
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteContact('phone')}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto"
-                        title="Delete phone"
-                      >
-                        <FiTrash2 className="text-red-500 hover:text-red-700" size={12} />
+                <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-gray-900 text-base font-bold flex items-center gap-2">
+                      <FiMail style={{ color: '#194ce6' }} />
+                      Contact Information
+                    </h3>
+                    {isOwner && (
+                      <button type="button" onClick={openContactModal}
+                        className="px-2.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-colors border"
+                        style={{ background: '#eef1fd', color: '#194ce6', borderColor: '#c5ccf7' }}>
+                        <FiEdit size={12} />
+                        Edit
                       </button>
                     )}
                   </div>
-                  <div className="group relative flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                    <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
-                      style={{ background: '#eef1fd', color: '#194ce6' }}>
-                      <FiMapPin className="text-sm" />
-                    </div>
-                    <span className="text-gray-700 text-xs font-medium">{profile?.location || 'Not added'}</span>
-                    {profile?.location && isOwner && (
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteContact('location')}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto"
-                        title="Delete location"
-                      >
-                        <FiTrash2 className="text-red-500 hover:text-red-700" size={12} />
-                      </button>
-                    )}
-                  </div>
-                  {profile?.linkedin_profile && (
-                    <a href={profile.linkedin_profile} target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                  <div className="flex flex-col gap-2.5">
+                    <div className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                       <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
                         style={{ background: '#eef1fd', color: '#194ce6' }}>
-                        <FiLink className="text-sm" />
+                        <FiMail className="text-sm" />
                       </div>
-                      <span className="text-gray-700 text-xs font-medium truncate">LinkedIn Profile</span>
-                    </a>
-                  )}
+                      <span className="text-gray-700 text-xs font-medium break-all line-clamp-1">{profile?.email || '-'}</span>
+                    </div>
+                    <div className="group relative flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
+                        style={{ background: '#eef1fd', color: '#194ce6' }}>
+                        <FiPhone className="text-sm" />
+                      </div>
+                      <span className="text-gray-700 text-xs font-medium">{profile?.phone || 'Not added'}</span>
+                      {profile?.phone && isOwner && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteContact('phone')}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto"
+                          title="Delete phone"
+                        >
+                          <FiTrash2 className="text-red-500 hover:text-red-700" size={12} />
+                        </button>
+                      )}
+                    </div>
+                    <div className="group relative flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                      <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
+                        style={{ background: '#eef1fd', color: '#194ce6' }}>
+                        <FiMapPin className="text-sm" />
+                      </div>
+                      <span className="text-gray-700 text-xs font-medium">{profile?.location || 'Not added'}</span>
+                      {profile?.location && isOwner && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteContact('location')}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto"
+                          title="Delete location"
+                        >
+                          <FiTrash2 className="text-red-500 hover:text-red-700" size={12} />
+                        </button>
+                      )}
+                    </div>
+                    {profile?.linkedin_profile && (
+                      <a href={profile.linkedin_profile} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                        <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
+                          style={{ background: '#eef1fd', color: '#194ce6' }}>
+                          <FiLink className="text-sm" />
+                        </div>
+                        <span className="text-gray-700 text-xs font-medium truncate">LinkedIn Profile</span>
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
               )}
 
               {/* Applied Jobs Section - Only for profile owner */}
@@ -1480,7 +1472,7 @@ const ProfilePage = () => {
                         {appliedJobs.length}
                       </span>
                     </div>
-                    
+
                     {loadingJobs ? (
                       <div className="space-y-3">
                         {Array.from({ length: 3 }, (_, index) => (
@@ -1494,8 +1486,8 @@ const ProfilePage = () => {
                       <div className="text-center py-6">
                         <FiBriefcase className="text-3xl text-gray-300 mx-auto mb-3" />
                         <p className="text-gray-500 text-sm">No job applications yet</p>
-                        <Link 
-                          to="/jobs" 
+                        <Link
+                          to="/jobs"
                           className="inline-flex items-center gap-2 mt-3 text-blue-600 hover:text-blue-700 text-sm font-medium"
                         >
                           Browse Jobs
@@ -1519,15 +1511,14 @@ const ProfilePage = () => {
                                     <FiCalendar className="text-xs" />
                                     {new Date(application.created_at).toLocaleDateString()}
                                   </span>
-                                  <span className={`text-xs px-2 py-0.5 rounded-full ${
-                                    application.status === 'pending' 
-                                      ? 'bg-yellow-100 text-yellow-700' 
+                                  <span className={`text-xs px-2 py-0.5 rounded-full ${application.status === 'pending'
+                                      ? 'bg-yellow-100 text-yellow-700'
                                       : application.status === 'reviewed'
-                                      ? 'bg-blue-100 text-blue-700'
-                                      : application.status === 'accepted'
-                                      ? 'bg-green-100 text-green-700'
-                                      : 'bg-gray-100 text-gray-700'
-                                  }`}>
+                                        ? 'bg-blue-100 text-blue-700'
+                                        : application.status === 'accepted'
+                                          ? 'bg-green-100 text-green-700'
+                                          : 'bg-gray-100 text-gray-700'
+                                    }`}>
                                     {application.status || 'pending'}
                                   </span>
                                 </div>
@@ -1543,7 +1534,7 @@ const ProfilePage = () => {
                           </div>
                         ))}
                         {appliedJobs.length > 3 && (
-                          <Link 
+                          <Link
                             to="/applications"
                             className="block w-full text-center py-2 text-blue-600 hover:text-blue-700 text-sm font-medium border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
                           >
@@ -1565,7 +1556,7 @@ const ProfilePage = () => {
                         <FiMail className="text-blue-600" />
                         Messages
                       </h3>
-                      <Link 
+                      <Link
                         to="/messages"
                         className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
                       >
@@ -1580,7 +1571,7 @@ const ProfilePage = () => {
                             <FiMail className="text-gray-400 text-xl" />
                           </div>
                           <p className="text-gray-500 text-sm">No messages yet</p>
-                          <Link 
+                          <Link
                             to="/contact"
                             className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                           >
@@ -1600,18 +1591,17 @@ const ProfilePage = () => {
                                   <h4 className="text-sm font-semibold text-gray-900 truncate">
                                     {message.subject}
                                   </h4>
-                                  <span className={`text-xs px-2 py-1 rounded-full ${
-                                    message.status === 'pending' 
-                                      ? 'bg-yellow-100 text-yellow-700' 
+                                  <span className={`text-xs px-2 py-1 rounded-full ${message.status === 'pending'
+                                      ? 'bg-yellow-100 text-yellow-700'
                                       : message.status === 'received'
-                                      ? 'bg-blue-100 text-blue-700'
-                                      : message.status === 'responded'
-                                      ? 'bg-green-100 text-green-700'
-                                      : 'bg-gray-100 text-gray-700'
-                                  }`}>
-                                    {message.status === 'pending' ? 'Pending' : 
-                                     message.status === 'received' ? 'Received' : 
-                                     message.status === 'responded' ? 'Responded' : 'Unknown'}
+                                        ? 'bg-blue-100 text-blue-700'
+                                        : message.status === 'responded'
+                                          ? 'bg-green-100 text-green-700'
+                                          : 'bg-gray-100 text-gray-700'
+                                    }`}>
+                                    {message.status === 'pending' ? 'Pending' :
+                                      message.status === 'received' ? 'Received' :
+                                        message.status === 'responded' ? 'Responded' : 'Unknown'}
                                   </span>
                                 </div>
                                 <p className="text-xs text-gray-600 line-clamp-2 mb-2">
@@ -1625,7 +1615,7 @@ const ProfilePage = () => {
                             </div>
                           ))}
                           {messages.length > 3 && (
-                            <Link 
+                            <Link
                               to="/messages"
                               className="block w-full text-center py-2 text-blue-600 hover:text-blue-700 text-sm font-medium border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
                             >
@@ -1648,7 +1638,7 @@ const ProfilePage = () => {
                         <FiCalendar className="text-blue-600" />
                         Registered Events
                       </h3>
-                      <Link 
+                      <Link
                         to="/events/registered"
                         className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
                       >
@@ -1672,7 +1662,7 @@ const ProfilePage = () => {
                             <FiCalendar className="text-gray-400 text-xl" />
                           </div>
                           <p className="text-gray-500 text-sm">No registered events yet</p>
-                          <Link 
+                          <Link
                             to="/events"
                             className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                           >
@@ -1692,15 +1682,14 @@ const ProfilePage = () => {
                                   <h4 className="text-sm font-semibold text-gray-900 truncate">
                                     {registration.alumni_event?.title || 'Event Title'}
                                   </h4>
-                                  <span className={`text-xs px-2 py-1 rounded-full ${
-                                    registration.status === 'registered' 
-                                      ? 'bg-blue-100 text-blue-700' 
+                                  <span className={`text-xs px-2 py-1 rounded-full ${registration.status === 'registered'
+                                      ? 'bg-blue-100 text-blue-700'
                                       : registration.status === 'confirmed'
-                                      ? 'bg-green-100 text-green-700'
-                                      : registration.status === 'attended'
-                                      ? 'bg-purple-100 text-purple-700'
-                                      : 'bg-gray-100 text-gray-700'
-                                  }`}>
+                                        ? 'bg-green-100 text-green-700'
+                                        : registration.status === 'attended'
+                                          ? 'bg-purple-100 text-purple-700'
+                                          : 'bg-gray-100 text-gray-700'
+                                    }`}>
                                     {registration.status || 'registered'}
                                   </span>
                                 </div>
@@ -1728,7 +1717,7 @@ const ProfilePage = () => {
                             </div>
                           ))}
                           {registeredEvents.length > 3 && (
-                            <Link 
+                            <Link
                               to="/events/registered"
                               className="block w-full text-center py-2 text-blue-600 hover:text-blue-700 text-sm font-medium border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
                             >
@@ -1854,7 +1843,7 @@ const ProfilePage = () => {
                               {req.title && <p className="text-xs text-gray-500 truncate">{req.title}</p>}
                               {req.whatsapp_number && (
                                 <p className="text-xs text-green-600 font-medium flex items-center gap-1 mt-0.5">
-                                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                  <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
                                   {req.whatsapp_number}
                                 </p>
                               )}
@@ -1862,11 +1851,10 @@ const ProfilePage = () => {
                                 <p className="text-xs text-gray-600 mt-1 line-clamp-2 italic">"{req.message}"</p>
                               )}
                               <div className="flex items-center justify-between mt-1">
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                  req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
-                                  req.status === 'accepted' ? 'bg-green-100 text-green-700' :
-                                  'bg-red-100 text-red-700'
-                                }`}>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${req.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                    req.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                                      'bg-red-100 text-red-700'
+                                  }`}>
                                   {req.status.charAt(0).toUpperCase() + req.status.slice(1)}
                                 </span>
                                 <span className="text-[10px] text-gray-400">
@@ -2018,11 +2006,10 @@ const ProfilePage = () => {
                               {app.title && <p className="text-xs text-gray-500 truncate">{app.title}</p>}
                               {app.company && <p className="text-xs text-gray-400 truncate">At {app.company}</p>}
                               <div className="flex items-center justify-between mt-1">
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                                  app.status === 'pending'  ? 'bg-yellow-100 text-yellow-700' :
-                                  app.status === 'accepted' ? 'bg-green-100 text-green-700' :
-                                  'bg-red-100 text-red-700'
-                                }`}>
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${app.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                    app.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                                      'bg-red-100 text-red-700'
+                                  }`}>
                                   {app.status.charAt(0).toUpperCase() + app.status.slice(1)}
                                 </span>
                                 <span className="text-[10px] text-gray-400">
@@ -2042,299 +2029,299 @@ const ProfilePage = () => {
 
             {/* Right Column (Main Content) — hide on non-overview tabs for owner */}
             {(!isOwner || activeTab === 'overview') && (
-            <div className="md:col-span-8 flex flex-col gap-6">
-              {/* About Me */}
-              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                <h3 className="text-gray-900 text-lg font-bold mb-4 flex items-center gap-2">
-                  <FiUser style={{ color: '#194ce6' }} />
-                  About Me
-                </h3>
-                <div className="bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg p-6 border border-gray-200">
-                  <p className="text-black leading-relaxed text-base">
-                    {profile?.bio || 'No bio added yet.'}
-                  </p>
-                </div>
-              </section>
-
-              {/* Professional Experience */}
-              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-gray-900 text-lg font-bold flex items-center gap-2">
-                    <FiBriefcase style={{ color: '#194ce6' }} />
-                    Professional Experience
+              <div className="md:col-span-8 flex flex-col gap-6">
+                {/* About Me */}
+                <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                  <h3 className="text-gray-900 text-lg font-bold mb-4 flex items-center gap-2">
+                    <FiUser style={{ color: '#194ce6' }} />
+                    About Me
                   </h3>
-                  {isOwner && (
-                    <button type="button" onClick={() => openExperienceModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
-                      <FiPlus />
-                      Add
-                    </button>
-                  )}
-                </div>
-                <div className="space-y-8">
-                  {experiences.length === 0 ? (
-                    isOwner ? (
-                      <button type="button" onClick={() => openExperienceModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
-                        <FiPlus />
-                        Add Experience
-                      </button>
-                    ) : (
-                      <div className="w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
-                        No experience added yet.
-                      </div>
-                    )
-                  ) : (
-                    experiences.map((exp, idx) => (
-                      <div key={exp.id} className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
-                        <div className={`absolute -left-[9px] top-0 w-4 h-4 ${idx === 0 ? 'bg-primary border-gray-100' : 'bg-gray-400 border-white'} rounded-full border-4 shadow-sm`}></div>
-                        <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 relative">
-                          <div className="absolute top-3 right-3 flex gap-2">
-                            {isOwner && (
-                              <>
-                                <button type="button" onClick={() => openExperienceModal(exp)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
-                                  <FiEdit />
-                                </button>
-                                <button type="button" onClick={() => handleDeleteExperience(exp.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
-                                  <FiTrash2 />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
-                            <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">{exp.job_title}</h4>
-                            <span className="text-primary font-medium text-sm">{exp.company || '-'}</span>
-                          </div>
-                          <p className="text-gray-600 text-sm mb-3">{exp.location || '-'}</p>
-                          <p className="text-black text-sm leading-relaxed">{exp.description || ''}</p>
-                          {exp.attachment && (
-                            <a className="inline-block mt-3 text-sm font-semibold text-blue-700 hover:text-blue-900" href={exp.attachment} target="_blank" rel="noreferrer">
-                              View Attachment
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </section>
+                  <div className="bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg p-6 border border-gray-200">
+                    <p className="text-black leading-relaxed text-base">
+                      {profile?.bio || 'No bio added yet.'}
+                    </p>
+                  </div>
+                </section>
 
-              {/* Education */}
-              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-black text-xl font-bold flex items-center gap-2">
-                    <FiBookOpen className="text-primary" />
-                    Education
-                  </h3>
-                  {isOwner && (
-                    <button type="button" onClick={() => openEducationModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
-                      <FiPlus />
-                      Add
-                    </button>
-                  )}
-                </div>
-                <div className="space-y-8">
-                  {educations.length === 0 ? (
-                    isOwner ? (
-                      <button type="button" onClick={() => openEducationModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+                {/* Professional Experience */}
+                <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-gray-900 text-lg font-bold flex items-center gap-2">
+                      <FiBriefcase style={{ color: '#194ce6' }} />
+                      Professional Experience
+                    </h3>
+                    {isOwner && (
+                      <button type="button" onClick={() => openExperienceModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
                         <FiPlus />
-                        Add Education
+                        Add
                       </button>
-                    ) : (
-                      <div className="w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
-                        No education added yet.
-                      </div>
-                    )
-                  ) : (
-                    educations.map((edu, idx) => (
-                      <div key={edu.id} className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
-                        <div className={`absolute -left-[9px] top-0 w-4 h-4 ${idx === 0 ? 'bg-primary border-gray-100' : 'bg-gray-400 border-white'} rounded-full border-4 shadow-sm`}></div>
-                        <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 relative">
-                          <div className="absolute top-3 right-3 flex gap-2">
-                            {isOwner && (
-                              <>
-                                <button type="button" onClick={() => openEducationModal(edu)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
-                                  <FiEdit />
-                                </button>
-                                <button type="button" onClick={() => handleDeleteEducation(edu.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
-                                  <FiTrash2 />
-                                </button>
-                              </>
-                            )}
-                          </div>
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
-                            <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">{edu.institution}</h4>
-                            <span className="text-primary font-medium text-sm">{edu.field_of_study || edu.degree || '-'}</span>
-                          </div>
-                          <p className="text-gray-600 text-sm mb-3">{edu.start_year || ''}{edu.end_year ? ` — ${edu.end_year}` : ''}</p>
-                          {edu.attachment && (
-                            <a className="inline-block mt-3 text-sm font-semibold text-blue-700 hover:text-blue-900" href={edu.attachment} target="_blank" rel="noreferrer">
-                              View Attachment
-                            </a>
-                          )}
+                    )}
+                  </div>
+                  <div className="space-y-8">
+                    {experiences.length === 0 ? (
+                      isOwner ? (
+                        <button type="button" onClick={() => openExperienceModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+                          <FiPlus />
+                          Add Experience
+                        </button>
+                      ) : (
+                        <div className="w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
+                          No experience added yet.
                         </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </section>
-
-              {/* Skills & Expertise */}
-              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-black text-xl font-bold flex items-center gap-2">
-                    <FiSettings className="text-primary" />
-                    Skills & Expertise
-                  </h3>
-                  {isOwner && (
-                    <button type="button" onClick={() => openSkillModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
-                      <FiPlus />
-                      Add
-                    </button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {skills.length === 0 ? (
-                    isOwner ? (
-                      <button type="button" onClick={() => openSkillModal(null)} className="col-span-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
-                        <FiPlus />
-                        Add Skill
-                      </button>
+                      )
                     ) : (
-                      <div className="col-span-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
-                        No skills added yet.
-                      </div>
-                    )
-                  ) : (
-                    skills.map((skill) => (
-                      <div key={skill.id} className="relative bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-300 rounded-lg p-6 hover:shadow-md transition-all duration-200 hover:scale-105 min-h-[160px] w-full">
-                        <div className="absolute top-3 right-3 flex gap-1">
-                          {isOwner && (
-                            <>
-                              <button type="button" onClick={() => openSkillModal(skill)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center shadow-sm" title="Edit">
-                                <FiEdit size={14} />
-                              </button>
-                              <button type="button" onClick={() => handleDeleteSkill(skill.id)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center shadow-sm" title="Delete">
-                                <FiTrash2 size={14} />
-                              </button>
-                            </>
-                          )}
-                        </div>
-                        <div className="flex flex-col items-center justify-center h-full text-center">
-                          <span className="text-black text-sm font-medium block mb-2">{skill.name}</span>
-                          {skill.category && (
-                            <span className="block text-xs text-gray-600 mb-2">{skill.category}</span>
-                          )}
-                          {skill.proficiency && (
-                            <div className="mb-2">
-                              <div className="flex justify-center gap-1 mb-1">
-                                {[...Array(5)].map((_, i) => (
-                                  <div key={i} className={`w-2 h-2 rounded-full ${i < skill.proficiency ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
-                                ))}
-                              </div>
-                              <span className="text-xs text-gray-600">{skill.proficiency}/5</span>
+                      experiences.map((exp, idx) => (
+                        <div key={exp.id} className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
+                          <div className={`absolute -left-[9px] top-0 w-4 h-4 ${idx === 0 ? 'bg-primary border-gray-100' : 'bg-gray-400 border-white'} rounded-full border-4 shadow-sm`}></div>
+                          <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 relative">
+                            <div className="absolute top-3 right-3 flex gap-2">
+                              {isOwner && (
+                                <>
+                                  <button type="button" onClick={() => openExperienceModal(exp)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
+                                    <FiEdit />
+                                  </button>
+                                  <button type="button" onClick={() => handleDeleteExperience(exp.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
+                                    <FiTrash2 />
+                                  </button>
+                                </>
+                              )}
                             </div>
-                          )}
-                          {skill.attachment && (
-                            <a className="inline-block mt-2 text-xs font-semibold text-blue-700 hover:text-blue-900" href={skill.attachment} target="_blank" rel="noreferrer">
-                              View
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </section>
-
-              {/* Achievements & Awards */}
-              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-black text-xl font-bold flex items-center gap-2">
-                    <FiAward className="text-primary" />
-                    Achievements & Awards
-                  </h3>
-                  {isOwner && (
-                    <button type="button" onClick={() => openAchievementModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
-                      <FiPlus />
-                      Add
-                    </button>
-                  )}
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                  <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg p-6 border border-yellow-200 hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center justify-between mb-3">
-                      <FiTrendingUp className="text-yellow-600 text-2xl" />
-                      <span className="text-2xl font-bold text-gray-900">{achievements.length}</span>
-                    </div>
-                    <p className="text-sm font-medium text-gray-700">Total Achievements</p>
-                  </div>
-                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center justify-between mb-3">
-                      <FiStar className="text-blue-600 text-2xl" />
-                      <span className="text-2xl font-bold text-gray-900">{achievements[0]?.year || '-'}</span>
-                    </div>
-                    <p className="text-sm font-medium text-gray-700">Latest Year</p>
-                  </div>
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200 hover:shadow-md transition-all duration-200">
-                    <div className="flex items-center justify-between mb-3">
-                      <FiTarget className="text-green-600 text-2xl" />
-                      <span className="text-2xl font-bold text-gray-900">{achievements[0]?.category || '-'}</span>
-                    </div>
-                    <p className="text-sm font-medium text-gray-700">Latest Category</p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  {achievements.length === 0 ? (
-                    isOwner ? (
-                      <button type="button" onClick={() => openAchievementModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
-                        <FiPlus />
-                        Add Achievement
-                      </button>
-                    ) : (
-                      <div className="w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
-                        No achievements added yet.
-                      </div>
-                    )
-                  ) : (
-                    achievements.map((a) => (
-                      <div key={a.id} className="bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
-                        <div className="flex items-start gap-3">
-                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <FiAward className="text-blue-600 text-xl" />
-                          </div>
-                          <div className="flex-1">
-                            <h5 className="font-semibold text-gray-900 mb-1">{a.title}</h5>
-                            {a.description && <p className="text-sm text-gray-600 mb-2">{a.description}</p>}
-                            <div className="flex items-center gap-2 text-xs text-gray-500">
-                              <span>{a.year || '-'}</span>
-                              <span>•</span>
-                              <span>{a.issuer || '-'}</span>
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                              <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">{exp.job_title}</h4>
+                              <span className="text-primary font-medium text-sm">{exp.company || '-'}</span>
                             </div>
-                            {a.attachment && (
-                              <a className="inline-block mt-2 text-sm font-semibold text-blue-700 hover:text-blue-900" href={a.attachment} target="_blank" rel="noreferrer">
+                            <p className="text-gray-600 text-sm mb-3">{exp.location || '-'}</p>
+                            <p className="text-black text-sm leading-relaxed">{exp.description || ''}</p>
+                            {exp.attachment && (
+                              <a className="inline-block mt-3 text-sm font-semibold text-blue-700 hover:text-blue-900" href={exp.attachment} target="_blank" rel="noreferrer">
                                 View Attachment
                               </a>
                             )}
                           </div>
-                          <div className="flex gap-2">
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </section>
+
+                {/* Education */}
+                <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-black text-xl font-bold flex items-center gap-2">
+                      <FiBookOpen className="text-primary" />
+                      Education
+                    </h3>
+                    {isOwner && (
+                      <button type="button" onClick={() => openEducationModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
+                        <FiPlus />
+                        Add
+                      </button>
+                    )}
+                  </div>
+                  <div className="space-y-8">
+                    {educations.length === 0 ? (
+                      isOwner ? (
+                        <button type="button" onClick={() => openEducationModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+                          <FiPlus />
+                          Add Education
+                        </button>
+                      ) : (
+                        <div className="w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
+                          No education added yet.
+                        </div>
+                      )
+                    ) : (
+                      educations.map((edu, idx) => (
+                        <div key={edu.id} className="relative pl-12 pb-8 border-l-2 border-gray-200 last:border-l-0">
+                          <div className={`absolute -left-[9px] top-0 w-4 h-4 ${idx === 0 ? 'bg-primary border-gray-100' : 'bg-gray-400 border-white'} rounded-full border-4 shadow-sm`}></div>
+                          <div className="bg-gray-50 rounded-lg p-6 hover:shadow-md transition-shadow duration-200 relative">
+                            <div className="absolute top-3 right-3 flex gap-2">
+                              {isOwner && (
+                                <>
+                                  <button type="button" onClick={() => openEducationModal(edu)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
+                                    <FiEdit />
+                                  </button>
+                                  <button type="button" onClick={() => handleDeleteEducation(edu.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
+                                    <FiTrash2 />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
+                              <h4 className="text-black font-bold text-lg mb-1 sm:mb-0">{edu.institution}</h4>
+                              <span className="text-primary font-medium text-sm">{edu.field_of_study || edu.degree || '-'}</span>
+                            </div>
+                            <p className="text-gray-600 text-sm mb-3">{edu.start_year || ''}{edu.end_year ? ` — ${edu.end_year}` : ''}</p>
+                            {edu.attachment && (
+                              <a className="inline-block mt-3 text-sm font-semibold text-blue-700 hover:text-blue-900" href={edu.attachment} target="_blank" rel="noreferrer">
+                                View Attachment
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </section>
+
+                {/* Skills & Expertise */}
+                <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-black text-xl font-bold flex items-center gap-2">
+                      <FiSettings className="text-primary" />
+                      Skills & Expertise
+                    </h3>
+                    {isOwner && (
+                      <button type="button" onClick={() => openSkillModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
+                        <FiPlus />
+                        Add
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {skills.length === 0 ? (
+                      isOwner ? (
+                        <button type="button" onClick={() => openSkillModal(null)} className="col-span-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+                          <FiPlus />
+                          Add Skill
+                        </button>
+                      ) : (
+                        <div className="col-span-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
+                          No skills added yet.
+                        </div>
+                      )
+                    ) : (
+                      skills.map((skill) => (
+                        <div key={skill.id} className="relative bg-gradient-to-r from-gray-50 to-slate-50 border border-gray-300 rounded-lg p-6 hover:shadow-md transition-all duration-200 hover:scale-105 min-h-[160px] w-full">
+                          <div className="absolute top-3 right-3 flex gap-1">
                             {isOwner && (
                               <>
-                                <button type="button" onClick={() => openAchievementModal(a)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
-                                  <FiEdit />
+                                <button type="button" onClick={() => openSkillModal(skill)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center shadow-sm" title="Edit">
+                                  <FiEdit size={14} />
                                 </button>
-                                <button type="button" onClick={() => handleDeleteAchievement(a.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
-                                  <FiTrash2 />
+                                <button type="button" onClick={() => handleDeleteSkill(skill.id)} className="w-8 h-8 rounded-md bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center shadow-sm" title="Delete">
+                                  <FiTrash2 size={14} />
                                 </button>
                               </>
                             )}
                           </div>
+                          <div className="flex flex-col items-center justify-center h-full text-center">
+                            <span className="text-black text-sm font-medium block mb-2">{skill.name}</span>
+                            {skill.category && (
+                              <span className="block text-xs text-gray-600 mb-2">{skill.category}</span>
+                            )}
+                            {skill.proficiency && (
+                              <div className="mb-2">
+                                <div className="flex justify-center gap-1 mb-1">
+                                  {[...Array(5)].map((_, i) => (
+                                    <div key={i} className={`w-2 h-2 rounded-full ${i < skill.proficiency ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
+                                  ))}
+                                </div>
+                                <span className="text-xs text-gray-600">{skill.proficiency}/5</span>
+                              </div>
+                            )}
+                            {skill.attachment && (
+                              <a className="inline-block mt-2 text-xs font-semibold text-blue-700 hover:text-blue-900" href={skill.attachment} target="_blank" rel="noreferrer">
+                                View
+                              </a>
+                            )}
+                          </div>
                         </div>
+                      ))
+                    )}
+                  </div>
+                </section>
+
+                {/* Achievements & Awards */}
+                <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-black text-xl font-bold flex items-center gap-2">
+                      <FiAward className="text-primary" />
+                      Achievements & Awards
+                    </h3>
+                    {isOwner && (
+                      <button type="button" onClick={() => openAchievementModal(null)} className="px-3 py-1.5 rounded-lg text-white text-xs font-semibold flex items-center gap-1.5 transition-colors" style={{ background: '#0f2d8a' }} onMouseEnter={e => e.currentTarget.style.background = '#091d5e'} onMouseLeave={e => e.currentTarget.style.background = '#0f2d8a'}>
+                        <FiPlus />
+                        Add
+                      </button>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg p-6 border border-yellow-200 hover:shadow-md transition-all duration-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <FiTrendingUp className="text-yellow-600 text-2xl" />
+                        <span className="text-2xl font-bold text-gray-900">{achievements.length}</span>
                       </div>
-                    ))
-                  )}
-                </div>
-              </section>
-            </div>
+                      <p className="text-sm font-medium text-gray-700">Total Achievements</p>
+                    </div>
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200 hover:shadow-md transition-all duration-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <FiStar className="text-blue-600 text-2xl" />
+                        <span className="text-2xl font-bold text-gray-900">{achievements[0]?.year || '-'}</span>
+                      </div>
+                      <p className="text-sm font-medium text-gray-700">Latest Year</p>
+                    </div>
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-6 border border-green-200 hover:shadow-md transition-all duration-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <FiTarget className="text-green-600 text-2xl" />
+                        <span className="text-2xl font-bold text-gray-900">{achievements[0]?.category || '-'}</span>
+                      </div>
+                      <p className="text-sm font-medium text-gray-700">Latest Category</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {achievements.length === 0 ? (
+                      isOwner ? (
+                        <button type="button" onClick={() => openAchievementModal(null)} className="w-full px-4 py-3 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 font-semibold flex items-center justify-center gap-2 cursor-pointer">
+                          <FiPlus />
+                          Add Achievement
+                        </button>
+                      ) : (
+                        <div className="w-full px-4 py-3 rounded-lg border border-gray-200 text-gray-500 text-center">
+                          No achievements added yet.
+                        </div>
+                      )
+                    ) : (
+                      achievements.map((a) => (
+                        <div key={a.id} className="bg-gradient-to-r from-gray-50 to-slate-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-all duration-200">
+                          <div className="flex items-start gap-3">
+                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                              <FiAward className="text-blue-600 text-xl" />
+                            </div>
+                            <div className="flex-1">
+                              <h5 className="font-semibold text-gray-900 mb-1">{a.title}</h5>
+                              {a.description && <p className="text-sm text-gray-600 mb-2">{a.description}</p>}
+                              <div className="flex items-center gap-2 text-xs text-gray-500">
+                                <span>{a.year || '-'}</span>
+                                <span>•</span>
+                                <span>{a.issuer || '-'}</span>
+                              </div>
+                              {a.attachment && (
+                                <a className="inline-block mt-2 text-sm font-semibold text-blue-700 hover:text-blue-900" href={a.attachment} target="_blank" rel="noreferrer">
+                                  View Attachment
+                                </a>
+                              )}
+                            </div>
+                            <div className="flex gap-2">
+                              {isOwner && (
+                                <>
+                                  <button type="button" onClick={() => openAchievementModal(a)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-gray-800 hover:bg-gray-100 flex items-center justify-center" title="Edit">
+                                    <FiEdit />
+                                  </button>
+                                  <button type="button" onClick={() => handleDeleteAchievement(a.id)} className="w-9 h-9 rounded-lg bg-white border border-gray-200 text-red-600 hover:bg-red-50 flex items-center justify-center" title="Delete">
+                                    <FiTrash2 />
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </section>
+              </div>
             )}
           </div>
         </div>
@@ -2722,8 +2709,8 @@ const ProfilePage = () => {
           <div className="text-center">
             <div className="relative inline-block">
               {profile?.profile_image ? (
-                <img 
-                  src={profile.profile_image} 
+                <img
+                  src={profile.profile_image}
                   alt={profile.name}
                   className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
                 />
@@ -2755,11 +2742,10 @@ const ProfilePage = () => {
               />
               <button
                 onClick={handleCopyLink}
-                className={`px-6 py-3 rounded-lg font-medium text-sm transition-all transform hover:scale-105 ${
-                  shareLinkCopied 
-                    ? 'bg-green-600 text-white' 
+                className={`px-6 py-3 rounded-lg font-medium text-sm transition-all transform hover:scale-105 ${shareLinkCopied
+                    ? 'bg-green-600 text-white'
                     : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
+                  }`}
               >
                 {shareLinkCopied ? (
                   <span className="flex items-center gap-2">
