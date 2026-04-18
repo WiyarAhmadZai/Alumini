@@ -1355,9 +1355,10 @@ const ProfilePage = () => {
 
           {/* Two Column Layout */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            {/* Left Column (Sidebar) */}
-            <aside className="md:col-span-4 flex flex-col gap-6">
-              {/* Contact Info Card */}
+            {/* Left Column (Sidebar) — becomes full width when owner selects a specific tab */}
+            <aside className={`${isOwner && activeTab !== 'overview' ? 'md:col-span-12' : 'md:col-span-4'} flex flex-col gap-6`}>
+              {/* Contact Info Card — hide on non-overview tabs for owner */}
+              {(!isOwner || activeTab === 'overview') && (
               <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-gray-900 text-base font-bold flex items-center gap-2">
@@ -1427,6 +1428,7 @@ const ProfilePage = () => {
                   )}
                 </div>
               </div>
+              )}
 
               {/* Applied Jobs Section - Only for profile owner */}
               {isOwner && (activeTab === 'overview' || activeTab === 'jobs') && (
@@ -1757,7 +1759,7 @@ const ProfilePage = () => {
               )}
 
               {/* Mentorship Requests - only shown to mentors */}
-              {isOwner && myMentor && (
+              {isOwner && myMentor && (activeTab === 'overview' || activeTab === 'requests') && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
@@ -1918,7 +1920,7 @@ const ProfilePage = () => {
               )}
 
               {/* My Mentor Applications - requests the owner sent to others */}
-              {isOwner && (
+              {isOwner && (activeTab === 'overview' || activeTab === 'applications') && (
                 <div className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
                   <div className="p-5">
                     <div className="flex items-center justify-between mb-4">
@@ -2001,7 +2003,8 @@ const ProfilePage = () => {
 
             </aside>
 
-            {/* Right Column (Main Content) */}
+            {/* Right Column (Main Content) — hide on non-overview tabs for owner */}
+            {(!isOwner || activeTab === 'overview') && (
             <div className="md:col-span-8 flex flex-col gap-6">
               {/* About Me */}
               <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
@@ -2295,6 +2298,7 @@ const ProfilePage = () => {
                 </div>
               </section>
             </div>
+            )}
           </div>
         </div>
       </div>
