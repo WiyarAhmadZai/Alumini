@@ -1188,9 +1188,9 @@ const ProfilePage = () => {
               />
             </div>
 
-            {/* Profile info row — dark band so white name is readable */}
-            <div className="px-6 sm:px-8 pb-6 pt-4 flex flex-col md:flex-row md:items-end gap-5 -mt-16 md:-mt-20 relative z-10"
-              style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(0,39,89,0.85) 35%, #002759 100%)' }}>
+            {/* Profile info row — shorter dark band */}
+            <div className="px-6 sm:px-8 pb-3 pt-2 flex flex-col md:flex-row md:items-end gap-4 -mt-12 md:-mt-14 relative z-10"
+              style={{ background: 'linear-gradient(to bottom, transparent 0%, rgba(0,39,89,0.75) 50%, #002759 100%)' }}>
               <div className="relative flex-shrink-0">
                 <div className="relative size-32 sm:size-36 md:size-40">
                   {profile?.profile_image || profile?.student_photo ? (
