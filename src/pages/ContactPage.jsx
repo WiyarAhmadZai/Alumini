@@ -98,11 +98,11 @@ const ContactPage = () => {
   return (
     <Layout>
       {/* ═══ HERO — branded design language ═════════════════════ */}
-      <section className="relative w-full h-64 sm:h-72 overflow-hidden">
+      <section className="relative w-full overflow-hidden" style={{ minHeight: 380 }}>
         <div className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 100%), url("/kpu5.jpg")' }} />
 
-        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+        <div className="relative z-10 flex flex-col items-center justify-center py-16 px-4 sm:px-6 text-center text-white" style={{ minHeight: 380 }}>
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 mb-3">
             <FiMessageSquare className="text-[10px]" />
             Get in Touch
