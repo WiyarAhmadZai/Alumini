@@ -36,10 +36,10 @@ const jobService = {
    * @param {File} cvFile - CV file (optional)
    * @returns {Promise} API response
    */
-  applyForJob: async (jobId, applicationData, cvFile = null) => {
+  applyForJob: async (jobId, applicationData, cvFile = null, onUploadProgress = null) => {
     try {
       const formData = new FormData();
-      
+
       // Add application data
       Object.entries(applicationData).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
@@ -55,6 +55,12 @@ const jobService = {
       const response = await api.post(`/alumini/jobs/${jobId}/apply`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
+        },
+        onUploadProgress: (progressEvent) => {
+          if (onUploadProgress && progressEvent.total) {
+            const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+            onUploadProgress(percent);
+          }
         }
       });
 
