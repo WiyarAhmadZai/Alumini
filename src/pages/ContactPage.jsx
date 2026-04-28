@@ -97,20 +97,40 @@ const ContactPage = () => {
 
   return (
     <Layout>
-      {/* ═══ HERO (dark overlay with image) ═════════════════════ */}
-      <section className="relative h-[400px] md:h-[500px] bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.60) 100%), url("/kpu5.jpg")' }}>
-        <div className="h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
-          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-6 text-white/90">
-            <FiMessageSquare className="text-white/70" />
+      {/* ═══ HERO — branded design language ═════════════════════ */}
+      <section className="relative w-full h-64 sm:h-72 overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 100%), url("/kpu5.jpg")' }} />
+
+        <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+          <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 mb-3">
+            <FiMessageSquare className="text-[10px]" />
             Get in Touch
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-5 max-w-4xl">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3 max-w-3xl">
             Contact Us
           </h1>
-          <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">
+          <p className="text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed font-light">
             Reach out to the KPU Alumni Association — we're here to help.
           </p>
+
+          {/* Inline quick info row — branded style consistent with other pages */}
+          <div className="mt-5 hidden sm:flex items-stretch bg-white/8 border border-white/15 rounded-xl overflow-hidden">
+            <div className="px-5 py-2 flex items-center gap-2 text-[11px]">
+              <FiPhone className="text-white/50 w-3 h-3" />
+              <span className="text-white/80 font-medium">+93 20 252 6364</span>
+            </div>
+            <div className="w-px bg-white/15" />
+            <div className="px-5 py-2 flex items-center gap-2 text-[11px]">
+              <FiMail className="text-white/50 w-3 h-3" />
+              <span className="text-white/80 font-medium">it.director@kpu.edu.af</span>
+            </div>
+            <div className="w-px bg-white/15" />
+            <div className="px-5 py-2 flex items-center gap-2 text-[11px]">
+              <FiMapPin className="text-white/50 w-3 h-3" />
+              <span className="text-white/80 font-medium">KPU Campus, Kabul</span>
+            </div>
+          </div>
         </div>
       </section>
 
