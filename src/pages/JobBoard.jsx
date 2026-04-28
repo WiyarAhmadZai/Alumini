@@ -4,7 +4,8 @@ import Layout from '../components/Layout';
 import ApplyModal from '../components/job/ApplyModal';
 import {
   FiSearch, FiMapPin, FiClock, FiDollarSign, FiChevronLeft, FiChevronRight,
-  FiBriefcase, FiX, FiLoader, FiGrid, FiList, FiCheck, FiArrowRight, FiFilter
+  FiBriefcase, FiX, FiLoader, FiGrid, FiList, FiCheck, FiArrowRight, FiFilter,
+  FiLayers, FiTrendingUp, FiChevronDown
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 import Swal from 'sweetalert2';
@@ -162,80 +163,147 @@ const JobBoard = () => {
     );
   };
 
-  // ─── Filter Panel content (used in sidebar and mobile drawer) ───
-  const FilterPanel = () => (
-    <div className="flex flex-col gap-5">
-      <div>
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] mb-3" style={{ color: BRAND_DARK }}>Job Type</h3>
-        <div className="flex flex-col gap-1.5">
-          {[
-            { key: 'fullTime', label: 'Full-time' },
-            { key: 'contract', label: 'Contract' },
-            { key: 'remote', label: 'Remote' },
-          ].map(opt => (
-            <label key={opt.key} className="flex items-center gap-2.5 text-xs text-gray-700 cursor-pointer p-1.5 rounded-md hover:bg-gray-50 transition-colors">
-              <input type="checkbox"
-                checked={filters.jobType[opt.key]}
-                onChange={() => handleFilterChange('jobType', opt.key)}
-                className="w-3.5 h-3.5 rounded border-gray-300"
-                style={{ accentColor: BRAND }}
-              />
-              <span className="font-medium">{opt.label}</span>
-            </label>
-          ))}
+  // ─── Section header helper ───
+  const FilterSection = ({ icon: Icon, title, count, children }) => (
+    <div>
+      <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center gap-1.5">
+          <Icon className="w-3 h-3" style={{ color: BRAND }} />
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-700">{title}</h3>
         </div>
+        {count > 0 && (
+          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold text-white"
+            style={{ background: BRAND }}>
+            {count}
+          </span>
+        )}
       </div>
-
-      <div className="h-px bg-gray-100" />
-
-      <div>
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] mb-3" style={{ color: BRAND_DARK }}>Industry</h3>
-        <div className="flex flex-col gap-1.5">
-          {[
-            { key: 'construction', label: 'Construction' },
-            { key: 'softwareEngineering', label: 'Software Engineering' },
-            { key: 'energy', label: 'Energy' },
-          ].map(opt => (
-            <label key={opt.key} className="flex items-center gap-2.5 text-xs text-gray-700 cursor-pointer p-1.5 rounded-md hover:bg-gray-50 transition-colors">
-              <input type="checkbox"
-                checked={filters.industry[opt.key]}
-                onChange={() => handleFilterChange('industry', opt.key)}
-                className="w-3.5 h-3.5 rounded border-gray-300"
-                style={{ accentColor: BRAND }}
-              />
-              <span className="font-medium">{opt.label}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <div className="h-px bg-gray-100" />
-
-      <div>
-        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] mb-3" style={{ color: BRAND_DARK }}>Experience Level</h3>
-        <select
-          value={filters.experienceLevel}
-          onChange={(e) => handleFilterChange('experienceLevel', e.target.value)}
-          className="w-full rounded-lg border border-gray-200 bg-white text-gray-700 text-xs focus:ring-2 focus:border-transparent p-2.5 transition-all"
-          style={{ '--tw-ring-color': BRAND_BORDER }}
-        >
-          <option value="all">All Levels</option>
-          <option value="entry">Entry Level</option>
-          <option value="intermediate">Intermediate</option>
-          <option value="senior">Senior Level</option>
-          <option value="director">Director / Lead</option>
-        </select>
-      </div>
-
-      {hasActiveFilters && (
-        <button onClick={resetFilters}
-          className="w-full text-xs font-semibold py-2.5 rounded-lg border transition-colors"
-          style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-          Reset All Filters
-        </button>
-      )}
+      {children}
     </div>
   );
+
+  // ─── Pill toggle row (full width, stacked one per row) ───
+  const PillToggle = ({ label, active, onClick }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full px-3 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-between border"
+      style={active
+        ? { background: BRAND_DARK, color: '#fff', borderColor: BRAND_DARK }
+        : { background: '#fff', color: '#374151', borderColor: '#e5e7eb' }
+      }
+      onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = BRAND_BORDER; e.currentTarget.style.background = BRAND_BG; e.currentTarget.style.color = BRAND; } }}
+      onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#374151'; } }}
+    >
+      <span>{label}</span>
+      <span
+        className="w-4 h-4 rounded-full flex items-center justify-center transition-all flex-shrink-0"
+        style={active
+          ? { background: '#fff' }
+          : { border: '1.5px solid #d1d5db' }
+        }
+      >
+        {active && <FiCheck className="w-2.5 h-2.5" style={{ color: BRAND_DARK }} />}
+      </span>
+    </button>
+  );
+
+  // ─── Filter Panel content (used in sidebar and mobile drawer) ───
+  const FilterPanel = () => {
+    const jobTypeCount = Object.values(filters.jobType).filter(Boolean).length;
+    const industryCount = Object.values(filters.industry).filter(Boolean).length;
+    const expCount = filters.experienceLevel !== 'all' ? 1 : 0;
+    const totalCount = jobTypeCount + industryCount + expCount + (searchTerm ? 1 : 0) + (location ? 1 : 0);
+
+    return (
+      <div className="flex flex-col gap-5">
+        {/* Active filters summary */}
+        {totalCount > 0 && (
+          <div className="flex items-center justify-between px-3 py-2 rounded-lg"
+            style={{ background: BRAND_BG }}>
+            <span className="text-[11px] font-semibold" style={{ color: BRAND_DARK }}>
+              {totalCount} active filter{totalCount > 1 ? 's' : ''}
+            </span>
+            <button onClick={resetFilters}
+              className="text-[11px] font-bold hover:underline" style={{ color: BRAND }}>
+              Clear all
+            </button>
+          </div>
+        )}
+
+        {/* Job Type — stacked rows */}
+        <FilterSection icon={FiBriefcase} title="Job Type" count={jobTypeCount}>
+          <div className="flex flex-col gap-1.5">
+            {[
+              { key: 'fullTime', label: 'Full-time' },
+              { key: 'contract', label: 'Contract' },
+              { key: 'remote', label: 'Remote' },
+            ].map(opt => (
+              <PillToggle
+                key={opt.key}
+                label={opt.label}
+                active={filters.jobType[opt.key]}
+                onClick={() => handleFilterChange('jobType', opt.key)}
+              />
+            ))}
+          </div>
+        </FilterSection>
+
+        <div className="h-px bg-gray-100" />
+
+        {/* Industry — stacked rows */}
+        <FilterSection icon={FiLayers} title="Industry" count={industryCount}>
+          <div className="flex flex-col gap-1.5">
+            {[
+              { key: 'construction', label: 'Construction' },
+              { key: 'softwareEngineering', label: 'Software Engineering' },
+              { key: 'energy', label: 'Energy' },
+            ].map(opt => (
+              <PillToggle
+                key={opt.key}
+                label={opt.label}
+                active={filters.industry[opt.key]}
+                onClick={() => handleFilterChange('industry', opt.key)}
+              />
+            ))}
+          </div>
+        </FilterSection>
+
+        <div className="h-px bg-gray-100" />
+
+        {/* Experience Level — stacked rows */}
+        <FilterSection icon={FiTrendingUp} title="Experience Level" count={expCount}>
+          <div className="flex flex-col gap-1.5">
+            {[
+              { key: 'all', label: 'All Levels' },
+              { key: 'entry', label: 'Entry Level' },
+              { key: 'intermediate', label: 'Intermediate' },
+              { key: 'senior', label: 'Senior Level' },
+              { key: 'director', label: 'Director / Lead' },
+            ].map(opt => (
+              <PillToggle
+                key={opt.key}
+                label={opt.label}
+                active={filters.experienceLevel === opt.key}
+                onClick={() => handleFilterChange('experienceLevel', opt.key)}
+              />
+            ))}
+          </div>
+        </FilterSection>
+
+        {hasActiveFilters && (
+          <button onClick={resetFilters}
+            className="w-full text-[11px] font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+            style={{ background: BRAND_DARK, color: '#fff' }}
+            onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
+            onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
+            <FiX className="w-3 h-3" />
+            Reset All Filters
+          </button>
+        )}
+      </div>
+    );
+  };
 
   // ─── Job Card — List view (full row) ───
   const ListCard = ({ job }) => {
@@ -465,17 +533,20 @@ const JobBoard = () => {
         <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Sidebar — desktop */}
-            <aside className="hidden lg:block w-64 flex-shrink-0">
-              <div className="sticky top-24 bg-white p-5 rounded-xl border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-sm font-bold text-gray-900">Filters</h2>
-                  {hasActiveFilters && (
-                    <button onClick={resetFilters} className="text-[11px] font-semibold hover:underline" style={{ color: BRAND }}>
-                      Clear
-                    </button>
-                  )}
+            <aside className="hidden lg:block w-72 flex-shrink-0">
+              <div className="sticky top-24 bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: BRAND_BG }}>
+                    <FiFilter className="w-3.5 h-3.5" style={{ color: BRAND }} />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">Filters</h2>
+                    <p className="text-[10px] text-gray-400">Narrow down your search</p>
+                  </div>
                 </div>
-                <FilterPanel />
+                <div className="p-5">
+                  <FilterPanel />
+                </div>
               </div>
             </aside>
 
