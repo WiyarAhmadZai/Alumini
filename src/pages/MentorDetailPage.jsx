@@ -294,6 +294,7 @@ const MentorDetailPage = () => {
   const [requestOpen, setRequestOpen] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
   const [viewerSrc, setViewerSrc] = useState(null);
+  const [iAmMentor, setIAmMentor] = useState(false);
 
   const storedUser = localStorage.getItem('alumni_user');
   const currentUserId = storedUser ? JSON.parse(storedUser)?.id : null;
@@ -321,12 +322,29 @@ const MentorDetailPage = () => {
     }).catch(() => {});
   }, [mentor]);
 
+  // Check if the logged-in user is themselves a mentor — if so, block requesting mentorship.
+  useEffect(() => {
+    if (!authService.isAuthenticated()) { setIAmMentor(false); return; }
+    mentorService.getMyMentor()
+      .then(res => setIAmMentor(!!res?.data))
+      .catch(() => setIAmMentor(false));
+  }, []);
+
   const openRequest = () => {
     if (!authService.isAuthenticated()) {
       Swal.fire({
         icon: 'info', title: 'Login Required', text: 'Please log in to request mentorship.',
         confirmButtonText: 'Go to Login', confirmButtonColor: BRAND,
       }).then(r => { if (r.isConfirmed) navigate('/login'); });
+      return;
+    }
+    if (iAmMentor) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Mentors Cannot Apply',
+        text: 'You are registered as a mentor, so you cannot request mentorship from another mentor.',
+        confirmButtonColor: BRAND,
+      });
       return;
     }
     setRequestOpen(true);
@@ -520,6 +538,14 @@ const MentorDetailPage = () => {
                     >
                       <FiEdit3 size={12} /> Edit Profile
                     </Link>
+                  ) : iAmMentor && (!myRequest || (myRequest.status === 'rejected' && myRequest.can_request_again)) ? (
+                    <button
+                      disabled
+                      title="Mentors cannot apply for mentorship"
+                      className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-500 px-4 py-2 rounded-lg font-semibold text-xs border border-gray-200 cursor-not-allowed"
+                    >
+                      <FiX size={12} /> Mentors Can't Apply
+                    </button>
                   ) : myRequest && myRequest.status === 'rejected' && myRequest.can_request_again ? (
                     <button
                       onClick={openRequest}
