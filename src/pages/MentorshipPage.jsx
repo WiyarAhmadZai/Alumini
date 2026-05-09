@@ -65,6 +65,8 @@ const MentorshipPage = () => {
 
   // My applications: map of mentor_id → { status, rejection_count, can_request_again }
   const [myApplicationMap, setMyApplicationMap] = useState({});
+  // Whether the logged-in user is themselves a mentor (mentors can't apply for mentorship)
+  const [iAmMentor, setIAmMentor] = useState(false);
 
   const fetchMyApplications = async () => {
     if (!authService.isAuthenticated()) return;
@@ -86,6 +88,11 @@ const MentorshipPage = () => {
 
   useEffect(() => {
     fetchMyApplications();
+    if (authService.isAuthenticated()) {
+      mentorService.getMyMentor()
+        .then(res => setIAmMentor(!!res?.data))
+        .catch(() => setIAmMentor(false));
+    }
   }, []);
 
   const [requestModalMentor, setRequestModalMentor] = useState(null);
@@ -123,6 +130,15 @@ const MentorshipPage = () => {
         confirmButtonText: 'Go to Login',
         confirmButtonColor: '#002759',
       }).then(r => { if (r.isConfirmed) navigate('/login'); });
+      return;
+    }
+    if (iAmMentor) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Mentors Cannot Apply',
+        text: 'You are registered as a mentor, so you cannot request mentorship from another mentor.',
+        confirmButtonColor: '#002759',
+      });
       return;
     }
     setRequestModalMentor(mentor);
@@ -388,6 +404,7 @@ const MentorshipPage = () => {
                   navigate={navigate}
                   currentUserId={currentUserId}
                   application={myApplicationMap[mentor.id] || null}
+                  iAmMentor={iAmMentor}
                 />
               ))}
             </div>
@@ -556,7 +573,7 @@ const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) =>
   );
 };
 
-const MentorCard = ({ mentor, onRequest, onCancel, requesting, navigate, currentUserId, application }) => {
+const MentorCard = ({ mentor, onRequest, onCancel, requesting, navigate, currentUserId, application, iAmMentor }) => {
   const applicationStatus = application?.status || null;
   const canRequestAgain = application?.can_request_again || false;
   const rejectionCount = application?.rejection_count || 0;
@@ -665,6 +682,14 @@ const MentorCard = ({ mentor, onRequest, onCancel, requesting, navigate, current
               className="flex-1 bg-gray-100 text-gray-700 text-sm font-semibold py-2.5 rounded-lg hover:bg-gray-200 transition-colors border border-gray-200"
             >
               Edit
+            </button>
+          ) : iAmMentor && (!applicationStatus || (applicationStatus === 'rejected' && canRequestAgain)) ? (
+            <button
+              disabled
+              title="Mentors cannot apply for mentorship"
+              className="flex-1 text-sm font-semibold py-2.5 rounded-lg border bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed"
+            >
+              Mentors Can't Apply
             </button>
           ) : applicationStatus === 'accepted' ? (
             <button disabled className="flex-1 text-sm font-semibold py-2.5 rounded-lg border bg-green-50 text-green-700 border-green-200">
