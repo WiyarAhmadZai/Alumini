@@ -98,39 +98,30 @@ const HomePage = () => {
     return () => clearInterval(interval); // Cleanup on unmount
   }, [testimonials.length]);
 
-  // Fetch upcoming events
+  // Fetch upcoming events — only events whose start_date is strictly in the future,
+  // sorted nearest-first, with the closest event highlighted at the top.
   useEffect(() => {
     const fetchUpcomingEvents = async () => {
       try {
-        const response = await eventService.getEvents({ per_page: 6 });
+        const response = await eventService.getEvents({ per_page: 20 });
         const allEvents = response.data.data;
         const now = new Date();
-        
-        // Filter for upcoming events with open registration
-        const activeEvents = allEvents.filter(event => {
-          const eventEndDate = new Date(event.end_date);
-          
-          // Hide events that have already completed
-          if (eventEndDate <= now) {
-            return false;
-          }
-          
-          // Hide events with expired registration deadlines
+
+        const futureEvents = allEvents.filter(event => {
+          const startDate = new Date(event.start_date);
+          if (!(startDate > now)) return false; // must be strictly in the future
+
           if (event.registration_deadline) {
             const deadlineDate = new Date(event.registration_deadline);
-            if (deadlineDate <= now) {
-              return false;
-            }
+            if (deadlineDate <= now) return false; // registration already closed
           }
-          
-          return true; // Only show events with open registration
+          return true;
         });
-        
-        // Sort by start date (nearest first) and take top 2
-        const nearestEvents = activeEvents
+
+        const nearestEvents = futureEvents
           .sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
           .slice(0, 2);
-        
+
         setUpcomingEvents(nearestEvents);
       } catch (error) {
         // Silently handle error
