@@ -118,8 +118,14 @@ const HomePage = () => {
           return true;
         });
 
+        // Featured events bubble to the top, then sort by nearest start_date.
         const nearestEvents = futureEvents
-          .sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
+          .sort((a, b) => {
+            const af = a.is_featured ? 1 : 0;
+            const bf = b.is_featured ? 1 : 0;
+            if (af !== bf) return bf - af;
+            return new Date(a.start_date) - new Date(b.start_date);
+          })
           .slice(0, 2);
 
         setUpcomingEvents(nearestEvents);
@@ -342,6 +348,23 @@ const HomePage = () => {
                 </Link>
               </div>
               <div className="lg:w-2/3 flex flex-col gap-3 sm:gap-4">
+                {upcomingEvents.length === 0 && (
+                  <div className="flex flex-col items-center justify-center text-center p-8 sm:p-10 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 rounded-full flex items-center justify-center mb-4">
+                      <FiCalendar className="text-blue-300 text-2xl sm:text-3xl" />
+                    </div>
+                    <h4 className="text-white text-lg sm:text-xl font-bold mb-2">No upcoming events yet</h4>
+                    <p className="text-gray-300 text-xs sm:text-sm max-w-md">
+                      We're preparing the next round of reunions and workshops. Open the calendar to browse past events — new ones will appear here as soon as they're scheduled.
+                    </p>
+                    <Link
+                      to="/events"
+                      className="mt-5 inline-flex items-center gap-2 px-5 py-2 border border-white/40 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-white/15 transition-colors"
+                    >
+                      <FiCalendar /> Browse calendar
+                    </Link>
+                  </div>
+                )}
                 {upcomingEvents.map((event, index) => {
                   const eventDate = new Date(event.start_date);
                   const day = eventDate.getDate();
