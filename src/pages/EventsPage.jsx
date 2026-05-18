@@ -167,14 +167,14 @@ const EventsPage = () => {
     try {
       const response = await eventService.getFeaturedEvent();
       const ev = response.data;
-      // Don't show featured event if registration deadline passed
-      if (ev && ev.registration_deadline && new Date(ev.registration_deadline) < new Date()) {
-        setFeaturedEvent(null);
-      } else {
-        setFeaturedEvent(ev);
-      }
+      const now = new Date();
+      // Only show a featured event when it's truly upcoming AND registration is still open.
+      const startInFuture = ev?.start_date && new Date(ev.start_date) > now;
+      const deadlinePassed = ev?.registration_deadline && new Date(ev.registration_deadline) < now;
+      setFeaturedEvent(ev && startInFuture && !deadlinePassed ? ev : null);
     } catch (error) {
       console.error('Failed to fetch featured event:', error);
+      setFeaturedEvent(null);
     }
   };
 
@@ -490,14 +490,21 @@ const EventsPage = () => {
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               {/* Left Content */}
               <div className="flex flex-col gap-6 pt-10">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-semibold text-white w-fit">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                  </span>
-                  Featured Event
-                </div>
-                
+                {featuredEvent ? (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-semibold text-white w-fit">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    Featured Event
+                  </div>
+                ) : (
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-semibold text-white/90 w-fit">
+                    <FiCalendar className="text-blue-300" />
+                    No Upcoming Events
+                  </div>
+                )}
+
                 <h1 className="text-3xl lg:text-4xl font-bold text-white leading-tight">
                   {featuredEvent ? (
                     <>
@@ -508,16 +515,16 @@ const EventsPage = () => {
                     </>
                   ) : (
                     <>
-                      Annual KPU Alumni
-                      <span className="block text-blue-300">Gala 2024</span>
+                      No upcoming events
+                      <span className="block text-blue-300">at the moment</span>
                     </>
                   )}
                 </h1>
-                
+
                 <p className="text-base text-white/80 leading-relaxed">
-                  {featuredEvent 
+                  {featuredEvent
                     ? featuredEvent.description.substring(0, 150) + '...'
-                    : 'Join us for an unforgettable evening of celebration, networking, and honoring the achievements of our global alumni community in Kabul.'
+                    : "We're not hosting anything new just yet. New reunions, workshops, and networking events are added regularly — check the calendar below or come back soon."
                   }
                 </p>
 
@@ -619,105 +626,104 @@ const EventsPage = () => {
                   </div>
                 )}
 
-                <div className="flex gap-3 pt-4">
-                  {featuredEvent ? (
-                    <>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          if (isRegistrationClosed(featuredEvent)) {
-                            // Show SweetAlert for closed registration
-                            const now = new Date();
-                            const isRegistrationDeadlinePassed = featuredEvent.registration_deadline && new Date(featuredEvent.registration_deadline) <= now;
-                            if (isRegistrationDeadlinePassed) {
-                              Swal.fire({
-                                icon: 'warning',
-                                title: 'Registration Closed',
-                                html: 'Deadline passed. Contact the KPU team <a href="/contact" style="color: #2563eb; text-decoration: underline;">if you want to participate</a>.',
-                                confirmButtonColor: '#2563eb',
-                                confirmButtonText: 'Contact KPU Team',
-                                showCancelButton: true,
-                                cancelButtonText: 'Close',
-                                position: 'center',
-                                backdrop: 'rgba(0, 0, 0, 0.4)'
-                              }).then((result) => {
-                                if (result.isConfirmed) {
-                                  navigate('/contact');
-                                }
-                              });
-                              return;
-                            }
-                            // For other closed reasons, show a generic message
+                {featuredEvent && (
+                  <div className="flex gap-3 pt-4">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (isRegistrationClosed(featuredEvent)) {
+                          const now = new Date();
+                          const isRegistrationDeadlinePassed = featuredEvent.registration_deadline && new Date(featuredEvent.registration_deadline) <= now;
+                          if (isRegistrationDeadlinePassed) {
                             Swal.fire({
-                              icon: 'info',
-                              title: 'Registration Unavailable',
-                              text: 'Registration is not available for this event.',
+                              icon: 'warning',
+                              title: 'Registration Closed',
+                              html: 'Deadline passed. Contact the KPU team <a href="/contact" style="color: #2563eb; text-decoration: underline;">if you want to participate</a>.',
                               confirmButtonColor: '#2563eb',
-                              confirmButtonText: 'Got it',
+                              confirmButtonText: 'Contact KPU Team',
+                              showCancelButton: true,
+                              cancelButtonText: 'Close',
                               position: 'center',
                               backdrop: 'rgba(0, 0, 0, 0.4)'
+                            }).then((result) => {
+                              if (result.isConfirmed) {
+                                navigate('/contact');
+                              }
                             });
                             return;
                           }
-                          handleRegister(featuredEvent.id, e);
-                        }}
-                        disabled={isRegistrationClosed(featuredEvent)}
-                        className={`px-6 py-2 font-semibold rounded-lg transition-colors text-sm ${getRegistrationButtonClass(featuredEvent.id)} ${isRegistrationClosed(featuredEvent) ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                      >
-                        {getRegistrationButtonText(featuredEvent.id)}
-                      </button>
-                      <button 
-                        onClick={() => handleEventClick(featuredEvent.id)}
-                        className="px-6 py-2 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm"
-                      >
-                        Event Details
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors text-sm">
-                        Register Now
-                      </button>
-                      <button className="px-6 py-2 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm">
-                        Event Details
-                      </button>
-                    </>
-                  )}
-                </div>
+                          Swal.fire({
+                            icon: 'info',
+                            title: 'Registration Unavailable',
+                            text: 'Registration is not available for this event.',
+                            confirmButtonColor: '#2563eb',
+                            confirmButtonText: 'Got it',
+                            position: 'center',
+                            backdrop: 'rgba(0, 0, 0, 0.4)'
+                          });
+                          return;
+                        }
+                        handleRegister(featuredEvent.id, e);
+                      }}
+                      disabled={isRegistrationClosed(featuredEvent)}
+                      className={`px-6 py-2 font-semibold rounded-lg transition-colors text-sm ${getRegistrationButtonClass(featuredEvent.id)} ${isRegistrationClosed(featuredEvent) ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                    >
+                      {getRegistrationButtonText(featuredEvent.id)}
+                    </button>
+                    <button
+                      onClick={() => handleEventClick(featuredEvent.id)}
+                      className="px-6 py-2 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm"
+                    >
+                      Event Details
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Right Content - Styled Div */}
               <div className="hidden lg:block">
                 <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
-                  <div className="text-center space-y-6">
-                    <div className="w-20 h-20 bg-yellow-400/20 rounded-full flex items-center justify-center mx-auto">
-                      <svg className="w-10 h-10 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                      </svg>
-                    </div>
-                    <h3 className="text-2xl font-bold text-white">Premium Event</h3>
-                    <p className="text-white/80">Experience an unforgettable evening with distinguished alumni, faculty, and industry leaders.</p>
-                    <div className="flex justify-center gap-6 pt-4">
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-yellow-400">
-                          {featuredEvent?.current_attendees || '0'}
-                        </div>
-                        <div className="text-sm text-white/70">Attendees</div>
+                  {featuredEvent ? (
+                    <div className="text-center space-y-6">
+                      <div className="w-20 h-20 bg-yellow-400/20 rounded-full flex items-center justify-center mx-auto">
+                        <svg className="w-10 h-10 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                        </svg>
                       </div>
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-yellow-400">
-                          {featuredEvent?.speakers_count || '0'}
+                      <h3 className="text-2xl font-bold text-white">Premium Event</h3>
+                      <p className="text-white/80">Experience an unforgettable evening with distinguished alumni, faculty, and industry leaders.</p>
+                      <div className="flex justify-center gap-6 pt-4">
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-yellow-400">{featuredEvent.current_attendees || '0'}</div>
+                          <div className="text-sm text-white/70">Attendees</div>
                         </div>
-                        <div className="text-sm text-white/70">Speakers</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-3xl font-bold text-yellow-400">
-                          {featuredEvent?.awards_count || '0'}
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-yellow-400">{featuredEvent.speakers_count || '0'}</div>
+                          <div className="text-sm text-white/70">Speakers</div>
                         </div>
-                        <div className="text-sm text-white/70">Awards</div>
+                        <div className="text-center">
+                          <div className="text-3xl font-bold text-yellow-400">{featuredEvent.awards_count || '0'}</div>
+                          <div className="text-sm text-white/70">Awards</div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="text-center space-y-5">
+                      <div className="w-20 h-20 bg-blue-400/20 rounded-full flex items-center justify-center mx-auto">
+                        <FiCalendar className="w-10 h-10 text-blue-300" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-white">Stay tuned</h3>
+                      <p className="text-white/80 leading-relaxed">
+                        We're planning the next round of reunions, workshops, and networking sessions. Browse the calendar or past events below — you'll see new ones here as soon as they're published.
+                      </p>
+                      <Link
+                        to="/contact"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/15 hover:bg-white/25 border border-white/30 text-white font-semibold rounded-lg text-sm transition-colors"
+                      >
+                        <FiMail /> Get notified
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
