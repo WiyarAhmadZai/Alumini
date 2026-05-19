@@ -103,7 +103,15 @@ const HomePage = () => {
   useEffect(() => {
     const fetchUpcomingEvents = async () => {
       try {
-        const response = await eventService.getEvents({ per_page: 20 });
+        // Ask the backend for upcoming events only (start_date > now), nearest first.
+        // Without status=upcoming the list is sorted by start_date asc and returns the
+        // OLDEST (past) events first, pushing genuine upcoming events out of the page.
+        const response = await eventService.getEvents({
+          per_page: 20,
+          status: 'upcoming',
+          sort_by: 'start_date',
+          sort_order: 'asc',
+        });
         const allEvents = response.data.data;
         const now = new Date();
 
