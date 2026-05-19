@@ -9,10 +9,27 @@ import {
   FiX,
   FiStar,
   FiEye,
+  FiFilter,
+  FiList,
+  FiGrid,
+  FiCheck,
+  FiArrowRight,
+  FiAward,
+  FiUsers,
+  FiBriefcase,
+  FiLayers,
+  FiTrendingUp,
 } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import mentorService from '../services/mentorService';
 import authService from '../services/authService';
+
+// ─── Brand palette (matches Job Board) ──────────────────────────
+const BRAND = '#194ce6';
+const BRAND_DARK = '#0f2d8a';
+const BRAND_DARKER = '#091d5e';
+const BRAND_BG = '#eef1fd';
+const BRAND_BORDER = '#c5ccf7';
 
 const FACULTY_OPTIONS = [
   { key: 'Civil Engineering',         label: 'Civil Engineering' },
@@ -41,6 +58,8 @@ const MentorshipPage = () => {
 
   const [searchInput, setSearchInput] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
+  const [filtersOpen, setFiltersOpen] = useState(false); // mobile drawer
   const debounceRef = useRef(null);
 
   // Debounce: update searchQuery 400ms after user stops typing
@@ -236,220 +255,412 @@ const MentorshipPage = () => {
     setPage(1);
   };
 
-  return (
-    <Layout>
-      {/* Hero Section */}
-      <section className="relative w-full h-80 sm:h-96 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6")',
-          }}
-        />
-        <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
-          <div className="text-center text-white max-w-3xl w-full">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-4">
-              KPU Alumni Mentorship Hub
-            </h1>
-            <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto">
-              Connect with experienced alumni mentors and guide the next generation of KPU professionals
-            </p>
-          </div>
+  const hasActiveFilters =
+    searchQuery ||
+    Object.values(selectedFaculty).some(Boolean) ||
+    selectedExpertise.length > 0 ||
+    (experienceLevel && experienceLevel !== 'all');
+
+  // ─── Section header helper ───
+  const FilterSection = ({ icon: Icon, title, count, children }) => (
+    <div>
+      <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center gap-1.5">
+          <Icon className="w-3 h-3" style={{ color: BRAND }} />
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-700">{title}</h3>
         </div>
-      </section>
+        {count > 0 && (
+          <span
+            className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold text-white"
+            style={{ background: BRAND }}
+          >
+            {count}
+          </span>
+        )}
+      </div>
+      {children}
+    </div>
+  );
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col lg:flex-row max-w-[1440px] mx-auto w-full px-4 lg:px-10 py-12 gap-8">
-        {/* Sidebar Filters */}
-        <aside className="w-full lg:w-72 flex-shrink-0">
-          <div className="sticky top-24 flex flex-col gap-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-            <div>
-              <h2 className="text-gray-900 text-lg font-bold">Filter Mentors</h2>
-              <p className="text-gray-600 text-sm">Find your perfect match</p>
-            </div>
+  // ─── Pill toggle row ───
+  const PillToggle = ({ label, active, onClick }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full px-3 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-between border"
+      style={active
+        ? { background: BRAND_DARK, color: '#fff', borderColor: BRAND_DARK }
+        : { background: '#fff', color: '#374151', borderColor: '#e5e7eb' }}
+      onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = BRAND_BORDER; e.currentTarget.style.background = BRAND_BG; e.currentTarget.style.color = BRAND; } }}
+      onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#374151'; } }}
+    >
+      <span className="text-left">{label}</span>
+      <span
+        className="w-4 h-4 rounded-full flex items-center justify-center transition-all flex-shrink-0 ml-2"
+        style={active ? { background: '#fff' } : { border: '1.5px solid #d1d5db' }}
+      >
+        {active && <FiCheck className="w-2.5 h-2.5" style={{ color: BRAND_DARK }} />}
+      </span>
+    </button>
+  );
 
-            {/* Search inside sidebar */}
-            <div className="relative">
-              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none" />
-              <input
-                type="text"
-                value={searchInput}
-                onChange={e => handleSearchChange(e.target.value)}
-                placeholder="Search mentors…"
-                className="w-full pl-9 pr-8 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              {searchInput && (
-                <button onClick={clearSearch} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                  <FiX size={13} />
-                </button>
-              )}
-            </div>
+  // ─── Filter panel (sidebar + mobile drawer) ───
+  const FilterPanel = () => {
+    const facultyCount = Object.values(selectedFaculty).filter(Boolean).length;
+    const expertiseCount = selectedExpertise.length;
+    const expCount = experienceLevel !== 'all' ? 1 : 0;
+    const totalCount = facultyCount + expertiseCount + expCount + (searchQuery ? 1 : 0);
 
-            <div className="flex flex-col gap-3">
-              <p className="text-sm font-bold text-gray-900">Faculty</p>
-              <div className="flex flex-col gap-2">
-                {FACULTY_OPTIONS.map(({ key, label }) => (
-                  <label key={key} className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={!!selectedFaculty[key]}
-                      onChange={() => handleFacultyChange(key)}
-                      className="rounded text-blue-600 focus:ring-blue-500 border-gray-300"
-                    />
-                    <span>{label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <p className="text-sm font-bold text-gray-900">Years of Experience</p>
-              <select
-                value={experienceLevel}
-                onChange={e => { setExperienceLevel(e.target.value); setPage(1); }}
-                className="w-full rounded-lg border-gray-200 bg-white text-sm text-gray-900 focus:ring-blue-500"
-              >
-                <option value="all">All experience levels</option>
-                <option value="5-10">5+ years</option>
-                <option value="10-15">10+ years</option>
-                <option value="15+">15+ years</option>
-              </select>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <p className="text-sm font-bold text-gray-900">Expertise Area</p>
-              <div className="flex flex-wrap gap-2">
-                {EXPERTISE_OPTIONS.map(expertise => (
-                  <button
-                    key={expertise}
-                    onClick={() => handleExpertiseToggle(expertise)}
-                    className={`px-3 py-1 text-xs font-semibold rounded-full border transition-all ${
-                      selectedExpertise.includes(expertise)
-                        ? 'bg-blue-100 text-blue-600 border-blue-200'
-                        : 'bg-gray-100 text-gray-600 border-gray-200 hover:bg-gray-200'
-                    }`}
-                  >
-                    {expertise}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <button
-              onClick={resetFilters}
-              className="mt-4 flex w-full cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-gray-100 text-gray-900 text-sm font-bold hover:bg-gray-200 transition-all"
-            >
-              Reset Filters
+    return (
+      <div className="flex flex-col gap-5">
+        {totalCount > 0 && (
+          <div className="flex items-center justify-between px-3 py-2 rounded-lg" style={{ background: BRAND_BG }}>
+            <span className="text-[11px] font-semibold" style={{ color: BRAND_DARK }}>
+              {totalCount} active filter{totalCount > 1 ? 's' : ''}
+            </span>
+            <button onClick={resetFilters} className="text-[11px] font-bold hover:underline" style={{ color: BRAND }}>
+              Clear all
             </button>
           </div>
-        </aside>
+        )}
 
-        {/* Mentor Cards */}
-        <div className="flex-1 flex flex-col gap-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">
-                {searchQuery ? `Results for "${searchQuery}"` : 'Featured Mentors'}
-              </h2>
-              <p className="text-gray-600">
-                {searchQuery
-                  ? `${pagination.total} mentor${pagination.total !== 1 ? 's' : ''} found`
-                  : 'Alumni who have volunteered to guide the next generation'}
-              </p>
-            </div>
-            {searchQuery && (
-              <button
-                onClick={clearSearch}
-                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-gray-800 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors"
-              >
-                <FiX size={13} />
-                Clear search
-              </button>
-            )}
+        <FilterSection icon={FiBriefcase} title="Faculty" count={facultyCount}>
+          <div className="flex flex-col gap-1.5">
+            {FACULTY_OPTIONS.map(({ key, label }) => (
+              <PillToggle
+                key={key}
+                label={label}
+                active={!!selectedFaculty[key]}
+                onClick={() => handleFacultyChange(key)}
+              />
+            ))}
           </div>
+        </FilterSection>
 
-          {loading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} className="bg-white border border-gray-200 rounded-2xl p-6 animate-pulse">
-                  <div className="flex gap-4 mb-4">
-                    <div className="w-20 h-20 rounded-xl bg-gray-200" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-gray-200 rounded w-3/4" />
-                      <div className="h-3 bg-gray-200 rounded w-1/2" />
-                      <div className="h-3 bg-gray-200 rounded w-1/3" />
-                    </div>
-                  </div>
-                  <div className="h-3 bg-gray-200 rounded mb-2" />
-                  <div className="h-3 bg-gray-200 rounded w-3/4" />
-                </div>
-              ))}
-            </div>
-          ) : mentors.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-              <FiUser className="text-5xl mb-3 text-gray-300" />
-              <p className="text-lg font-semibold">No mentors found</p>
-              <p className="text-sm">Try adjusting your filters</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {mentors.map(mentor => (
-                <MentorCard
-                  key={mentor.id}
-                  mentor={mentor}
-                  onRequest={openRequestModal}
-                  onCancel={handleCancelRequest}
-                  requesting={requestingId === mentor.id}
-                  navigate={navigate}
-                  currentUserId={currentUserId}
-                  application={myApplicationMap[mentor.id] || null}
-                  iAmMentor={iAmMentor}
-                />
-              ))}
-            </div>
-          )}
+        <div className="h-px bg-gray-100" />
 
-          {/* Pagination */}
-          {!loading && mentors.length > 0 && (
-            <div className="flex items-center justify-between py-6 border-t border-gray-200 mt-4">
-              <p className="text-sm text-gray-600">
-                Showing <span className="font-bold text-gray-900">{pagination.total}</span> mentors
-              </p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setPage(p => Math.max(1, p - 1))}
-                  disabled={pagination.current_page === 1}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-900 disabled:opacity-40"
-                >
-                  <FiChevronLeft />
-                </button>
-                {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map(p => (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    className={`flex h-10 px-4 items-center justify-center rounded-lg font-semibold text-sm ${
-                      p === pagination.current_page
-                        ? 'text-white'
-                        : 'hover:bg-gray-50 text-gray-900'
-                    }`}
-                    style={p === pagination.current_page ? { backgroundColor: '#002759' } : {}}
-                  >
-                    {p}
-                  </button>
-                ))}
-                <button
-                  onClick={() => setPage(p => Math.min(pagination.last_page, p + 1))}
-                  disabled={pagination.current_page === pagination.last_page}
-                  className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-900 disabled:opacity-40"
-                >
-                  <FiChevronRight />
-                </button>
-              </div>
-            </div>
-          )}
+        <FilterSection icon={FiTrendingUp} title="Years of Experience" count={expCount}>
+          <div className="flex flex-col gap-1.5">
+            {[
+              { key: 'all', label: 'All experience levels' },
+              { key: '5-10', label: '5+ years' },
+              { key: '10-15', label: '10+ years' },
+              { key: '15+', label: '15+ years' },
+            ].map(opt => (
+              <PillToggle
+                key={opt.key}
+                label={opt.label}
+                active={experienceLevel === opt.key}
+                onClick={() => { setExperienceLevel(opt.key); setPage(1); }}
+              />
+            ))}
+          </div>
+        </FilterSection>
+
+        <div className="h-px bg-gray-100" />
+
+        <FilterSection icon={FiLayers} title="Expertise Area" count={expertiseCount}>
+          <div className="flex flex-col gap-1.5">
+            {EXPERTISE_OPTIONS.map(expertise => (
+              <PillToggle
+                key={expertise}
+                label={expertise}
+                active={selectedExpertise.includes(expertise)}
+                onClick={() => handleExpertiseToggle(expertise)}
+              />
+            ))}
+          </div>
+        </FilterSection>
+
+        {hasActiveFilters && (
+          <button
+            onClick={resetFilters}
+            className="w-full text-[11px] font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+            style={{ background: BRAND_DARK, color: '#fff' }}
+            onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
+            onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}
+          >
+            <FiX className="w-3 h-3" />
+            Reset All Filters
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  // ─── Skeletons ───
+  const ListSkeleton = () => (
+    <div className="bg-white rounded-xl border border-gray-200 p-5 animate-pulse">
+      <div className="flex gap-5">
+        <div className="w-14 h-14 rounded-xl bg-gray-200" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 w-48 bg-gray-200 rounded" />
+          <div className="h-3 w-32 bg-gray-100 rounded" />
+          <div className="h-3 w-full bg-gray-100 rounded" />
         </div>
-      </main>
+        <div className="flex flex-col gap-2">
+          <div className="h-8 w-24 bg-gray-200 rounded" />
+          <div className="h-8 w-24 bg-gray-100 rounded" />
+        </div>
+      </div>
+    </div>
+  );
+
+  const GridSkeleton = () => (
+    <div className="bg-white rounded-xl border border-gray-200 p-5 animate-pulse">
+      <div className="flex gap-3 mb-4">
+        <div className="w-14 h-14 rounded-xl bg-gray-200" />
+        <div className="flex-1 space-y-2">
+          <div className="h-4 w-3/4 bg-gray-200 rounded" />
+          <div className="h-3 w-1/2 bg-gray-100 rounded" />
+        </div>
+      </div>
+      <div className="space-y-1.5 mb-3">
+        <div className="h-3 w-full bg-gray-100 rounded" />
+        <div className="h-3 w-2/3 bg-gray-100 rounded" />
+      </div>
+      <div className="h-8 w-full bg-gray-200 rounded" />
+    </div>
+  );
+
+  return (
+    <Layout>
+      <div className="min-h-screen bg-gray-50">
+        {/* Hero — dark overlay with branded accent */}
+        <section className="relative w-full h-64 sm:h-72 overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage:
+                'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6")',
+            }}
+          />
+          <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
+            <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 mb-4">
+              <FiAward className="text-[10px]" />
+              KPU Alumni Mentorship Hub
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3 max-w-3xl">
+              Find Your Mentor
+            </h1>
+            <p className="text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed font-light">
+              Connect with experienced alumni and guide the next generation of KPU professionals.
+            </p>
+          </div>
+        </section>
+
+        {/* Search bar — overlaps hero */}
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 -mt-7 relative z-20">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-3 md:p-4">
+            <div className="flex flex-col md:flex-row gap-2">
+              <div
+                className="flex-1 flex items-center bg-gray-50 rounded-lg px-3 py-2 focus-within:ring-2 transition-all"
+                style={{ '--tw-ring-color': BRAND_BORDER }}
+              >
+                <FiSearch className="text-gray-400 mr-2.5 flex-shrink-0 w-4 h-4" />
+                <input
+                  className="w-full border-none bg-transparent focus:ring-0 focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
+                  placeholder="Search by name, title, company, or expertise…"
+                  value={searchInput}
+                  onChange={(e) => handleSearchChange(e.target.value)}
+                />
+                {searchInput && (
+                  <button onClick={clearSearch} className="text-gray-400 hover:text-gray-600 ml-2">
+                    <FiX className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+              <button
+                onClick={() => setFiltersOpen(true)}
+                className="lg:hidden flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold border transition-colors"
+                style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}
+              >
+                <FiFilter className="w-3.5 h-3.5" /> Filters
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main */}
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Sidebar — desktop */}
+            <aside className="hidden lg:block w-72 flex-shrink-0">
+              <div className="sticky top-24 bg-white rounded-xl border border-gray-200 overflow-hidden">
+                <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: BRAND_BG }}>
+                    <FiFilter className="w-3.5 h-3.5" style={{ color: BRAND }} />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">Filters</h2>
+                    <p className="text-[10px] text-gray-400">Find your perfect match</p>
+                  </div>
+                </div>
+                <div className="p-5">
+                  <FilterPanel />
+                </div>
+              </div>
+            </aside>
+
+            {/* Mobile filter drawer */}
+            {filtersOpen && (
+              <div className="lg:hidden fixed inset-0 z-50">
+                <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
+                <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-base font-bold text-gray-900">Filters</h2>
+                    <button
+                      onClick={() => setFiltersOpen(false)}
+                      className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50"
+                    >
+                      <FiX className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <FilterPanel />
+                  <button
+                    onClick={() => setFiltersOpen(false)}
+                    className="w-full mt-4 text-white text-sm font-semibold py-2.5 rounded-lg"
+                    style={{ background: BRAND_DARK }}
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Results */}
+            <div className="flex-1 min-w-0">
+              {/* Toolbar — count + view toggle */}
+              <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+                <p className="text-xs text-gray-500">
+                  {loading ? 'Loading…' : (
+                    <>Showing <span className="font-semibold text-gray-900">{mentors.length}</span> of <span className="font-semibold text-gray-900">{pagination.total}</span> mentors</>
+                  )}
+                </p>
+                <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-0.5">
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-semibold transition-colors ${
+                      viewMode === 'list' ? 'text-white' : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                    style={viewMode === 'list' ? { background: BRAND_DARK } : {}}
+                  >
+                    <FiList className="w-3.5 h-3.5" /> List
+                  </button>
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-semibold transition-colors ${
+                      viewMode === 'grid' ? 'text-white' : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                    style={viewMode === 'grid' ? { background: BRAND_DARK } : {}}
+                  >
+                    <FiGrid className="w-3.5 h-3.5" /> Grid
+                  </button>
+                </div>
+              </div>
+
+              {/* Mentor listings */}
+              {loading ? (
+                viewMode === 'list' ? (
+                  <div className="flex flex-col gap-3">
+                    {Array.from({ length: 5 }).map((_, i) => <ListSkeleton key={i} />)}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                    {Array.from({ length: 6 }).map((_, i) => <GridSkeleton key={i} />)}
+                  </div>
+                )
+              ) : mentors.length === 0 ? (
+                <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+                  <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style={{ background: BRAND_BG }}>
+                    <FiUser className="text-2xl" style={{ color: BRAND }} />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">No mentors found</h3>
+                  <p className="text-xs text-gray-500 max-w-xs mx-auto">Try adjusting your search or removing some filters.</p>
+                  <button
+                    onClick={resetFilters}
+                    className="mt-4 px-5 py-2 text-white text-xs font-semibold rounded-lg"
+                    style={{ background: BRAND_DARK }}
+                  >
+                    Reset filters
+                  </button>
+                </div>
+              ) : viewMode === 'list' ? (
+                <div className="flex flex-col gap-3">
+                  {mentors.map(mentor => (
+                    <MentorCard
+                      key={mentor.id}
+                      view="list"
+                      mentor={mentor}
+                      onRequest={openRequestModal}
+                      onCancel={handleCancelRequest}
+                      requesting={requestingId === mentor.id}
+                      navigate={navigate}
+                      currentUserId={currentUserId}
+                      application={myApplicationMap[mentor.id] || null}
+                      iAmMentor={iAmMentor}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {mentors.map(mentor => (
+                    <MentorCard
+                      key={mentor.id}
+                      view="grid"
+                      mentor={mentor}
+                      onRequest={openRequestModal}
+                      onCancel={handleCancelRequest}
+                      requesting={requestingId === mentor.id}
+                      navigate={navigate}
+                      currentUserId={currentUserId}
+                      application={myApplicationMap[mentor.id] || null}
+                      iAmMentor={iAmMentor}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Pagination */}
+              {!loading && mentors.length > 0 && pagination.total > 0 && (
+                <div className="mt-6 bg-white rounded-xl border border-gray-200 p-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                  <p className="text-xs text-gray-500">
+                    Showing <span className="font-semibold text-gray-900">{pagination.total}</span> mentors
+                  </p>
+                  <div className="flex items-center gap-1">
+                    <button
+                      className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 hover:bg-gray-50 text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                      disabled={pagination.current_page === 1}
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
+                    >
+                      <FiChevronLeft className="text-sm" />
+                    </button>
+                    {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => i + 1).map(p => (
+                      <button
+                        key={p}
+                        onClick={() => setPage(p)}
+                        className={`min-w-[32px] h-8 px-2 rounded-md text-xs font-semibold transition-colors ${
+                          p === pagination.current_page ? 'text-white' : 'text-gray-600 hover:bg-gray-50 border border-gray-200'
+                        }`}
+                        style={p === pagination.current_page ? { background: BRAND_DARK } : {}}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                    <button
+                      className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 hover:bg-gray-50 text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
+                      disabled={pagination.current_page === pagination.last_page}
+                      onClick={() => setPage(p => Math.min(pagination.last_page, p + 1))}
+                    >
+                      <FiChevronRight className="text-sm" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Request Mentorship Modal */}
       <RequestMentorshipModal
@@ -573,7 +784,7 @@ const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) =>
   );
 };
 
-const MentorCard = ({ mentor, onRequest, onCancel, requesting, navigate, currentUserId, application, iAmMentor }) => {
+const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, navigate, currentUserId, application, iAmMentor }) => {
   const applicationStatus = application?.status || null;
   const canRequestAgain = application?.can_request_again || false;
   const rejectionCount = application?.rejection_count || 0;
@@ -585,145 +796,218 @@ const MentorCard = ({ mentor, onRequest, onCancel, requesting, navigate, current
 
   const goToDetail = () => navigate(`/mentorship/${mentor.id}`);
 
-  return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col gap-4 hover:shadow-xl transition-all relative overflow-hidden group">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-50" />
-      <div className="relative z-10">
-        <div className="flex gap-4">
-          <div
-            className="relative flex-shrink-0 cursor-pointer"
-            onClick={goToDetail}
-            title="View mentor"
+  const Avatar = ({ size }) => (
+    profileImg ? (
+      <img
+        src={profileImg}
+        alt={mentor.name}
+        className={`${size} rounded-xl object-cover flex-shrink-0 cursor-pointer hover:opacity-90 transition`}
+        style={{ border: `2px solid ${BRAND_BORDER}` }}
+        onClick={goToDetail}
+      />
+    ) : (
+      <div
+        className={`${size} rounded-xl flex items-center justify-center text-white text-xl font-bold flex-shrink-0 cursor-pointer hover:opacity-90 transition`}
+        style={{ background: BRAND_DARK }}
+        onClick={goToDetail}
+      >
+        {mentor.name?.charAt(0)?.toUpperCase()}
+      </div>
+    )
+  );
+
+  const Rating = () => (
+    reviewsCount > 0 ? (
+      <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-0.5">
+          {[1, 2, 3, 4, 5].map(n => (
+            <FiStar key={n} size={11} className={n <= Math.round(avg) ? 'text-amber-400 fill-amber-400' : 'text-gray-300'} />
+          ))}
+        </div>
+        <span className="text-xs font-bold text-gray-700">{avg.toFixed(1)}</span>
+        <span className="text-[10px] text-gray-400">({reviewsCount})</span>
+      </div>
+    ) : (
+      <span className="text-[11px] text-gray-400">No reviews yet</span>
+    )
+  );
+
+  // Primary action button — shared between list & grid
+  const ActionButton = ({ small }) => {
+    const base = small
+      ? 'flex-1 text-[11px] font-bold py-2 rounded-md transition-colors flex items-center justify-center gap-1'
+      : 'flex-1 text-xs font-bold py-2 rounded-lg transition-colors flex items-center justify-center gap-1.5';
+    if (isOwnCard) {
+      return (
+        <button onClick={() => navigate('/profile')} className={`${base} bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200`}>
+          Edit Profile
+        </button>
+      );
+    }
+    if (iAmMentor && (!applicationStatus || (applicationStatus === 'rejected' && canRequestAgain))) {
+      return (
+        <button disabled title="Mentors cannot apply for mentorship" className={`${base} bg-gray-100 text-gray-500 border border-gray-200 cursor-not-allowed`}>
+          Mentors Can't Apply
+        </button>
+      );
+    }
+    if (applicationStatus === 'accepted') {
+      return (
+        <button disabled className={`${base} bg-green-50 text-green-700 border border-green-200`}>
+          <FiCheck className="text-[11px]" /> Accepted
+        </button>
+      );
+    }
+    if (applicationStatus === 'pending') {
+      return (
+        <div className="flex-1 flex gap-1">
+          <button disabled className={`${base} bg-amber-50 text-amber-700 border border-amber-200`}>
+            Pending
+          </button>
+          <button
+            onClick={() => applicationId && onCancel && onCancel(applicationId, mentor)}
+            title="Cancel request"
+            className="px-3 rounded-md border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition flex items-center"
           >
-            {profileImg ? (
-              <img
-                src={profileImg}
-                alt={mentor.name}
-                className="w-20 h-20 rounded-xl border-2 border-blue-600/20 object-cover hover:opacity-90 transition-opacity"
-              />
-            ) : (
-              <div className="w-20 h-20 rounded-xl border-2 border-blue-600/20 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold hover:opacity-90 transition-opacity">
-                {mentor.name?.charAt(0)?.toUpperCase()}
-              </div>
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3
-              className="text-lg font-bold text-gray-900 truncate cursor-pointer hover:text-blue-600 transition-colors"
-              onClick={goToDetail}
-            >
-              {mentor.name}
-            </h3>
-            {mentor.title && <p className="text-blue-600 text-sm font-semibold truncate">{mentor.title}</p>}
-            {mentor.company && <p className="text-gray-600 text-xs truncate">At {mentor.company}</p>}
+            <FiX size={14} />
+          </button>
+        </div>
+      );
+    }
+    if (applicationStatus === 'rejected' && !canRequestAgain) {
+      return (
+        <button disabled title="Cooldown: try again later" className={`${base} bg-red-50 text-red-700 border border-red-200`}>
+          Rejected ({rejectionCount}/3)
+        </button>
+      );
+    }
+    return (
+      <button
+        onClick={() => onRequest(mentor)}
+        disabled={requesting}
+        className={`${base} text-white disabled:opacity-60`}
+        style={{ background: BRAND_DARK }}
+        onMouseEnter={(e) => !requesting && (e.currentTarget.style.background = BRAND_DARKER)}
+        onMouseLeave={(e) => !requesting && (e.currentTarget.style.background = BRAND_DARK)}
+      >
+        {requesting ? 'Sending…' : (applicationStatus === 'rejected' ? `Request Again (${rejectionCount}/3)` : 'Request Mentorship')}
+      </button>
+    );
+  };
 
-            {/* Rating */}
-            {reviewsCount > 0 ? (
-              <div className="flex items-center gap-1.5 mt-1.5">
-                <div className="flex items-center gap-0.5">
-                  {[1,2,3,4,5].map(n => (
-                    <FiStar key={n} size={11} className={n <= Math.round(avg) ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'} />
-                  ))}
-                </div>
-                <span className="text-xs font-bold text-gray-700">{avg.toFixed(1)}</span>
-                <span className="text-[10px] text-gray-500">({reviewsCount})</span>
-              </div>
-            ) : (
-              <p className="text-[11px] text-gray-400 mt-1.5">No reviews yet</p>
-            )}
+  const expertise = mentor.expertise || [];
 
-            {mentor.expertise?.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-1">
-                {mentor.expertise.slice(0, 3).map(skill => (
-                  <span key={skill} className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold rounded">
-                    {skill}
-                  </span>
+  // ─── LIST VIEW (full row) ───
+  if (view === 'list') {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all overflow-hidden">
+        <div className="p-5 flex flex-col md:flex-row gap-5 items-start">
+          <Avatar size="w-14 h-14" />
+          <div className="flex-1 min-w-0 w-full">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <button onClick={goToDetail} className="text-base font-bold text-gray-900 hover:underline transition-colors line-clamp-1"
+                onMouseEnter={e => e.currentTarget.style.color = BRAND}
+                onMouseLeave={e => e.currentTarget.style.color = ''}>
+                {mentor.name}
+              </button>
+              {mentor.graduation_year && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                  style={{ background: BRAND_BG, color: BRAND, border: `1px solid ${BRAND_BORDER}` }}>
+                  <FiCheck className="text-[10px]" /> Class of {mentor.graduation_year}
+                </span>
+              )}
+            </div>
+            {mentor.title && <p className="text-sm font-semibold" style={{ color: BRAND_DARK }}>{mentor.title}</p>}
+            {mentor.company && <p className="text-xs text-gray-500 mb-1.5">At {mentor.company}</p>}
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-gray-500 mb-2">
+              <Rating />
+              {mentor.years_of_experience ? (
+                <span className="flex items-center gap-1"><FiTrendingUp className="text-gray-400" />{mentor.years_of_experience} yrs exp.</span>
+              ) : null}
+              {mentor.mentored_count > 0 && (
+                <span className="flex items-center gap-1"><FiUsers className="text-gray-400" />{mentor.mentored_count} mentored</span>
+              )}
+            </div>
+            {mentor.bio && <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-2">{mentor.bio}</p>}
+            {expertise.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {expertise.slice(0, 4).map(skill => (
+                  <span key={skill} className="px-2 py-0.5 text-[10px] font-bold rounded"
+                    style={{ background: BRAND_BG, color: BRAND }}>{skill}</span>
                 ))}
               </div>
             )}
           </div>
+          <div className="flex md:flex-col gap-2 w-full md:w-36">
+            <ActionButton />
+            <button onClick={goToDetail}
+              className="flex-1 text-xs font-bold py-2 rounded-lg text-center transition-colors border flex items-center justify-center gap-1.5"
+              style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
+              <FiEye className="text-xs" /> View
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── GRID VIEW (compact card) ───
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 hover:border-gray-300 transition-all overflow-hidden flex flex-col">
+      <div className="p-5 flex-1 flex flex-col">
+        <div className="flex gap-3 mb-3">
+          <Avatar size="w-14 h-14" />
+          <div className="flex-1 min-w-0">
+            <button onClick={goToDetail} className="text-sm font-bold text-gray-900 line-clamp-1 hover:underline text-left"
+              onMouseEnter={e => e.currentTarget.style.color = BRAND}
+              onMouseLeave={e => e.currentTarget.style.color = ''}>
+              {mentor.name}
+            </button>
+            {mentor.title && <p className="text-xs font-semibold line-clamp-1" style={{ color: BRAND_DARK }}>{mentor.title}</p>}
+            {mentor.company && <p className="text-[11px] text-gray-500 line-clamp-1">At {mentor.company}</p>}
+            <div className="mt-1"><Rating /></div>
+          </div>
         </div>
 
-        {mentor.bio && (
-          <p className="text-sm text-gray-600 line-clamp-2 mt-2">{mentor.bio}</p>
-        )}
+        {mentor.bio && <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-3">{mentor.bio}</p>}
 
-        <div className="flex items-center gap-6 py-3 border-y border-gray-200 mt-2">
+        <div className="flex items-center gap-4 py-2.5 border-y border-gray-100 mb-3 text-[11px]">
+          {mentor.years_of_experience ? (
+            <div className="flex flex-col">
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Experience</span>
+              <span className="font-bold text-gray-700">{mentor.years_of_experience} yrs</span>
+            </div>
+          ) : null}
           {mentor.mentored_count > 0 && (
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase font-bold text-gray-500">Mentored</span>
-              <span className="text-sm font-bold">{mentor.mentored_count} Alumni</span>
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Mentored</span>
+              <span className="font-bold text-gray-700">{mentor.mentored_count}</span>
             </div>
           )}
           {mentor.graduation_year && (
             <div className="flex flex-col">
-              <span className="text-[10px] uppercase font-bold text-gray-500">Graduation</span>
-              <span className="text-sm font-bold">Class of {mentor.graduation_year}</span>
-            </div>
-          )}
-          {mentor.years_of_experience && (
-            <div className="flex flex-col">
-              <span className="text-[10px] uppercase font-bold text-gray-500">Experience</span>
-              <span className="text-sm font-bold">{mentor.years_of_experience} yrs</span>
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Class</span>
+              <span className="font-bold text-gray-700">{mentor.graduation_year}</span>
             </div>
           )}
         </div>
 
-        <div className="flex gap-2 mt-2">
-          <button
-            onClick={goToDetail}
-            className="flex-1 flex items-center justify-center gap-1.5 bg-gray-100 text-gray-900 text-sm font-semibold py-2.5 rounded-lg hover:bg-gray-200 transition-colors border border-gray-200"
-          >
-            <FiEye size={14} /> View
+        {expertise.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-3">
+            {expertise.slice(0, 3).map(skill => (
+              <span key={skill} className="px-2 py-0.5 text-[10px] font-bold rounded"
+                style={{ background: BRAND_BG, color: BRAND }}>{skill}</span>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-auto flex gap-1.5 pt-2 border-t border-gray-100">
+          <ActionButton small />
+          <button onClick={goToDetail}
+            className="px-3 text-[11px] font-bold rounded-md text-center transition-colors border flex items-center"
+            style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
+            <FiArrowRight className="text-xs" />
           </button>
-          {isOwnCard ? (
-            <button
-              onClick={() => navigate('/profile')}
-              className="flex-1 bg-gray-100 text-gray-700 text-sm font-semibold py-2.5 rounded-lg hover:bg-gray-200 transition-colors border border-gray-200"
-            >
-              Edit
-            </button>
-          ) : iAmMentor && (!applicationStatus || (applicationStatus === 'rejected' && canRequestAgain)) ? (
-            <button
-              disabled
-              title="Mentors cannot apply for mentorship"
-              className="flex-1 text-sm font-semibold py-2.5 rounded-lg border bg-gray-100 text-gray-500 border-gray-200 cursor-not-allowed"
-            >
-              Mentors Can't Apply
-            </button>
-          ) : applicationStatus === 'accepted' ? (
-            <button disabled className="flex-1 text-sm font-semibold py-2.5 rounded-lg border bg-green-50 text-green-700 border-green-200">
-              ✓ Accepted
-            </button>
-          ) : applicationStatus === 'pending' ? (
-            <div className="flex-1 flex gap-1">
-              <button disabled className="flex-1 text-sm font-semibold py-2.5 rounded-lg border bg-yellow-50 text-yellow-700 border-yellow-200">
-                ⏱ Pending
-              </button>
-              <button
-                onClick={() => applicationId && onCancel && onCancel(applicationId, mentor)}
-                title="Cancel request"
-                className="px-3 py-2.5 rounded-lg border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition"
-              >
-                <FiX size={14} />
-              </button>
-            </div>
-          ) : applicationStatus === 'rejected' && !canRequestAgain ? (
-            <button disabled className="flex-1 text-sm font-semibold py-2.5 rounded-lg border bg-red-50 text-red-700 border-red-200" title="Cooldown: try again later">
-              ✗ Rejected ({rejectionCount}/3)
-            </button>
-          ) : (
-            <button
-              onClick={() => onRequest(mentor)}
-              disabled={requesting}
-              className="flex-1 text-white text-sm font-semibold py-2.5 rounded-lg transition-colors disabled:opacity-60"
-              style={{ backgroundColor: '#002759' }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0a519b'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#002759'}
-            >
-              {requesting ? 'Sending…' : (applicationStatus === 'rejected' ? `Request Again (${rejectionCount}/3)` : 'Request')}
-            </button>
-          )}
         </div>
       </div>
     </div>
