@@ -7,6 +7,14 @@ import { useAuth } from '../contexts/AuthContext';
 import Swal from 'sweetalert2';
 import EventRegistrationModal from '../components/event/EventRegistrationModal';
 import EventCardModal from '../components/event/EventCardModal';
+import { FiList, FiX, FiTag } from 'react-icons/fi';
+
+// ─── Brand palette (matches Job Board / Mentorship) ─────────────
+const BRAND = '#194ce6';
+const BRAND_DARK = '#0f2d8a';
+const BRAND_DARKER = '#091d5e';
+const BRAND_BG = '#eef1fd';
+const BRAND_BORDER = '#c5ccf7';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -116,6 +124,7 @@ const EventsPage = () => {
   const { user } = useAuth();
   
   const [viewMode, setViewMode] = useState('list');
+  const [filtersOpen, setFiltersOpen] = useState(false); // mobile drawer
   const [searchTerm, setSearchTerm] = useState('');
   const [eventFilter, setEventFilter] = useState('all');
   const [dateFrom, setDateFrom] = useState('');
@@ -472,6 +481,133 @@ const EventsPage = () => {
     return colors[eventType] || 'bg-gray-600';
   };
 
+  const hasActiveFilters = searchTerm || eventFilter !== 'all' || dateFrom || dateTo;
+
+  // ─── Section header ───
+  const FilterSection = ({ icon: Icon, title, count, children }) => (
+    <div>
+      <div className="flex items-center justify-between mb-2.5">
+        <div className="flex items-center gap-1.5">
+          <Icon className="w-3 h-3" style={{ color: BRAND }} />
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-700">{title}</h3>
+        </div>
+        {count > 0 && (
+          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold text-white"
+            style={{ background: BRAND }}>
+            {count}
+          </span>
+        )}
+      </div>
+      {children}
+    </div>
+  );
+
+  // ─── Pill toggle row ───
+  const PillToggle = ({ label, active, onClick, badge }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full px-3 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-between border"
+      style={active
+        ? { background: BRAND_DARK, color: '#fff', borderColor: BRAND_DARK }
+        : { background: '#fff', color: '#374151', borderColor: '#e5e7eb' }}
+      onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = BRAND_BORDER; e.currentTarget.style.background = BRAND_BG; e.currentTarget.style.color = BRAND; } }}
+      onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#374151'; } }}
+    >
+      <span className="text-left">{label}</span>
+      {badge != null && (
+        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-2 flex-shrink-0"
+          style={active ? { background: 'rgba(255,255,255,0.2)' } : { background: BRAND_BG, color: BRAND }}>
+          {badge}
+        </span>
+      )}
+    </button>
+  );
+
+  // ─── Filter panel (sidebar + mobile drawer) ───
+  const FilterPanel = () => {
+    const totalCount = (eventFilter !== 'all' ? 1 : 0) + (searchTerm ? 1 : 0) + (dateFrom || dateTo ? 1 : 0);
+    const totalEvents = categories.reduce((s, c) => s + c.count, 0);
+    return (
+      <div className="flex flex-col gap-5">
+        {totalCount > 0 && (
+          <div className="flex items-center justify-between px-3 py-2 rounded-lg" style={{ background: BRAND_BG }}>
+            <span className="text-[11px] font-semibold" style={{ color: BRAND_DARK }}>
+              {totalCount} active filter{totalCount > 1 ? 's' : ''}
+            </span>
+            <button onClick={() => { setSearchTerm(''); setEventFilter('all'); setDateFrom(''); setDateTo(''); }}
+              className="text-[11px] font-bold hover:underline" style={{ color: BRAND }}>
+              Clear all
+            </button>
+          </div>
+        )}
+
+        {/* View mode */}
+        <FilterSection icon={FiList} title="View" count={0}>
+          <div className="flex flex-col gap-1.5">
+            <PillToggle label="List View" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
+            <PillToggle label="Calendar" active={viewMode === 'calendar'}
+              onClick={() => { setViewMode('calendar'); setCalendarDate(dateFrom ? new Date(dateFrom) : new Date()); }} />
+          </div>
+        </FilterSection>
+
+        <div className="h-px bg-gray-100" />
+
+        {/* Categories */}
+        <FilterSection icon={FiTag} title="Categories" count={eventFilter !== 'all' ? 1 : 0}>
+          <div className="flex flex-col gap-1.5">
+            <PillToggle label="All Events" active={eventFilter === 'all'} onClick={() => setEventFilter('all')} badge={totalEvents} />
+            {categories.map((c, i) => (
+              <PillToggle key={i} label={c.name} active={eventFilter === c.type} onClick={() => setEventFilter(c.type)} badge={c.count} />
+            ))}
+          </div>
+        </FilterSection>
+
+        <div className="h-px bg-gray-100" />
+
+        {/* Date range */}
+        <FilterSection icon={FiCalendar} title="Date Range" count={dateFrom || dateTo ? 1 : 0}>
+          <div className="flex flex-col gap-2">
+            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} title="From date"
+              className="w-full px-3 py-2 text-[11px] rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2"
+              style={{ '--tw-ring-color': BRAND_BORDER }} />
+            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} title="To date"
+              className="w-full px-3 py-2 text-[11px] rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2"
+              style={{ '--tw-ring-color': BRAND_BORDER }} />
+            {(dateFrom || dateTo) && (
+              <button onClick={() => { setDateFrom(''); setDateTo(''); }}
+                className="text-[11px] font-semibold hover:underline self-start" style={{ color: BRAND }}>
+                Clear dates
+              </button>
+            )}
+          </div>
+        </FilterSection>
+
+        {hasActiveFilters && (
+          <button onClick={() => { setSearchTerm(''); setEventFilter('all'); setDateFrom(''); setDateTo(''); }}
+            className="w-full text-[11px] font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+            style={{ background: BRAND_DARK, color: '#fff' }}
+            onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
+            onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
+            <FiX className="w-3 h-3" /> Reset All Filters
+          </button>
+        )}
+      </div>
+    );
+  };
+
+  const GridSkeleton = () => (
+    <div className="bg-white rounded-xl overflow-hidden border border-gray-200 animate-pulse">
+      <div className="h-44 bg-gray-200" />
+      <div className="p-4 space-y-3">
+        <div className="h-3 bg-gray-200 rounded w-1/2" />
+        <div className="h-4 bg-gray-200 rounded w-3/4" />
+        <div className="h-3 bg-gray-100 rounded w-2/3" />
+        <div className="h-9 bg-gray-200 rounded mt-2" />
+      </div>
+    </div>
+  );
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
@@ -730,167 +866,115 @@ const EventsPage = () => {
           </div>
         </section>
 
-        {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Sidebar */}
-            <aside className="w-full lg:w-80 flex-shrink-0">
-              <div className="sticky top-8 flex flex-col gap-8">
-                {/* View Toggle */}
-                <div className="bg-white p-1 rounded-lg border border-gray-200 flex">
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-colors ${
-                      viewMode === 'list'
-                        ? 'bg-blue-600 text-white'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
-                    </svg>
-                    List View
+        {/* Search bar — overlaps hero */}
+        <div className="max-w-7xl mx-auto px-4 lg:px-8 -mt-7 relative z-20">
+          <div className="bg-white rounded-2xl border border-gray-200 shadow-lg p-3 md:p-4">
+            <div className="flex flex-col md:flex-row gap-2">
+              <div className="flex-1 flex items-center bg-gray-50 rounded-lg px-3 py-2 focus-within:ring-2 transition-all"
+                style={{ '--tw-ring-color': BRAND_BORDER }}>
+                <FiSearch className="text-gray-400 mr-2.5 flex-shrink-0 w-4 h-4" />
+                <input
+                  className="w-full border-none bg-transparent focus:ring-0 focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
+                  placeholder="Search events by title, type, or location…"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                {searchTerm && (
+                  <button onClick={() => setSearchTerm('')} className="text-gray-400 hover:text-gray-600 ml-2">
+                    <FiX className="w-3.5 h-3.5" />
                   </button>
-                  <button
-                    onClick={() => {
-                      setViewMode('calendar');
-                      setCalendarDate(dateFrom ? new Date(dateFrom) : new Date());
-                    }}
-                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-md text-sm font-medium transition-colors ${
-                      viewMode === 'calendar'
-                        ? 'bg-blue-600 text-white'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    }`}
-                  >
-                    <FiCalendar className="text-[16px]" />
-                    Calendar
-                  </button>
-                </div>
+                )}
+              </div>
+              <button
+                onClick={() => setFiltersOpen(true)}
+                className="lg:hidden flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold border transition-colors"
+                style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
+                <FiFilter className="w-3.5 h-3.5" /> Filters
+              </button>
+            </div>
+          </div>
+        </div>
 
-                {/* Categories */}
-                <div className="bg-white p-6 rounded-lg border border-gray-200">
-                  <h2 className="text-gray-900 text-lg font-bold mb-4">Popular Categories</h2>
-                  <div className="space-y-1">
-                    <button
-                      onClick={() => setEventFilter('all')}
-                      className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        eventFilter === 'all'
-                          ? 'bg-blue-600 text-white'
-                          : 'text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      <span>All Events</span>
-                      <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${eventFilter === 'all' ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-600'}`}>
-                        {categories.reduce((sum, c) => sum + c.count, 0)}
-                      </span>
-                    </button>
-                    {categories.map((category, index) => (
-                      <button
-                        key={index}
-                        onClick={() => setEventFilter(category.type)}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                          eventFilter === category.type
-                            ? 'bg-blue-600 text-white'
-                            : 'text-gray-700 hover:bg-gray-50'
-                        }`}
-                      >
-                        <span>{category.name}</span>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${eventFilter === category.type ? 'bg-white/20 text-white' : 'bg-blue-100 text-blue-600'}`}>
-                          {category.count}
-                        </span>
-                      </button>
-                    ))}
+        {/* Main Content */}
+        <main className="max-w-7xl mx-auto px-4 lg:px-8 py-8">
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Sidebar — desktop */}
+            <aside className="hidden lg:block w-72 flex-shrink-0">
+              <div className="sticky top-24 flex flex-col gap-4">
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: BRAND_BG }}>
+                      <FiFilter className="w-3.5 h-3.5" style={{ color: BRAND }} />
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">Filters</h2>
+                      <p className="text-[10px] text-gray-400">Find events that fit you</p>
+                    </div>
                   </div>
+                  <div className="p-5"><FilterPanel /></div>
                 </div>
 
                 {/* Newsletter */}
-                <div className="bg-blue-600 p-6 rounded-lg text-white">
-                  <FiMail className="text-white/80 text-2xl mb-3" />
-                  <h3 className="font-bold text-lg mb-2">Stay Updated</h3>
-                  <p className="text-sm text-white/80 mb-4">
-                    Get the latest event invitations directly in your inbox.
-                  </p>
-                  <input 
-                    className="w-full px-4 py-2 rounded-lg border-white/20 bg-white/10 placeholder-white/60 text-white text-sm focus:outline-none focus:ring-2 focus:ring-white/30 mb-3" 
-                    placeholder="Email address" 
-                    type="email"
-                  />
-                  <button className="w-full bg-white text-blue-600 text-sm font-bold py-2 rounded-lg hover:bg-gray-100 transition-colors">
+                <div className="rounded-xl p-5 text-white" style={{ background: BRAND_DARK }}>
+                  <FiMail className="text-white/80 text-2xl mb-2.5" />
+                  <h3 className="font-bold text-base mb-1">Stay Updated</h3>
+                  <p className="text-xs text-white/70 mb-3">Get the latest event invitations in your inbox.</p>
+                  <input
+                    className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 placeholder-white/60 text-white text-xs focus:outline-none focus:ring-2 focus:ring-white/30 mb-2.5"
+                    placeholder="Email address" type="email" />
+                  <button className="w-full text-xs font-bold py-2 rounded-lg transition-colors"
+                    style={{ background: '#fff', color: BRAND_DARK }}>
                     Subscribe
                   </button>
                 </div>
               </div>
             </aside>
 
-            {/* Events List */}
-            <div className="flex-1">
-              {/* Search and Filters */}
-              <div className="bg-white p-4 rounded-lg border border-gray-200 mb-6">
-                <div className="flex flex-col md:flex-row gap-4">
-                  <div className="flex-1 relative">
-                    <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input 
-                      className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 text-black text-sm focus:ring-2 focus:ring-blue-600 focus:border-blue-600" 
-                      placeholder="Search events..." 
-                      type="text"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+            {/* Mobile filter drawer */}
+            {filtersOpen && (
+              <div className="lg:hidden fixed inset-0 z-50">
+                <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
+                <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto">
+                  <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-base font-bold text-gray-900">Filters</h2>
+                    <button onClick={() => setFiltersOpen(false)}
+                      className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50">
+                      <FiX className="w-4 h-4" />
+                    </button>
                   </div>
-                  <div className="flex flex-wrap gap-3">
-                    <select
-                      className="px-4 py-2 text-sm rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-                      value={eventFilter}
-                      onChange={(e) => setEventFilter(e.target.value)}
-                    >
-                      <option value="all">All Types</option>
-                      <option value="reunion">Reunions</option>
-                      <option value="workshop">Workshops</option>
-                      <option value="webinar">Webinars</option>
-                      <option value="sports">Sports</option>
-                      <option value="career_fair">Career Fairs</option>
-                      <option value="conference">Conferences</option>
-                      <option value="seminar">Seminars</option>
-                      <option value="networking">Networking</option>
-                    </select>
-                    <div className="flex items-center gap-2">
-                      <input
-                        className="px-3 py-2 text-sm rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-                        type="date"
-                        value={dateFrom}
-                        onChange={(e) => setDateFrom(e.target.value)}
-                        title="From date"
-                      />
-                      <span className="text-gray-400 text-sm">to</span>
-                      <input
-                        className="px-3 py-2 text-sm rounded-lg border border-gray-300 text-black focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-                        type="date"
-                        value={dateTo}
-                        onChange={(e) => setDateTo(e.target.value)}
-                        title="To date"
-                      />
-                      {(dateFrom || dateTo) && (
-                        <button
-                          onClick={() => { setDateFrom(''); setDateTo(''); }}
-                          className="text-gray-400 hover:text-gray-600 text-lg leading-none"
-                          title="Clear dates"
-                        >×</button>
-                      )}
-                    </div>
-                  </div>
+                  <FilterPanel />
+                  <button onClick={() => setFiltersOpen(false)}
+                    className="w-full mt-4 text-white text-sm font-semibold py-2.5 rounded-lg"
+                    style={{ background: BRAND_DARK }}>
+                    Apply
+                  </button>
                 </div>
               </div>
+            )}
 
-              {/* Results Header */}
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {viewMode === 'calendar' ? 'Event Calendar' : 'Upcoming Events'}
-                </h2>
-                {viewMode === 'list' && (
-                  <div className="text-sm text-gray-600">
-                    Sort by: <span className="text-blue-600 font-bold cursor-pointer">Date Ascending</span>
-                  </div>
-                )}
+            {/* Events List */}
+            <div className="flex-1 min-w-0">
+              {/* Toolbar — count + view toggle */}
+              <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
+                <p className="text-xs text-gray-500">
+                  {loading ? 'Loading…' : (viewMode === 'calendar'
+                    ? 'Event calendar'
+                    : <>Showing <span className="font-semibold text-gray-900">{events.length}</span> of <span className="font-semibold text-gray-900">{pagination.total}</span> events</>)}
+                </p>
+                <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-0.5">
+                  <button onClick={() => setViewMode('list')}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-semibold transition-colors ${
+                      viewMode === 'list' ? 'text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                    style={viewMode === 'list' ? { background: BRAND_DARK } : {}}>
+                    <FiList className="w-3.5 h-3.5" /> List
+                  </button>
+                  <button onClick={() => { setViewMode('calendar'); setCalendarDate(dateFrom ? new Date(dateFrom) : new Date()); }}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-semibold transition-colors ${
+                      viewMode === 'calendar' ? 'text-white' : 'text-gray-600 hover:bg-gray-50'}`}
+                    style={viewMode === 'calendar' ? { background: BRAND_DARK } : {}}>
+                    <FiCalendar className="w-3.5 h-3.5" /> Calendar
+                  </button>
+                </div>
               </div>
 
               {/* Calendar View */}
@@ -910,28 +994,26 @@ const EventsPage = () => {
 
               {/* Events Grid (List View) */}
               {viewMode === 'list' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
                 {loading ? (
-                  Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="bg-white rounded-xl overflow-hidden border border-gray-200 h-[440px] animate-pulse">
-                      <div className="h-48 bg-gray-200" />
-                      <div className="p-4 space-y-3">
-                        <div className="h-4 bg-gray-200 rounded w-3/4" />
-                        <div className="h-4 bg-gray-200 rounded w-1/2" />
-                        <div className="h-4 bg-gray-200 rounded w-2/3" />
-                        <div className="h-10 bg-gray-200 rounded mt-auto" />
-                      </div>
-                    </div>
-                  ))
+                  Array.from({ length: 6 }).map((_, i) => <GridSkeleton key={i} />)
                 ) : events.length === 0 ? (
-                  <div className="col-span-3 text-center py-16 text-gray-500">
-                    <FiCalendar className="text-5xl mx-auto mb-4 text-gray-300" />
-                    <p className="text-lg font-medium">No events found</p>
-                    <p className="text-sm mt-1">Try adjusting your filters</p>
+                  <div className="col-span-full bg-white rounded-xl border border-gray-200 p-12 text-center">
+                    <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style={{ background: BRAND_BG }}>
+                      <FiCalendar className="text-2xl" style={{ color: BRAND }} />
+                    </div>
+                    <h3 className="text-base font-bold text-gray-900 mb-1">No events found</h3>
+                    <p className="text-xs text-gray-500 max-w-xs mx-auto">Try adjusting your search or removing some filters.</p>
+                    {hasActiveFilters && (
+                      <button onClick={() => { setSearchTerm(''); setEventFilter('all'); setDateFrom(''); setDateTo(''); }}
+                        className="mt-4 px-5 py-2 text-white text-xs font-semibold rounded-lg" style={{ background: BRAND_DARK }}>
+                        Reset filters
+                      </button>
+                    )}
                   </div>
                 ) : events.map((event) => (
-                  <div key={event.id} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-xl transition-all duration-300 h-[440px] w-full flex flex-col group">
-                    <div className="relative h-48 flex-shrink-0 overflow-hidden">
+                  <div key={event.id} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-gray-300 transition-all h-[440px] w-full flex flex-col group">
+                    <div className="relative h-44 flex-shrink-0 overflow-hidden">
                       {event.featured_image ? (
                         <img
                           alt={event.title}
@@ -940,14 +1022,14 @@ const EventsPage = () => {
                           onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling && (e.target.nextElementSibling.style.display = 'flex'); }}
                         />
                       ) : null}
-                      <div className={`w-full h-full bg-gradient-to-br from-blue-400 to-blue-600 items-center justify-center ${event.featured_image ? 'hidden' : 'flex'}`}>
+                      <div className={`w-full h-full items-center justify-center ${event.featured_image ? 'hidden' : 'flex'}`} style={{ background: BRAND_DARK }}>
                         <FiCalendar className="text-white text-4xl" />
                       </div>
-                      <div className="absolute top-4 left-4 bg-white px-3 py-2 rounded-lg shadow-md">
-                        <div className="text-blue-600 font-bold text-xs">
+                      <div className="absolute top-3 left-3 bg-white px-3 py-1.5 rounded-lg shadow-md text-center">
+                        <div className="font-bold text-[10px] tracking-wider" style={{ color: BRAND }}>
                           {new Date(event.start_date).toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}
                         </div>
-                        <div className="text-base font-bold text-gray-900">
+                        <div className="text-base font-extrabold text-gray-900 leading-none">
                           {new Date(event.start_date).toLocaleDateString('en-US', { day: 'numeric' })}
                         </div>
                       </div>
@@ -966,7 +1048,7 @@ const EventsPage = () => {
                       </button>
                     </div>
                     <div className="p-4 flex flex-col flex-1">
-                      <div className="flex items-center gap-2 text-blue-600 font-semibold text-xs mb-2">
+                      <div className="flex items-center gap-2 font-semibold text-xs mb-2" style={{ color: BRAND }}>
                         <FiClock className="text-[12px]" />
                         <span className="truncate">
                           {new Date(event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} ({event.time_zone})
@@ -1066,27 +1148,21 @@ const EventsPage = () => {
               )}
 
               {/* Pagination (list view only) */}
-              {viewMode === 'list' && (
-              <div className="flex items-center justify-between py-6 border-t border-gray-200">
-                <p className="text-sm text-gray-600">
-                  Showing <span className="font-semibold text-gray-900">{Math.min(pagination.per_page * (pagination.current_page - 1) + 1, pagination.total)}</span> to{' '}
+              {viewMode === 'list' && !loading && events.length > 0 && pagination.total > 0 && (
+              <div className="mt-6 bg-white rounded-xl border border-gray-200 p-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <p className="text-xs text-gray-500">
+                  Showing <span className="font-semibold text-gray-900">{Math.min(pagination.per_page * (pagination.current_page - 1) + 1, pagination.total)}</span>–
                   <span className="font-semibold text-gray-900">{Math.min(pagination.per_page * pagination.current_page, pagination.total)}</span> of{' '}
                   <span className="font-semibold text-gray-900">{pagination.total}</span> events
                 </p>
-                <div className="flex gap-2">
-                  <button 
+                <div className="flex items-center gap-1">
+                  <button
                     onClick={() => fetchEvents(pagination.current_page - 1)}
                     disabled={pagination.current_page <= 1}
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-200 ${
-                      pagination.current_page <= 1 
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                        : 'border border-gray-300 hover:bg-gray-100 text-gray-600'
-                    }`}
+                    className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 hover:bg-gray-50 text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    <FiChevronLeft />
+                    <FiChevronLeft className="text-sm" />
                   </button>
-                  
-                  {/* Page Numbers */}
                   {Array.from({ length: Math.min(5, pagination.last_page) }, (_, i) => {
                     let pageNum;
                     if (pagination.last_page <= 5) {
@@ -1098,32 +1174,25 @@ const EventsPage = () => {
                     } else {
                       pageNum = pagination.current_page - 2 + i;
                     }
-                    
                     return (
                       <button
                         key={pageNum}
                         onClick={() => fetchEvents(pageNum)}
-                        className={`flex h-10 px-3 items-center justify-center rounded-lg font-medium text-sm transition-all duration-200 ${
-                          pagination.current_page === pageNum
-                            ? 'bg-blue-600 text-white shadow-md'
-                            : 'border border-gray-300 hover:bg-gray-100 text-gray-600'
+                        className={`min-w-[32px] h-8 px-2 rounded-md text-xs font-semibold transition-colors ${
+                          pagination.current_page === pageNum ? 'text-white' : 'text-gray-600 hover:bg-gray-50 border border-gray-200'
                         }`}
+                        style={pagination.current_page === pageNum ? { background: BRAND_DARK } : {}}
                       >
                         {pageNum}
                       </button>
                     );
                   })}
-                  
-                  <button 
+                  <button
                     onClick={() => fetchEvents(pagination.current_page + 1)}
                     disabled={pagination.current_page >= pagination.last_page}
-                    className={`flex h-10 w-10 items-center justify-center rounded-lg transition-all duration-200 ${
-                      pagination.current_page >= pagination.last_page 
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-                        : 'border border-gray-300 hover:bg-gray-100 text-gray-600'
-                    }`}
+                    className="w-8 h-8 flex items-center justify-center rounded-md border border-gray-200 hover:bg-gray-50 text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed"
                   >
-                    <FiChevronRight />
+                    <FiChevronRight className="text-sm" />
                   </button>
                 </div>
               </div>
