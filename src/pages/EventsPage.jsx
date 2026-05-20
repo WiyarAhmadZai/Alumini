@@ -119,6 +119,134 @@ const CalendarView = ({ events, calendarDate, setCalendarDate, onDayClick, onEve
   );
 };
 
+// ─── Filter section header (module scope — stable identity) ───
+const FilterSection = ({ icon: Icon, title, count, children }) => (
+  <div>
+    <div className="flex items-center justify-between mb-2.5">
+      <div className="flex items-center gap-1.5">
+        <Icon className="w-3 h-3" style={{ color: BRAND }} />
+        <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-700">{title}</h3>
+      </div>
+      {count > 0 && (
+        <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold text-white"
+          style={{ background: BRAND }}>
+          {count}
+        </span>
+      )}
+    </div>
+    {children}
+  </div>
+);
+
+// ─── Pill toggle row (module scope — stable identity) ───
+const PillToggle = ({ label, active, onClick, badge }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className="w-full px-3 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-between border"
+    style={active
+      ? { background: BRAND_DARK, color: '#fff', borderColor: BRAND_DARK }
+      : { background: '#fff', color: '#374151', borderColor: '#e5e7eb' }}
+    onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = BRAND_BORDER; e.currentTarget.style.background = BRAND_BG; e.currentTarget.style.color = BRAND; } }}
+    onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#374151'; } }}
+  >
+    <span className="text-left truncate">{label}</span>
+    {badge != null && (
+      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-2 flex-shrink-0"
+        style={active ? { background: 'rgba(255,255,255,0.25)' } : { background: BRAND_BG, color: BRAND }}>
+        {badge}
+      </span>
+    )}
+  </button>
+);
+
+const GridSkeleton = () => (
+  <div className="bg-white rounded-xl overflow-hidden border border-gray-200 animate-pulse">
+    <div className="h-40 bg-gray-200" />
+    <div className="p-4 space-y-3">
+      <div className="h-3 bg-gray-200 rounded w-1/2" />
+      <div className="h-4 bg-gray-200 rounded w-3/4" />
+      <div className="h-3 bg-gray-100 rounded w-2/3" />
+      <div className="h-9 bg-gray-200 rounded mt-2" />
+    </div>
+  </div>
+);
+
+// ─── Filter panel — module scope, fully props-driven so the native
+//     date picker & inputs never remount on parent re-render ───
+const EventsFilterPanel = ({
+  viewMode, setViewMode, setCalendarDate,
+  eventFilter, setEventFilter, categories,
+  dateFrom, setDateFrom, dateTo, setDateTo,
+  hasActiveFilters, onReset, activeCount,
+}) => {
+  const totalEvents = categories.reduce((s, c) => s + c.count, 0);
+  return (
+    <div className="flex flex-col gap-5">
+      {activeCount > 0 && (
+        <div className="flex items-center justify-between px-3 py-2 rounded-lg" style={{ background: BRAND_BG }}>
+          <span className="text-[11px] font-semibold" style={{ color: BRAND_DARK }}>
+            {activeCount} active filter{activeCount > 1 ? 's' : ''}
+          </span>
+          <button onClick={onReset} className="text-[11px] font-bold hover:underline" style={{ color: BRAND }}>
+            Clear all
+          </button>
+        </div>
+      )}
+
+      <FilterSection icon={FiList} title="View" count={0}>
+        <div className="flex flex-col gap-1.5">
+          <PillToggle label="List View" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
+          <PillToggle label="Calendar" active={viewMode === 'calendar'}
+            onClick={() => { setViewMode('calendar'); setCalendarDate(dateFrom ? new Date(dateFrom) : new Date()); }} />
+        </div>
+      </FilterSection>
+
+      <div className="h-px bg-gray-100" />
+
+      <FilterSection icon={FiTag} title="Categories" count={eventFilter !== 'all' ? 1 : 0}>
+        <div className="flex flex-col gap-1.5 max-h-72 overflow-y-auto pr-1">
+          <PillToggle label="All Events" active={eventFilter === 'all'} onClick={() => setEventFilter('all')} badge={totalEvents} />
+          {categories.map((c, i) => (
+            <PillToggle key={i} label={c.name} active={eventFilter === c.type} onClick={() => setEventFilter(c.type)} badge={c.count} />
+          ))}
+        </div>
+      </FilterSection>
+
+      <div className="h-px bg-gray-100" />
+
+      <FilterSection icon={FiCalendar} title="Date Range" count={dateFrom || dateTo ? 1 : 0}>
+        <div className="flex flex-col gap-2">
+          <label className="text-[10px] font-semibold text-gray-500">From</label>
+          <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
+            className="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2"
+            style={{ '--tw-ring-color': BRAND_BORDER }} />
+          <label className="text-[10px] font-semibold text-gray-500 mt-1">To</label>
+          <input type="date" value={dateTo} min={dateFrom || undefined} onChange={(e) => setDateTo(e.target.value)}
+            className="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2"
+            style={{ '--tw-ring-color': BRAND_BORDER }} />
+          {(dateFrom || dateTo) && (
+            <button onClick={() => { setDateFrom(''); setDateTo(''); }}
+              className="text-[11px] font-semibold hover:underline self-start mt-1" style={{ color: BRAND }}>
+              Clear dates
+            </button>
+          )}
+        </div>
+      </FilterSection>
+
+      {hasActiveFilters && (
+        <button onClick={onReset}
+          className="w-full text-[11px] font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors"
+          style={{ background: BRAND_DARK, color: '#fff' }}
+          onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
+          onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
+          <FiX className="w-3 h-3" /> Reset All Filters
+        </button>
+      )}
+    </div>
+  );
+};
+
 const EventsPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -481,132 +609,16 @@ const EventsPage = () => {
     return colors[eventType] || 'bg-gray-600';
   };
 
-  const hasActiveFilters = searchTerm || eventFilter !== 'all' || dateFrom || dateTo;
+  const hasActiveFilters = !!(searchTerm || eventFilter !== 'all' || dateFrom || dateTo);
+  const activeCount = (eventFilter !== 'all' ? 1 : 0) + (searchTerm ? 1 : 0) + (dateFrom || dateTo ? 1 : 0);
+  const resetFilters = () => { setSearchTerm(''); setEventFilter('all'); setDateFrom(''); setDateTo(''); };
 
-  // ─── Section header ───
-  const FilterSection = ({ icon: Icon, title, count, children }) => (
-    <div>
-      <div className="flex items-center justify-between mb-2.5">
-        <div className="flex items-center gap-1.5">
-          <Icon className="w-3 h-3" style={{ color: BRAND }} />
-          <h3 className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-700">{title}</h3>
-        </div>
-        {count > 0 && (
-          <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold text-white"
-            style={{ background: BRAND }}>
-            {count}
-          </span>
-        )}
-      </div>
-      {children}
-    </div>
-  );
-
-  // ─── Pill toggle row ───
-  const PillToggle = ({ label, active, onClick, badge }) => (
-    <button
-      type="button"
-      onClick={onClick}
-      className="w-full px-3 py-2 rounded-lg text-[11px] font-semibold transition-all flex items-center justify-between border"
-      style={active
-        ? { background: BRAND_DARK, color: '#fff', borderColor: BRAND_DARK }
-        : { background: '#fff', color: '#374151', borderColor: '#e5e7eb' }}
-      onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = BRAND_BORDER; e.currentTarget.style.background = BRAND_BG; e.currentTarget.style.color = BRAND; } }}
-      onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#374151'; } }}
-    >
-      <span className="text-left">{label}</span>
-      {badge != null && (
-        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full ml-2 flex-shrink-0"
-          style={active ? { background: 'rgba(255,255,255,0.2)' } : { background: BRAND_BG, color: BRAND }}>
-          {badge}
-        </span>
-      )}
-    </button>
-  );
-
-  // ─── Filter panel (sidebar + mobile drawer) ───
-  const FilterPanel = () => {
-    const totalCount = (eventFilter !== 'all' ? 1 : 0) + (searchTerm ? 1 : 0) + (dateFrom || dateTo ? 1 : 0);
-    const totalEvents = categories.reduce((s, c) => s + c.count, 0);
-    return (
-      <div className="flex flex-col gap-5">
-        {totalCount > 0 && (
-          <div className="flex items-center justify-between px-3 py-2 rounded-lg" style={{ background: BRAND_BG }}>
-            <span className="text-[11px] font-semibold" style={{ color: BRAND_DARK }}>
-              {totalCount} active filter{totalCount > 1 ? 's' : ''}
-            </span>
-            <button onClick={() => { setSearchTerm(''); setEventFilter('all'); setDateFrom(''); setDateTo(''); }}
-              className="text-[11px] font-bold hover:underline" style={{ color: BRAND }}>
-              Clear all
-            </button>
-          </div>
-        )}
-
-        {/* View mode */}
-        <FilterSection icon={FiList} title="View" count={0}>
-          <div className="flex flex-col gap-1.5">
-            <PillToggle label="List View" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
-            <PillToggle label="Calendar" active={viewMode === 'calendar'}
-              onClick={() => { setViewMode('calendar'); setCalendarDate(dateFrom ? new Date(dateFrom) : new Date()); }} />
-          </div>
-        </FilterSection>
-
-        <div className="h-px bg-gray-100" />
-
-        {/* Categories */}
-        <FilterSection icon={FiTag} title="Categories" count={eventFilter !== 'all' ? 1 : 0}>
-          <div className="flex flex-col gap-1.5">
-            <PillToggle label="All Events" active={eventFilter === 'all'} onClick={() => setEventFilter('all')} badge={totalEvents} />
-            {categories.map((c, i) => (
-              <PillToggle key={i} label={c.name} active={eventFilter === c.type} onClick={() => setEventFilter(c.type)} badge={c.count} />
-            ))}
-          </div>
-        </FilterSection>
-
-        <div className="h-px bg-gray-100" />
-
-        {/* Date range */}
-        <FilterSection icon={FiCalendar} title="Date Range" count={dateFrom || dateTo ? 1 : 0}>
-          <div className="flex flex-col gap-2">
-            <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} title="From date"
-              className="w-full px-3 py-2 text-[11px] rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2"
-              style={{ '--tw-ring-color': BRAND_BORDER }} />
-            <input type="date" value={dateTo} onChange={(e) => setDateTo(e.target.value)} title="To date"
-              className="w-full px-3 py-2 text-[11px] rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2"
-              style={{ '--tw-ring-color': BRAND_BORDER }} />
-            {(dateFrom || dateTo) && (
-              <button onClick={() => { setDateFrom(''); setDateTo(''); }}
-                className="text-[11px] font-semibold hover:underline self-start" style={{ color: BRAND }}>
-                Clear dates
-              </button>
-            )}
-          </div>
-        </FilterSection>
-
-        {hasActiveFilters && (
-          <button onClick={() => { setSearchTerm(''); setEventFilter('all'); setDateFrom(''); setDateTo(''); }}
-            className="w-full text-[11px] font-bold py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors"
-            style={{ background: BRAND_DARK, color: '#fff' }}
-            onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
-            onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
-            <FiX className="w-3 h-3" /> Reset All Filters
-          </button>
-        )}
-      </div>
-    );
+  const filterPanelProps = {
+    viewMode, setViewMode, setCalendarDate,
+    eventFilter, setEventFilter, categories,
+    dateFrom, setDateFrom, dateTo, setDateTo,
+    hasActiveFilters, onReset: resetFilters, activeCount,
   };
-
-  const GridSkeleton = () => (
-    <div className="bg-white rounded-xl overflow-hidden border border-gray-200 animate-pulse">
-      <div className="h-44 bg-gray-200" />
-      <div className="p-4 space-y-3">
-        <div className="h-3 bg-gray-200 rounded w-1/2" />
-        <div className="h-4 bg-gray-200 rounded w-3/4" />
-        <div className="h-3 bg-gray-100 rounded w-2/3" />
-        <div className="h-9 bg-gray-200 rounded mt-2" />
-      </div>
-    </div>
-  );
 
   return (
     <Layout>
@@ -911,7 +923,7 @@ const EventsPage = () => {
                       <p className="text-[10px] text-gray-400">Find events that fit you</p>
                     </div>
                   </div>
-                  <div className="p-5"><FilterPanel /></div>
+                  <div className="p-5"><EventsFilterPanel {...filterPanelProps} /></div>
                 </div>
 
                 {/* Newsletter */}
@@ -942,7 +954,7 @@ const EventsPage = () => {
                       <FiX className="w-4 h-4" />
                     </button>
                   </div>
-                  <FilterPanel />
+                  <EventsFilterPanel {...filterPanelProps} />
                   <button onClick={() => setFiltersOpen(false)}
                     className="w-full mt-4 text-white text-sm font-semibold py-2.5 rounded-lg"
                     style={{ background: BRAND_DARK }}>
@@ -994,7 +1006,7 @@ const EventsPage = () => {
 
               {/* Events Grid (List View) */}
               {viewMode === 'list' && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
                 {loading ? (
                   Array.from({ length: 6 }).map((_, i) => <GridSkeleton key={i} />)
                 ) : events.length === 0 ? (
@@ -1012,8 +1024,8 @@ const EventsPage = () => {
                     )}
                   </div>
                 ) : events.map((event) => (
-                  <div key={event.id} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-gray-300 transition-all h-[440px] w-full flex flex-col group">
-                    <div className="relative h-44 flex-shrink-0 overflow-hidden">
+                  <div key={event.id} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all h-[400px] w-full flex flex-col group">
+                    <div className="relative h-40 flex-shrink-0 overflow-hidden">
                       {event.featured_image ? (
                         <img
                           alt={event.title}
