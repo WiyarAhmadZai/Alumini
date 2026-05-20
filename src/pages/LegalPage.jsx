@@ -1,14 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiHeart, FiTrendingUp, FiX, FiDollarSign, FiUser, FiMail, FiPhone, FiAward, FiTarget, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
+import { FiHeart, FiTrendingUp, FiX, FiDollarSign, FiUser, FiMail, FiPhone, FiAward, FiTarget, FiCheckCircle, FiArrowRight, FiUsers, FiGift } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import fundraisingService from '../services/fundraisingService';
 import authService from '../services/authService';
 
-const BRAND = '#002759';
-const BRAND_LIGHT = '#0a519b';
+// ─── Brand palette ─────────────────────────────────────────────
+const BRAND = '#002759';        // primary dark navy
+const BRAND_LIGHT = '#0a519b';  // hover dark
+const BRAND_ACCENT = '#194ce6'; // accent royal blue (matches site)
+const BRAND_BG = '#eef1fd';     // soft surface
+const BRAND_BORDER = '#c5ccf7'; // soft border
 const PHONE_REGEX = /^[+\d][\d\s\-()]{6,29}$/;
+
+// ─── Eyebrow chip used above every section heading ───
+const Eyebrow = ({ children, dark = false }) => (
+  <span
+    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] mb-3"
+    style={dark
+      ? { background: 'rgba(255,255,255,0.10)', color: '#fff', border: '1px solid rgba(255,255,255,0.20)' }
+      : { background: BRAND_BG, color: BRAND, border: `1px solid ${BRAND_BORDER}` }}
+  >
+    {children}
+  </span>
+);
+
+// ─── Donor rank badge (Gold / Silver / Bronze for top 3) ───
+const RankBadge = ({ rank }) => {
+  if (rank > 3) return null;
+  const styles = [
+    null,
+    { bg: 'linear-gradient(135deg,#fbbf24 0%,#d97706 100%)', label: '1' },
+    { bg: 'linear-gradient(135deg,#d1d5db 0%,#9ca3af 100%)', label: '2' },
+    { bg: 'linear-gradient(135deg,#f59e0b 0%,#92400e 100%)', label: '3' },
+  ][rank];
+  return (
+    <span
+      className="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-extrabold text-white shadow-md ring-2 ring-white"
+      style={{ background: styles.bg }}
+      title={`Rank #${rank}`}
+    >
+      {styles.label}
+    </span>
+  );
+};
 
 const resolveImg = (img) => {
   if (!img) return null;
@@ -322,51 +358,87 @@ const GivingPage = () => {
     return Math.min((raised / goal) * 100, 100);
   };
 
+  // ─── Aggregated stats for the metric strip ───
+  const totalRaised = projects.reduce((sum, p) => sum + Number(p.raised_amount || 0), 0);
+  const totalGoal = projects.reduce((sum, p) => sum + Number(p.goal_amount || 0), 0);
+  const overallPct = totalGoal > 0 ? Math.min((totalRaised / totalGoal) * 100, 100) : 0;
+  const activeProjectsCount = projects.length;
+
   return (
     <Layout>
       <div className="min-h-screen bg-gray-50">
         {/* Hero */}
-        <section className="relative w-full h-[420px] sm:h-[480px] overflow-hidden">
+        <section className="relative w-full h-[440px] sm:h-[500px] overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage:
-                'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url("https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1920&q=80")',
+                'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 100%), url("https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1920&q=80")',
             }}
           />
-          <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pt-16">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider mb-4 border border-white/20">
-              <FiHeart size={11} /> KPU Giving
-            </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4 max-w-3xl">
-              Support the Future of KPU
+          <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pb-20">
+            <Eyebrow dark><FiHeart size={11} /> KPU Giving</Eyebrow>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4 max-w-3xl">
+              Invest in the Next Generation of Engineers
             </h1>
-            <p className="text-base sm:text-lg text-white/80 max-w-2xl mb-6">
-              Your contributions help us maintain excellence in education and provide opportunities for the next generation of engineers.
+            <p className="text-base sm:text-lg text-white/75 max-w-2xl mb-7 leading-relaxed font-light">
+              Your gift funds scholarships, modern labs and research opportunities for KPU students — and shapes the future of Afghanistan's technical leadership.
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => document.getElementById('projects-section')?.scrollIntoView({ behavior: 'smooth' })}
-                className="px-6 py-3 bg-white text-[#002759] font-bold rounded-lg hover:bg-gray-100 transition text-sm"
+                className="px-6 py-3 font-bold rounded-lg transition text-sm shadow-lg"
+                style={{ background: '#fff', color: BRAND }}
               >
                 Explore Projects
               </button>
               <button
                 onClick={() => openDonation()}
-                className="px-6 py-3 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition text-sm"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition text-sm"
               >
-                Quick Donation
+                <FiHeart size={14} /> Donate Now
               </button>
             </div>
           </div>
         </section>
 
-        <main className="max-w-7xl mx-auto px-4 lg:px-8 py-14">
+        {/* Metric strip — overlaps hero */}
+        <div className="max-w-6xl mx-auto px-4 lg:px-8 -mt-14 relative z-20">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 bg-white rounded-2xl border border-gray-200 shadow-xl p-3 sm:p-5">
+            <div className="text-center px-3 py-2 sm:py-1 border-r border-gray-100 last:border-r-0">
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">Total Raised</div>
+              <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
+                ${Number(totalRaised).toLocaleString()}
+              </div>
+            </div>
+            <div className="text-center px-3 py-2 sm:py-1 md:border-r border-gray-100">
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">Generous Donors</div>
+              <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
+                {Number(topDonorsTotal || 0).toLocaleString()}
+              </div>
+            </div>
+            <div className="text-center px-3 py-2 sm:py-1 border-r border-gray-100">
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">Active Projects</div>
+              <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
+                {activeProjectsCount}
+              </div>
+            </div>
+            <div className="text-center px-3 py-2 sm:py-1">
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">Overall Progress</div>
+              <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
+                {Math.round(overallPct)}%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <main className="max-w-7xl mx-auto px-4 lg:px-8 pt-12 pb-14">
           {/* Projects */}
           <section id="projects-section" className="mb-16">
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">Fundraising Projects</h2>
-              <p className="text-base text-gray-600 max-w-2xl mx-auto">
+              <Eyebrow><FiTarget size={11} /> Active Initiatives</Eyebrow>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">Fundraising Projects</h2>
+              <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
                 Join us in supporting these important initiatives that will benefit current and future KPU students.
               </p>
             </div>
@@ -397,53 +469,71 @@ const GivingPage = () => {
                 {projects.map((project) => {
                   const pct = project.progress_percent ?? getProgressPercentage(project.raised_amount, project.goal_amount);
                   const imgUrl = resolveImg(project.image);
+                  const remaining = Number(project.remaining_amount ?? Math.max(0, project.goal_amount - project.raised_amount));
                   return (
-                    <div key={project.id} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-200">
-                      <div className="relative h-48 bg-gray-100">
+                    <div key={project.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:border-gray-300 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 flex flex-col">
+                      <div className="relative h-48 bg-gray-100 overflow-hidden">
                         {imgUrl ? (
-                          <img src={imgUrl} alt={project.title} className="w-full h-full object-cover" />
+                          <img src={imgUrl} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: BRAND }}>
-                            <FiHeart size={48} className="text-white/30" />
+                          <div className="w-full h-full flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_LIGHT} 100%)` }}>
+                            <FiHeart size={56} className="text-white/25" />
                           </div>
                         )}
-                        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold text-[#002759]">
+                        {/* Funded chip */}
+                        <div className="absolute top-3 right-3 bg-white/95 backdrop-blur px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider shadow-md"
+                          style={{ color: BRAND }}>
                           {Math.round(pct)}% FUNDED
                         </div>
+                        {/* Donor count chip */}
+                        <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 bg-black/40 backdrop-blur px-2.5 py-1 rounded-full text-[10px] font-bold text-white">
+                          <FiUsers size={10} /> {project.donors_count || 0} donor{project.donors_count === 1 ? '' : 's'}
+                        </div>
                       </div>
-                      <div className="p-6">
-                        <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-1">{project.title}</h3>
-                        <p className="text-sm text-gray-600 mb-4 line-clamp-2 min-h-[40px]">{project.description}</p>
 
-                        <div className="mb-4">
-                          <div className="flex justify-between text-xs text-gray-500 mb-1.5 font-semibold">
-                            <span>Raised: <span className="text-[#002759]">${Number(project.raised_amount).toLocaleString()}</span></span>
-                            <span>Goal: ${Number(project.goal_amount).toLocaleString()}</span>
+                      <div className="p-6 flex-1 flex flex-col">
+                        <h3 className="text-base font-bold text-gray-900 mb-2 line-clamp-1">{project.title}</h3>
+                        <p className="text-sm text-gray-600 mb-5 line-clamp-2 min-h-[40px] leading-relaxed">{project.description}</p>
+
+                        {/* Progress */}
+                        <div className="mb-5">
+                          <div className="flex justify-between items-baseline text-[11px] font-semibold mb-1.5">
+                            <span className="text-gray-500">Raised</span>
+                            <span className="font-extrabold text-lg" style={{ color: BRAND }}>
+                              ${Number(project.raised_amount).toLocaleString()}
+                            </span>
                           </div>
                           <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                             <div
-                              className="h-full rounded-full transition-all duration-500"
-                              style={{ width: `${pct}%`, backgroundColor: BRAND }}
+                              className="h-full rounded-full transition-all duration-700"
+                              style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${BRAND_ACCENT} 0%, ${BRAND} 100%)` }}
                             />
                           </div>
-                          <div className="flex justify-between text-[11px] text-gray-500 mt-1.5">
-                            <span>{project.donors_count} donors</span>
-                            <span>{Math.round(pct)}% funded</span>
+                          <div className="flex justify-between text-[11px] mt-1.5">
+                            <span className="text-gray-500">Goal: <span className="font-bold text-gray-700">${Number(project.goal_amount).toLocaleString()}</span></span>
+                            <span className="font-bold text-gray-700">{Math.round(pct)}%</span>
                           </div>
-                          <div className="mt-2 px-2.5 py-1.5 bg-orange-50 border border-orange-100 rounded-md text-[11px] font-semibold text-orange-700 flex items-center justify-between">
-                            <span>Remaining</span>
-                            <span>${Number(project.remaining_amount ?? Math.max(0, project.goal_amount - project.raised_amount)).toLocaleString()}</span>
+
+                          {/* Remaining row — brand-soft */}
+                          <div className="mt-3 px-3 py-2 rounded-lg flex items-center justify-between"
+                            style={{ background: BRAND_BG, border: `1px solid ${BRAND_BORDER}` }}>
+                            <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: BRAND }}>
+                              Remaining
+                            </span>
+                            <span className="text-sm font-extrabold" style={{ color: BRAND }}>
+                              ${remaining.toLocaleString()}
+                            </span>
                           </div>
                         </div>
 
                         <button
                           onClick={() => openDonation(project)}
-                          className="w-full text-white font-bold py-2.5 rounded-lg transition text-sm"
+                          className="mt-auto w-full inline-flex items-center justify-center gap-2 text-white font-bold py-2.5 rounded-lg transition text-sm shadow-sm"
                           style={{ backgroundColor: BRAND }}
                           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = BRAND_LIGHT}
                           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = BRAND}
                         >
-                          Donate Now
+                          <FiHeart size={14} /> Donate to this Project
                         </button>
                       </div>
                     </div>
@@ -455,58 +545,77 @@ const GivingPage = () => {
 
           {/* Quick Gift */}
           <section className="mb-16">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              <div className="text-center mb-6">
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Make a Quick Gift</h2>
-                <p className="text-base text-gray-600">
-                  Every contribution, no matter the size, makes a difference in our students' lives.
-                </p>
-              </div>
-
-              <div className="max-w-2xl mx-auto">
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-5">
-                  {quickGiftAmounts.map((amount) => (
-                    <button
-                      key={amount}
-                      onClick={() => { setQuickAmount(amount); setQuickCustom(''); }}
-                      className={`py-3 px-4 rounded-lg font-bold transition border ${
-                        Number(quickAmount) === amount
-                          ? 'text-white'
-                          : 'bg-gray-50 text-gray-700 border-gray-200 hover:border-[#002759]'
-                      }`}
-                      style={Number(quickAmount) === amount ? { backgroundColor: BRAND, borderColor: BRAND } : {}}
-                    >
-                      ${amount}
-                    </button>
-                  ))}
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+              {/* Left/right split */}
+              <div className="grid grid-cols-1 lg:grid-cols-5">
+                {/* Left — branded panel */}
+                <div className="lg:col-span-2 p-8 flex flex-col justify-center text-white relative overflow-hidden"
+                  style={{ background: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_LIGHT} 100%)` }}>
+                  <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full opacity-10" style={{ background: '#fff' }} />
+                  <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full opacity-10" style={{ background: '#fff' }} />
+                  <div className="relative">
+                    <Eyebrow dark><FiGift size={11} /> Quick Gift</Eyebrow>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold mb-3 tracking-tight">Every contribution counts</h2>
+                    <p className="text-sm text-white/80 leading-relaxed">
+                      No project, no paperwork — just a direct gift to support KPU students. Choose an amount or enter your own.
+                    </p>
+                  </div>
                 </div>
 
-                <div className="mb-5">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Custom Amount
+                {/* Right — form */}
+                <div className="lg:col-span-3 p-8">
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-3">
+                    Choose an amount
                   </label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
+                  <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-5">
+                    {quickGiftAmounts.map((amount) => {
+                      const active = Number(quickAmount) === amount;
+                      return (
+                        <button
+                          key={amount}
+                          onClick={() => { setQuickAmount(amount); setQuickCustom(''); }}
+                          className="py-2.5 px-2 rounded-lg font-bold text-sm transition border"
+                          style={active
+                            ? { background: BRAND, borderColor: BRAND, color: '#fff' }
+                            : { background: '#fff', borderColor: '#e5e7eb', color: '#374151' }}
+                          onMouseEnter={e => { if (!active) { e.currentTarget.style.borderColor = BRAND_BORDER; e.currentTarget.style.background = BRAND_BG; e.currentTarget.style.color = BRAND; } }}
+                          onMouseLeave={e => { if (!active) { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#374151'; } }}
+                        >
+                          ${amount}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-2">
+                    Or enter a custom amount
+                  </label>
+                  <div className="relative mb-5">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
                     <input
                       type="number"
                       min="1"
                       value={quickCustom}
                       onChange={(e) => { setQuickCustom(e.target.value); setQuickAmount(''); }}
-                      placeholder="Enter custom amount"
-                      className="w-full pl-8 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-1 focus:ring-[#002759] focus:border-[#002759] outline-none"
+                      placeholder="Enter amount in USD"
+                      className="w-full pl-8 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-1 focus:ring-[#002759] focus:border-[#002759] outline-none transition"
                     />
                   </div>
-                </div>
 
-                <button
-                  onClick={handleQuickGift}
-                  className="w-full text-white font-bold py-3 rounded-lg transition text-base"
-                  style={{ backgroundColor: BRAND }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = BRAND_LIGHT}
-                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = BRAND}
-                >
-                  Process Donation
-                </button>
+                  <button
+                    onClick={handleQuickGift}
+                    className="w-full inline-flex items-center justify-center gap-2 text-white font-bold py-3 rounded-lg transition text-sm shadow-sm"
+                    style={{ backgroundColor: BRAND }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = BRAND_LIGHT}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = BRAND}
+                  >
+                    <FiHeart size={14} /> Process Donation
+                  </button>
+
+                  <p className="text-[11px] text-gray-400 mt-3 text-center">
+                    Your information is private. Our team will contact you to complete the gift.
+                  </p>
+                </div>
               </div>
             </div>
           </section>
@@ -514,9 +623,10 @@ const GivingPage = () => {
           {/* Wall of Honor / Top donors (only completed) */}
           <section>
             <div className="text-center mb-10">
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">Wall of Honor</h2>
-              <p className="text-base text-gray-600 max-w-2xl mx-auto">
-                We gratefully acknowledge the generous alumni who have made contributions to KPU.
+              <Eyebrow><FiAward size={11} /> Wall of Honor</Eyebrow>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">Our Generous Donors</h2>
+              <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                We gratefully acknowledge the alumni and supporters who have made contributions to KPU.
               </p>
             </div>
 
@@ -533,30 +643,34 @@ const GivingPage = () => {
                     {topDonors.map((donor, index) => {
                       const projectsAmt = Number(donor.projects_amount || 0);
                       const quickAmt = Number(donor.quick_gift_amount || 0);
+                      const rank = index + 1;
                       return (
-                        <div key={index} className="p-4 bg-gray-50 rounded-lg hover:bg-blue-50 transition border border-gray-100">
+                        <div key={index} className="p-5 bg-white rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition">
                           <div className="flex items-start gap-4">
-                            {donor.alumni_student_id ? (
-                              <Link to={`/profile/${donor.alumni_student_id}`} className="flex-shrink-0">
-                                {donor.profile_image ? (
-                                  <img src={resolveImg(donor.profile_image)} alt={donor.donor_name} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow" />
-                                ) : (
-                                  <div className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg" style={{ backgroundColor: BRAND }}>
-                                    {donor.donor_name?.charAt(0)?.toUpperCase() || '?'}
-                                  </div>
-                                )}
-                              </Link>
-                            ) : (
-                              <div className="flex-shrink-0">
-                                {donor.profile_image ? (
-                                  <img src={resolveImg(donor.profile_image)} alt={donor.donor_name} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow" />
-                                ) : (
-                                  <div className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg" style={{ backgroundColor: BRAND }}>
-                                    {donor.donor_name?.charAt(0)?.toUpperCase() || '?'}
-                                  </div>
-                                )}
-                              </div>
-                            )}
+                            <div className="relative flex-shrink-0">
+                              <RankBadge rank={rank} />
+                              {donor.alumni_student_id ? (
+                                <Link to={`/profile/${donor.alumni_student_id}`}>
+                                  {donor.profile_image ? (
+                                    <img src={resolveImg(donor.profile_image)} alt={donor.donor_name} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow ring-1 ring-gray-200" />
+                                  ) : (
+                                    <div className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg shadow ring-1 ring-gray-200" style={{ background: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_LIGHT} 100%)` }}>
+                                      {donor.donor_name?.charAt(0)?.toUpperCase() || '?'}
+                                    </div>
+                                  )}
+                                </Link>
+                              ) : (
+                                <>
+                                  {donor.profile_image ? (
+                                    <img src={resolveImg(donor.profile_image)} alt={donor.donor_name} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow ring-1 ring-gray-200" />
+                                  ) : (
+                                    <div className="w-14 h-14 rounded-full flex items-center justify-center text-white font-bold text-lg shadow ring-1 ring-gray-200" style={{ background: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_LIGHT} 100%)` }}>
+                                      {donor.donor_name?.charAt(0)?.toUpperCase() || '?'}
+                                    </div>
+                                  )}
+                                </>
+                              )}
+                            </div>
                             <div className="flex-1 min-w-0">
                               {donor.alumni_student_id ? (
                                 <Link to={`/profile/${donor.alumni_student_id}`} className="font-bold text-gray-900 hover:text-[#002759] truncate block">
