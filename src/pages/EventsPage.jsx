@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiCalendar, FiClock, FiMapPin, FiVideo, FiSearch, FiFilter, FiChevronLeft, FiChevronRight, FiMail, FiUsers, FiDollarSign, FiDownload } from 'react-icons/fi';
@@ -19,6 +20,7 @@ const BRAND_BORDER = '#c5ccf7';
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 const CalendarView = ({ events, calendarDate, setCalendarDate, onDayClick, onEventClick }) => {
+  const { t } = useTranslation();
   const year = calendarDate.getFullYear();
   const month = calendarDate.getMonth();
 
@@ -95,7 +97,7 @@ const CalendarView = ({ events, calendarDate, setCalendarDate, onDayClick, onEve
                   </div>
                 ))}
                 {dayEvents.length > 2 && (
-                  <div className="text-[10px] text-blue-600 font-semibold px-1">+{dayEvents.length - 2} more</div>
+                  <div className="text-[10px] text-blue-600 font-semibold px-1">{t('events.calendar.moreEvents', { n: dayEvents.length - 2 })}</div>
                 )}
               </div>
             </div>
@@ -107,13 +109,13 @@ const CalendarView = ({ events, calendarDate, setCalendarDate, onDayClick, onEve
       <div className="px-6 py-3 border-t border-gray-100 flex items-center gap-4 text-xs text-gray-500">
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-full bg-blue-600 inline-block"></span>
-          Event
+          {t('events.calendar.eventLegend')}
         </span>
         <span className="flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-full bg-blue-600 text-white flex items-center justify-center text-[8px] font-bold inline-block"></span>
-          Today
+          {t('events.calendar.todayLegend')}
         </span>
-        <span className="ml-auto text-gray-400">Click a day with events to filter the list view</span>
+        <span className="ml-auto text-gray-400">{t('events.calendar.clickHint')}</span>
       </div>
     </div>
   );
@@ -180,33 +182,34 @@ const EventsFilterPanel = ({
   dateFrom, setDateFrom, dateTo, setDateTo,
   hasActiveFilters, onReset, activeCount,
 }) => {
+  const { t } = useTranslation();
   const totalEvents = categories.reduce((s, c) => s + c.count, 0);
   return (
     <div className="flex flex-col gap-5">
       {activeCount > 0 && (
         <div className="flex items-center justify-between px-3 py-2 rounded-lg" style={{ background: BRAND_BG }}>
           <span className="text-[11px] font-semibold" style={{ color: BRAND_DARK }}>
-            {activeCount} active filter{activeCount > 1 ? 's' : ''}
+            {activeCount > 1 ? t('events.filter.activeFilters', { n: activeCount }) : t('events.filter.activeFilter', { n: activeCount })}
           </span>
           <button onClick={onReset} className="text-[11px] font-bold hover:underline" style={{ color: BRAND }}>
-            Clear all
+            {t('events.filter.clearAll')}
           </button>
         </div>
       )}
 
-      <FilterSection icon={FiList} title="View" count={0}>
+      <FilterSection icon={FiList} title={t('events.filter.viewTitle')} count={0}>
         <div className="flex flex-col gap-1.5">
-          <PillToggle label="List View" active={viewMode === 'list'} onClick={() => setViewMode('list')} />
-          <PillToggle label="Calendar" active={viewMode === 'calendar'}
+          <PillToggle label={t('events.filter.listView')} active={viewMode === 'list'} onClick={() => setViewMode('list')} />
+          <PillToggle label={t('events.filter.calendar')} active={viewMode === 'calendar'}
             onClick={() => { setViewMode('calendar'); setCalendarDate(dateFrom ? new Date(dateFrom) : new Date()); }} />
         </div>
       </FilterSection>
 
       <div className="h-px bg-gray-100" />
 
-      <FilterSection icon={FiTag} title="Categories" count={eventFilter !== 'all' ? 1 : 0}>
+      <FilterSection icon={FiTag} title={t('events.filter.categoriesTitle')} count={eventFilter !== 'all' ? 1 : 0}>
         <div className="flex flex-col gap-1.5 max-h-72 overflow-y-auto pr-1">
-          <PillToggle label="All Events" active={eventFilter === 'all'} onClick={() => setEventFilter('all')} badge={totalEvents} />
+          <PillToggle label={t('events.filter.allEvents')} active={eventFilter === 'all'} onClick={() => setEventFilter('all')} badge={totalEvents} />
           {categories.map((c, i) => (
             <PillToggle key={i} label={c.name} active={eventFilter === c.type} onClick={() => setEventFilter(c.type)} badge={c.count} />
           ))}
@@ -215,20 +218,20 @@ const EventsFilterPanel = ({
 
       <div className="h-px bg-gray-100" />
 
-      <FilterSection icon={FiCalendar} title="Date Range" count={dateFrom || dateTo ? 1 : 0}>
+      <FilterSection icon={FiCalendar} title={t('events.filter.dateRange')} count={dateFrom || dateTo ? 1 : 0}>
         <div className="flex flex-col gap-2">
-          <label className="text-[10px] font-semibold text-gray-500">From</label>
+          <label className="text-[10px] font-semibold text-gray-500">{t('events.filter.from')}</label>
           <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
             className="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2"
             style={{ '--tw-ring-color': BRAND_BORDER }} />
-          <label className="text-[10px] font-semibold text-gray-500 mt-1">To</label>
+          <label className="text-[10px] font-semibold text-gray-500 mt-1">{t('events.filter.to')}</label>
           <input type="date" value={dateTo} min={dateFrom || undefined} onChange={(e) => setDateTo(e.target.value)}
             className="w-full px-3 py-2 text-xs rounded-lg border border-gray-200 text-gray-700 focus:outline-none focus:ring-2"
             style={{ '--tw-ring-color': BRAND_BORDER }} />
           {(dateFrom || dateTo) && (
             <button onClick={() => { setDateFrom(''); setDateTo(''); }}
               className="text-[11px] font-semibold hover:underline self-start mt-1" style={{ color: BRAND }}>
-              Clear dates
+              {t('events.filter.clearDates')}
             </button>
           )}
         </div>
@@ -240,7 +243,7 @@ const EventsFilterPanel = ({
           style={{ background: BRAND_DARK, color: '#fff' }}
           onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
           onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
-          <FiX className="w-3 h-3" /> Reset All Filters
+          <FiX className="w-3 h-3" /> {t('events.filter.resetAllFilters')}
         </button>
       )}
     </div>
@@ -248,9 +251,10 @@ const EventsFilterPanel = ({
 };
 
 const EventsPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
+
   const [viewMode, setViewMode] = useState('list');
   const [filtersOpen, setFiltersOpen] = useState(false); // mobile drawer
   const [searchTerm, setSearchTerm] = useState('');
@@ -371,7 +375,7 @@ const EventsPage = () => {
       // Don't show Swal for every error to prevent infinite loops
       // Only show if it's not a network error or if it's the first attempt
       if (error.message && !error.message.includes('Failed to load events')) {
-        Swal.fire('Error', 'Failed to load events', 'error');
+        Swal.fire(t('events.alert.errorTitle'), t('events.alert.loadEventsFailed'), 'error');
       }
     } finally {
       setLoading(false);
@@ -419,15 +423,15 @@ const EventsPage = () => {
     e.stopPropagation();
     
     if (!user) {
-      Swal.fire('Login Required', 'Please login to register for this event', 'info');
+      Swal.fire(t('events.alert.loginRequiredTitle'), t('events.alert.loginRequiredText'), 'info');
       return;
     }
 
     // Find event from events list or featured event
     const event = events.find(ev => ev.id === eventId) || featuredEvent;
-    
+
     if (!event) {
-      Swal.fire('Event Not Found', 'The requested event could not be found.', 'error');
+      Swal.fire(t('events.alert.eventNotFoundTitle'), t('events.alert.eventNotFoundText'), 'error');
       return;
     }
     
@@ -436,10 +440,10 @@ const EventsPage = () => {
     if (existingRegistration) {
       Swal.fire({
         icon: 'info',
-        title: 'Already Registered',
-        text: 'You are already registered for this event.',
+        title: t('events.alert.alreadyRegisteredTitle'),
+        text: t('events.alert.alreadyRegisteredText'),
         confirmButtonColor: '#2563eb',
-        confirmButtonText: 'Got it',
+        confirmButtonText: t('events.alert.gotIt'),
         position: 'center',
         backdrop: 'rgba(0, 0, 0, 0.4)'
       });
@@ -451,13 +455,13 @@ const EventsPage = () => {
     
     // Check if event has already ended/completed
     if (eventEndDate <= now) {
-      Swal.fire('Event Completed', 'This event has already happened and registration is no longer available.', 'error');
+      Swal.fire(t('events.alert.eventCompletedTitle'), t('events.alert.eventCompletedText'), 'error');
       return;
     }
-    
+
     // Check if event is full
     if (event.max_attendees && event.current_attendees >= event.max_attendees) {
-      Swal.fire('Seats Full', 'You cannot register for this event because all the seats are full.', 'warning');
+      Swal.fire(t('events.alert.seatsFullTitle'), t('events.alert.seatsFullText'), 'warning');
       return;
     }
     
@@ -468,10 +472,10 @@ const EventsPage = () => {
   const handleRegistrationSuccess = () => {
     Swal.fire({
       icon: 'success',
-      title: 'Registration Successful!',
-      text: 'You have been registered for this event successfully.',
+      title: t('events.alert.registrationSuccessTitle'),
+      text: t('events.alert.registrationSuccessText'),
       confirmButtonColor: '#2563eb',
-      confirmButtonText: 'Great!',
+      confirmButtonText: t('events.alert.great'),
       timer: 3000,
       timerProgressBar: true,
       position: 'center',
@@ -501,27 +505,27 @@ const EventsPage = () => {
     const status = getUserRegistrationStatus(eventId);
     const event = events.find(ev => ev.id === eventId);
     
-    if (!event) return 'Register Now';
-    
+    if (!event) return t('events.button.registerNow');
+
     // Use only the deadline to control registration
     const now = new Date();
     const deadlineEnd = event.registration_deadline ? new Date(new Date(event.registration_deadline).setHours(23, 59, 59, 999)) : null;
     const isRegistrationDeadlinePassed = deadlineEnd && now > deadlineEnd;
-    
+
     // Check if user is already registered
     if (status === 'registered' || status === 'confirmed') {
-      return 'Registered';
+      return t('events.button.registered');
     }
     if (status === 'cancelled') {
-      return 'Register Again';
+      return t('events.button.registerAgain');
     }
-    
+
     // Check registration availability based only on deadline
     if (isRegistrationDeadlinePassed) {
-      return 'Registration Closed';
+      return t('events.button.registrationClosed');
     }
-    
-    return 'Register Now';
+
+    return t('events.button.registerNow');
   };
 
   const getRegistrationButtonClass = (eventId) => {
@@ -628,7 +632,7 @@ const EventsPage = () => {
           <div className="absolute inset-0 z-0">
             <img
               src={resolveImage(featuredEvent?.featured_image) || '/images/hero-bg.jpg'}
-              alt={featuredEvent?.title || 'Events'}
+              alt={featuredEvent?.title || t('events.list.heroAlt')}
               className="w-full h-full object-cover"
               onError={(e) => { e.target.src = '/images/hero-bg.jpg'; }}
             />
@@ -644,12 +648,12 @@ const EventsPage = () => {
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
                     </span>
-                    Featured Event
+                    {t('events.list.featuredBadge')}
                   </div>
                 ) : (
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm font-semibold text-white/90 w-fit">
                     <FiCalendar className="text-blue-300" />
-                    No Upcoming Events
+                    {t('events.list.noUpcomingBadge')}
                   </div>
                 )}
 
@@ -663,8 +667,8 @@ const EventsPage = () => {
                     </>
                   ) : (
                     <>
-                      No upcoming events
-                      <span className="block text-blue-300">at the moment</span>
+                      {t('events.list.noUpcomingTitle')}
+                      <span className="block text-blue-300">{t('events.list.noUpcomingTitleAccent')}</span>
                     </>
                   )}
                 </h1>
@@ -672,43 +676,43 @@ const EventsPage = () => {
                 <p className="text-base text-white/80 leading-relaxed">
                   {featuredEvent
                     ? featuredEvent.description.substring(0, 150) + '...'
-                    : "We're not hosting anything new just yet. New reunions, workshops, and networking events are added regularly — check the calendar below or come back soon."
+                    : t('events.list.noUpcomingDesc')
                   }
                 </p>
 
                 {countdown && (
                   <div className="space-y-2">
-                    <p className="text-white/70 text-sm font-medium">Event starts in:</p>
+                    <p className="text-white/70 text-sm font-medium">{t('events.list.countdownLabel')}</p>
                     <div className="flex flex-wrap gap-2">
                       {countdown.years > 0 && (
                         <div className="text-center">
                           <div className="text-2xl font-bold text-white">{countdown.years}</div>
-                          <div className="text-xs uppercase font-bold text-white/60">Years</div>
+                          <div className="text-xs uppercase font-bold text-white/60">{t('events.list.years')}</div>
                         </div>
                       )}
                       {countdown.months > 0 && (
                         <div className="text-center">
                           <div className="text-2xl font-bold text-white">{countdown.months}</div>
-                          <div className="text-xs uppercase font-bold text-white/60">Months</div>
+                          <div className="text-xs uppercase font-bold text-white/60">{t('events.list.months')}</div>
                         </div>
                       )}
                       {countdown.days > 0 && (
                         <div className="text-center">
                           <div className="text-2xl font-bold text-white">{countdown.days}</div>
-                          <div className="text-xs uppercase font-bold text-white/60">Days</div>
+                          <div className="text-xs uppercase font-bold text-white/60">{t('events.list.days')}</div>
                         </div>
                       )}
                       <div className="text-center">
                         <div className="text-2xl font-bold text-white">{countdown.hours}</div>
-                        <div className="text-xs uppercase font-bold text-white/60">Hours</div>
+                        <div className="text-xs uppercase font-bold text-white/60">{t('events.list.hours')}</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-white">{countdown.mins}</div>
-                        <div className="text-xs uppercase font-bold text-white/60">Mins</div>
+                        <div className="text-xs uppercase font-bold text-white/60">{t('events.list.mins')}</div>
                       </div>
                       <div className="text-center">
                         <div className="text-2xl font-bold text-white">{countdown.secs}</div>
-                        <div className="text-xs uppercase font-bold text-white/60">Secs</div>
+                        <div className="text-xs uppercase font-bold text-white/60">{t('events.list.secs')}</div>
                       </div>
                     </div>
                   </div>
@@ -753,7 +757,7 @@ const EventsPage = () => {
                       )}
                       {featuredEvent.mode === 'online' && (
                         <span className="px-2 py-1 rounded-full text-xs font-bold text-white bg-blue-600">
-                          ONLINE
+                          {t('events.list.online')}
                         </span>
                       )}
                     </div>
@@ -761,7 +765,7 @@ const EventsPage = () => {
                     {/* Registration Deadline for Featured Event */}
                     {featuredEvent.registration_deadline && (
                       <div className="flex items-center justify-between text-white/80 text-sm mt-3">
-                        <span className="font-medium">Registration Deadline</span>
+                        <span className="font-medium">{t('events.list.registrationDeadline')}</span>
                         <span className="font-bold">
                           {new Date(featuredEvent.registration_deadline).toLocaleDateString('en-GB', {
                             day: '2-digit',
@@ -785,12 +789,12 @@ const EventsPage = () => {
                           if (isRegistrationDeadlinePassed) {
                             Swal.fire({
                               icon: 'warning',
-                              title: 'Registration Closed',
-                              html: 'Deadline passed. Contact the KPU team <a href="/contact" style="color: #2563eb; text-decoration: underline;">if you want to participate</a>.',
+                              title: t('events.alert.registrationClosedTitle'),
+                              html: t('events.alert.deadlinePassedHtml'),
                               confirmButtonColor: '#2563eb',
-                              confirmButtonText: 'Contact KPU Team',
+                              confirmButtonText: t('events.alert.contactKpuTeam'),
                               showCancelButton: true,
-                              cancelButtonText: 'Close',
+                              cancelButtonText: t('events.alert.close'),
                               position: 'center',
                               backdrop: 'rgba(0, 0, 0, 0.4)'
                             }).then((result) => {
@@ -802,10 +806,10 @@ const EventsPage = () => {
                           }
                           Swal.fire({
                             icon: 'info',
-                            title: 'Registration Unavailable',
-                            text: 'Registration is not available for this event.',
+                            title: t('events.alert.registrationUnavailableTitle'),
+                            text: t('events.alert.registrationUnavailableText'),
                             confirmButtonColor: '#2563eb',
-                            confirmButtonText: 'Got it',
+                            confirmButtonText: t('events.alert.gotIt'),
                             position: 'center',
                             backdrop: 'rgba(0, 0, 0, 0.4)'
                           });
@@ -822,7 +826,7 @@ const EventsPage = () => {
                       onClick={() => handleEventClick(featuredEvent.id)}
                       className="px-6 py-2 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm"
                     >
-                      Event Details
+                      {t('events.list.eventDetails')}
                     </button>
                   </div>
                 )}
@@ -838,20 +842,20 @@ const EventsPage = () => {
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                         </svg>
                       </div>
-                      <h3 className="text-2xl font-bold text-white">Premium Event</h3>
-                      <p className="text-white/80">Experience an unforgettable evening with distinguished alumni, faculty, and industry leaders.</p>
+                      <h3 className="text-2xl font-bold text-white">{t('events.list.premiumTitle')}</h3>
+                      <p className="text-white/80">{t('events.list.premiumDesc')}</p>
                       <div className="flex justify-center gap-6 pt-4">
                         <div className="text-center">
                           <div className="text-3xl font-bold text-yellow-400">{featuredEvent.current_attendees || '0'}</div>
-                          <div className="text-sm text-white/70">Attendees</div>
+                          <div className="text-sm text-white/70">{t('events.list.attendees')}</div>
                         </div>
                         <div className="text-center">
                           <div className="text-3xl font-bold text-yellow-400">{featuredEvent.speakers_count || '0'}</div>
-                          <div className="text-sm text-white/70">Speakers</div>
+                          <div className="text-sm text-white/70">{t('events.list.speakers')}</div>
                         </div>
                         <div className="text-center">
                           <div className="text-3xl font-bold text-yellow-400">{featuredEvent.awards_count || '0'}</div>
-                          <div className="text-sm text-white/70">Awards</div>
+                          <div className="text-sm text-white/70">{t('events.list.awards')}</div>
                         </div>
                       </div>
                     </div>
@@ -860,15 +864,15 @@ const EventsPage = () => {
                       <div className="w-20 h-20 bg-blue-400/20 rounded-full flex items-center justify-center mx-auto">
                         <FiCalendar className="w-10 h-10 text-blue-300" />
                       </div>
-                      <h3 className="text-2xl font-bold text-white">Stay tuned</h3>
+                      <h3 className="text-2xl font-bold text-white">{t('events.list.stayTunedTitle')}</h3>
                       <p className="text-white/80 leading-relaxed">
-                        We're planning the next round of reunions, workshops, and networking sessions. Browse the calendar or past events below — you'll see new ones here as soon as they're published.
+                        {t('events.list.stayTunedDesc')}
                       </p>
                       <Link
                         to="/contact"
                         className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white/15 hover:bg-white/25 border border-white/30 text-white font-semibold rounded-lg text-sm transition-colors"
                       >
-                        <FiMail /> Get notified
+                        <FiMail /> {t('events.list.getNotified')}
                       </Link>
                     </div>
                   )}
@@ -887,7 +891,7 @@ const EventsPage = () => {
                 <FiSearch className="text-gray-400 mr-2.5 flex-shrink-0 w-4 h-4" />
                 <input
                   className="w-full border-none bg-transparent focus:ring-0 focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
-                  placeholder="Search events by title, type, or location…"
+                  placeholder={t('events.list.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -901,7 +905,7 @@ const EventsPage = () => {
                 onClick={() => setFiltersOpen(true)}
                 className="lg:hidden flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold border transition-colors"
                 style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-                <FiFilter className="w-3.5 h-3.5" /> Filters
+                <FiFilter className="w-3.5 h-3.5" /> {t('events.list.filtersBtn')}
               </button>
             </div>
           </div>
@@ -919,8 +923,8 @@ const EventsPage = () => {
                       <FiFilter className="w-3.5 h-3.5" style={{ color: BRAND }} />
                     </div>
                     <div className="flex-1">
-                      <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">Filters</h2>
-                      <p className="text-[10px] text-gray-400">Find events that fit you</p>
+                      <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">{t('events.list.filtersTitle')}</h2>
+                      <p className="text-[10px] text-gray-400">{t('events.list.filtersSubtitle')}</p>
                     </div>
                   </div>
                   <div className="p-5"><EventsFilterPanel {...filterPanelProps} /></div>
@@ -929,14 +933,14 @@ const EventsPage = () => {
                 {/* Newsletter */}
                 <div className="rounded-xl p-5 text-white" style={{ background: BRAND_DARK }}>
                   <FiMail className="text-white/80 text-2xl mb-2.5" />
-                  <h3 className="font-bold text-base mb-1">Stay Updated</h3>
-                  <p className="text-xs text-white/70 mb-3">Get the latest event invitations in your inbox.</p>
+                  <h3 className="font-bold text-base mb-1">{t('events.list.stayUpdatedTitle')}</h3>
+                  <p className="text-xs text-white/70 mb-3">{t('events.list.stayUpdatedDesc')}</p>
                   <input
                     className="w-full px-3 py-2 rounded-lg bg-white/10 border border-white/20 placeholder-white/60 text-white text-xs focus:outline-none focus:ring-2 focus:ring-white/30 mb-2.5"
-                    placeholder="Email address" type="email" />
+                    placeholder={t('events.list.emailPlaceholder')} type="email" />
                   <button className="w-full text-xs font-bold py-2 rounded-lg transition-colors"
                     style={{ background: '#fff', color: BRAND_DARK }}>
-                    Subscribe
+                    {t('events.list.subscribe')}
                   </button>
                 </div>
               </div>
@@ -948,7 +952,7 @@ const EventsPage = () => {
                 <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
                 <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base font-bold text-gray-900">Filters</h2>
+                    <h2 className="text-base font-bold text-gray-900">{t('events.list.filtersTitle')}</h2>
                     <button onClick={() => setFiltersOpen(false)}
                       className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50">
                       <FiX className="w-4 h-4" />
@@ -958,7 +962,7 @@ const EventsPage = () => {
                   <button onClick={() => setFiltersOpen(false)}
                     className="w-full mt-4 text-white text-sm font-semibold py-2.5 rounded-lg"
                     style={{ background: BRAND_DARK }}>
-                    Apply
+                    {t('events.list.applyFilters')}
                   </button>
                 </div>
               </div>
@@ -969,22 +973,22 @@ const EventsPage = () => {
               {/* Toolbar — count + view toggle */}
               <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
                 <p className="text-xs text-gray-500">
-                  {loading ? 'Loading…' : (viewMode === 'calendar'
-                    ? 'Event calendar'
-                    : <>Showing <span className="font-semibold text-gray-900">{events.length}</span> of <span className="font-semibold text-gray-900">{pagination.total}</span> events</>)}
+                  {loading ? t('events.list.loadingText') : (viewMode === 'calendar'
+                    ? t('events.list.eventCalendar')
+                    : <>{t('events.list.showingPrefix')} <span className="font-semibold text-gray-900">{events.length}</span> {t('events.filter.from')} <span className="font-semibold text-gray-900">{pagination.total}</span> {t('events.list.ofEvents')}</>)}
                 </p>
                 <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-0.5">
                   <button onClick={() => setViewMode('list')}
                     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-semibold transition-colors ${
                       viewMode === 'list' ? 'text-white' : 'text-gray-600 hover:bg-gray-50'}`}
                     style={viewMode === 'list' ? { background: BRAND_DARK } : {}}>
-                    <FiList className="w-3.5 h-3.5" /> List
+                    <FiList className="w-3.5 h-3.5" /> {t('events.list.listView')}
                   </button>
                   <button onClick={() => { setViewMode('calendar'); setCalendarDate(dateFrom ? new Date(dateFrom) : new Date()); }}
                     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-semibold transition-colors ${
                       viewMode === 'calendar' ? 'text-white' : 'text-gray-600 hover:bg-gray-50'}`}
                     style={viewMode === 'calendar' ? { background: BRAND_DARK } : {}}>
-                    <FiCalendar className="w-3.5 h-3.5" /> Calendar
+                    <FiCalendar className="w-3.5 h-3.5" /> {t('events.list.calendarView')}
                   </button>
                 </div>
               </div>
@@ -1014,12 +1018,12 @@ const EventsPage = () => {
                     <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style={{ background: BRAND_BG }}>
                       <FiCalendar className="text-2xl" style={{ color: BRAND }} />
                     </div>
-                    <h3 className="text-base font-bold text-gray-900 mb-1">No events found</h3>
-                    <p className="text-xs text-gray-500 max-w-xs mx-auto">Try adjusting your search or removing some filters.</p>
+                    <h3 className="text-base font-bold text-gray-900 mb-1">{t('events.list.noEventsTitle')}</h3>
+                    <p className="text-xs text-gray-500 max-w-xs mx-auto">{t('events.list.noEventsDesc')}</p>
                     {hasActiveFilters && (
                       <button onClick={() => { setSearchTerm(''); setEventFilter('all'); setDateFrom(''); setDateTo(''); }}
                         className="mt-4 px-5 py-2 text-white text-xs font-semibold rounded-lg" style={{ background: BRAND_DARK }}>
-                        Reset filters
+                        {t('events.list.resetFilters')}
                       </button>
                     )}
                   </div>
@@ -1028,7 +1032,7 @@ const EventsPage = () => {
                     <div className="relative h-40 flex-shrink-0 overflow-hidden">
                       {event.featured_image ? (
                         <img
-                          alt={event.title}
+                          alt={event.title || t('events.list.heroAlt')}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           src={resolveImage(event.featured_image)}
                           onError={(e) => { e.target.style.display = 'none'; e.target.nextElementSibling && (e.target.nextElementSibling.style.display = 'flex'); }}
@@ -1051,7 +1055,7 @@ const EventsPage = () => {
                       <button
                         onClick={() => handleEventClick(event.id)}
                         className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white"
-                        title="View Event Details"
+                        title={t('events.list.viewEventDetails')}
                       >
                         <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -1078,16 +1082,16 @@ const EventsPage = () => {
                         <span className="truncate">{event.location}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-                        <span>{event.current_attendees || 0} attending</span>
+                        <span>{t('events.list.attendingCount', { n: event.current_attendees || 0 })}</span>
                         {event.max_attendees && (
-                          <span>{event.max_attendees - event.current_attendees} spots left</span>
+                          <span>{t('events.list.spotsLeft', { n: event.max_attendees - event.current_attendees })}</span>
                         )}
                       </div>
                       
                       {/* Registration Deadline */}
                       {event.registration_deadline && (
                         <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-                          <span className="font-medium">Registration Deadline</span>
+                          <span className="font-medium">{t('events.list.registrationDeadline')}</span>
                           <span className="font-bold">
                             {new Date(event.registration_deadline).toLocaleDateString('en-GB', {
                               day: '2-digit',
@@ -1109,12 +1113,12 @@ const EventsPage = () => {
                               if (isRegistrationDeadlinePassed) {
                                 Swal.fire({
                                   icon: 'warning',
-                                  title: 'Registration Closed',
-                                  html: 'Deadline passed. Contact the KPU team <a href="/contact" style="color: #2563eb; text-decoration: underline;">if you want to participate</a>.',
+                                  title: t('events.alert.registrationClosedTitle'),
+                                  html: t('events.alert.deadlinePassedHtml'),
                                   confirmButtonColor: '#2563eb',
-                                  confirmButtonText: 'Contact KPU Team',
+                                  confirmButtonText: t('events.alert.contactKpuTeam'),
                                   showCancelButton: true,
-                                  cancelButtonText: 'Close',
+                                  cancelButtonText: t('events.alert.close'),
                                   position: 'center',
                                   backdrop: 'rgba(0, 0, 0, 0.4)'
                                 }).then((result) => {
@@ -1127,10 +1131,10 @@ const EventsPage = () => {
                               // For other closed reasons, show a generic message
                               Swal.fire({
                                 icon: 'info',
-                                title: 'Registration Unavailable',
-                                text: 'Registration is not available for this event.',
+                                title: t('events.alert.registrationUnavailableTitle'),
+                                text: t('events.alert.registrationUnavailableText'),
                                 confirmButtonColor: '#2563eb',
-                                confirmButtonText: 'Got it',
+                                confirmButtonText: t('events.alert.gotIt'),
                                 position: 'center',
                                 backdrop: 'rgba(0, 0, 0, 0.4)'
                               });
@@ -1149,7 +1153,7 @@ const EventsPage = () => {
                             className="w-full flex items-center justify-center gap-2 mt-2 py-2 px-4 bg-[#002759] text-white font-semibold rounded-lg hover:bg-[#003580] transition-colors text-sm"
                           >
                             <FiDownload size={14} />
-                            {getUserRegistration(event.id)?.card_downloaded ? 'View Card' : 'Download Card'}
+                            {getUserRegistration(event.id)?.card_downloaded ? t('events.list.viewCard') : t('events.list.downloadCard')}
                           </button>
                         )}
                       </div>
@@ -1163,9 +1167,11 @@ const EventsPage = () => {
               {viewMode === 'list' && !loading && events.length > 0 && pagination.total > 0 && (
               <div className="mt-6 bg-white rounded-xl border border-gray-200 p-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
                 <p className="text-xs text-gray-500">
-                  Showing <span className="font-semibold text-gray-900">{Math.min(pagination.per_page * (pagination.current_page - 1) + 1, pagination.total)}</span>–
-                  <span className="font-semibold text-gray-900">{Math.min(pagination.per_page * pagination.current_page, pagination.total)}</span> of{' '}
-                  <span className="font-semibold text-gray-900">{pagination.total}</span> events
+                  {t('events.list.paginationRange', {
+                    from: Math.min(pagination.per_page * (pagination.current_page - 1) + 1, pagination.total),
+                    to: Math.min(pagination.per_page * pagination.current_page, pagination.total),
+                    total: pagination.total,
+                  })}
                 </p>
                 <div className="flex items-center gap-1">
                   <button
