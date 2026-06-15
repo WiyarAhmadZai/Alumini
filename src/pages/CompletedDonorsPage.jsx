@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiArrowLeft, FiHeart, FiSearch, FiX, FiChevronLeft, FiChevronRight, FiAward, FiUser, FiTarget } from 'react-icons/fi';
@@ -16,6 +17,7 @@ const resolveImg = (img) => {
 };
 
 const CompletedDonorsPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [donors, setDonors] = useState([]);
   const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0, per_page: 20 });
@@ -70,11 +72,11 @@ const CompletedDonorsPage = () => {
         />
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pt-16">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider mb-4 border border-white/20">
-            <FiHeart size={11} /> Wall of Honor
+            <FiHeart size={11} /> {t('donors.hero.badge')}
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-2">All KPU Donors</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-2">{t('donors.hero.title')}</h1>
           <p className="text-sm sm:text-base text-white/80 max-w-xl">
-            We gratefully acknowledge every alumnus who has contributed to KPU
+            {t('donors.hero.subtitle')}
           </p>
         </div>
       </section>
@@ -85,7 +87,7 @@ const CompletedDonorsPage = () => {
             onClick={() => navigate('/legal')}
             className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-[#002759] font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200 hover:border-[#002759] shadow-sm transition"
           >
-            <FiArrowLeft size={14} /> Back to Giving Page
+            <FiArrowLeft size={14} /> {t('donors.backToGiving')}
           </button>
         </div>
       </div>
@@ -97,9 +99,9 @@ const CompletedDonorsPage = () => {
             <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <FiAward style={{ color: BRAND }} /> {pagination.total} {pagination.total === 1 ? 'Donor' : 'Donors'}
+                  <FiAward style={{ color: BRAND }} /> {pagination.total === 1 ? t('donors.donorCountOne', { count: pagination.total }) : t('donors.donorCountOther', { count: pagination.total })}
                 </h2>
-                <p className="text-xs text-gray-500">Listed by total contribution amount</p>
+                <p className="text-xs text-gray-500">{t('donors.listedBy')}</p>
               </div>
               <div className="relative">
                 <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
@@ -107,7 +109,7 @@ const CompletedDonorsPage = () => {
                   type="text"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search by name or message…"
+                  placeholder={t('donors.searchPlaceholder')}
                   className="pl-9 pr-9 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none focus:ring-1 focus:ring-[#002759] focus:border-[#002759] w-64"
                 />
                 {searchInput && (
@@ -134,19 +136,19 @@ const CompletedDonorsPage = () => {
             ) : donors.length === 0 ? (
               <div className="text-center py-16">
                 <FiHeart size={48} className="mx-auto text-gray-300 mb-3" />
-                <p className="text-gray-500 font-semibold">No donors found</p>
+                <p className="text-gray-500 font-semibold">{t('donors.noDonors')}</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-100">
                     <tr>
-                      <th className="text-left px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider">#</th>
-                      <th className="text-left px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider">Donor</th>
-                      <th className="text-left px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider hidden lg:table-cell">Faculty</th>
-                      <th className="text-right px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider hidden sm:table-cell">Projects</th>
-                      <th className="text-right px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider hidden sm:table-cell">Quick Gift</th>
-                      <th className="text-right px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider">Total</th>
+                      <th className="text-left px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider">{t('donors.table.rank')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider">{t('donors.table.donor')}</th>
+                      <th className="text-left px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider hidden lg:table-cell">{t('donors.table.faculty')}</th>
+                      <th className="text-right px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider hidden sm:table-cell">{t('donors.table.projects')}</th>
+                      <th className="text-right px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider hidden sm:table-cell">{t('donors.table.quickGift')}</th>
+                      <th className="text-right px-4 py-3 text-[11px] uppercase font-bold text-gray-500 tracking-wider">{t('donors.table.total')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
@@ -190,7 +192,7 @@ const CompletedDonorsPage = () => {
                             <div>
                               <p>{donor.faculty || '—'}</p>
                               {donor.donor_graduation_year && (
-                                <p className="text-[10px] text-gray-400">Class of {donor.donor_graduation_year}</p>
+                                <p className="text-[10px] text-gray-400">{t('donors.classOf', { year: donor.donor_graduation_year })}</p>
                               )}
                             </div>
                           </td>
@@ -208,7 +210,7 @@ const CompletedDonorsPage = () => {
                           </td>
                           <td className="px-4 py-3 text-right">
                             <p className="font-bold text-base" style={{ color: BRAND }}>${Number(donor.total_amount).toLocaleString()}</p>
-                            <p className="text-[10px] text-gray-400">{donor.donation_count} donation{donor.donation_count > 1 ? 's' : ''}</p>
+                            <p className="text-[10px] text-gray-400">{donor.donation_count > 1 ? t('donors.donationOther', { count: donor.donation_count }) : t('donors.donationOne', { count: donor.donation_count })}</p>
                           </td>
                         </tr>
                       );
@@ -222,7 +224,7 @@ const CompletedDonorsPage = () => {
             {!loading && pagination.last_page > 1 && (
               <div className="flex items-center justify-between p-4 border-t border-gray-100">
                 <p className="text-xs text-gray-500">
-                  Page <span className="font-bold">{pagination.current_page}</span> of <span className="font-bold">{pagination.last_page}</span>
+                  {t('donors.pageOf', { current: pagination.current_page, last: pagination.last_page })}
                 </p>
                 <div className="flex gap-1">
                   <button
