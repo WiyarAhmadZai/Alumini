@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import { FiArrowLeft, FiUsers, FiMail, FiPhone, FiMessageCircle, FiSearch } from 'react-icons/fi';
 import mentorService from '../services/mentorService';
 
 const MentorMenteesPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [mentees, setMentees] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -40,13 +42,13 @@ const MentorMenteesPage = () => {
         />
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pt-16">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4 border border-white/20">
-            <FiUsers size={11} /> My Mentees
+            <FiUsers size={11} /> {t('mentorship.mentees.heroBadge')}
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-3 max-w-3xl">
-            Alumni You Mentor
+            {t('mentorship.mentees.heroTitle')}
           </h1>
           <p className="text-sm sm:text-base text-white/80 max-w-xl">
-            Connect with and guide the next generation of KPU professionals
+            {t('mentorship.mentees.heroSubtitle')}
           </p>
         </div>
       </section>
@@ -56,7 +58,7 @@ const MentorMenteesPage = () => {
             onClick={() => navigate('/profile')}
             className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 font-semibold bg-white px-4 py-2 rounded-full border border-gray-200 hover:border-blue-300 shadow-sm transition"
           >
-            <FiArrowLeft size={14} /> Back to Profile
+            <FiArrowLeft size={14} /> {t('mentorship.common.backToProfile')}
           </button>
         </div>
       </div>
@@ -65,8 +67,8 @@ const MentorMenteesPage = () => {
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
             <div>
-              <h2 className="text-lg font-bold text-gray-900">{filtered.length} {filtered.length === 1 ? 'Mentee' : 'Mentees'}</h2>
-              <p className="text-xs text-gray-500">Connect and stay in touch with the alumni you mentor</p>
+              <h2 className="text-lg font-bold text-gray-900">{t('mentorship.mentees.count', { count: filtered.length })}</h2>
+              <p className="text-xs text-gray-500">{t('mentorship.mentees.subtitle')}</p>
             </div>
             <div className="relative">
               <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
@@ -74,7 +76,7 @@ const MentorMenteesPage = () => {
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search mentees…"
+                placeholder={t('mentorship.mentees.searchPlaceholder')}
                 className="pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm w-64 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
               />
             </div>
@@ -99,9 +101,9 @@ const MentorMenteesPage = () => {
           ) : filtered.length === 0 ? (
             <div className="text-center py-16">
               <FiUsers size={48} className="mx-auto text-gray-300 mb-3" />
-              <p className="text-gray-500 font-semibold">No mentees yet</p>
-              <p className="text-xs text-gray-400 mt-1">When you accept mentorship requests, they will appear here.</p>
-              <Link to="/mentorship/my/requests" className="inline-block mt-4 text-blue-600 font-semibold text-sm hover:underline">View pending requests →</Link>
+              <p className="text-gray-500 font-semibold">{t('mentorship.mentees.emptyTitle')}</p>
+              <p className="text-xs text-gray-400 mt-1">{t('mentorship.mentees.emptyText')}</p>
+              <Link to="/mentorship/my/requests" className="inline-block mt-4 text-blue-600 font-semibold text-sm hover:underline">{t('mentorship.mentees.viewPending')}</Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -132,16 +134,16 @@ const MentorMenteesPage = () => {
                   <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-gray-100">
                     {m.email && (
                       <a href={`mailto:${m.email}`} className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-semibold rounded hover:bg-blue-100">
-                        <FiMail size={10} /> Email
+                        <FiMail size={10} /> {t('mentorship.contact.email')}
                       </a>
                     )}
                     {m.whatsapp_number && (
                       <a href={`https://wa.me/${m.whatsapp_number.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 text-[10px] font-semibold rounded hover:bg-green-100">
-                        <FiPhone size={10} /> WhatsApp
+                        <FiPhone size={10} /> {t('mentorship.contact.whatsapp')}
                       </a>
                     )}
                     <Link to={`/messages?to=${m.requester_id}`} className="flex items-center gap-1 px-2 py-1 bg-purple-50 text-purple-700 text-[10px] font-semibold rounded hover:bg-purple-100">
-                      <FiMessageCircle size={10} /> Message
+                      <FiMessageCircle size={10} /> {t('mentorship.contact.message')}
                     </Link>
                   </div>
                 </div>
