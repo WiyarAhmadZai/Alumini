@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -15,6 +16,7 @@ const BRAND_BG = '#eef1fd';
 const BRAND_BORDER = '#c5ccf7';
 
 const LoginPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -39,20 +41,20 @@ const LoginPage = () => {
       if (response.status === 'success') {
         navigate('/profile');
       } else {
-        setError(response.message || 'Login failed');
+        setError(response.message || t('auth.errors.loginFailed'));
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.');
+      setError(err.response?.data?.message || t('auth.errors.loginFailedRetry'));
     } finally {
       setLoading(false);
     }
   };
 
   const benefits = [
-    { icon: FiAward, text: 'Access exclusive alumni resources' },
-    { icon: FiUsers, text: 'Network with 10,000+ KPU graduates' },
-    { icon: FiBriefcase, text: 'Career opportunities and mentorship' },
-    { icon: FiCalendar, text: 'Alumni events and reunions' },
+    { icon: FiAward, text: t('auth.benefits.resources') },
+    { icon: FiUsers, text: t('auth.benefits.network') },
+    { icon: FiBriefcase, text: t('auth.benefits.career') },
+    { icon: FiCalendar, text: t('auth.benefits.events') },
   ];
 
   return (
@@ -62,7 +64,7 @@ const LoginPage = () => {
         <section className="relative min-h-[680px] overflow-hidden">
           {/* Background image + dark overlay */}
           <div className="absolute inset-0">
-            <img src="/kpu2.jpg" alt="KPU Campus" className="w-full h-full object-cover" />
+            <img src="/kpu2.jpg" alt={t('auth.brand.university')} className="w-full h-full object-cover" />
             <div className="absolute inset-0"
               style={{ background: 'linear-gradient(rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.85) 100%)' }} />
           </div>
@@ -77,8 +79,8 @@ const LoginPage = () => {
                     <img src="/logo_kpu.png" alt="KPU" className="w-9 h-9 object-contain" />
                   </div>
                   <div className="min-w-0">
-                    <div className="font-extrabold text-base tracking-tight">KPU Alumni Network</div>
-                    <div className="text-xs text-white/60">Kabul Polytechnic University</div>
+                    <div className="font-extrabold text-base tracking-tight">{t('auth.brand.network')}</div>
+                    <div className="text-xs text-white/60">{t('auth.brand.university')}</div>
                   </div>
                 </div>
 
@@ -87,16 +89,16 @@ const LoginPage = () => {
                   className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] mb-5"
                   style={{ background: 'rgba(255,255,255,0.10)', color: '#fff', border: '1px solid rgba(255,255,255,0.20)' }}
                 >
-                  <FiLogIn size={11} /> Sign in to your account
+                  <FiLogIn size={11} /> {t('auth.login.eyebrow')}
                 </span>
 
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight mb-5">
-                  Welcome back to the<br className="hidden lg:block" />
-                  <span className="text-white"> KPU community.</span>
+                  {t('auth.login.headingLine1')}<br className="hidden lg:block" />
+                  <span className="text-white"> {t('auth.login.headingHighlight')}</span>
                 </h1>
 
                 <p className="text-base sm:text-lg text-white/75 leading-relaxed mb-8 max-w-xl font-light">
-                  Reconnect with classmates, discover career opportunities, and stay updated with everything happening at Kabul Polytechnic University.
+                  {t('auth.login.intro')}
                 </p>
 
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl">
@@ -122,10 +124,10 @@ const LoginPage = () => {
                       className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] mb-3"
                       style={{ background: BRAND_BG, color: BRAND, border: `1px solid ${BRAND_BORDER}` }}
                     >
-                      Sign In
+                      {t('auth.login.cardBadge')}
                     </span>
-                    <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Welcome back</h2>
-                    <p className="text-sm text-gray-500 mt-1">Enter your credentials to access your account.</p>
+                    <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">{t('auth.login.cardTitle')}</h2>
+                    <p className="text-sm text-gray-500 mt-1">{t('auth.login.cardSubtitle')}</p>
                   </div>
 
                   <div className="px-7 pb-7">
@@ -144,14 +146,14 @@ const LoginPage = () => {
                       {/* Email */}
                       <div>
                         <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600 mb-2">
-                          Email Address
+                          {t('auth.login.emailLabel')}
                         </label>
                         <div className="relative">
                           <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
                           <input
                             type="email" name="email" required
                             value={formData.email} onChange={handleInputChange}
-                            placeholder="you@example.com"
+                            placeholder={t('auth.login.emailPlaceholder')}
                             className="w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
                             style={{ '--tw-ring-color': BRAND_BORDER }}
                           />
@@ -161,14 +163,14 @@ const LoginPage = () => {
                       {/* Password */}
                       <div>
                         <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600 mb-2">
-                          Password
+                          {t('auth.login.passwordLabel')}
                         </label>
                         <div className="relative">
                           <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
                           <input
                             type={showPassword ? 'text' : 'password'} name="password" required
                             value={formData.password} onChange={handleInputChange}
-                            placeholder="Enter your password"
+                            placeholder={t('auth.login.passwordPlaceholder')}
                             className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
                             style={{ '--tw-ring-color': BRAND_BORDER }}
                           />
@@ -188,11 +190,11 @@ const LoginPage = () => {
                             className="w-4 h-4 rounded border-gray-300"
                             style={{ accentColor: BRAND }}
                           />
-                          <span className="text-xs text-gray-600 font-medium">Remember me</span>
+                          <span className="text-xs text-gray-600 font-medium">{t('auth.login.rememberMe')}</span>
                         </label>
                         <button type="button" onClick={(e) => e.preventDefault()}
                           className="text-xs font-semibold hover:underline" style={{ color: BRAND_ACCENT }}>
-                          Forgot password?
+                          {t('auth.login.forgotPassword')}
                         </button>
                       </div>
 
@@ -207,11 +209,11 @@ const LoginPage = () => {
                         {loading ? (
                           <>
                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            Signing in…
+                            {t('auth.login.signingIn')}
                           </>
                         ) : (
                           <>
-                            Sign In <FiArrowRight size={15} />
+                            {t('auth.login.signIn')} <FiArrowRight size={15} />
                           </>
                         )}
                       </button>
@@ -222,7 +224,7 @@ const LoginPage = () => {
                       <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200" /></div>
                       <div className="relative flex justify-center">
                         <span className="bg-white px-3 text-[10px] uppercase tracking-[0.18em] font-bold text-gray-400">
-                          New to KPU Alumni?
+                          {t('auth.login.newToAlumni')}
                         </span>
                       </div>
                     </div>
@@ -234,11 +236,11 @@ const LoginPage = () => {
                       onMouseEnter={(e) => { e.currentTarget.style.background = BRAND_BORDER; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = BRAND_BG; }}
                     >
-                      <FiCheckCircle size={14} /> Create a verified account
+                      <FiCheckCircle size={14} /> {t('auth.login.createVerified')}
                     </button>
 
                     <p className="text-[11px] text-gray-400 text-center mt-3 leading-relaxed">
-                      Verified through MIS records · Secure & confidential
+                      {t('auth.login.verifiedNote')}
                     </p>
                   </div>
                 </div>
