@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiMail, FiPhone, FiMapPin, FiSend, FiMessageSquare, FiNavigation, FiCalendar, FiBriefcase, FiUser, FiUsers, FiBookOpen, FiAward } from 'react-icons/fi';
@@ -13,12 +14,13 @@ const BRAND_BG = '#eef1fd';
 const BRAND_BORDER = '#c5ccf7';
 
 const ContactPage = () => {
+  const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    subject: 'General Inquiry',
+    subject: t('contact.form.defaultSubject'),
     message: ''
   });
   const [loading, setLoading] = useState(false);
@@ -44,13 +46,13 @@ const ContactPage = () => {
 
     if (!isAuthenticated()) {
       Swal.fire({
-        title: 'Login Required',
-        text: 'Please login to send a message.',
+        title: t('contact.alerts.loginRequiredTitle'),
+        text: t('contact.alerts.loginRequiredText'),
         icon: 'warning',
         confirmButtonColor: BRAND,
-        confirmButtonText: 'Login',
+        confirmButtonText: t('contact.alerts.loginBtn'),
         showCancelButton: true,
-        cancelButtonText: 'Cancel'
+        cancelButtonText: t('contact.alerts.cancelBtn')
       }).then((result) => {
         if (result.isConfirmed) window.location.href = '/login';
       });
@@ -58,7 +60,7 @@ const ContactPage = () => {
     }
 
     if (!formData.message.trim()) {
-      Swal.fire({ title: 'Validation Error', text: 'Please enter your message.', icon: 'error', confirmButtonColor: BRAND });
+      Swal.fire({ title: t('contact.alerts.validationTitle'), text: t('contact.alerts.validationText'), icon: 'error', confirmButtonColor: BRAND });
       return;
     }
 
@@ -67,32 +69,32 @@ const ContactPage = () => {
       await messageService.sendMessage({ subject: formData.subject, message: formData.message });
       Swal.fire({
         icon: 'success',
-        title: 'Message Sent!',
-        text: 'We will respond to you soon.',
+        title: t('contact.alerts.sentTitle'),
+        text: t('contact.alerts.sentText'),
         confirmButtonColor: BRAND,
         timer: 3000,
         timerProgressBar: true
       });
       setFormData(prev => ({ ...prev, message: '' }));
     } catch {
-      Swal.fire({ icon: 'error', title: 'Error', text: 'Failed to send message. Please try again.', confirmButtonColor: '#dc2626' });
+      Swal.fire({ icon: 'error', title: t('contact.alerts.errorTitle'), text: t('contact.alerts.errorText'), confirmButtonColor: '#dc2626' });
     } finally {
       setLoading(false);
     }
   };
 
   const contactCards = [
-    { icon: <FiMail />, title: 'Email Us', detail: 'it.director@kpu.edu.af', cta: 'Send Email', href: 'mailto:it.director@kpu.edu.af' },
-    { icon: <FiPhone />, title: 'Call Us', detail: '+93 20 252 6364', cta: 'Call Now', href: 'tel:0202526364' },
-    { icon: <FiMapPin />, title: 'Visit Us', detail: 'KPU Campus, Kabul, Afghanistan', cta: 'Get Directions', href: 'https://maps.google.com/?q=Kabul+Polytechnic+University' },
-    { icon: <FiBookOpen />, title: 'Transcripts', detail: 'transcript@kpu.edu.af', cta: 'Request', href: 'mailto:transcript@kpu.edu.af' },
+    { icon: <FiMail />, title: t('contact.cards.emailTitle'), detail: 'it.director@kpu.edu.af', cta: t('contact.cards.emailCta'), href: 'mailto:it.director@kpu.edu.af' },
+    { icon: <FiPhone />, title: t('contact.cards.callTitle'), detail: '+93 20 252 6364', cta: t('contact.cards.callCta'), href: 'tel:0202526364' },
+    { icon: <FiMapPin />, title: t('contact.cards.visitTitle'), detail: t('contact.cards.visitDetail'), cta: t('contact.cards.visitCta'), href: 'https://maps.google.com/?q=Kabul+Polytechnic+University' },
+    { icon: <FiBookOpen />, title: t('contact.cards.transcriptsTitle'), detail: 'transcript@kpu.edu.af', cta: t('contact.cards.transcriptsCta'), href: 'mailto:transcript@kpu.edu.af' },
   ];
 
   const quickLinks = [
-    { icon: <FiUsers />, title: 'About Us', desc: 'Our mission and history', href: '/about' },
-    { icon: <FiCalendar />, title: 'Events', desc: 'Upcoming alumni events', href: '/events' },
-    { icon: <FiUser />, title: 'Mentorship', desc: 'Join our program', href: '/mentorship' },
-    { icon: <FiBriefcase />, title: 'Jobs', desc: 'Career opportunities', href: '/jobs' },
+    { icon: <FiUsers />, title: t('contact.quickLinks.aboutTitle'), desc: t('contact.quickLinks.aboutDesc'), href: '/about' },
+    { icon: <FiCalendar />, title: t('contact.quickLinks.eventsTitle'), desc: t('contact.quickLinks.eventsDesc'), href: '/events' },
+    { icon: <FiUser />, title: t('contact.quickLinks.mentorshipTitle'), desc: t('contact.quickLinks.mentorshipDesc'), href: '/mentorship' },
+    { icon: <FiBriefcase />, title: t('contact.quickLinks.jobsTitle'), desc: t('contact.quickLinks.jobsDesc'), href: '/jobs' },
   ];
 
   return (
@@ -105,13 +107,13 @@ const ContactPage = () => {
         <div className="relative z-10 flex flex-col items-center justify-center py-16 px-4 sm:px-6 text-center text-white" style={{ minHeight: 380 }}>
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 mb-3">
             <FiMessageSquare className="text-[10px]" />
-            Get in Touch
+            {t('contact.hero.badge')}
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3 max-w-3xl">
-            Contact Us
+            {t('contact.hero.title')}
           </h1>
           <p className="text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed font-light">
-            Reach out to the KPU Alumni Association — we're here to help.
+            {t('contact.hero.subtitle')}
           </p>
 
           {/* Inline quick info row — branded style consistent with other pages */}
@@ -128,7 +130,7 @@ const ContactPage = () => {
             <div className="w-px bg-white/15" />
             <div className="px-5 py-2 flex items-center gap-2 text-[11px]">
               <FiMapPin className="text-white/50 w-3 h-3" />
-              <span className="text-white/80 font-medium">KPU Campus, Kabul</span>
+              <span className="text-white/80 font-medium">{t('contact.hero.campus')}</span>
             </div>
           </div>
         </div>
@@ -140,13 +142,13 @@ const ContactPage = () => {
           <div className="text-center mb-10 max-w-xl mx-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] border mb-3"
               style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-              Reach Us
+              {t('contact.cardsSection.label')}
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
-              Multiple Ways to Connect
+              {t('contact.cardsSection.title')}
             </h2>
             <p className="text-gray-500 text-sm leading-relaxed">
-              Choose the channel that works best for you.
+              {t('contact.cardsSection.subtitle')}
             </p>
             <div className="w-10 h-0.5 mx-auto mt-4 rounded-full" style={{ background: BRAND }} />
           </div>
@@ -177,13 +179,13 @@ const ContactPage = () => {
           <div className="text-center mb-10 max-w-xl mx-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] border mb-3"
               style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-              Send a Message
+              {t('contact.form.label')}
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
-              We'd Love to Hear From You
+              {t('contact.form.title')}
             </h2>
             <p className="text-gray-500 text-sm leading-relaxed">
-              Questions about membership, events, or opportunities? Drop us a message.
+              {t('contact.form.subtitle')}
             </p>
             <div className="w-10 h-0.5 mx-auto mt-4 rounded-full" style={{ background: BRAND }} />
           </div>
@@ -194,50 +196,50 @@ const ContactPage = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">First Name</label>
+                    <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.firstName')}</label>
                     <input
                       type="text" name="firstName" value={formData.firstName} onChange={handleInputChange}
                       className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-                      placeholder="John"
+                      placeholder={t('contact.form.firstNamePlaceholder')}
                       disabled={!!user?.name}
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">Last Name</label>
+                    <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.lastName')}</label>
                     <input
                       type="text" name="lastName" value={formData.lastName} onChange={handleInputChange}
                       className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-                      placeholder="Doe"
+                      placeholder={t('contact.form.lastNamePlaceholder')}
                       disabled={!!user?.last_name}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">Email</label>
+                  <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.email')}</label>
                   <input
                     type="email" name="email" value={formData.email} onChange={handleInputChange}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-                    placeholder="john.doe@example.com"
+                    placeholder={t('contact.form.emailPlaceholder')}
                     disabled={!!user?.email}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">Subject</label>
+                  <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.subject')}</label>
                   <input
                     type="text" name="subject" value={formData.subject} onChange={handleInputChange}
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all"
-                    placeholder="Enter subject..."
+                    placeholder={t('contact.form.subjectPlaceholder')}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">Message</label>
+                  <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.message')}</label>
                   <textarea
                     name="message" value={formData.message} onChange={handleInputChange} rows="5"
                     className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all resize-none"
-                    placeholder="Tell us how we can help you..."
+                    placeholder={t('contact.form.messagePlaceholder')}
                     required
                   ></textarea>
                 </div>
@@ -245,7 +247,7 @@ const ContactPage = () => {
                 <div className="flex items-center justify-between pt-2">
                   <label className="flex items-center cursor-pointer">
                     <input type="checkbox" className="w-4 h-4 rounded border-gray-300 focus:ring-2" style={{ accentColor: BRAND }} />
-                    <span className="ml-2 text-xs text-gray-600">Subscribe to newsletter</span>
+                    <span className="ml-2 text-xs text-gray-600">{t('contact.form.newsletter')}</span>
                   </label>
                   <button
                     type="submit" disabled={loading}
@@ -257,12 +259,12 @@ const ContactPage = () => {
                     {loading ? (
                       <>
                         <div className="animate-spin rounded-full h-3.5 w-3.5 border-b-2 border-white" />
-                        Sending...
+                        {t('contact.form.sending')}
                       </>
                     ) : (
                       <>
                         <FiSend className="text-xs" />
-                        Send Message
+                        {t('contact.form.send')}
                       </>
                     )}
                   </button>
@@ -279,14 +281,14 @@ const ContactPage = () => {
                   width="100%" height="220"
                   style={{ border: 0 }}
                   allowFullScreen="" loading="lazy" referrerPolicy="no-referrer-when-downgrade"
-                  title="KPU Map"
+                  title={t('contact.map.mapAlt')}
                 ></iframe>
                 <div className="p-3 border-t border-gray-100">
                   <h4 className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
                     <FiMapPin className="text-xs" style={{ color: BRAND }} />
-                    Kabul Polytechnic University
+                    {t('contact.map.title')}
                   </h4>
-                  <p className="text-[11px] text-gray-500 mt-0.5">Kabul, Afghanistan</p>
+                  <p className="text-[11px] text-gray-500 mt-0.5">{t('contact.map.location')}</p>
                 </div>
               </div>
 
@@ -295,14 +297,14 @@ const ContactPage = () => {
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3 bg-white/10 border border-white/20">
                   <FiAward className="text-white text-sm" />
                 </div>
-                <h4 className="text-white text-sm font-bold mb-2">Office Hours</h4>
+                <h4 className="text-white text-sm font-bold mb-2">{t('contact.map.officeHours')}</h4>
                 <div className="space-y-1 text-[11px] text-white/70">
-                  <div className="flex justify-between"><span>Mon – Thu</span><span className="text-white/90">8:00 AM – 4:00 PM</span></div>
-                  <div className="flex justify-between"><span>Friday</span><span className="text-white/90">8:00 AM – 12:00 PM</span></div>
-                  <div className="flex justify-between"><span>Sat – Sun</span><span className="text-white/90">Closed</span></div>
+                  <div className="flex justify-between"><span>{t('contact.map.monThu')}</span><span className="text-white/90">{t('contact.map.monThuTime')}</span></div>
+                  <div className="flex justify-between"><span>{t('contact.map.friday')}</span><span className="text-white/90">{t('contact.map.fridayTime')}</span></div>
+                  <div className="flex justify-between"><span>{t('contact.map.weekend')}</span><span className="text-white/90">{t('contact.map.closed')}</span></div>
                 </div>
                 <div className="mt-3 pt-3 border-t border-white/10 text-[10px] text-white/60">
-                  Response within 24–48 hours
+                  {t('contact.map.responseTime')}
                 </div>
               </div>
             </div>
@@ -316,13 +318,13 @@ const ContactPage = () => {
           <div className="text-center mb-10 max-w-xl mx-auto">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] border mb-3"
               style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-              Explore More
+              {t('contact.links.label')}
             </div>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
-              Quick Links
+              {t('contact.links.title')}
             </h2>
             <p className="text-gray-500 text-sm leading-relaxed">
-              Useful shortcuts to help you navigate the alumni experience.
+              {t('contact.links.subtitle')}
             </p>
             <div className="w-10 h-0.5 mx-auto mt-4 rounded-full" style={{ background: BRAND }} />
           </div>
