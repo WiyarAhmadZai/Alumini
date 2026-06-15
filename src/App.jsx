@@ -21,6 +21,7 @@ import ApplicationsPage from './pages/ApplicationsPage';
 import MessagesPage from './pages/MessagesPage';
 import MessageConversationPage from './pages/MessageConversationPage';
 import AdminDashboard from './pages/AdminDashboard';
+import DashboardPage from './pages/DashboardPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import VerifiedAlumniRegistration from './components/VerifiedAlumniRegistration';
@@ -58,6 +59,7 @@ function App() {
           <Route path="/messages" element={<MessagesPage />} />
           <Route path="/message/:id" element={<MessageConversationPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
         </Routes>
