@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import {
   FiArrowLeft, FiMail, FiBriefcase, FiAward, FiUsers, FiStar,
@@ -55,6 +56,7 @@ const ImageViewer = ({ src, open, onClose }) => {
 const PHONE_REGEX = /^[+\d][\d\s\-()]{6,29}$/;
 
 const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [error, setError] = useState('');
@@ -68,7 +70,7 @@ const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
 
   const submit = async () => {
     if (whatsapp && !PHONE_REGEX.test(whatsapp.trim())) {
-      setError('Please enter a valid phone number (digits, +, -, ( ) only).');
+      setError(t('mentorship.modal.phoneError'));
       return;
     }
     setError('');
@@ -79,8 +81,8 @@ const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
       setMessage(''); setWhatsapp('');
       Swal.fire({
         icon: 'success',
-        title: 'Request Sent',
-        text: `Your mentorship request has been sent to ${mentor.name}.`,
+        title: t('mentorship.request.sentTitle'),
+        text: t('mentorship.request.sentText', { name: mentor.name }),
         timer: 2500,
         showConfirmButton: false,
       });
@@ -89,13 +91,13 @@ const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
       const data = err.response?.data || {};
       onClose();
       if (data.status === 'cooldown') {
-        Swal.fire({ icon: 'warning', title: 'Cooldown Active', text: data.message });
+        Swal.fire({ icon: 'warning', title: t('mentorship.request.cooldownTitle'), text: data.message });
       } else {
         const alreadySent = data.status === 'already_requested';
         Swal.fire({
           icon: alreadySent ? 'info' : 'error',
-          title: alreadySent ? 'Already Requested' : 'Error',
-          text: data.message || 'Failed to send request.',
+          title: alreadySent ? t('mentorship.request.alreadyTitle') : t('mentorship.common.error'),
+          text: data.message || t('mentorship.request.failed'),
         });
       }
     } finally {
@@ -111,7 +113,7 @@ const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100" style={{ backgroundColor: BRAND }}>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-white/70 font-semibold">Request Mentorship</p>
+            <p className="text-[10px] uppercase tracking-wider text-white/70 font-semibold">{t('mentorship.modal.requestTitle')}</p>
             <h3 className="text-base font-bold text-white">{mentor.name}</h3>
           </div>
           <button onClick={onClose} className="text-white/80 hover:text-white p-1">
@@ -122,7 +124,7 @@ const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
         <div className="p-5 space-y-4">
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-              WhatsApp Number <span className="text-gray-400 font-normal">(optional)</span>
+              {t('mentorship.modal.whatsappLabel')} <span className="text-gray-400 font-normal">{t('mentorship.modal.optional')}</span>
             </label>
             <input
               type="tel"
@@ -137,14 +139,14 @@ const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-              Introduction Message
+              {t('mentorship.modal.introLabel')}
             </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
               maxLength={500}
-              placeholder="Tell the mentor what you'd like guidance on…"
+              placeholder={t('mentorship.modal.introPlaceholder')}
               className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#002759] focus:ring-1 focus:ring-[#002759] transition resize-none"
             />
             <p className="text-[10px] text-gray-400 mt-1 text-right">{message.length}/500</p>
@@ -156,7 +158,7 @@ const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
             onClick={onClose}
             className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             onClick={submit}
@@ -167,7 +169,7 @@ const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
             {loading ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
-              <><FiSend size={13} /> Send Request</>
+              <><FiSend size={13} /> {t('mentorship.modal.sendRequest')}</>
             )}
           </button>
         </div>
@@ -178,6 +180,7 @@ const RequestModal = ({ mentor, open, onClose, onSuccess }) => {
 
 // ─────────── Review Modal (simple, branded) ───────────
 const ReviewModal = ({ mentor, open, onClose, onSuccess }) => {
+  const { t } = useTranslation();
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [review, setReview] = useState('');
@@ -187,7 +190,7 @@ const ReviewModal = ({ mentor, open, onClose, onSuccess }) => {
 
   const submit = async () => {
     if (!rating) {
-      Swal.fire({ icon: 'warning', title: 'Please select a rating', timer: 1500, showConfirmButton: false });
+      Swal.fire({ icon: 'warning', title: t('mentorship.review.selectRatingWarning'), timer: 1500, showConfirmButton: false });
       return;
     }
     setLoading(true);
@@ -195,16 +198,16 @@ const ReviewModal = ({ mentor, open, onClose, onSuccess }) => {
       await mentorService.submitReview(mentor.id, rating, review);
       onClose();
       setRating(0); setReview(''); setHoverRating(0);
-      Swal.fire({ icon: 'success', title: 'Thank You', text: 'Your review has been submitted.', timer: 2500, showConfirmButton: false });
+      Swal.fire({ icon: 'success', title: t('mentorship.review.thankYou'), text: t('mentorship.review.submitted'), timer: 2500, showConfirmButton: false });
       if (onSuccess) onSuccess();
     } catch (err) {
-      Swal.fire({ icon: 'error', title: 'Error', text: err.response?.data?.message || 'Failed to submit review.' });
+      Swal.fire({ icon: 'error', title: t('mentorship.common.error'), text: err.response?.data?.message || t('mentorship.review.failed') });
     } finally {
       setLoading(false);
     }
   };
 
-  const labels = ['', 'Poor', 'Fair', 'Good', 'Very Good', 'Excellent'];
+  const labels = ['', t('mentorship.review.poor'), t('mentorship.review.fair'), t('mentorship.review.good'), t('mentorship.review.veryGood'), t('mentorship.review.excellent')];
   const display = hoverRating || rating;
 
   return (
@@ -212,8 +215,8 @@ const ReviewModal = ({ mentor, open, onClose, onSuccess }) => {
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between px-5 py-4" style={{ backgroundColor: BRAND }}>
           <div>
-            <p className="text-[10px] uppercase tracking-wider text-white/70 font-semibold">Leave a Review</p>
-            <h3 className="text-base font-bold text-white">for {mentor.name}</h3>
+            <p className="text-[10px] uppercase tracking-wider text-white/70 font-semibold">{t('mentorship.review.leaveReview')}</p>
+            <h3 className="text-base font-bold text-white">{t('mentorship.review.forName', { name: mentor.name })}</h3>
           </div>
           <button onClick={onClose} className="text-white/80 hover:text-white p-1">
             <FiX size={20} />
@@ -222,7 +225,7 @@ const ReviewModal = ({ mentor, open, onClose, onSuccess }) => {
 
         <div className="p-5">
           <div className="text-center mb-5 pb-5 border-b border-gray-100">
-            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Your Rating</p>
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">{t('mentorship.review.yourRating')}</p>
             <div className="flex items-center justify-center gap-2" onMouseLeave={() => setHoverRating(0)}>
               {[1, 2, 3, 4, 5].map((n) => (
                 <button
@@ -240,19 +243,19 @@ const ReviewModal = ({ mentor, open, onClose, onSuccess }) => {
               ))}
             </div>
             <p className="text-sm font-semibold text-gray-700 mt-2 min-h-[20px]">
-              {display ? labels[display] : 'Select a rating'}
+              {display ? labels[display] : t('mentorship.review.selectRating')}
             </p>
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-              Your Experience <span className="text-gray-400 font-normal">(optional)</span>
+              {t('mentorship.review.experienceLabel')} <span className="text-gray-400 font-normal">{t('mentorship.modal.optional')}</span>
             </label>
             <textarea
               value={review}
               onChange={(e) => setReview(e.target.value)}
               rows={4}
               maxLength={1000}
-              placeholder="Share how this mentor helped you…"
+              placeholder={t('mentorship.review.experiencePlaceholder')}
               className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#002759] focus:ring-1 focus:ring-[#002759] transition resize-none"
             />
             <p className="text-[10px] text-gray-400 mt-1 text-right">{review.length}/1000</p>
@@ -264,7 +267,7 @@ const ReviewModal = ({ mentor, open, onClose, onSuccess }) => {
             onClick={onClose}
             className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             onClick={submit}
@@ -275,7 +278,7 @@ const ReviewModal = ({ mentor, open, onClose, onSuccess }) => {
             {loading ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
-              <>Submit Review</>
+              <>{t('mentorship.review.submitReview')}</>
             )}
           </button>
         </div>
@@ -286,6 +289,7 @@ const ReviewModal = ({ mentor, open, onClose, onSuccess }) => {
 
 // ─────────── Main Page ───────────
 const MentorDetailPage = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [mentor, setMentor] = useState(null);
@@ -306,7 +310,7 @@ const MentorDetailPage = () => {
       const res = await mentorService.getById(id);
       if (res.status === 'success') setMentor(res.data);
     } catch {
-      Swal.fire({ icon: 'error', title: 'Error', text: 'Could not load mentor profile.' });
+      Swal.fire({ icon: 'error', title: t('mentorship.common.error'), text: t('mentorship.detail.loadError') });
     } finally {
       setLoading(false);
     }
@@ -333,16 +337,16 @@ const MentorDetailPage = () => {
   const openRequest = () => {
     if (!authService.isAuthenticated()) {
       Swal.fire({
-        icon: 'info', title: 'Login Required', text: 'Please log in to request mentorship.',
-        confirmButtonText: 'Go to Login', confirmButtonColor: BRAND,
+        icon: 'info', title: t('mentorship.login.title'), text: t('mentorship.login.requestText'),
+        confirmButtonText: t('mentorship.login.goToLogin'), confirmButtonColor: BRAND,
       }).then(r => { if (r.isConfirmed) navigate('/login'); });
       return;
     }
     if (iAmMentor) {
       Swal.fire({
         icon: 'info',
-        title: 'Mentors Cannot Apply',
-        text: 'You are registered as a mentor, so you cannot request mentorship from another mentor.',
+        title: t('mentorship.mentorBlock.title'),
+        text: t('mentorship.mentorBlock.text'),
         confirmButtonColor: BRAND,
       });
       return;
@@ -353,8 +357,8 @@ const MentorDetailPage = () => {
   const openReview = () => {
     if (!authService.isAuthenticated()) {
       Swal.fire({
-        icon: 'info', title: 'Login Required', text: 'Please log in to leave a review.',
-        confirmButtonText: 'Go to Login', confirmButtonColor: BRAND,
+        icon: 'info', title: t('mentorship.login.title'), text: t('mentorship.login.reviewText'),
+        confirmButtonText: t('mentorship.login.goToLogin'), confirmButtonColor: BRAND,
       }).then(r => { if (r.isConfirmed) navigate('/login'); });
       return;
     }
@@ -372,20 +376,20 @@ const MentorDetailPage = () => {
     if (!myRequest) return;
     const confirm = await Swal.fire({
       icon: 'warning',
-      title: 'Cancel Request?',
-      text: `Cancel your mentorship request to ${mentor.name}?`,
+      title: t('mentorship.cancel.title'),
+      text: t('mentorship.cancel.confirm', { name: mentor.name }),
       showCancelButton: true,
-      confirmButtonText: 'Yes, cancel',
+      confirmButtonText: t('mentorship.cancel.yes'),
       confirmButtonColor: '#dc2626',
-      cancelButtonText: 'No',
+      cancelButtonText: t('mentorship.cancel.no'),
     });
     if (!confirm.isConfirmed) return;
     try {
       await mentorService.cancelRequest(myRequest.id);
       setMyRequest(null);
-      Swal.fire({ icon: 'success', title: 'Cancelled', timer: 1500, showConfirmButton: false });
+      Swal.fire({ icon: 'success', title: t('mentorship.cancel.cancelled'), timer: 1500, showConfirmButton: false });
     } catch (err) {
-      Swal.fire({ icon: 'error', title: 'Error', text: err.response?.data?.message || 'Failed to cancel request.' });
+      Swal.fire({ icon: 'error', title: t('mentorship.common.error'), text: err.response?.data?.message || t('mentorship.cancel.failedRequest') });
     }
   };
 
@@ -404,10 +408,10 @@ const MentorDetailPage = () => {
       <Layout>
         <div className="min-h-screen flex flex-col items-center justify-center py-32 px-4">
           <FiUsers size={48} className="text-gray-300 mb-4" />
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Mentor Not Found</h2>
-          <p className="text-gray-500 mb-6 text-center">This mentor profile doesn't exist or has been removed.</p>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">{t('mentorship.detail.notFoundTitle')}</h2>
+          <p className="text-gray-500 mb-6 text-center">{t('mentorship.detail.notFoundText')}</p>
           <Link to="/mentorship" className="px-5 py-2.5 rounded-lg text-white text-sm font-semibold" style={{ backgroundColor: BRAND }}>
-            Back to Mentors
+            {t('mentorship.detail.backToMentors')}
           </Link>
         </div>
       </Layout>
@@ -433,10 +437,10 @@ const MentorDetailPage = () => {
         />
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pt-16">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider mb-3 border border-white/20">
-            Mentor Profile
+            {t('mentorship.detail.heroBadge')}
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-2">KPU Alumni Mentorship</h1>
-          <p className="text-sm text-white/80 max-w-xl">Connect with experienced alumni</p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-2">{t('mentorship.detail.heroTitle')}</h1>
+          <p className="text-sm text-white/80 max-w-xl">{t('mentorship.detail.heroSubtitle')}</p>
         </div>
       </section>
 
@@ -447,7 +451,7 @@ const MentorDetailPage = () => {
             onClick={() => navigate('/mentorship')}
             className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-[#002759] font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200 hover:border-[#002759] shadow-sm transition"
           >
-            <FiArrowLeft size={14} /> All Mentors
+            <FiArrowLeft size={14} /> {t('mentorship.detail.allMentors')}
           </button>
         </div>
       </div>
@@ -464,7 +468,7 @@ const MentorDetailPage = () => {
             >
               {coverImg ? (
                 <>
-                  <img src={coverImg} alt="Cover" className="w-full h-full object-cover" />
+                  <img src={coverImg} alt={t('mentorship.detail.coverAlt')} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition flex items-center justify-center">
                     <FiMaximize2 size={20} className="text-white opacity-0 group-hover:opacity-100 transition" />
                   </div>
@@ -500,7 +504,7 @@ const MentorDetailPage = () => {
                     <div
                       className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full border-4 border-white flex items-center justify-center shadow"
                       style={{ backgroundColor: '#16a34a' }}
-                      title="Verified mentor"
+                      title={t('mentorship.detail.verifiedMentor')}
                     >
                       <FiCheckCircle className="text-white" size={12} />
                     </div>
@@ -536,15 +540,15 @@ const MentorDetailPage = () => {
                       to="/profile"
                       className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-800 px-4 py-2 rounded-lg font-semibold text-xs hover:bg-gray-200 transition"
                     >
-                      <FiEdit3 size={12} /> Edit Profile
+                      <FiEdit3 size={12} /> {t('mentorship.card.editProfile')}
                     </Link>
                   ) : iAmMentor && (!myRequest || (myRequest.status === 'rejected' && myRequest.can_request_again)) ? (
                     <button
                       disabled
-                      title="Mentors cannot apply for mentorship"
+                      title={t('mentorship.card.mentorsCannotApplyTitle')}
                       className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-500 px-4 py-2 rounded-lg font-semibold text-xs border border-gray-200 cursor-not-allowed"
                     >
-                      <FiX size={12} /> Mentors Can't Apply
+                      <FiX size={12} /> {t('mentorship.card.mentorsCantApply')}
                     </button>
                   ) : myRequest && myRequest.status === 'rejected' && myRequest.can_request_again ? (
                     <button
@@ -554,7 +558,7 @@ const MentorDetailPage = () => {
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = BRAND_LIGHT}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = BRAND}
                     >
-                      <FiSend size={12} /> Request Again ({myRequest.rejection_count || 0}/3)
+                      <FiSend size={12} /> {t('mentorship.card.requestAgainCount', { count: myRequest.rejection_count || 0 })}
                     </button>
                   ) : myRequest ? (
                     <>
@@ -564,19 +568,19 @@ const MentorDetailPage = () => {
                           myRequest.status === 'rejected' ? 'bg-red-100 text-red-700 border border-red-200' :
                           'bg-yellow-100 text-yellow-700 border border-yellow-200'
                         }`}
-                        title={myRequest.status === 'rejected' ? `Rejected ${myRequest.rejection_count || 0}/3 times` : ''}
+                        title={myRequest.status === 'rejected' ? t('mentorship.detail.rejectedTimes', { count: myRequest.rejection_count || 0 }) : ''}
                       >
                         {myRequest.status === 'accepted' && <FiCheckCircle size={12} />}
                         {myRequest.status === 'pending' && <FiClock size={12} />}
                         {myRequest.status === 'rejected' && <FiX size={12} />}
-                        {myRequest.status === 'rejected' ? `Rejected (${myRequest.rejection_count || 0}/3)` : myRequest.status.charAt(0).toUpperCase() + myRequest.status.slice(1)}
+                        {myRequest.status === 'rejected' ? t('mentorship.card.rejectedCount', { count: myRequest.rejection_count || 0 }) : t(`mentorship.status.${myRequest.status}`)}
                       </div>
                       {myRequest.status === 'pending' && (
                         <button
                           onClick={handleCancelRequest}
                           className="inline-flex items-center gap-1.5 bg-red-50 text-red-700 px-4 py-2 rounded-lg font-semibold text-xs border border-red-200 hover:bg-red-100 transition"
                         >
-                          <FiX size={12} /> Cancel Request
+                          <FiX size={12} /> {t('mentorship.detail.cancelRequest')}
                         </button>
                       )}
                     </>
@@ -588,7 +592,7 @@ const MentorDetailPage = () => {
                       onMouseEnter={(e) => e.currentTarget.style.backgroundColor = BRAND_LIGHT}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = BRAND}
                     >
-                      <FiSend size={12} /> Request Mentorship
+                      <FiSend size={12} /> {t('mentorship.card.requestMentorship')}
                     </button>
                   )}
                   {!isOwn && (
@@ -596,7 +600,7 @@ const MentorDetailPage = () => {
                       onClick={openReview}
                       className="inline-flex items-center gap-1.5 bg-white text-gray-700 px-4 py-2 rounded-lg font-semibold text-xs border border-gray-300 hover:bg-gray-50 transition"
                     >
-                      <FiStar size={12} /> Leave Review
+                      <FiStar size={12} /> {t('mentorship.detail.leaveReview')}
                     </button>
                   )}
                   {myRequest?.status === 'accepted' && mentor.whatsapp_number && (
@@ -605,7 +609,7 @@ const MentorDetailPage = () => {
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1.5 bg-[#25d366] hover:bg-[#1ebe5b] text-white px-4 py-2 rounded-lg font-semibold text-xs transition"
-                      title="Contact on WhatsApp"
+                      title={t('mentorship.detail.contactWhatsapp')}
                     >
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347M12.05 21.785h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
@@ -620,19 +624,19 @@ const MentorDetailPage = () => {
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-gray-100">
                 <div className="text-center">
                   <p className="text-2xl font-bold" style={{ color: BRAND }}>{mentor.mentored_count || 0}</p>
-                  <p className="text-[10px] uppercase text-gray-500 font-semibold tracking-wider">Mentored</p>
+                  <p className="text-[10px] uppercase text-gray-500 font-semibold tracking-wider">{t('mentorship.detail.statMentored')}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold" style={{ color: BRAND }}>{mentor.years_of_experience || 0}</p>
-                  <p className="text-[10px] uppercase text-gray-500 font-semibold tracking-wider">Years Exp.</p>
+                  <p className="text-[10px] uppercase text-gray-500 font-semibold tracking-wider">{t('mentorship.detail.statYearsExp')}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold" style={{ color: BRAND }}>{avg.toFixed(1)}</p>
-                  <p className="text-[10px] uppercase text-gray-500 font-semibold tracking-wider">Rating</p>
+                  <p className="text-[10px] uppercase text-gray-500 font-semibold tracking-wider">{t('mentorship.detail.statRating')}</p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold" style={{ color: BRAND }}>{mentor.graduation_year || '—'}</p>
-                  <p className="text-[10px] uppercase text-gray-500 font-semibold tracking-wider">Graduation</p>
+                  <p className="text-[10px] uppercase text-gray-500 font-semibold tracking-wider">{t('mentorship.detail.statGraduation')}</p>
                 </div>
               </div>
             </div>
@@ -650,7 +654,7 @@ const MentorDetailPage = () => {
               {mentor.bio && (
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
                   <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FiBriefcase size={16} style={{ color: BRAND }} /> About {mentor.name?.split(' ')[0]}
+                    <FiBriefcase size={16} style={{ color: BRAND }} /> {t('mentorship.detail.about', { name: mentor.name?.split(' ')[0] })}
                   </h2>
                   <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{mentor.bio}</p>
                 </div>
@@ -660,7 +664,7 @@ const MentorDetailPage = () => {
               {mentor.expertise?.length > 0 && (
                 <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
                   <h2 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <FiAward size={16} style={{ color: BRAND }} /> Areas of Expertise
+                    <FiAward size={16} style={{ color: BRAND }} /> {t('mentorship.detail.areasOfExpertise')}
                   </h2>
                   <div className="flex flex-wrap gap-2">
                     {mentor.expertise.map((skill) => (
@@ -680,7 +684,7 @@ const MentorDetailPage = () => {
               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <div className="p-5 border-b border-gray-100 flex items-center justify-between flex-wrap gap-3">
                   <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                    <FiMessageCircle size={16} style={{ color: BRAND }} /> Reviews
+                    <FiMessageCircle size={16} style={{ color: BRAND }} /> {t('mentorship.detail.reviews')}
                     <span className="text-sm font-semibold text-gray-400">({totalReviews})</span>
                   </h2>
                   {!isOwn && (
@@ -689,7 +693,7 @@ const MentorDetailPage = () => {
                       className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg text-white transition"
                       style={{ backgroundColor: BRAND }}
                     >
-                      <FiStar size={11} /> Write Review
+                      <FiStar size={11} /> {t('mentorship.detail.writeReview')}
                     </button>
                   )}
                 </div>
@@ -698,8 +702,8 @@ const MentorDetailPage = () => {
                   {totalReviews === 0 ? (
                     <div className="text-center py-10">
                       <FiMessageCircle size={36} className="text-gray-300 mx-auto mb-2" />
-                      <p className="text-sm text-gray-600 font-semibold">No reviews yet</p>
-                      <p className="text-xs text-gray-400 mt-1">Be the first to share your experience</p>
+                      <p className="text-sm text-gray-600 font-semibold">{t('mentorship.card.noReviews')}</p>
+                      <p className="text-xs text-gray-400 mt-1">{t('mentorship.detail.beFirstReview')}</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
@@ -743,7 +747,7 @@ const MentorDetailPage = () => {
             <div className="space-y-6">
               {/* Rating overview */}
               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
-                <h3 className="font-bold text-gray-900 mb-3 text-xs uppercase tracking-wider">Rating Overview</h3>
+                <h3 className="font-bold text-gray-900 mb-3 text-xs uppercase tracking-wider">{t('mentorship.detail.ratingOverview')}</h3>
                 <div className="text-center mb-4 pb-4 border-b border-gray-100">
                   <div className="text-5xl font-bold" style={{ color: BRAND }}>{avg.toFixed(1)}</div>
                   <div className="flex items-center justify-center gap-1 my-2">
@@ -751,7 +755,7 @@ const MentorDetailPage = () => {
                       <FiStar key={n} size={16} className={n <= Math.round(avg) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'} />
                     ))}
                   </div>
-                  <p className="text-xs text-gray-500">Based on {totalReviews} reviews</p>
+                  <p className="text-xs text-gray-500">{t('mentorship.detail.basedOn', { count: totalReviews })}</p>
                 </div>
                 <div className="space-y-2">
                   {[5, 4, 3, 2, 1].map((star) => {
@@ -773,12 +777,12 @@ const MentorDetailPage = () => {
 
               {/* Quick info */}
               <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-3">
-                <h3 className="font-bold text-gray-900 text-xs uppercase tracking-wider mb-2">Quick Info</h3>
+                <h3 className="font-bold text-gray-900 text-xs uppercase tracking-wider mb-2">{t('mentorship.detail.quickInfo')}</h3>
                 {mentor.faculty && (
                   <div className="flex items-start gap-3">
                     <FiAward size={14} className="mt-0.5 flex-shrink-0" style={{ color: BRAND }} />
                     <div className="min-w-0">
-                      <div className="text-[10px] uppercase font-semibold text-gray-400 tracking-wider">Faculty</div>
+                      <div className="text-[10px] uppercase font-semibold text-gray-400 tracking-wider">{t('mentorship.detail.faculty')}</div>
                       <div className="text-xs font-semibold text-gray-800">{mentor.faculty}</div>
                     </div>
                   </div>
@@ -787,7 +791,7 @@ const MentorDetailPage = () => {
                   <div className="flex items-start gap-3">
                     <FiGlobe size={14} className="mt-0.5 flex-shrink-0" style={{ color: BRAND }} />
                     <div className="min-w-0">
-                      <div className="text-[10px] uppercase font-semibold text-gray-400 tracking-wider">Department</div>
+                      <div className="text-[10px] uppercase font-semibold text-gray-400 tracking-wider">{t('mentorship.detail.department')}</div>
                       <div className="text-xs font-semibold text-gray-800">{mentor.department}</div>
                     </div>
                   </div>
@@ -796,7 +800,7 @@ const MentorDetailPage = () => {
                   <div className="flex items-start gap-3 pt-3 border-t border-gray-100">
                     <FiMail size={14} className="mt-0.5 flex-shrink-0" style={{ color: BRAND }} />
                     <div className="min-w-0">
-                      <div className="text-[10px] uppercase font-semibold text-gray-400 tracking-wider">Email</div>
+                      <div className="text-[10px] uppercase font-semibold text-gray-400 tracking-wider">{t('mentorship.detail.email')}</div>
                       <a href={`mailto:${mentor.email}`} className="text-xs font-semibold hover:underline break-all" style={{ color: BRAND }}>
                         {mentor.email}
                       </a>
@@ -810,7 +814,7 @@ const MentorDetailPage = () => {
                 to={`/profile/${mentor.alumni_student_id}`}
                 className="block w-full text-center bg-white border border-gray-200 hover:border-[#002759] text-gray-700 hover:text-[#002759] py-3 rounded-xl text-sm font-semibold transition"
               >
-                View Full Profile
+                {t('mentorship.detail.viewFullProfile')}
               </Link>
             </div>
           </div>
