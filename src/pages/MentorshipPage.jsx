@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import {
   FiChevronLeft,
@@ -45,6 +46,7 @@ const FACULTY_OPTIONS = [
 const EXPERTISE_OPTIONS = ['Structural', 'Hydraulics', 'AI/ML', 'Project Mgmt', 'GIS', 'Python', 'Machine Learning'];
 
 const MentorshipPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -119,12 +121,12 @@ const MentorshipPage = () => {
   const handleCancelRequest = async (requestId, mentor) => {
     const confirm = await Swal.fire({
       icon: 'warning',
-      title: 'Cancel Request?',
-      text: `Cancel your mentorship request to ${mentor.name}?`,
+      title: t('mentorship.cancel.title'),
+      text: t('mentorship.cancel.confirm', { name: mentor.name }),
       showCancelButton: true,
-      confirmButtonText: 'Yes, cancel',
+      confirmButtonText: t('mentorship.cancel.yes'),
       confirmButtonColor: '#dc2626',
-      cancelButtonText: 'No',
+      cancelButtonText: t('mentorship.cancel.no'),
     });
     if (!confirm.isConfirmed) return;
     try {
@@ -134,9 +136,9 @@ const MentorshipPage = () => {
         delete copy[mentor.id];
         return copy;
       });
-      Swal.fire({ icon: 'success', title: 'Cancelled', timer: 1500, showConfirmButton: false });
+      Swal.fire({ icon: 'success', title: t('mentorship.cancel.cancelled'), timer: 1500, showConfirmButton: false });
     } catch (err) {
-      Swal.fire({ icon: 'error', title: 'Error', text: err.response?.data?.message || 'Failed to cancel.' });
+      Swal.fire({ icon: 'error', title: t('mentorship.common.error'), text: err.response?.data?.message || t('mentorship.cancel.failed') });
     }
   };
 
@@ -144,9 +146,9 @@ const MentorshipPage = () => {
     if (!authService.isAuthenticated()) {
       Swal.fire({
         icon: 'info',
-        title: 'Login Required',
-        text: 'Please log in to request mentorship.',
-        confirmButtonText: 'Go to Login',
+        title: t('mentorship.login.title'),
+        text: t('mentorship.login.requestText'),
+        confirmButtonText: t('mentorship.login.goToLogin'),
         confirmButtonColor: '#002759',
       }).then(r => { if (r.isConfirmed) navigate('/login'); });
       return;
@@ -154,8 +156,8 @@ const MentorshipPage = () => {
     if (iAmMentor) {
       Swal.fire({
         icon: 'info',
-        title: 'Mentors Cannot Apply',
-        text: 'You are registered as a mentor, so you cannot request mentorship from another mentor.',
+        title: t('mentorship.mentorBlock.title'),
+        text: t('mentorship.mentorBlock.text'),
         confirmButtonColor: '#002759',
       });
       return;
@@ -174,8 +176,8 @@ const MentorshipPage = () => {
       setRequestModalMentor(null);
       Swal.fire({
         icon: 'success',
-        title: 'Request Sent',
-        text: `Your request has been sent to ${mentor.name}.`,
+        title: t('mentorship.request.sentTitle'),
+        text: t('mentorship.request.sentText', { name: mentor.name }),
         timer: 2500,
         showConfirmButton: false,
       });
@@ -187,15 +189,15 @@ const MentorshipPage = () => {
           ...prev,
           [mentor.id]: { status: 'pending', rejection_count: prev[mentor.id]?.rejection_count || 0, can_request_again: false },
         }));
-        Swal.fire({ icon: 'info', title: 'Already Requested', text: data.message });
+        Swal.fire({ icon: 'info', title: t('mentorship.request.alreadyTitle'), text: data.message });
       } else if (data.status === 'cooldown') {
         setMyApplicationMap(prev => ({
           ...prev,
           [mentor.id]: { status: 'rejected', rejection_count: data.rejection_count || 3, can_request_again: false },
         }));
-        Swal.fire({ icon: 'warning', title: 'Cooldown Active', text: data.message });
+        Swal.fire({ icon: 'warning', title: t('mentorship.request.cooldownTitle'), text: data.message });
       } else {
-        Swal.fire({ icon: 'error', title: 'Error', text: data.message || 'Failed to send request.' });
+        Swal.fire({ icon: 'error', title: t('mentorship.common.error'), text: data.message || t('mentorship.request.failed') });
       }
     } finally {
       setRequestingId(null);
@@ -316,20 +318,20 @@ const MentorshipPage = () => {
         {totalCount > 0 && (
           <div className="flex items-center justify-between px-3 py-2 rounded-lg" style={{ background: BRAND_BG }}>
             <span className="text-[11px] font-semibold" style={{ color: BRAND_DARK }}>
-              {totalCount} active filter{totalCount > 1 ? 's' : ''}
+              {t('mentorship.filters.activeCount', { count: totalCount })}
             </span>
             <button onClick={resetFilters} className="text-[11px] font-bold hover:underline" style={{ color: BRAND }}>
-              Clear all
+              {t('mentorship.filters.clearAll')}
             </button>
           </div>
         )}
 
-        <FilterSection icon={FiBriefcase} title="Faculty" count={facultyCount}>
+        <FilterSection icon={FiBriefcase} title={t('mentorship.filters.faculty')} count={facultyCount}>
           <div className="flex flex-col gap-1.5">
             {FACULTY_OPTIONS.map(({ key, label }) => (
               <PillToggle
                 key={key}
-                label={label}
+                label={t(`mentorship.faculties.${key}`, { defaultValue: label })}
                 active={!!selectedFaculty[key]}
                 onClick={() => handleFacultyChange(key)}
               />
@@ -339,13 +341,13 @@ const MentorshipPage = () => {
 
         <div className="h-px bg-gray-100" />
 
-        <FilterSection icon={FiTrendingUp} title="Years of Experience" count={expCount}>
+        <FilterSection icon={FiTrendingUp} title={t('mentorship.filters.experience')} count={expCount}>
           <div className="flex flex-col gap-1.5">
             {[
-              { key: 'all', label: 'All experience levels' },
-              { key: '5-10', label: '5+ years' },
-              { key: '10-15', label: '10+ years' },
-              { key: '15+', label: '15+ years' },
+              { key: 'all', label: t('mentorship.filters.expAll') },
+              { key: '5-10', label: t('mentorship.filters.exp5') },
+              { key: '10-15', label: t('mentorship.filters.exp10') },
+              { key: '15+', label: t('mentorship.filters.exp15') },
             ].map(opt => (
               <PillToggle
                 key={opt.key}
@@ -359,12 +361,12 @@ const MentorshipPage = () => {
 
         <div className="h-px bg-gray-100" />
 
-        <FilterSection icon={FiLayers} title="Expertise Area" count={expertiseCount}>
+        <FilterSection icon={FiLayers} title={t('mentorship.filters.expertise')} count={expertiseCount}>
           <div className="flex flex-col gap-1.5">
             {EXPERTISE_OPTIONS.map(expertise => (
               <PillToggle
                 key={expertise}
-                label={expertise}
+                label={t(`mentorship.expertise.${expertise}`, { defaultValue: expertise })}
                 active={selectedExpertise.includes(expertise)}
                 onClick={() => handleExpertiseToggle(expertise)}
               />
@@ -381,7 +383,7 @@ const MentorshipPage = () => {
             onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}
           >
             <FiX className="w-3 h-3" />
-            Reset All Filters
+            {t('mentorship.filters.resetAll')}
           </button>
         )}
       </div>
@@ -438,13 +440,13 @@ const MentorshipPage = () => {
           <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 mb-4">
               <FiAward className="text-[10px]" />
-              KPU Alumni Mentorship Hub
+              {t('mentorship.list.heroBadge')}
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3 max-w-3xl">
-              Find Your Mentor
+              {t('mentorship.list.heroTitle')}
             </h1>
             <p className="text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed font-light">
-              Connect with experienced alumni and guide the next generation of KPU professionals.
+              {t('mentorship.list.heroSubtitle')}
             </p>
           </div>
         </section>
@@ -460,7 +462,7 @@ const MentorshipPage = () => {
                 <FiSearch className="text-gray-400 mr-2.5 flex-shrink-0 w-4 h-4" />
                 <input
                   className="w-full border-none bg-transparent focus:ring-0 focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
-                  placeholder="Search by name, title, company, or expertise…"
+                  placeholder={t('mentorship.list.searchPlaceholder')}
                   value={searchInput}
                   onChange={(e) => handleSearchChange(e.target.value)}
                 />
@@ -475,7 +477,7 @@ const MentorshipPage = () => {
                 className="lg:hidden flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold border transition-colors"
                 style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}
               >
-                <FiFilter className="w-3.5 h-3.5" /> Filters
+                <FiFilter className="w-3.5 h-3.5" /> {t('mentorship.filters.title')}
               </button>
             </div>
           </div>
@@ -492,8 +494,8 @@ const MentorshipPage = () => {
                     <FiFilter className="w-3.5 h-3.5" style={{ color: BRAND }} />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">Filters</h2>
-                    <p className="text-[10px] text-gray-400">Find your perfect match</p>
+                    <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">{t('mentorship.filters.title')}</h2>
+                    <p className="text-[10px] text-gray-400">{t('mentorship.filters.subtitle')}</p>
                   </div>
                 </div>
                 <div className="p-5">
@@ -508,7 +510,7 @@ const MentorshipPage = () => {
                 <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
                 <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base font-bold text-gray-900">Filters</h2>
+                    <h2 className="text-base font-bold text-gray-900">{t('mentorship.filters.title')}</h2>
                     <button
                       onClick={() => setFiltersOpen(false)}
                       className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50"
@@ -522,7 +524,7 @@ const MentorshipPage = () => {
                     className="w-full mt-4 text-white text-sm font-semibold py-2.5 rounded-lg"
                     style={{ background: BRAND_DARK }}
                   >
-                    Apply
+                    {t('common.apply')}
                   </button>
                 </div>
               </div>
@@ -533,8 +535,8 @@ const MentorshipPage = () => {
               {/* Toolbar — count + view toggle */}
               <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
                 <p className="text-xs text-gray-500">
-                  {loading ? 'Loading…' : (
-                    <>Showing <span className="font-semibold text-gray-900">{mentors.length}</span> of <span className="font-semibold text-gray-900">{pagination.total}</span> mentors</>
+                  {loading ? t('mentorship.list.loading') : (
+                    <>{t('mentorship.list.showingPrefix')} <span className="font-semibold text-gray-900">{mentors.length}</span> {t('mentorship.list.showingOf')} <span className="font-semibold text-gray-900">{pagination.total}</span> {t('mentorship.list.mentorsLabel')}</>
                   )}
                 </p>
                 <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-0.5">
@@ -545,7 +547,7 @@ const MentorshipPage = () => {
                     }`}
                     style={viewMode === 'list' ? { background: BRAND_DARK } : {}}
                   >
-                    <FiList className="w-3.5 h-3.5" /> List
+                    <FiList className="w-3.5 h-3.5" /> {t('mentorship.list.viewList')}
                   </button>
                   <button
                     onClick={() => setViewMode('grid')}
@@ -554,7 +556,7 @@ const MentorshipPage = () => {
                     }`}
                     style={viewMode === 'grid' ? { background: BRAND_DARK } : {}}
                   >
-                    <FiGrid className="w-3.5 h-3.5" /> Grid
+                    <FiGrid className="w-3.5 h-3.5" /> {t('mentorship.list.viewGrid')}
                   </button>
                 </div>
               </div>
@@ -575,14 +577,14 @@ const MentorshipPage = () => {
                   <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style={{ background: BRAND_BG }}>
                     <FiUser className="text-2xl" style={{ color: BRAND }} />
                   </div>
-                  <h3 className="text-base font-bold text-gray-900 mb-1">No mentors found</h3>
-                  <p className="text-xs text-gray-500 max-w-xs mx-auto">Try adjusting your search or removing some filters.</p>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">{t('mentorship.list.emptyTitle')}</h3>
+                  <p className="text-xs text-gray-500 max-w-xs mx-auto">{t('mentorship.list.emptyText')}</p>
                   <button
                     onClick={resetFilters}
                     className="mt-4 px-5 py-2 text-white text-xs font-semibold rounded-lg"
                     style={{ background: BRAND_DARK }}
                   >
-                    Reset filters
+                    {t('mentorship.list.resetFilters')}
                   </button>
                 </div>
               ) : viewMode === 'list' ? (
@@ -625,7 +627,7 @@ const MentorshipPage = () => {
               {!loading && mentors.length > 0 && pagination.total > 0 && (
                 <div className="mt-6 bg-white rounded-xl border border-gray-200 p-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
                   <p className="text-xs text-gray-500">
-                    Showing <span className="font-semibold text-gray-900">{pagination.total}</span> mentors
+                    {t('mentorship.list.showingPrefix')} <span className="font-semibold text-gray-900">{pagination.total}</span> {t('mentorship.list.mentorsLabel')}
                   </p>
                   <div className="flex items-center gap-1">
                     <button
@@ -678,6 +680,7 @@ const MentorshipPage = () => {
 const PHONE_REGEX = /^[+\d][\d\s\-()]{6,29}$/;
 
 const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) => {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [error, setError] = useState('');
@@ -688,7 +691,7 @@ const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) =>
 
   const handleSend = () => {
     if (whatsapp && !PHONE_REGEX.test(whatsapp.trim())) {
-      setError('Please enter a valid phone number (digits, +, -, ( ) only).');
+      setError(t('mentorship.modal.phoneError'));
       return;
     }
     setError('');
@@ -714,7 +717,7 @@ const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) =>
               </div>
             )}
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-wider text-white/70 font-semibold">Request Mentorship</p>
+              <p className="text-[10px] uppercase tracking-wider text-white/70 font-semibold">{t('mentorship.modal.requestTitle')}</p>
               <h3 className="text-base font-bold text-white truncate">{mentor.name}</h3>
             </div>
           </div>
@@ -727,7 +730,7 @@ const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) =>
         <div className="p-5 space-y-4">
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-              WhatsApp Number <span className="text-gray-400 font-normal">(optional)</span>
+              {t('mentorship.modal.whatsappLabel')} <span className="text-gray-400 font-normal">{t('mentorship.modal.optional')}</span>
             </label>
             <input
               type="tel"
@@ -742,14 +745,14 @@ const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) =>
           </div>
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-              Introduction Message
+              {t('mentorship.modal.introLabel')}
             </label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               rows={4}
               maxLength={500}
-              placeholder="Tell the mentor what you'd like guidance on…"
+              placeholder={t('mentorship.modal.introPlaceholder')}
               className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#002759] focus:ring-1 focus:ring-[#002759] transition resize-none"
             />
             <p className="text-[10px] text-gray-400 mt-1 text-right">{message.length}/500</p>
@@ -762,7 +765,7 @@ const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) =>
             onClick={onClose}
             className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition"
           >
-            Cancel
+            {t('common.cancel')}
           </button>
           <button
             onClick={handleSend}
@@ -775,7 +778,7 @@ const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) =>
             {loading ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
-              <>Send Request</>
+              <>{t('mentorship.modal.sendRequest')}</>
             )}
           </button>
         </div>
@@ -785,6 +788,7 @@ const RequestMentorshipModal = ({ mentor, open, loading, onClose, onSubmit }) =>
 };
 
 const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, navigate, currentUserId, application, iAmMentor }) => {
+  const { t } = useTranslation();
   const applicationStatus = application?.status || null;
   const canRequestAgain = application?.can_request_again || false;
   const rejectionCount = application?.rejection_count || 0;
@@ -828,7 +832,7 @@ const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, na
         <span className="text-[10px] text-gray-400">({reviewsCount})</span>
       </div>
     ) : (
-      <span className="text-[11px] text-gray-400">No reviews yet</span>
+      <span className="text-[11px] text-gray-400">{t('mentorship.card.noReviews')}</span>
     )
   );
 
@@ -840,21 +844,21 @@ const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, na
     if (isOwnCard) {
       return (
         <button onClick={() => navigate('/profile')} className={`${base} bg-gray-100 text-gray-600 border border-gray-200 hover:bg-gray-200`}>
-          Edit Profile
+          {t('mentorship.card.editProfile')}
         </button>
       );
     }
     if (iAmMentor && (!applicationStatus || (applicationStatus === 'rejected' && canRequestAgain))) {
       return (
-        <button disabled title="Mentors cannot apply for mentorship" className={`${base} bg-gray-100 text-gray-500 border border-gray-200 cursor-not-allowed`}>
-          Mentors Can't Apply
+        <button disabled title={t('mentorship.card.mentorsCannotApplyTitle')} className={`${base} bg-gray-100 text-gray-500 border border-gray-200 cursor-not-allowed`}>
+          {t('mentorship.card.mentorsCantApply')}
         </button>
       );
     }
     if (applicationStatus === 'accepted') {
       return (
         <button disabled className={`${base} bg-green-50 text-green-700 border border-green-200`}>
-          <FiCheck className="text-[11px]" /> Accepted
+          <FiCheck className="text-[11px]" /> {t('mentorship.status.accepted')}
         </button>
       );
     }
@@ -862,11 +866,11 @@ const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, na
       return (
         <div className="flex-1 flex gap-1">
           <button disabled className={`${base} bg-amber-50 text-amber-700 border border-amber-200`}>
-            Pending
+            {t('mentorship.status.pending')}
           </button>
           <button
             onClick={() => applicationId && onCancel && onCancel(applicationId, mentor)}
-            title="Cancel request"
+            title={t('mentorship.card.cancelRequestTitle')}
             className="px-3 rounded-md border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition flex items-center"
           >
             <FiX size={14} />
@@ -876,8 +880,8 @@ const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, na
     }
     if (applicationStatus === 'rejected' && !canRequestAgain) {
       return (
-        <button disabled title="Cooldown: try again later" className={`${base} bg-red-50 text-red-700 border border-red-200`}>
-          Rejected ({rejectionCount}/3)
+        <button disabled title={t('mentorship.card.cooldownTitle')} className={`${base} bg-red-50 text-red-700 border border-red-200`}>
+          {t('mentorship.card.rejectedCount', { count: rejectionCount })}
         </button>
       );
     }
@@ -890,7 +894,7 @@ const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, na
         onMouseEnter={(e) => !requesting && (e.currentTarget.style.background = BRAND_DARKER)}
         onMouseLeave={(e) => !requesting && (e.currentTarget.style.background = BRAND_DARK)}
       >
-        {requesting ? 'Sending…' : (applicationStatus === 'rejected' ? `Request Again (${rejectionCount}/3)` : 'Request Mentorship')}
+        {requesting ? t('mentorship.card.sending') : (applicationStatus === 'rejected' ? t('mentorship.card.requestAgainCount', { count: rejectionCount }) : t('mentorship.card.requestMentorship'))}
       </button>
     );
   };
@@ -913,19 +917,19 @@ const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, na
               {mentor.graduation_year && (
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
                   style={{ background: BRAND_BG, color: BRAND, border: `1px solid ${BRAND_BORDER}` }}>
-                  <FiCheck className="text-[10px]" /> Class of {mentor.graduation_year}
+                  <FiCheck className="text-[10px]" /> {t('mentorship.card.classOf', { year: mentor.graduation_year })}
                 </span>
               )}
             </div>
             {mentor.title && <p className="text-sm font-semibold" style={{ color: BRAND_DARK }}>{mentor.title}</p>}
-            {mentor.company && <p className="text-xs text-gray-500 mb-1.5">At {mentor.company}</p>}
+            {mentor.company && <p className="text-xs text-gray-500 mb-1.5">{t('mentorship.card.atCompany', { company: mentor.company })}</p>}
             <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-gray-500 mb-2">
               <Rating />
               {mentor.years_of_experience ? (
-                <span className="flex items-center gap-1"><FiTrendingUp className="text-gray-400" />{mentor.years_of_experience} yrs exp.</span>
+                <span className="flex items-center gap-1"><FiTrendingUp className="text-gray-400" />{t('mentorship.card.yrsExp', { count: mentor.years_of_experience })}</span>
               ) : null}
               {mentor.mentored_count > 0 && (
-                <span className="flex items-center gap-1"><FiUsers className="text-gray-400" />{mentor.mentored_count} mentored</span>
+                <span className="flex items-center gap-1"><FiUsers className="text-gray-400" />{t('mentorship.card.mentoredCount', { count: mentor.mentored_count })}</span>
               )}
             </div>
             {mentor.bio && <p className="text-xs text-gray-500 leading-relaxed line-clamp-2 mb-2">{mentor.bio}</p>}
@@ -943,7 +947,7 @@ const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, na
             <button onClick={goToDetail}
               className="flex-1 text-xs font-bold py-2 rounded-lg text-center transition-colors border flex items-center justify-center gap-1.5"
               style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-              <FiEye className="text-xs" /> View
+              <FiEye className="text-xs" /> {t('mentorship.card.view')}
             </button>
           </div>
         </div>
@@ -964,7 +968,7 @@ const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, na
               {mentor.name}
             </button>
             {mentor.title && <p className="text-xs font-semibold line-clamp-1" style={{ color: BRAND_DARK }}>{mentor.title}</p>}
-            {mentor.company && <p className="text-[11px] text-gray-500 line-clamp-1">At {mentor.company}</p>}
+            {mentor.company && <p className="text-[11px] text-gray-500 line-clamp-1">{t('mentorship.card.atCompany', { company: mentor.company })}</p>}
             <div className="mt-1"><Rating /></div>
           </div>
         </div>
@@ -974,19 +978,19 @@ const MentorCard = ({ view = 'grid', mentor, onRequest, onCancel, requesting, na
         <div className="flex items-center gap-4 py-2.5 border-y border-gray-100 mb-3 text-[11px]">
           {mentor.years_of_experience ? (
             <div className="flex flex-col">
-              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Experience</span>
-              <span className="font-bold text-gray-700">{mentor.years_of_experience} yrs</span>
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider">{t('mentorship.card.experienceLabel')}</span>
+              <span className="font-bold text-gray-700">{t('mentorship.card.yrs', { count: mentor.years_of_experience })}</span>
             </div>
           ) : null}
           {mentor.mentored_count > 0 && (
             <div className="flex flex-col">
-              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Mentored</span>
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider">{t('mentorship.card.mentoredLabel')}</span>
               <span className="font-bold text-gray-700">{mentor.mentored_count}</span>
             </div>
           )}
           {mentor.graduation_year && (
             <div className="flex flex-col">
-              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider">Class</span>
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider">{t('mentorship.card.classLabel')}</span>
               <span className="font-bold text-gray-700">{mentor.graduation_year}</span>
             </div>
           )}
