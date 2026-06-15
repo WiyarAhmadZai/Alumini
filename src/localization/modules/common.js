@@ -33,6 +33,7 @@ const common = {
       events: "Events",
       giving: "Giving & Impact",
       home: "Home",
+      dashboard: "Dashboard",
       alumniDirectory: "Alumni Directory",
       aboutKpu: "About KPU",
       contactUs: "Contact Us",
@@ -44,6 +45,16 @@ const common = {
       title: "Notifications",
       empty: "No notifications",
       reason: "Reason:",
+    },
+    userMenu: {
+      signedInAs: "Signed in as",
+      dashboard: "Dashboard",
+      myProfile: "My Profile",
+      myApplications: "My Applications",
+      myEvents: "Registered Events",
+      myMessages: "Messages",
+      mentorship: "Mentorship",
+      logout: "Logout",
     },
     footer: {
       about:
@@ -98,6 +109,7 @@ const common = {
       events: "رویدادها",
       giving: "کمک و تأثیر",
       home: "خانه",
+      dashboard: "داشبورد",
       alumniDirectory: "دایرکتوری فارغان",
       aboutKpu: "درباره KPU",
       contactUs: "با ما در تماس شوید",
@@ -109,6 +121,16 @@ const common = {
       title: "اطلاعیه‌ها",
       empty: "اطلاعیه‌ای نیست",
       reason: "دلیل:",
+    },
+    userMenu: {
+      signedInAs: "وارد شده به نام",
+      dashboard: "داشبورد",
+      myProfile: "پروفایل من",
+      myApplications: "درخواست‌های من",
+      myEvents: "رویدادهای ثبت‌شده",
+      myMessages: "پیام‌ها",
+      mentorship: "رهنمایی",
+      logout: "خروج",
     },
     footer: {
       about:
@@ -163,6 +185,7 @@ const common = {
       events: "پیښې",
       giving: "مرسته او اغېز",
       home: "کور",
+      dashboard: "ډشبورډ",
       alumniDirectory: "د فارغانو لارښود",
       aboutKpu: "د KPU په اړه",
       contactUs: "زموږ سره اړیکه",
@@ -174,6 +197,16 @@ const common = {
       title: "خبرتیاوې",
       empty: "هیڅ خبرتیا نشته",
       reason: "دلیل:",
+    },
+    userMenu: {
+      signedInAs: "ننوتلی په نوم",
+      dashboard: "ډشبورډ",
+      myProfile: "زما پروفایل",
+      myApplications: "زما غوښتنلیکونه",
+      myEvents: "ثبت‌شوې پیښې",
+      myMessages: "پیغامونه",
+      mentorship: "لارښوونه",
+      logout: "وتل",
     },
     footer: {
       about:
