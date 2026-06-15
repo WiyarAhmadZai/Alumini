@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { FiCheckCircle, FiXCircle, FiCalendar, FiMapPin, FiClock, FiUser } from 'react-icons/fi';
 import eventService from '../services/eventService';
@@ -12,6 +13,7 @@ const resolveImage = (img) => {
 };
 
 const VerifyCardPage = () => {
+  const { t } = useTranslation();
   const { eventId, userId } = useParams();
   const [loading, setLoading] = useState(true);
   const [event, setEvent] = useState(null);
@@ -32,7 +34,7 @@ const VerifyCardPage = () => {
             headers: { 'Accept': 'application/json' },
           });
         }
-        if (!res.ok) throw new Error('Event not found');
+        if (!res.ok) throw new Error(t('events.verify.eventNotFound'));
         const eventData = await res.json();
         setEvent(eventData.data);
 
@@ -44,7 +46,7 @@ const VerifyCardPage = () => {
           setRegistration(reg || null);
         }
       } catch (err) {
-        setError('Could not verify this card.');
+        setError(t('events.verify.couldNotVerify'));
       } finally {
         setLoading(false);
       }
@@ -63,7 +65,7 @@ const VerifyCardPage = () => {
   const isValid = registration && ['registered', 'confirmed', 'attended'].includes(registration.status);
   const studentInfo = registration?.special_requirements ? (() => { try { return JSON.parse(registration.special_requirements); } catch { return null; } })() : null;
   const alumniStudent = registration?.alumni_student;
-  const studentName = alumniStudent?.name || alumniStudent?.student?.full_name || alumniStudent?.student?.first_name || alumniStudent?.full_name || studentInfo?.name || 'Unknown';
+  const studentName = alumniStudent?.name || alumniStudent?.student?.full_name || alumniStudent?.student?.first_name || alumniStudent?.full_name || studentInfo?.name || t('events.verify.unknown');
   const facultyName = alumniStudent?.faculty_name || alumniStudent?.student?.department?.faculty?.name || '';
   const departmentName = alumniStudent?.student?.department?.name || '';
 
@@ -76,7 +78,7 @@ const VerifyCardPage = () => {
             <img src="/logo_kpu.png" alt="KPU" className="w-12 h-12 rounded-xl bg-white p-1 shadow" />
             <div className="text-right">
               <h1 className="text-lg font-bold text-[#002759]">پوهنتون پولی تخنیک کابل</h1>
-              <p className="text-xs text-gray-500">KPU University — Card Verification</p>
+              <p className="text-xs text-gray-500">{t('events.verify.cardVerification')}</p>
             </div>
           </div>
         </div>
@@ -84,7 +86,7 @@ const VerifyCardPage = () => {
         {error ? (
           <div className="bg-white rounded-2xl shadow-lg border border-red-200 p-8 text-center">
             <FiXCircle className="mx-auto text-red-500 mb-4" size={48} />
-            <h2 className="text-lg font-bold text-red-700 mb-2">Verification Failed</h2>
+            <h2 className="text-lg font-bold text-red-700 mb-2">{t('events.verify.verificationFailed')}</h2>
             <p className="text-sm text-gray-600">{error}</p>
           </div>
         ) : (
@@ -94,14 +96,14 @@ const VerifyCardPage = () => {
               {isValid ? (
                 <>
                   <FiCheckCircle className="mx-auto text-green-600 mb-2" size={40} />
-                  <h2 className="text-lg font-bold text-green-800">Card Verified</h2>
-                  <p className="text-xs text-green-600 mt-1">This participation card is authentic and valid.</p>
+                  <h2 className="text-lg font-bold text-green-800">{t('events.verify.cardVerified')}</h2>
+                  <p className="text-xs text-green-600 mt-1">{t('events.verify.cardVerifiedDesc')}</p>
                 </>
               ) : (
                 <>
                   <FiXCircle className="mx-auto text-red-500 mb-2" size={40} />
-                  <h2 className="text-lg font-bold text-red-700">Invalid Card</h2>
-                  <p className="text-xs text-red-600 mt-1">No valid registration found for this event.</p>
+                  <h2 className="text-lg font-bold text-red-700">{t('events.verify.invalidCard')}</h2>
+                  <p className="text-xs text-red-600 mt-1">{t('events.verify.invalidCardDesc')}</p>
                 </>
               )}
             </div>
@@ -134,7 +136,7 @@ const VerifyCardPage = () => {
                 {/* Participant Info */}
                 {isValid && (
                   <div className="border-t border-gray-200 pt-4">
-                    <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2 flex items-center gap-1"><FiUser size={12} /> Participant</h4>
+                    <h4 className="text-xs font-semibold text-gray-500 uppercase mb-2 flex items-center gap-1"><FiUser size={12} /> {t('events.verify.participant')}</h4>
                     <div className="bg-gray-50 rounded-xl p-3">
                       <div className="flex items-center gap-3">
                         {alumniStudent?.profile_image || alumniStudent?.student?.student_photo ? (
@@ -147,7 +149,7 @@ const VerifyCardPage = () => {
                         <div className="flex-1">
                           <p className="text-sm font-bold text-gray-900">{studentName}</p>
                           {alumniStudent?.university_id && (
-                            <p className="text-xs text-gray-500 mt-0.5">ID: {alumniStudent.university_id}</p>
+                            <p className="text-xs text-gray-500 mt-0.5">{t('events.verify.id')} {alumniStudent.university_id}</p>
                           )}
                         </div>
                       </div>
@@ -155,13 +157,13 @@ const VerifyCardPage = () => {
                         <div className="grid grid-cols-2 gap-2 mt-3">
                           {facultyName && (
                             <div className="bg-white rounded-lg p-2 border border-gray-200">
-                              <p className="text-[10px] text-gray-400 uppercase">Faculty</p>
+                              <p className="text-[10px] text-gray-400 uppercase">{t('events.verify.faculty')}</p>
                               <p className="text-xs font-semibold text-gray-700">{facultyName}</p>
                             </div>
                           )}
                           {departmentName && (
                             <div className="bg-white rounded-lg p-2 border border-gray-200">
-                              <p className="text-[10px] text-gray-400 uppercase">Department</p>
+                              <p className="text-[10px] text-gray-400 uppercase">{t('events.verify.department')}</p>
                               <p className="text-xs font-semibold text-gray-700">{departmentName}</p>
                             </div>
                           )}
@@ -174,7 +176,7 @@ const VerifyCardPage = () => {
                           'bg-blue-100 text-blue-700'
                         }`}>{registration.status}</span>
                         {registration.card_downloaded && (
-                          <span className="text-[10px] text-green-600 font-medium">Card Downloaded</span>
+                          <span className="text-[10px] text-green-600 font-medium">{t('events.verify.cardDownloaded')}</span>
                         )}
                       </div>
                     </div>
@@ -185,7 +187,7 @@ const VerifyCardPage = () => {
 
             {/* Footer */}
             <div className="bg-gray-50 border-t border-gray-200 px-6 py-3 text-center">
-              <p className="text-[10px] text-gray-400">Verified by KPU Alumni System</p>
+              <p className="text-[10px] text-gray-400">{t('events.verify.verifiedFooter')}</p>
             </div>
           </div>
         )}
