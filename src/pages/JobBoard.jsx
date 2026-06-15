@@ -8,6 +8,7 @@ import {
   FiLayers, FiTrendingUp, FiChevronDown
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
 
 // ─── Brand palette ──────────────────────────────────────────────
@@ -18,6 +19,7 @@ const BRAND_BG = '#eef1fd';
 const BRAND_BORDER = '#c5ccf7';
 
 const JobBoard = () => {
+  const { t } = useTranslation();
   const { isAuthenticated, user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [location, setLocation] = useState('');
@@ -125,7 +127,7 @@ const JobBoard = () => {
   const handleApplyClick = (job) => {
     if (!isAuthenticated()) { window.location.href = '/login'; return; }
     if (appliedJobIds.includes(job.id)) {
-      Swal.fire({ icon: 'info', title: 'Already Applied', text: 'You have already applied for this job.', confirmButtonColor: BRAND });
+      Swal.fire({ icon: 'info', title: t('jobs.board.alreadyAppliedTitle'), text: t('jobs.board.alreadyAppliedText'), confirmButtonColor: BRAND });
       return;
     }
     setSelectedJob(job);
@@ -135,9 +137,9 @@ const JobBoard = () => {
   const handleApplicationSuccess = () => {
     if (selectedJob) setAppliedJobIds(prev => [...prev, selectedJob.id]);
     Swal.fire({
-      icon: 'success', title: 'Application Submitted!',
-      text: 'Your job application has been submitted successfully.',
-      confirmButtonColor: BRAND, confirmButtonText: 'Great!',
+      icon: 'success', title: t('jobs.board.successTitle'),
+      text: t('jobs.board.successText'),
+      confirmButtonColor: BRAND, confirmButtonText: t('jobs.board.successConfirm'),
       timer: 3000, timerProgressBar: true
     });
   };
@@ -222,22 +224,22 @@ const JobBoard = () => {
           <div className="flex items-center justify-between px-3 py-2 rounded-lg"
             style={{ background: BRAND_BG }}>
             <span className="text-[11px] font-semibold" style={{ color: BRAND_DARK }}>
-              {totalCount} active filter{totalCount > 1 ? 's' : ''}
+              {t('jobs.board.activeFilter', { count: totalCount })}
             </span>
             <button onClick={resetFilters}
               className="text-[11px] font-bold hover:underline" style={{ color: BRAND }}>
-              Clear all
+              {t('jobs.board.clearAll')}
             </button>
           </div>
         )}
 
         {/* Job Type — stacked rows */}
-        <FilterSection icon={FiBriefcase} title="Job Type" count={jobTypeCount}>
+        <FilterSection icon={FiBriefcase} title={t('jobs.board.jobType')} count={jobTypeCount}>
           <div className="flex flex-col gap-1.5">
             {[
-              { key: 'fullTime', label: 'Full-time' },
-              { key: 'contract', label: 'Contract' },
-              { key: 'remote', label: 'Remote' },
+              { key: 'fullTime', label: t('jobs.board.fullTime') },
+              { key: 'contract', label: t('jobs.board.contract') },
+              { key: 'remote', label: t('jobs.board.remote') },
             ].map(opt => (
               <PillToggle
                 key={opt.key}
@@ -252,12 +254,12 @@ const JobBoard = () => {
         <div className="h-px bg-gray-100" />
 
         {/* Industry — stacked rows */}
-        <FilterSection icon={FiLayers} title="Industry" count={industryCount}>
+        <FilterSection icon={FiLayers} title={t('jobs.board.industry')} count={industryCount}>
           <div className="flex flex-col gap-1.5">
             {[
-              { key: 'construction', label: 'Construction' },
-              { key: 'softwareEngineering', label: 'Software Engineering' },
-              { key: 'energy', label: 'Energy' },
+              { key: 'construction', label: t('jobs.board.construction') },
+              { key: 'softwareEngineering', label: t('jobs.board.softwareEngineering') },
+              { key: 'energy', label: t('jobs.board.energy') },
             ].map(opt => (
               <PillToggle
                 key={opt.key}
@@ -272,14 +274,14 @@ const JobBoard = () => {
         <div className="h-px bg-gray-100" />
 
         {/* Experience Level — stacked rows */}
-        <FilterSection icon={FiTrendingUp} title="Experience Level" count={expCount}>
+        <FilterSection icon={FiTrendingUp} title={t('jobs.board.experienceLevel')} count={expCount}>
           <div className="flex flex-col gap-1.5">
             {[
-              { key: 'all', label: 'All Levels' },
-              { key: 'entry', label: 'Entry Level' },
-              { key: 'intermediate', label: 'Intermediate' },
-              { key: 'senior', label: 'Senior Level' },
-              { key: 'director', label: 'Director / Lead' },
+              { key: 'all', label: t('jobs.board.allLevels') },
+              { key: 'entry', label: t('jobs.board.entryLevel') },
+              { key: 'intermediate', label: t('jobs.board.intermediate') },
+              { key: 'senior', label: t('jobs.board.seniorLevel') },
+              { key: 'director', label: t('jobs.board.directorLead') },
             ].map(opt => (
               <PillToggle
                 key={opt.key}
@@ -298,7 +300,7 @@ const JobBoard = () => {
             onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
             onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
             <FiX className="w-3 h-3" />
-            Reset All Filters
+            {t('jobs.board.resetAllFilters')}
           </button>
         )}
       </div>
@@ -325,7 +327,7 @@ const JobBoard = () => {
               {job.posted_by_alumnus && (
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
                   style={{ background: BRAND_BG, color: BRAND, border: `1px solid ${BRAND_BORDER}` }}>
-                  <FiCheck className="text-[10px]" /> Alumnus
+                  <FiCheck className="text-[10px]" /> {t('jobs.board.alumnus')}
                 </span>
               )}
             </div>
@@ -335,7 +337,7 @@ const JobBoard = () => {
                 <span className="flex items-center gap-1"><FiMapPin className="text-gray-400" />{job.location}</span>
               )}
               {(job.posted_time_ago || job.created_at) && (
-                <span className="flex items-center gap-1"><FiClock className="text-gray-400" />{job.posted_time_ago || 'Recently'}</span>
+                <span className="flex items-center gap-1"><FiClock className="text-gray-400" />{job.posted_time_ago || t('jobs.board.recently')}</span>
               )}
               {job.salary && (
                 <span className="flex items-center gap-1"><FiDollarSign className="text-gray-400" />{job.salary}</span>
@@ -348,7 +350,7 @@ const JobBoard = () => {
           <div className="flex md:flex-col gap-2 w-full md:w-auto">
             {applied ? (
               <button disabled className="flex-1 md:w-28 bg-gray-100 text-gray-500 text-xs font-bold py-2 rounded-lg cursor-not-allowed flex items-center justify-center gap-1.5">
-                <FiCheck className="text-xs" /> Applied
+                <FiCheck className="text-xs" /> {t('jobs.board.applied')}
               </button>
             ) : (
               <button onClick={() => handleApplyClick(job)}
@@ -356,13 +358,13 @@ const JobBoard = () => {
                 style={{ background: BRAND_DARK }}
                 onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
                 onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
-                Apply Now
+                {t('jobs.board.applyNow')}
               </button>
             )}
             <Link to={`/job/${job.id}`}
               className="flex-1 md:w-28 text-xs font-bold py-2 rounded-lg text-center transition-colors border"
               style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-              Details
+              {t('jobs.board.details')}
             </Link>
           </div>
         </div>
@@ -396,20 +398,20 @@ const JobBoard = () => {
             {job.salary && (
               <span className="flex items-center gap-1"><FiDollarSign className="w-3 h-3 flex-shrink-0" />{job.salary}</span>
             )}
-            <span className="flex items-center gap-1"><FiClock className="w-3 h-3 flex-shrink-0" />{job.posted_time_ago || 'Recently'}</span>
+            <span className="flex items-center gap-1"><FiClock className="w-3 h-3 flex-shrink-0" />{job.posted_time_ago || t('jobs.board.recently')}</span>
           </div>
 
           {job.posted_by_alumnus && (
             <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full self-start mb-3"
               style={{ background: BRAND_BG, color: BRAND, border: `1px solid ${BRAND_BORDER}` }}>
-              <FiCheck className="text-[10px]" /> Alumnus
+              <FiCheck className="text-[10px]" /> {t('jobs.board.alumnus')}
             </span>
           )}
 
           <div className="mt-auto flex gap-1.5 pt-2 border-t border-gray-100">
             {applied ? (
               <button disabled className="flex-1 bg-gray-100 text-gray-500 text-[11px] font-bold py-2 rounded-md cursor-not-allowed flex items-center justify-center gap-1">
-                <FiCheck className="text-[10px]" /> Applied
+                <FiCheck className="text-[10px]" /> {t('jobs.board.applied')}
               </button>
             ) : (
               <button onClick={() => handleApplyClick(job)}
@@ -417,7 +419,7 @@ const JobBoard = () => {
                 style={{ background: BRAND_DARK }}
                 onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
                 onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
-                Apply
+                {t('jobs.board.apply')}
               </button>
             )}
             <Link to={`/job/${job.id}`}
@@ -475,13 +477,13 @@ const JobBoard = () => {
           <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
             <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 mb-4">
               <FiBriefcase className="text-[10px]" />
-              KPU Alumni Job Board
+              {t('jobs.board.badge')}
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3 max-w-3xl">
-              Find Your Next Opportunity
+              {t('jobs.board.heroTitle')}
             </h1>
             <p className="text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed font-light">
-              Discover careers posted by fellow alumni and trusted employers.
+              {t('jobs.board.heroSubtitle')}
             </p>
           </div>
         </section>
@@ -495,7 +497,7 @@ const JobBoard = () => {
                 <FiSearch className="text-gray-400 mr-2.5 flex-shrink-0 w-4 h-4" />
                 <input
                   className="w-full border-none bg-transparent focus:ring-0 focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
-                  placeholder="Job title, company, or keywords..."
+                  placeholder={t('jobs.board.searchPlaceholder')}
                   value={searchTerm}
                   onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
                 />
@@ -510,7 +512,7 @@ const JobBoard = () => {
                 <FiMapPin className="text-gray-400 mr-2.5 flex-shrink-0 w-4 h-4" />
                 <input
                   className="w-full border-none bg-transparent focus:ring-0 focus:outline-none text-gray-900 placeholder:text-gray-400 text-sm"
-                  placeholder="Location..."
+                  placeholder={t('jobs.board.locationPlaceholder')}
                   value={location}
                   onChange={(e) => { setLocation(e.target.value); setCurrentPage(1); }}
                 />
@@ -523,7 +525,7 @@ const JobBoard = () => {
                 onClick={() => setFiltersOpen(true)}
                 className="lg:hidden flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold border transition-colors"
                 style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-                <FiFilter className="w-3.5 h-3.5" /> Filters
+                <FiFilter className="w-3.5 h-3.5" /> {t('jobs.board.filters')}
               </button>
             </div>
           </div>
@@ -540,8 +542,8 @@ const JobBoard = () => {
                     <FiFilter className="w-3.5 h-3.5" style={{ color: BRAND }} />
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">Filters</h2>
-                    <p className="text-[10px] text-gray-400">Narrow down your search</p>
+                    <h2 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">{t('jobs.board.filters')}</h2>
+                    <p className="text-[10px] text-gray-400">{t('jobs.board.filtersSubtitle')}</p>
                   </div>
                 </div>
                 <div className="p-5">
@@ -556,7 +558,7 @@ const JobBoard = () => {
                 <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
                 <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-5 max-h-[85vh] overflow-y-auto">
                   <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-base font-bold text-gray-900">Filters</h2>
+                    <h2 className="text-base font-bold text-gray-900">{t('jobs.board.filters')}</h2>
                     <button onClick={() => setFiltersOpen(false)}
                       className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-50">
                       <FiX className="w-4 h-4" />
@@ -566,7 +568,7 @@ const JobBoard = () => {
                   <button onClick={() => setFiltersOpen(false)}
                     className="w-full mt-4 text-white text-sm font-semibold py-2.5 rounded-lg"
                     style={{ background: BRAND_DARK }}>
-                    Apply
+                    {t('jobs.board.apply')}
                   </button>
                 </div>
               </div>
@@ -577,9 +579,9 @@ const JobBoard = () => {
               {/* Toolbar — count + view toggle */}
               <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
                 <p className="text-xs text-gray-500">
-                  {pagination?.total ? (
-                    <>Showing <span className="font-semibold text-gray-900">{jobs.length}</span> of <span className="font-semibold text-gray-900">{pagination.total}</span> jobs</>
-                  ) : 'Loading…'}
+                  {pagination?.total
+                    ? t('jobs.board.showingCount', { shown: jobs.length, total: pagination.total })
+                    : t('jobs.board.loading')}
                 </p>
                 <div className="flex items-center gap-1 bg-white rounded-lg border border-gray-200 p-0.5">
                   <button onClick={() => setViewMode('list')}
@@ -587,14 +589,14 @@ const JobBoard = () => {
                       viewMode === 'list' ? 'text-white' : 'text-gray-600 hover:bg-gray-50'
                     }`}
                     style={viewMode === 'list' ? { background: BRAND_DARK } : {}}>
-                    <FiList className="w-3.5 h-3.5" /> List
+                    <FiList className="w-3.5 h-3.5" /> {t('jobs.board.list')}
                   </button>
                   <button onClick={() => setViewMode('grid')}
                     className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-semibold transition-colors ${
                       viewMode === 'grid' ? 'text-white' : 'text-gray-600 hover:bg-gray-50'
                     }`}
                     style={viewMode === 'grid' ? { background: BRAND_DARK } : {}}>
-                    <FiGrid className="w-3.5 h-3.5" /> Grid
+                    <FiGrid className="w-3.5 h-3.5" /> {t('jobs.board.grid')}
                   </button>
                 </div>
               </div>
@@ -615,13 +617,13 @@ const JobBoard = () => {
                   <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style={{ background: BRAND_BG }}>
                     <FiBriefcase className="text-2xl" style={{ color: BRAND }} />
                   </div>
-                  <h3 className="text-base font-bold text-gray-900 mb-1">No jobs found</h3>
-                  <p className="text-xs text-gray-500 max-w-xs mx-auto">Try adjusting your search or removing some filters.</p>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">{t('jobs.board.noJobsTitle')}</h3>
+                  <p className="text-xs text-gray-500 max-w-xs mx-auto">{t('jobs.board.noJobsText')}</p>
                   {hasActiveFilters && (
                     <button onClick={resetFilters}
                       className="mt-4 px-5 py-2 text-white text-xs font-semibold rounded-lg"
                       style={{ background: BRAND_DARK }}>
-                      Reset filters
+                      {t('jobs.board.resetFilters')}
                     </button>
                   )}
                 </div>
@@ -640,10 +642,10 @@ const JobBoard = () => {
                 <div className="mt-6 bg-white rounded-xl border border-gray-200 p-3 flex flex-col md:flex-row md:items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <p className="text-xs text-gray-500">
-                      Showing <span className="font-semibold text-gray-900">{pagination.total}</span> jobs
+                      {t('jobs.board.showingTotal', { total: pagination.total })}
                     </p>
                     <div className="flex items-center gap-1.5">
-                      <span className="text-[11px] text-gray-500">Per page:</span>
+                      <span className="text-[11px] text-gray-500">{t('jobs.board.perPage')}</span>
                       <select
                         value={recordsPerPage}
                         onChange={(e) => { setRecordsPerPage(Number(e.target.value)); setCurrentPage(1); }}
