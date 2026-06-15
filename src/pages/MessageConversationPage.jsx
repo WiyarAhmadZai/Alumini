@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiMail, FiCalendar, FiArrowLeft, FiSend, FiUser, FiMessageSquare, FiX, FiClock, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
@@ -7,6 +8,7 @@ import messageService from '../services/messageService';
 import { AuthContext } from '../contexts/AuthContext';
 
 const MessageConversationPage = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useContext(AuthContext);
@@ -56,7 +58,7 @@ const MessageConversationPage = () => {
               created_at: foundMessage.responded_at || foundMessage.created_at,
               parent_id: null,
               all_children: [],
-              sender_name: 'University',
+              sender_name: t('messages.universityName'),
               sender_image: null,
             }
           ]);
@@ -70,8 +72,8 @@ const MessageConversationPage = () => {
       console.error('Failed to fetch message details:', error);
       Swal.fire({
         icon: 'error',
-        title: 'Error',
-        text: 'Failed to load message details.',
+        title: t('messages.errorTitle'),
+        text: t('messages.loadErrorText'),
         confirmButtonColor: '#dc2626'
       });
       navigate('/messages');
@@ -84,8 +86,8 @@ const MessageConversationPage = () => {
     if (!newReply.trim()) {
       Swal.fire({
         icon: 'warning',
-        title: 'Validation Error',
-        text: 'Please enter your reply.',
+        title: t('messages.validationErrorTitle'),
+        text: t('messages.enterReplyText'),
         confirmButtonColor: '#2563eb'
       });
       return;
@@ -104,8 +106,8 @@ const MessageConversationPage = () => {
 
       Swal.fire({
         icon: 'success',
-        title: 'Reply Sent!',
-        text: 'Your reply has been sent successfully.',
+        title: t('messages.replySentTitle'),
+        text: t('messages.replySentText'),
         timer: 2000,
         timerProgressBar: true
       });
@@ -113,8 +115,8 @@ const MessageConversationPage = () => {
     } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'Error',
-        text: 'Failed to send reply. Please try again.',
+        title: t('messages.errorTitle'),
+        text: t('messages.sendReplyErrorText'),
         confirmButtonColor: '#dc2626'
       });
     } finally {
@@ -150,7 +152,7 @@ const MessageConversationPage = () => {
   const ReplyItem = ({ reply, depth = 0, onReplyTo, replyingTo }) => {
     const isReplying = replyingTo?.id === reply.id;
     const isAlumni = reply.sender_type === 'alumni';
-    const senderName = reply.sender_name || (isAlumni ? 'You' : 'University');
+    const senderName = reply.sender_name || (isAlumni ? t('messages.you') : t('messages.universityName'));
     const senderImage = reply.sender_image;
     const children = reply.all_children || reply.children || [];
 
@@ -167,7 +169,7 @@ const MessageConversationPage = () => {
                 {user?.profile_image ? (
                   <img
                     src={user.profile_image}
-                    alt="User Profile"
+                    alt={t('messages.userProfileAlt')}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`;
@@ -176,7 +178,7 @@ const MessageConversationPage = () => {
                 ) : (
                   <img
                     src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`}
-                    alt="User Profile"
+                    alt={t('messages.userProfileAlt')}
                     className="w-full h-full object-cover"
                     onError={(e) => {
                       e.target.style.display = 'none';
@@ -201,10 +203,10 @@ const MessageConversationPage = () => {
             } shadow-sm`}>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-sm font-bold">
-                  {isAlumni ? 'You' : senderName}
+                  {isAlumni ? t('messages.you') : senderName}
                 </p>
                 <span className="text-xs text-gray-600 ml-4">
-                  {new Date(reply.created_at).toLocaleDateString()} at {new Date(reply.created_at).toLocaleTimeString()}
+                  {new Date(reply.created_at).toLocaleDateString()} {t('messages.dateTimeSeparator')} {new Date(reply.created_at).toLocaleTimeString()}
                 </span>
               </div>
               <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
@@ -218,7 +220,7 @@ const MessageConversationPage = () => {
                       : 'text-gray-600 hover:text-white hover:bg-blue-600'
                   }`}
                 >
-                  {isReplying ? 'Cancel' : 'Reply'}
+                  {isReplying ? t('common.cancel') : t('messages.reply')}
                 </button>
               </div>
             </div>
@@ -244,10 +246,10 @@ const MessageConversationPage = () => {
 
   const getStatusText = (status) => {
     switch(status) {
-      case 'pending': return 'Pending';
-      case 'received': return 'Received';
-      case 'responded': return 'Responded';
-      default: return 'Unknown';
+      case 'pending': return t('messages.statusPending');
+      case 'received': return t('messages.statusReceived');
+      case 'responded': return t('messages.statusResponded');
+      default: return t('messages.statusUnknown');
     }
   };
 
@@ -314,10 +316,10 @@ const MessageConversationPage = () => {
           <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
             <div className="text-center text-white max-w-4xl">
               <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-4">
-                Message Not Found
+                {t('messages.notFoundTitle')}
               </h1>
               <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto">
-                The message you're looking for could not be found.
+                {t('messages.notFoundSubtitle')}
               </p>
             </div>
           </div>
@@ -327,14 +329,14 @@ const MessageConversationPage = () => {
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
               <FiAlertCircle className="text-gray-400 text-3xl" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Message Not Found</h3>
-            <p className="text-gray-600 mb-8 text-lg">The message you're looking for could not be found.</p>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">{t('messages.notFoundTitle')}</h3>
+            <p className="text-gray-600 mb-8 text-lg">{t('messages.notFoundSubtitle')}</p>
             <Link
               to="/messages"
               className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             >
               <FiArrowLeft className="text-xl" />
-              Back to Messages
+              {t('messages.backToMessages')}
             </Link>
           </div>
         </div>
@@ -358,10 +360,10 @@ const MessageConversationPage = () => {
         <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
           <div className="text-center text-white max-w-4xl">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-4">
-              Message Conversation
+              {t('messages.conversationTitle')}
             </h1>
             <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto">
-              View your complete conversation with the university
+              {t('messages.conversationSubtitle')}
             </p>
           </div>
         </div>
@@ -376,7 +378,7 @@ const MessageConversationPage = () => {
             className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 text-gray-700 hover:bg-white/20 rounded-xl hover:shadow-lg transition-all duration-300 font-medium"
           >
             <FiArrowLeft className="text-xl" />
-            Back to Messages
+            {t('messages.backToMessages')}
           </Link>
         </div>
 
@@ -403,7 +405,7 @@ const MessageConversationPage = () => {
                       </span>
                       <div className="flex items-center gap-2 text-gray-600 text-sm">
                         <FiClock className="text-lg" />
-                        {new Date(message.created_at).toLocaleDateString()} at {new Date(message.created_at).toLocaleTimeString()}
+                        {new Date(message.created_at).toLocaleDateString()} {t('messages.dateTimeSeparator')} {new Date(message.created_at).toLocaleTimeString()}
                       </div>
                     </div>
                   </div>
@@ -416,7 +418,7 @@ const MessageConversationPage = () => {
                       {user?.profile_image ? (
                         <img
                           src={user.profile_image}
-                          alt="User Profile"
+                          alt={t('messages.userProfileAlt')}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`;
@@ -425,7 +427,7 @@ const MessageConversationPage = () => {
                       ) : (
                         <img
                           src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=6366f1&color=fff&size=200`}
-                          alt="User Profile"
+                          alt={t('messages.userProfileAlt')}
                           className="w-full h-full object-cover"
                           onError={(e) => {
                             e.target.style.display = 'none';
@@ -434,7 +436,7 @@ const MessageConversationPage = () => {
                       )}
                     </div>
                     <div className="flex-1">
-                      <p className="text-black font-medium mb-2">Your Message:</p>
+                      <p className="text-black font-medium mb-2">{t('messages.yourMessageLabel')}</p>
                       <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                         <p className="text-black whitespace-pre-wrap">{message.message}</p>
                       </div>
@@ -448,10 +450,10 @@ const MessageConversationPage = () => {
                 <div className="flex items-center justify-between mb-4">
                   <h4 className="text-lg font-bold text-black flex items-center gap-2">
                     <FiMessageSquare className="text-black" />
-                    Conversation Thread
+                    {t('messages.conversationThread')}
                   </h4>
                   <span className="text-sm text-gray-600">
-                    {replies.length} {replies.length === 1 ? 'reply' : 'replies'}
+                    {replies.length} {replies.length === 1 ? t('messages.replySingular') : t('messages.replyPlural')}
                   </span>
                 </div>
 
@@ -459,7 +461,7 @@ const MessageConversationPage = () => {
                   {replies.length === 0 ? (
                     <div className="text-center py-8 text-gray-500">
                       <FiMessageSquare className="mx-auto text-3xl mb-2 text-gray-300" />
-                      <p className="text-sm">No replies yet. The university will respond soon.</p>
+                      <p className="text-sm">{t('messages.noRepliesYet')}</p>
                     </div>
                   ) : (
                     replies.map((reply) => (
@@ -479,7 +481,7 @@ const MessageConversationPage = () => {
                   {replyingTo && (
                     <div className="mb-2 p-2 bg-gray-50 rounded border border-gray-200">
                       <p className="text-xs text-black mb-1">
-                        Replying to <span className="font-semibold">{replyingTo.sender_type === 'alumni' ? 'your message' : (replyingTo.sender_name || "university's message")}</span>:
+                        {t('messages.replyingToPrefix')} <span className="font-semibold">{replyingTo.sender_type === 'alumni' ? t('messages.yourMessageTarget') : (replyingTo.sender_name || t('messages.universityMessageTarget'))}</span>{t('messages.replyingToSuffix')}
                       </p>
                       <p className="text-xs text-gray-600 italic">
                         "{(replyingTo.content || '').substring(0, 100)}{(replyingTo.content || '').length > 100 ? '...' : ''}"
@@ -488,7 +490,7 @@ const MessageConversationPage = () => {
                         onClick={cancelReply}
                         className="text-xs text-gray-500 hover:text-gray-700 underline"
                       >
-                        Cancel
+                        {t('common.cancel')}
                       </button>
                     </div>
                   )}
@@ -504,7 +506,7 @@ const MessageConversationPage = () => {
                             handleSendReply();
                           }
                         }}
-                        placeholder={replyingTo ? `Reply to ${replyingTo.sender_type === 'alumni' ? 'your message' : "university's message"}...` : "Type your reply here..."}
+                        placeholder={replyingTo ? t('messages.replyToPlaceholder', { target: replyingTo.sender_type === 'alumni' ? t('messages.yourMessageTarget') : t('messages.universityMessageTarget') }) : t('messages.typeReplyPlaceholder')}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-200 text-black text-sm"
                       />
                     </div>
@@ -516,12 +518,12 @@ const MessageConversationPage = () => {
                       {sendingReply ? (
                         <>
                           <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white"></div>
-                          Sending...
+                          {t('messages.sending')}
                         </>
                       ) : (
                         <>
                           <FiSend />
-                          Reply
+                          {t('messages.reply')}
                         </>
                       )}
                     </button>
@@ -537,11 +539,11 @@ const MessageConversationPage = () => {
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
               <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
                 <FiMail className="text-black" />
-                Quick Stats
+                {t('messages.quickStats')}
               </h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-sm text-black">Status:</span>
+                  <span className="text-sm text-black">{t('messages.statusColon')}</span>
                   <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
                     message.status === 'pending'
                       ? 'bg-yellow-400 text-yellow-900'
@@ -555,11 +557,11 @@ const MessageConversationPage = () => {
                   </span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-sm text-black">Replies:</span>
+                  <span className="text-sm text-black">{t('messages.repliesColon')}</span>
                   <span className="text-sm font-semibold text-black">{replies.length}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span className="text-sm text-black">Date:</span>
+                  <span className="text-sm text-black">{t('messages.dateColon')}</span>
                   <span className="text-sm font-semibold text-black">
                     {new Date(message.created_at).toLocaleDateString()}
                   </span>
@@ -571,7 +573,7 @@ const MessageConversationPage = () => {
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
               <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
                 <FiMail className="text-black" />
-                Quick Actions
+                {t('messages.quickActions')}
               </h3>
               <div className="space-y-3">
                 <Link
@@ -579,14 +581,14 @@ const MessageConversationPage = () => {
                   className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium flex items-center justify-center gap-2 text-sm shadow-sm hover:shadow-md"
                 >
                   <FiMail />
-                  Send New Message
+                  {t('messages.sendNewMessage')}
                 </Link>
                 <Link
                   to="/messages"
                   className="w-full px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium flex items-center justify-center gap-2 text-sm shadow-sm hover:shadow-md"
                 >
                   <FiArrowLeft />
-                  Back to Messages
+                  {t('messages.backToMessages')}
                 </Link>
               </div>
             </div>
@@ -595,22 +597,22 @@ const MessageConversationPage = () => {
             <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-100">
               <h3 className="text-lg font-bold text-black mb-4 flex items-center gap-2">
                 <FiMessageSquare className="text-black" />
-                University Info
+                {t('messages.universityInfo')}
               </h3>
               <div className="space-y-3">
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-black font-medium">
-                    <span className="text-green-600 font-bold">Response Time:</span> Usually within 24-48 hours
+                    <span className="text-green-600 font-bold">{t('messages.responseTimeLabel')}</span> {t('messages.responseTimeValue')}
                   </p>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-black font-medium">
-                    <span className="text-black font-bold">Contact Hours:</span> Mon-Fri, 9AM-5PM
+                    <span className="text-black font-bold">{t('messages.contactHoursLabel')}</span> {t('messages.contactHoursValue')}
                   </p>
                 </div>
                 <div className="p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-black font-medium">
-                    <span className="text-black font-bold">Email:</span> it.director@kpu.edu.af
+                    <span className="text-black font-bold">{t('messages.emailLabel')}</span> it.director@kpu.edu.af
                   </p>
                 </div>
               </div>
