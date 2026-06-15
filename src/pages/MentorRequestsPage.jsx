@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import { FiArrowLeft, FiInbox, FiCheckCircle, FiXCircle, FiClock, FiMail, FiPhone, FiSearch, FiUser } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import mentorService from '../services/mentorService';
 
 const StatusBadge = ({ status }) => {
+  const { t } = useTranslation();
   const map = {
-    pending:  { bg: 'bg-yellow-100 text-yellow-700', icon: FiClock,       label: 'Pending' },
-    accepted: { bg: 'bg-green-100 text-green-700',   icon: FiCheckCircle, label: 'Accepted' },
-    rejected: { bg: 'bg-red-100 text-red-700',       icon: FiXCircle,     label: 'Rejected' },
+    pending:  { bg: 'bg-yellow-100 text-yellow-700', icon: FiClock,       label: t('mentorship.status.pending') },
+    accepted: { bg: 'bg-green-100 text-green-700',   icon: FiCheckCircle, label: t('mentorship.status.accepted') },
+    rejected: { bg: 'bg-red-100 text-red-700',       icon: FiXCircle,     label: t('mentorship.status.rejected') },
   };
   const cfg = map[status] || map.pending;
   const Icon = cfg.icon;
@@ -21,6 +23,7 @@ const StatusBadge = ({ status }) => {
 };
 
 const MentorRequestsPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -48,17 +51,17 @@ const MentorRequestsPage = () => {
       const defaultEndStr = defaultEnd.toISOString().split('T')[0];
       const minEndStr = new Date(today.getTime() + 86400000).toISOString().split('T')[0];
       const { value, isConfirmed } = await Swal.fire({
-        title: 'Accept Mentorship',
-        html: `<p style="color:#4b5563;font-size:13px;margin-bottom:10px">Set the mentorship end date. After this date, <strong>${req.name}</strong> will need to request again.</p>`,
+        title: t('mentorship.requests.acceptTitle'),
+        html: `<p style="color:#4b5563;font-size:13px;margin-bottom:10px">${t('mentorship.requests.acceptHtml', { name: req.name })}</p>`,
         input: 'date',
         inputValue: defaultEndStr,
         inputAttributes: { min: minEndStr },
         showCancelButton: true,
-        confirmButtonText: 'Accept',
+        confirmButtonText: t('mentorship.requests.acceptBtn'),
         confirmButtonColor: '#002759',
         inputValidator: (v) => {
-          if (!v) return 'Please pick an end date';
-          if (v <= today.toISOString().split('T')[0]) return 'End date must be in the future';
+          if (!v) return t('mentorship.requests.pickEndDate');
+          if (v <= today.toISOString().split('T')[0]) return t('mentorship.requests.endDateFuture');
         },
       });
       if (!isConfirmed) return;
@@ -66,10 +69,10 @@ const MentorRequestsPage = () => {
     } else {
       const confirm = await Swal.fire({
         icon: 'question',
-        title: 'Reject Request?',
-        text: `Reject the mentorship request from ${req.name}?`,
+        title: t('mentorship.requests.rejectTitle'),
+        text: t('mentorship.requests.rejectConfirm', { name: req.name }),
         showCancelButton: true,
-        confirmButtonText: 'Reject',
+        confirmButtonText: t('mentorship.requests.rejectBtn'),
         confirmButtonColor: '#dc2626',
       });
       if (!confirm.isConfirmed) return;
@@ -78,14 +81,14 @@ const MentorRequestsPage = () => {
       await mentorService.updateRequestStatus(req.id, newStatus, endDate);
       Swal.fire({
         icon: 'success',
-        title: 'Done',
-        text: newStatus === 'accepted' ? `Mentorship active until ${endDate}` : `Request rejected.`,
+        title: t('mentorship.requests.doneTitle'),
+        text: newStatus === 'accepted' ? t('mentorship.requests.activeUntil', { date: endDate }) : t('mentorship.requests.rejected'),
         timer: 2000,
         showConfirmButton: false,
       });
       fetchRequests();
     } catch (err) {
-      Swal.fire({ icon: 'error', title: 'Error', text: err.response?.data?.message || 'Failed to update request.' });
+      Swal.fire({ icon: 'error', title: t('mentorship.common.error'), text: err.response?.data?.message || t('mentorship.requests.updateFailed') });
     }
   };
 
@@ -117,13 +120,13 @@ const MentorRequestsPage = () => {
         />
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pt-16">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4 border border-white/20">
-            <FiInbox size={11} /> Incoming Requests
+            <FiInbox size={11} /> {t('mentorship.requests.heroBadge')}
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-3 max-w-3xl">
-            Mentorship Requests
+            {t('mentorship.requests.heroTitle')}
           </h1>
           <p className="text-sm sm:text-base text-white/80 max-w-xl">
-            Review and respond to alumni seeking your guidance
+            {t('mentorship.requests.heroSubtitle')}
           </p>
         </div>
       </section>
@@ -133,7 +136,7 @@ const MentorRequestsPage = () => {
             onClick={() => navigate('/profile')}
             className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-blue-600 font-semibold bg-white px-4 py-2 rounded-full border border-gray-200 hover:border-blue-300 shadow-sm transition"
           >
-            <FiArrowLeft size={14} /> Back to Profile
+            <FiArrowLeft size={14} /> {t('mentorship.common.backToProfile')}
           </button>
         </div>
       </div>
@@ -143,10 +146,10 @@ const MentorRequestsPage = () => {
           {/* Tabs */}
           <div className="flex flex-wrap items-center gap-2 p-4 border-b border-gray-200">
             {[
-              { key: 'all',      label: 'All' },
-              { key: 'pending',  label: 'Pending' },
-              { key: 'accepted', label: 'Accepted' },
-              { key: 'rejected', label: 'Rejected' },
+              { key: 'all',      label: t('mentorship.requests.tabAll') },
+              { key: 'pending',  label: t('mentorship.status.pending') },
+              { key: 'accepted', label: t('mentorship.status.accepted') },
+              { key: 'rejected', label: t('mentorship.status.rejected') },
             ].map(tab => (
               <button
                 key={tab.key}
@@ -164,7 +167,7 @@ const MentorRequestsPage = () => {
                 type="text"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                placeholder="Search…"
+                placeholder={t('mentorship.requests.searchPlaceholder')}
                 className="pl-9 pr-4 py-1.5 border border-gray-200 rounded-lg text-sm w-full focus:ring-2 focus:ring-blue-500 outline-none"
               />
             </div>
@@ -189,8 +192,8 @@ const MentorRequestsPage = () => {
             ) : filtered.length === 0 ? (
               <div className="text-center py-16">
                 <FiInbox size={48} className="mx-auto text-gray-300 mb-3" />
-                <p className="text-gray-500 font-semibold">No requests found</p>
-                <p className="text-xs text-gray-400 mt-1">When someone requests mentorship, it will appear here.</p>
+                <p className="text-gray-500 font-semibold">{t('mentorship.requests.emptyTitle')}</p>
+                <p className="text-xs text-gray-400 mt-1">{t('mentorship.requests.emptyText')}</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -227,12 +230,12 @@ const MentorRequestsPage = () => {
                           <span className="text-[11px] text-gray-400">{new Date(req.created_at).toLocaleDateString()}</span>
                           {req.email && (
                             <a href={`mailto:${req.email}`} className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-semibold rounded hover:bg-blue-100">
-                              <FiMail size={10} /> Email
+                              <FiMail size={10} /> {t('mentorship.contact.email')}
                             </a>
                           )}
                           {req.whatsapp_number && (
                             <a href={`https://wa.me/${req.whatsapp_number.replace(/[^0-9]/g, '')}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 text-[10px] font-semibold rounded hover:bg-green-100">
-                              <FiPhone size={10} /> WhatsApp
+                              <FiPhone size={10} /> {t('mentorship.contact.whatsapp')}
                             </a>
                           )}
                         </div>
@@ -240,10 +243,10 @@ const MentorRequestsPage = () => {
                         {req.status === 'pending' && (
                           <div className="flex gap-2 mt-3">
                             <button onClick={() => handleStatusChange(req, 'accepted')} className="flex items-center gap-1 px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 transition">
-                              <FiCheckCircle size={12} /> Accept
+                              <FiCheckCircle size={12} /> {t('mentorship.requests.acceptBtn')}
                             </button>
                             <button onClick={() => handleStatusChange(req, 'rejected')} className="flex items-center gap-1 px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition">
-                              <FiXCircle size={12} /> Reject
+                              <FiXCircle size={12} /> {t('mentorship.requests.rejectBtn')}
                             </button>
                           </div>
                         )}
