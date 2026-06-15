@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import {
   FiSearch, FiBookOpen, FiBriefcase, FiLinkedin, FiX, FiUsers, FiAward,
@@ -16,6 +17,7 @@ const BRAND_BORDER = '#c5ccf7';
 
 const DirectoryPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilters, setSelectedFilters] = useState({ faculty: '', graduationYear: '' });
   const [loading, setLoading] = useState(true);
@@ -33,7 +35,7 @@ const DirectoryPage = () => {
         const alumniData = response?.data?.alumni || response?.alumni || [];
         setAlumni(Array.isArray(alumniData) ? alumniData : []);
       } catch {
-        setError('Failed to load alumni directory.');
+        setError(t('directory.loadError'));
       } finally {
         setLoading(false);
       }
@@ -93,7 +95,7 @@ const DirectoryPage = () => {
       <div className="relative z-10 flex flex-col items-center justify-center py-16 px-4 sm:px-6 text-center text-white" style={{ minHeight: 380 }}>
         <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 mb-4">
           <FiUsers className="text-[10px]" />
-          Alumni Network
+          {t('directory.alumniNetwork')}
         </div>
         {isLoading ? (
           <>
@@ -102,25 +104,25 @@ const DirectoryPage = () => {
           </>
         ) : (
           <>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mb-3">Alumni Directory</h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mb-3">{t('directory.title')}</h1>
             <p className="text-base text-white/60 max-w-md mx-auto leading-relaxed font-light mb-8">
-              Discover and connect with distinguished graduates shaping the world.
+              {t('directory.subtitle')}
             </p>
             {alumni.length > 0 && (
               <div className="flex items-stretch bg-white/8 border border-white/12 rounded-2xl overflow-hidden">
                 <div className="px-6 py-3 text-center">
                   <div className="text-2xl font-bold">{alumni.length}+</div>
-                  <div className="text-[10px] text-white/40 uppercase tracking-widest mt-0.5">Alumni</div>
+                  <div className="text-[10px] text-white/40 uppercase tracking-widest mt-0.5">{t('directory.statAlumni')}</div>
                 </div>
                 <div className="w-px bg-white/12" />
                 <div className="px-6 py-3 text-center">
                   <div className="text-2xl font-bold">{faculties.length || 8}</div>
-                  <div className="text-[10px] text-white/40 uppercase tracking-widest mt-0.5">Faculties</div>
+                  <div className="text-[10px] text-white/40 uppercase tracking-widest mt-0.5">{t('directory.statFaculties')}</div>
                 </div>
                 <div className="w-px bg-white/12" />
                 <div className="px-6 py-3 text-center">
                   <div className="text-2xl font-bold">{availableYears.length > 0 ? availableYears.length : '20'}+</div>
-                  <div className="text-[10px] text-white/40 uppercase tracking-widest mt-0.5">Grad Years</div>
+                  <div className="text-[10px] text-white/40 uppercase tracking-widest mt-0.5">{t('directory.statGradYears')}</div>
                 </div>
               </div>
             )}
@@ -185,7 +187,7 @@ const DirectoryPage = () => {
             <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-3">
               <FiX className="text-red-500 text-xl" />
             </div>
-            <h3 className="text-base font-semibold text-gray-900 mb-1">Something went wrong</h3>
+            <h3 className="text-base font-semibold text-gray-900 mb-1">{t('directory.somethingWrong')}</h3>
             <p className="text-gray-500 text-sm">{error}</p>
           </div>
         </div>
@@ -209,7 +211,7 @@ const DirectoryPage = () => {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by name, company, or role..."
+                placeholder={t('directory.searchPlaceholder')}
                 className="bg-transparent border-none focus:ring-0 focus:outline-none w-full text-gray-900 placeholder-gray-400 text-sm"
               />
               {searchTerm && (
@@ -226,7 +228,7 @@ const DirectoryPage = () => {
               className="px-3 py-2 bg-gray-50 border-none rounded-lg text-sm text-gray-700 focus:ring-2 cursor-pointer w-full md:w-auto md:min-w-[180px]"
               style={{ '--tw-ring-color': BRAND_BORDER }}
             >
-              <option value="">All Faculties</option>
+              <option value="">{t('directory.allFaculties')}</option>
               {faculties.map(f => <option key={f.id || f.code} value={f.name}>{f.name}</option>)}
             </select>
 
@@ -237,7 +239,7 @@ const DirectoryPage = () => {
               className="px-3 py-2 bg-gray-50 border-none rounded-lg text-sm text-gray-700 focus:ring-2 cursor-pointer w-full md:w-auto md:min-w-[110px]"
               style={{ '--tw-ring-color': BRAND_BORDER }}
             >
-              <option value="">All Years</option>
+              <option value="">{t('directory.allYears')}</option>
               {availableYears.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
 
@@ -245,10 +247,10 @@ const DirectoryPage = () => {
               <button
                 onClick={resetFilters}
                 className="px-3 py-2 text-gray-500 text-xs font-semibold rounded-lg hover:bg-gray-50 transition flex items-center justify-center gap-1"
-                title="Reset filters"
+                title={t('directory.resetFilters')}
               >
                 <FiX className="w-3.5 h-3.5" />
-                Reset
+                {t('directory.reset')}
               </button>
             )}
           </div>
@@ -257,7 +259,7 @@ const DirectoryPage = () => {
           <div className="flex flex-wrap items-center gap-2 mt-3 px-0.5">
             <span className="text-[11px] text-gray-400 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-              Showing <span className="font-semibold text-gray-700">{filteredAlumni.length}</span> of <span className="font-semibold text-gray-700">{alumni.length}</span> alumni
+              {t('directory.showingPrefix')} <span className="font-semibold text-gray-700">{filteredAlumni.length}</span> {t('directory.of')} <span className="font-semibold text-gray-700">{alumni.length}</span> {t('directory.alumniLower')}
             </span>
 
             {/* Active filter chips */}
@@ -291,14 +293,14 @@ const DirectoryPage = () => {
                 style={viewMode === 'grid' ? { background: BRAND_DARK, color: '#fff' } : { color: '#6b7280' }}
                 onMouseEnter={e => { if (viewMode !== 'grid') e.currentTarget.style.background = '#fff'; }}
                 onMouseLeave={e => { if (viewMode !== 'grid') e.currentTarget.style.background = ''; }}>
-                <FiGrid className="w-3 h-3" /> Grid
+                <FiGrid className="w-3 h-3" /> {t('directory.grid')}
               </button>
               <button onClick={() => setViewMode('list')}
                 className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors"
                 style={viewMode === 'list' ? { background: BRAND_DARK, color: '#fff' } : { color: '#6b7280' }}
                 onMouseEnter={e => { if (viewMode !== 'list') e.currentTarget.style.background = '#fff'; }}
                 onMouseLeave={e => { if (viewMode !== 'list') e.currentTarget.style.background = ''; }}>
-                <FiList className="w-3 h-3" /> List
+                <FiList className="w-3 h-3" /> {t('directory.list')}
               </button>
             </div>
           </div>
@@ -312,11 +314,11 @@ const DirectoryPage = () => {
             <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: BRAND_BG }}>
               <FiUsers className="text-2xl" style={{ color: BRAND }} />
             </div>
-            <h3 className="text-lg font-bold text-gray-800 mb-1">No alumni found</h3>
-            <p className="text-gray-400 max-w-xs text-sm">Try different search terms or remove filters.</p>
+            <h3 className="text-lg font-bold text-gray-800 mb-1">{t('directory.noAlumniFound')}</h3>
+            <p className="text-gray-400 max-w-xs text-sm">{t('directory.noAlumniHint')}</p>
             {hasActiveFilters && (
               <button onClick={resetFilters} className="mt-4 px-5 py-2 text-white text-sm font-semibold rounded-lg" style={{ background: BRAND_DARK }}>
-                Clear filters
+                {t('directory.clearFilters')}
               </button>
             )}
           </div>
@@ -365,7 +367,7 @@ const DirectoryPage = () => {
                   )}
                   <div className="mt-2 pt-2 border-t border-gray-100">
                     <span className="font-bold text-[9px] uppercase tracking-wider flex items-center gap-1" style={{ color: BRAND_DARK }}>
-                      View Profile <FiArrowRight className="w-2.5 h-2.5" />
+                      {t('directory.viewProfile')} <FiArrowRight className="w-2.5 h-2.5" />
                     </span>
                   </div>
                 </div>
@@ -379,7 +381,7 @@ const DirectoryPage = () => {
                 <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-1.5">
                   <FiPlus className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
                 </div>
-                <span className="text-gray-400 text-[10px] font-semibold group-hover:text-gray-600 transition-colors">Join Directory</span>
+                <span className="text-gray-400 text-[10px] font-semibold group-hover:text-gray-600 transition-colors">{t('directory.joinDirectory')}</span>
               </div>
             </div>
           </div>
@@ -408,7 +410,7 @@ const DirectoryPage = () => {
                     <h3 className="text-sm font-bold text-gray-900 truncate">{alumnus.name}</h3>
                     {alumnus.graduation_year && (
                       <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold" style={{ background: BRAND_BG, color: BRAND_DARK }}>
-                        Class of {alumnus.graduation_year}
+                        {t('directory.classOf', { year: alumnus.graduation_year })}
                       </span>
                     )}
                   </div>
@@ -449,7 +451,7 @@ const DirectoryPage = () => {
                     style={{ background: BRAND_DARK, color: '#fff' }}
                     onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
                     onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
-                    View <FiArrowRight className="w-3 h-3" />
+                    {t('directory.view')} <FiArrowRight className="w-3 h-3" />
                   </button>
                 </div>
               </div>
@@ -461,11 +463,11 @@ const DirectoryPage = () => {
         {filteredAlumni.length > 0 && (
           <nav className="flex items-center justify-between border-t border-gray-100 pt-5 mt-8">
             <p className="text-xs text-gray-400 hidden sm:block">
-              Showing <span className="font-semibold text-gray-700">{filteredAlumni.length}</span> of <span className="font-semibold text-gray-700">{alumni.length}</span>
+              {t('directory.showingPrefix')} <span className="font-semibold text-gray-700">{filteredAlumni.length}</span> {t('directory.of')} <span className="font-semibold text-gray-700">{alumni.length}</span>
             </p>
             <div className="flex-1 flex justify-between sm:justify-end gap-2">
-              <button className="px-3.5 py-1.5 border border-gray-200 text-xs font-medium rounded-lg text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-40" disabled>Previous</button>
-              <button className="px-3.5 py-1.5 border border-gray-200 text-xs font-medium rounded-lg text-gray-600 bg-white hover:bg-gray-50">Next</button>
+              <button className="px-3.5 py-1.5 border border-gray-200 text-xs font-medium rounded-lg text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-40" disabled>{t('directory.previous')}</button>
+              <button className="px-3.5 py-1.5 border border-gray-200 text-xs font-medium rounded-lg text-gray-600 bg-white hover:bg-gray-50">{t('directory.next')}</button>
             </div>
           </nav>
         )}
