@@ -3,6 +3,7 @@ import { FiX, FiDownload, FiAlertTriangle } from 'react-icons/fi';
 import { QRCodeCanvas } from 'qrcode.react';
 import Swal from 'sweetalert2';
 import html2canvas from 'html2canvas';
+import { useTranslation } from 'react-i18next';
 import eventService from '../../services/eventService';
 
 const translations = {
@@ -112,6 +113,7 @@ const SITE_URL = window.location.hostname === 'localhost'
   : window.location.origin;
 
 const EventCardModal = ({ isOpen, onClose, event, user, registration, onCardDownloaded }) => {
+  const { t: tt } = useTranslation();
   const [lang, setLang] = useState('fa');
   const [downloading, setDownloading] = useState(false);
   const [profileDataUrl, setProfileDataUrl] = useState(null);
@@ -152,7 +154,7 @@ const EventCardModal = ({ isOpen, onClose, event, user, registration, onCardDown
     setDownloading(true);
     try {
       await eventService.markCardDownloaded(event.id);
-      if (!cardRef.current) throw new Error('Card not ready');
+      if (!cardRef.current) throw new Error(tt('events.cardModal.cardNotReady'));
 
       // Wait one frame so React commits any pending image swaps
       await new Promise((r) => requestAnimationFrame(r));
@@ -177,7 +179,7 @@ const EventCardModal = ({ isOpen, onClose, event, user, registration, onCardDown
       document.body.removeChild(link);
       if (onCardDownloaded) onCardDownloaded();
     } catch (err) {
-      Swal.fire('Error', err.message || 'Failed', 'error');
+      Swal.fire(tt('events.cardModal.errorTitle'), err.message || tt('events.cardModal.downloadFailed'), 'error');
     } finally { setDownloading(false); }
   };
 
@@ -224,7 +226,7 @@ const EventCardModal = ({ isOpen, onClose, event, user, registration, onCardDown
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 {logoDataUrl && (
-                  <img src={logoDataUrl} alt="KPU" style={{ width: '44px', height: '44px', borderRadius: '8px', background: '#fff', padding: '4px', display: 'block' }} />
+                  <img src={logoDataUrl} alt={tt('events.cardModal.logoAlt')} style={{ width: '44px', height: '44px', borderRadius: '8px', background: '#fff', padding: '4px', display: 'block' }} />
                 )}
                 <div>
                   <div style={{ color: '#fff', fontSize: '16px', fontWeight: 800, lineHeight: 1.2 }}>{t.university}</div>
