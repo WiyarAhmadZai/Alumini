@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiHeart, FiTrendingUp, FiX, FiDollarSign, FiUser, FiMail, FiPhone, FiAward, FiTarget, FiCheckCircle, FiArrowRight, FiUsers, FiGift } from 'react-icons/fi';
@@ -28,6 +29,7 @@ const Eyebrow = ({ children, dark = false }) => (
 
 // ─── Donor rank badge (Gold / Silver / Bronze for top 3) ───
 const RankBadge = ({ rank }) => {
+  const { t } = useTranslation();
   if (rank > 3) return null;
   const styles = [
     null,
@@ -39,7 +41,7 @@ const RankBadge = ({ rank }) => {
     <span
       className="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-extrabold text-white shadow-md ring-2 ring-white"
       style={{ background: styles.bg }}
-      title={`Rank #${rank}`}
+      title={t('legal.wall.rankBadge', { rank })}
     >
       {styles.label}
     </span>
@@ -56,6 +58,7 @@ const resolveImg = (img) => {
 
 // ─────────── Donation Modal ───────────
 const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => {
+  const { t } = useTranslation();
   const loggedInUser = (() => {
     try { return JSON.parse(localStorage.getItem('alumni_user') || 'null'); } catch { return null; }
   })();
@@ -89,11 +92,11 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
 
   const validate = () => {
     const e = {};
-    if (!form.donor_name.trim()) e.donor_name = 'Name is required';
-    if (!form.donor_email.trim()) e.donor_email = 'Email is required';
-    else if (!/^[^@]+@[^@]+\.[^@]+$/.test(form.donor_email.trim())) e.donor_email = 'Invalid email address';
-    if (form.donor_phone && !PHONE_REGEX.test(form.donor_phone.trim())) e.donor_phone = 'Invalid phone number';
-    if (!form.amount || Number(form.amount) < 1) e.amount = 'Please enter a valid amount';
+    if (!form.donor_name.trim()) e.donor_name = t('legal.modal.errNameRequired');
+    if (!form.donor_email.trim()) e.donor_email = t('legal.modal.errEmailRequired');
+    else if (!/^[^@]+@[^@]+\.[^@]+$/.test(form.donor_email.trim())) e.donor_email = t('legal.modal.errEmailInvalid');
+    if (form.donor_phone && !PHONE_REGEX.test(form.donor_phone.trim())) e.donor_phone = t('legal.modal.errPhoneInvalid');
+    if (!form.amount || Number(form.amount) < 1) e.amount = t('legal.modal.errAmountInvalid');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -114,20 +117,20 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
       onClose();
       Swal.fire({
         icon: 'success',
-        title: 'Thank You!',
-        text: `Your donation pledge has been submitted. Our team will contact you shortly to process the donation.`,
+        title: t('legal.modal.thankYouTitle'),
+        text: t('legal.modal.thankYouText'),
         confirmButtonColor: BRAND,
       });
       if (onSuccess) onSuccess();
     } catch (err) {
-      const msg = err.response?.data?.message || 'Failed to submit donation.';
+      const msg = err.response?.data?.message || t('legal.modal.donateFailed');
       const serverErrors = err.response?.data?.errors || {};
       if (Object.keys(serverErrors).length > 0) {
         const mapped = {};
         Object.keys(serverErrors).forEach(k => { mapped[k] = serverErrors[k][0]; });
         setErrors(mapped);
       } else {
-        Swal.fire({ icon: 'error', title: 'Error', text: msg });
+        Swal.fire({ icon: 'error', title: t('legal.modal.errorTitle'), text: msg });
       }
     } finally {
       setLoading(false);
@@ -151,9 +154,9 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
         <div className="flex items-center justify-between px-6 py-5" style={{ backgroundColor: BRAND }}>
           <div className="text-white min-w-0">
             <p className="text-[10px] uppercase tracking-wider text-white/70 font-semibold mb-1">
-              {project ? 'Donate to Project' : 'Quick Gift'}
+              {project ? t('legal.modal.donateToProject') : t('legal.modal.quickGift')}
             </p>
-            <h3 className="text-lg font-bold truncate">{project?.title || 'Support KPU'}</h3>
+            <h3 className="text-lg font-bold truncate">{project?.title || t('legal.modal.supportKpu')}</h3>
           </div>
           <button onClick={onClose} className="text-white/80 hover:text-white p-1 flex-shrink-0">
             <FiX size={22} />
@@ -165,59 +168,59 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
           {loggedInUser && (
             <div className="flex items-center gap-2 p-3 bg-blue-50 border border-blue-100 rounded-lg text-xs text-blue-700">
               <FiCheckCircle size={14} />
-              <span>Pre-filled from your profile — you can edit any field.</span>
+              <span>{t('legal.modal.prefilled')}</span>
             </div>
           )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                <FiUser className="inline mr-1" size={11} /> Full Name *
+                <FiUser className="inline mr-1" size={11} /> {t('legal.modal.fullName')}
               </label>
               <input
                 type="text"
                 value={form.donor_name}
                 onChange={(e) => { setForm({ ...form, donor_name: e.target.value }); if (errors.donor_name) setErrors({ ...errors, donor_name: null }); }}
-                placeholder="Your full name"
+                placeholder={t('legal.modal.fullNamePlaceholder')}
                 className={inputCls('donor_name')}
               />
               {errors.donor_name && <p className="text-[11px] text-red-600 mt-1">{errors.donor_name}</p>}
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                <FiMail className="inline mr-1" size={11} /> Email *
+                <FiMail className="inline mr-1" size={11} /> {t('legal.modal.email')}
               </label>
               <input
                 type="email"
                 value={form.donor_email}
                 onChange={(e) => { setForm({ ...form, donor_email: e.target.value }); if (errors.donor_email) setErrors({ ...errors, donor_email: null }); }}
-                placeholder="you@example.com"
+                placeholder={t('legal.modal.emailPlaceholder')}
                 className={inputCls('donor_email')}
               />
               {errors.donor_email && <p className="text-[11px] text-red-600 mt-1">{errors.donor_email}</p>}
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                <FiPhone className="inline mr-1" size={11} /> Phone <span className="text-gray-400 font-normal">(optional)</span>
+                <FiPhone className="inline mr-1" size={11} /> {t('legal.modal.phone')} <span className="text-gray-400 font-normal">{t('legal.modal.phoneOptional')}</span>
               </label>
               <input
                 type="tel"
                 value={form.donor_phone}
                 onChange={(e) => { setForm({ ...form, donor_phone: e.target.value }); if (errors.donor_phone) setErrors({ ...errors, donor_phone: null }); }}
-                placeholder="+93 700 000 000"
+                placeholder={t('legal.modal.phonePlaceholder')}
                 className={inputCls('donor_phone')}
               />
               {errors.donor_phone && <p className="text-[11px] text-red-600 mt-1">{errors.donor_phone}</p>}
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                <FiAward className="inline mr-1" size={11} /> Graduation Year <span className="text-gray-400 font-normal">(optional)</span>
+                <FiAward className="inline mr-1" size={11} /> {t('legal.modal.graduationYear')} <span className="text-gray-400 font-normal">{t('legal.modal.phoneOptional')}</span>
               </label>
               <input
                 type="text"
                 value={form.donor_graduation_year}
                 onChange={(e) => setForm({ ...form, donor_graduation_year: e.target.value })}
-                placeholder="e.g. 2015"
+                placeholder={t('legal.modal.graduationYearPlaceholder')}
                 className={inputCls('donor_graduation_year')}
               />
             </div>
@@ -225,7 +228,7 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
 
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-              <FiDollarSign className="inline mr-1" size={11} /> Amount (USD) *
+              <FiDollarSign className="inline mr-1" size={11} /> {t('legal.modal.amount')}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
@@ -234,7 +237,7 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
                 min="1"
                 value={form.amount}
                 onChange={(e) => { setForm({ ...form, amount: e.target.value }); if (errors.amount) setErrors({ ...errors, amount: null }); }}
-                placeholder="100"
+                placeholder={t('legal.modal.amountPlaceholder')}
                 className={`${inputCls('amount')} pl-7`}
               />
             </div>
@@ -260,14 +263,14 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
 
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-              Your Message <span className="text-gray-400 font-normal">(optional — may be displayed publicly)</span>
+              {t('legal.modal.yourMessage')} <span className="text-gray-400 font-normal">{t('legal.modal.messageOptional')}</span>
             </label>
             <textarea
               value={form.message}
               onChange={(e) => setForm({ ...form, message: e.target.value })}
               rows={3}
               maxLength={1000}
-              placeholder="Share why you're donating or a message of support…"
+              placeholder={t('legal.modal.messagePlaceholder')}
               className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 outline-none focus:border-[#002759] focus:ring-1 focus:ring-[#002759] transition resize-none"
             />
             <p className="text-[10px] text-gray-400 mt-1 text-right">{form.message.length}/1000</p>
@@ -280,7 +283,7 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
             onClick={onClose}
             className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition"
           >
-            Cancel
+            {t('legal.modal.cancel')}
           </button>
           <button
             onClick={submit}
@@ -293,7 +296,7 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
             {loading ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
-              <><FiHeart size={14} /> Submit Donation</>
+              <><FiHeart size={14} /> {t('legal.modal.submitDonation')}</>
             )}
           </button>
         </div>
@@ -304,6 +307,7 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
 
 // ─────────── Main Page ───────────
 const GivingPage = () => {
+  const { t } = useTranslation();
   const [projects, setProjects] = useState([]);
   const [topDonors, setTopDonors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -345,7 +349,7 @@ const GivingPage = () => {
   const handleQuickGift = () => {
     const amt = quickAmount || quickCustom;
     if (!amt || Number(amt) < 1) {
-      Swal.fire({ icon: 'warning', title: 'Please select an amount', confirmButtonColor: BRAND });
+      Swal.fire({ icon: 'warning', title: t('legal.quickGift.selectAmountTitle'), confirmButtonColor: BRAND });
       return;
     }
     openDonation(null, amt);
@@ -377,12 +381,12 @@ const GivingPage = () => {
             }}
           />
           <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pb-20">
-            <Eyebrow dark><FiHeart size={11} /> KPU Giving</Eyebrow>
+            <Eyebrow dark><FiHeart size={11} /> {t('legal.hero.badge')}</Eyebrow>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4 max-w-3xl">
-              Invest in the Next Generation of Engineers
+              {t('legal.hero.title')}
             </h1>
             <p className="text-base sm:text-lg text-white/75 max-w-2xl mb-7 leading-relaxed font-light">
-              Your gift funds scholarships, modern labs and research opportunities for KPU students — and shapes the future of Afghanistan's technical leadership.
+              {t('legal.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <button
@@ -390,13 +394,13 @@ const GivingPage = () => {
                 className="px-6 py-3 font-bold rounded-lg transition text-sm shadow-lg"
                 style={{ background: '#fff', color: BRAND }}
               >
-                Explore Projects
+                {t('legal.hero.exploreProjects')}
               </button>
               <button
                 onClick={() => openDonation()}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-transparent border-2 border-white text-white font-bold rounded-lg hover:bg-white/10 transition text-sm"
               >
-                <FiHeart size={14} /> Donate Now
+                <FiHeart size={14} /> {t('legal.hero.donateNow')}
               </button>
             </div>
           </div>
@@ -406,25 +410,25 @@ const GivingPage = () => {
         <div className="max-w-6xl mx-auto px-4 lg:px-8 -mt-14 relative z-20">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 bg-white rounded-2xl border border-gray-200 shadow-xl p-3 sm:p-5">
             <div className="text-center px-3 py-2 sm:py-1 border-r border-gray-100 last:border-r-0">
-              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">Total Raised</div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">{t('legal.metrics.totalRaised')}</div>
               <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
                 ${Number(totalRaised).toLocaleString()}
               </div>
             </div>
             <div className="text-center px-3 py-2 sm:py-1 md:border-r border-gray-100">
-              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">Generous Donors</div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">{t('legal.metrics.generousDonors')}</div>
               <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
                 {Number(topDonorsTotal || 0).toLocaleString()}
               </div>
             </div>
             <div className="text-center px-3 py-2 sm:py-1 border-r border-gray-100">
-              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">Active Projects</div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">{t('legal.metrics.activeProjects')}</div>
               <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
                 {activeProjectsCount}
               </div>
             </div>
             <div className="text-center px-3 py-2 sm:py-1">
-              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">Overall Progress</div>
+              <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">{t('legal.metrics.overallProgress')}</div>
               <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
                 {Math.round(overallPct)}%
               </div>
@@ -436,10 +440,10 @@ const GivingPage = () => {
           {/* Projects */}
           <section id="projects-section" className="mb-16">
             <div className="text-center mb-10">
-              <Eyebrow><FiTarget size={11} /> Active Initiatives</Eyebrow>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">Fundraising Projects</h2>
+              <Eyebrow><FiTarget size={11} /> {t('legal.projects.eyebrow')}</Eyebrow>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">{t('legal.projects.title')}</h2>
               <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                Join us in supporting these important initiatives that will benefit current and future KPU students.
+                {t('legal.projects.subtitle')}
               </p>
             </div>
 
@@ -461,8 +465,8 @@ const GivingPage = () => {
             ) : projects.length === 0 ? (
               <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
                 <FiTarget size={48} className="mx-auto text-gray-300 mb-3" />
-                <p className="text-gray-500 font-semibold">No active fundraising projects right now</p>
-                <p className="text-xs text-gray-400 mt-1">Check back later or make a quick donation below</p>
+                <p className="text-gray-500 font-semibold">{t('legal.projects.emptyTitle')}</p>
+                <p className="text-xs text-gray-400 mt-1">{t('legal.projects.emptySubtitle')}</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -483,11 +487,11 @@ const GivingPage = () => {
                         {/* Funded chip */}
                         <div className="absolute top-3 right-3 bg-white/95 backdrop-blur px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider shadow-md"
                           style={{ color: BRAND }}>
-                          {Math.round(pct)}% FUNDED
+                          {t('legal.projects.funded', { pct: Math.round(pct) })}
                         </div>
                         {/* Donor count chip */}
                         <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 bg-black/40 backdrop-blur px-2.5 py-1 rounded-full text-[10px] font-bold text-white">
-                          <FiUsers size={10} /> {project.donors_count || 0} donor{project.donors_count === 1 ? '' : 's'}
+                          <FiUsers size={10} /> {project.donors_count === 1 ? t('legal.projects.donorOne', { count: project.donors_count || 0 }) : t('legal.projects.donorOther', { count: project.donors_count || 0 })}
                         </div>
                       </div>
 
@@ -498,7 +502,7 @@ const GivingPage = () => {
                         {/* Progress */}
                         <div className="mb-5">
                           <div className="flex justify-between items-baseline text-[11px] font-semibold mb-1.5">
-                            <span className="text-gray-500">Raised</span>
+                            <span className="text-gray-500">{t('legal.projects.raised')}</span>
                             <span className="font-extrabold text-lg" style={{ color: BRAND }}>
                               ${Number(project.raised_amount).toLocaleString()}
                             </span>
@@ -510,7 +514,7 @@ const GivingPage = () => {
                             />
                           </div>
                           <div className="flex justify-between text-[11px] mt-1.5">
-                            <span className="text-gray-500">Goal: <span className="font-bold text-gray-700">${Number(project.goal_amount).toLocaleString()}</span></span>
+                            <span className="text-gray-500">{t('legal.projects.goal')} <span className="font-bold text-gray-700">${Number(project.goal_amount).toLocaleString()}</span></span>
                             <span className="font-bold text-gray-700">{Math.round(pct)}%</span>
                           </div>
 
@@ -518,7 +522,7 @@ const GivingPage = () => {
                           <div className="mt-3 px-3 py-2 rounded-lg flex items-center justify-between"
                             style={{ background: BRAND_BG, border: `1px solid ${BRAND_BORDER}` }}>
                             <span className="text-[11px] font-bold uppercase tracking-wider" style={{ color: BRAND }}>
-                              Remaining
+                              {t('legal.projects.remaining')}
                             </span>
                             <span className="text-sm font-extrabold" style={{ color: BRAND }}>
                               ${remaining.toLocaleString()}
@@ -533,7 +537,7 @@ const GivingPage = () => {
                           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = BRAND_LIGHT}
                           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = BRAND}
                         >
-                          <FiHeart size={14} /> Donate to this Project
+                          <FiHeart size={14} /> {t('legal.projects.donateToThis')}
                         </button>
                       </div>
                     </div>
@@ -554,10 +558,10 @@ const GivingPage = () => {
                   <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full opacity-10" style={{ background: '#fff' }} />
                   <div className="absolute -bottom-16 -left-16 w-56 h-56 rounded-full opacity-10" style={{ background: '#fff' }} />
                   <div className="relative">
-                    <Eyebrow dark><FiGift size={11} /> Quick Gift</Eyebrow>
-                    <h2 className="text-2xl sm:text-3xl font-extrabold mb-3 tracking-tight">Every contribution counts</h2>
+                    <Eyebrow dark><FiGift size={11} /> {t('legal.quickGift.eyebrow')}</Eyebrow>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold mb-3 tracking-tight">{t('legal.quickGift.title')}</h2>
                     <p className="text-sm text-white/80 leading-relaxed">
-                      No project, no paperwork — just a direct gift to support KPU students. Choose an amount or enter your own.
+                      {t('legal.quickGift.subtitle')}
                     </p>
                   </div>
                 </div>
@@ -565,7 +569,7 @@ const GivingPage = () => {
                 {/* Right — form */}
                 <div className="lg:col-span-3 p-8">
                   <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-3">
-                    Choose an amount
+                    {t('legal.quickGift.chooseAmount')}
                   </label>
                   <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-5">
                     {quickGiftAmounts.map((amount) => {
@@ -588,7 +592,7 @@ const GivingPage = () => {
                   </div>
 
                   <label className="block text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-2">
-                    Or enter a custom amount
+                    {t('legal.quickGift.customAmount')}
                   </label>
                   <div className="relative mb-5">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold">$</span>
@@ -597,7 +601,7 @@ const GivingPage = () => {
                       min="1"
                       value={quickCustom}
                       onChange={(e) => { setQuickCustom(e.target.value); setQuickAmount(''); }}
-                      placeholder="Enter amount in USD"
+                      placeholder={t('legal.quickGift.customPlaceholder')}
                       className="w-full pl-8 pr-4 py-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-900 placeholder-gray-400 focus:ring-1 focus:ring-[#002759] focus:border-[#002759] outline-none transition"
                     />
                   </div>
@@ -609,11 +613,11 @@ const GivingPage = () => {
                     onMouseEnter={(e) => e.currentTarget.style.backgroundColor = BRAND_LIGHT}
                     onMouseLeave={(e) => e.currentTarget.style.backgroundColor = BRAND}
                   >
-                    <FiHeart size={14} /> Process Donation
+                    <FiHeart size={14} /> {t('legal.quickGift.processDonation')}
                   </button>
 
                   <p className="text-[11px] text-gray-400 mt-3 text-center">
-                    Your information is private. Our team will contact you to complete the gift.
+                    {t('legal.quickGift.privacyNote')}
                   </p>
                 </div>
               </div>
@@ -623,10 +627,10 @@ const GivingPage = () => {
           {/* Wall of Honor / Top donors (only completed) */}
           <section>
             <div className="text-center mb-10">
-              <Eyebrow><FiAward size={11} /> Wall of Honor</Eyebrow>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">Our Generous Donors</h2>
+              <Eyebrow><FiAward size={11} /> {t('legal.wall.eyebrow')}</Eyebrow>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">{t('legal.wall.title')}</h2>
               <p className="text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                We gratefully acknowledge the alumni and supporters who have made contributions to KPU.
+                {t('legal.wall.subtitle')}
               </p>
             </div>
 
@@ -634,8 +638,8 @@ const GivingPage = () => {
               {topDonors.length === 0 ? (
                 <div className="text-center py-10">
                   <FiHeart size={40} className="mx-auto text-gray-300 mb-3" />
-                  <p className="text-gray-500 font-semibold">No completed donations yet</p>
-                  <p className="text-xs text-gray-400 mt-1">Be the first to contribute!</p>
+                  <p className="text-gray-500 font-semibold">{t('legal.wall.emptyTitle')}</p>
+                  <p className="text-xs text-gray-400 mt-1">{t('legal.wall.emptySubtitle')}</p>
                 </div>
               ) : (
                 <>
@@ -680,7 +684,7 @@ const GivingPage = () => {
                                 <h4 className="font-bold text-gray-900 truncate">{donor.donor_name}</h4>
                               )}
                               {donor.donor_graduation_year && (
-                                <p className="text-xs text-gray-500">Class of {donor.donor_graduation_year}</p>
+                                <p className="text-xs text-gray-500">{t('legal.wall.classOf', { year: donor.donor_graduation_year })}</p>
                               )}
                               {donor.faculty && (
                                 <p className="text-[11px] text-gray-400 truncate">{donor.faculty}</p>
@@ -701,13 +705,13 @@ const GivingPage = () => {
                           <div className="mt-3 pt-3 border-t border-gray-200 grid grid-cols-2 gap-2 text-[11px]">
                             <div className="flex items-center justify-between px-2.5 py-1.5 bg-blue-50 border border-blue-100 rounded-md">
                               <span className="flex items-center gap-1 text-[#002759] font-semibold">
-                                <FiTarget size={10} /> Projects
+                                <FiTarget size={10} /> {t('legal.wall.projects')}
                               </span>
                               <span className="font-bold text-[#002759]">${projectsAmt.toLocaleString()}</span>
                             </div>
                             <div className="flex items-center justify-between px-2.5 py-1.5 bg-purple-50 border border-purple-100 rounded-md">
                               <span className="flex items-center gap-1 text-purple-700 font-semibold">
-                                <FiHeart size={10} /> Quick Gift
+                                <FiHeart size={10} /> {t('legal.wall.quickGift')}
                               </span>
                               <span className="font-bold text-purple-700">${quickAmt.toLocaleString()}</span>
                             </div>
@@ -738,7 +742,7 @@ const GivingPage = () => {
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = BRAND_LIGHT}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = BRAND}
                       >
-                        See All {topDonorsTotal} Donors <FiArrowRight size={14} />
+                        {t('legal.wall.seeAll', { count: topDonorsTotal })} <FiArrowRight size={14} />
                       </Link>
                     </div>
                   )}
