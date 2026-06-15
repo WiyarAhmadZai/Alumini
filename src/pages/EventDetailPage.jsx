@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiCalendar, FiClock, FiMapPin, FiVideo, FiUsers, FiDollarSign, FiTag, FiArrowLeft, FiCheck, FiX, FiAlertCircle, FiDownload } from 'react-icons/fi';
@@ -16,6 +17,7 @@ const resolveImage = (img) => {
 };
 
 const EventDetailPage = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -46,7 +48,7 @@ const EventDetailPage = () => {
       }
     } catch (error) {
       console.error('Failed to fetch event details:', error);
-      Swal.fire('Error', 'Failed to load event details', 'error');
+      Swal.fire(t('events.detail.errorTitle'), t('events.detail.loadDetailsFailed'), 'error');
     } finally {
       setLoading(false);
     }
@@ -54,18 +56,18 @@ const EventDetailPage = () => {
 
   const handleRegister = async () => {
     if (!user) {
-      Swal.fire('Login Required', 'Please login to register for this event', 'info');
+      Swal.fire(t('events.alert.loginRequiredTitle'), t('events.alert.loginRequiredText'), 'info');
       return;
     }
 
     const { value: specialRequirements } = await Swal.fire({
-      title: 'Register for Event',
+      title: t('events.detail.registerForEventTitle'),
       input: 'textarea',
-      inputLabel: 'Special Requirements (Optional)',
-      inputPlaceholder: 'Any special requirements or accommodations...',
+      inputLabel: t('events.detail.specialRequirementsLabel'),
+      inputPlaceholder: t('events.detail.specialRequirementsPlaceholder'),
       showCancelButton: true,
-      confirmButtonText: 'Register',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: t('events.detail.register'),
+      cancelButtonText: t('events.detail.cancel'),
     });
 
     if (specialRequirements === undefined) return;
@@ -74,10 +76,10 @@ const EventDetailPage = () => {
       setRegistering(true);
       await eventService.registerForEvent(id, specialRequirements);
       
-      Swal.fire('Success!', 'You have been registered for this event', 'success');
+      Swal.fire(t('events.detail.registerSuccessTitle'), t('events.detail.registerSuccessText'), 'success');
       fetchEventDetails(); // Refresh to update registration status
     } catch (error) {
-      Swal.fire('Error', error.message || 'Failed to register for event', 'error');
+      Swal.fire(t('events.detail.errorTitle'), error.message || t('events.detail.registerErrorText'), 'error');
     } finally {
       setRegistering(false);
     }
@@ -85,12 +87,12 @@ const EventDetailPage = () => {
 
   const handleCancelRegistration = async () => {
     const result = await Swal.fire({
-      title: 'Cancel Registration?',
-      text: 'Are you sure you want to cancel your registration for this event?',
+      title: t('events.detail.cancelRegTitle'),
+      text: t('events.detail.cancelRegText'),
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, Cancel',
-      cancelButtonText: 'No, Keep Registration',
+      confirmButtonText: t('events.detail.cancelRegConfirm'),
+      cancelButtonText: t('events.detail.cancelRegKeep'),
     });
 
     if (!result.isConfirmed) return;
@@ -99,10 +101,10 @@ const EventDetailPage = () => {
       setCancelling(true);
       await eventService.cancelRegistration(id);
       
-      Swal.fire('Cancelled', 'Your registration has been cancelled', 'success');
+      Swal.fire(t('events.detail.cancelledTitle'), t('events.detail.cancelledText'), 'success');
       fetchEventDetails(); // Refresh to update registration status
     } catch (error) {
-      Swal.fire('Error', error.message || 'Failed to cancel registration', 'error');
+      Swal.fire(t('events.detail.errorTitle'), error.message || t('events.detail.cancelErrorText'), 'error');
     } finally {
       setCancelling(false);
     }
@@ -152,7 +154,7 @@ const EventDetailPage = () => {
             <div className="absolute inset-0 z-0">
               <img
                 src="/kari-shea-apcUIqOPEIo-unsplash.jpg"
-                alt="Event Background"
+                alt={t('events.detail.bgAlt')}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-transparent"></div>
@@ -225,12 +227,12 @@ const EventDetailPage = () => {
       <Layout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Event Not Found</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('events.detail.notFoundTitle')}</h2>
             <button
               onClick={() => navigate('/events')}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              Back to Events
+              {t('events.detail.backToEvents')}
             </button>
           </div>
         </div>
@@ -252,7 +254,7 @@ const EventDetailPage = () => {
           <div className="absolute inset-0 z-0">
             <img
               src={resolveImage(event?.featured_image) || '/kari-shea-apcUIqOPEIo-unsplash.jpg'}
-              alt={event?.title || 'Event'}
+              alt={event?.title || t('events.detail.defaultImageAlt')}
               className="w-full h-full object-cover"
               onError={(e) => { e.target.src = '/kari-shea-apcUIqOPEIo-unsplash.jpg'; }}
             />
@@ -265,7 +267,7 @@ const EventDetailPage = () => {
               className="mb-8 inline-flex items-center gap-2 text-white hover:text-gray-200 transition-colors"
             >
               <FiArrowLeft className="text-xl" />
-              <span>Back to Events</span>
+              <span>{t('events.detail.backToEvents')}</span>
             </button>
             
             <div className="text-white">
@@ -277,13 +279,13 @@ const EventDetailPage = () => {
                 )}
                 {event?.mode && (
                   <span className="px-3 py-1 bg-white/20 backdrop-blur-sm rounded-full text-sm font-bold text-white">
-                    {event.mode === 'online' ? 'Online Event' : 'Offline Event'}
+                    {event.mode === 'online' ? t('events.detail.onlineEvent') : t('events.detail.offlineEvent')}
                   </span>
                 )}
               </div>
               
               <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight">
-                {event?.title || 'Event Title'}
+                {event?.title || t('events.detail.defaultTitle')}
               </h1>
               
               <div className="flex flex-wrap gap-6 text-lg">
@@ -293,8 +295,8 @@ const EventDetailPage = () => {
                     weekday: 'long', 
                     year: 'numeric', 
                     month: 'long', 
-                    day: 'numeric' 
-                  }) : 'Date TBD'}</span>
+                    day: 'numeric'
+                  }) : t('events.detail.dateTbd')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <FiClock className="text-xl" />
@@ -302,7 +304,7 @@ const EventDetailPage = () => {
                     hour: 'numeric',
                     minute: '2-digit',
                     hour12: true
-                  }) : 'Time TBD'} ({event?.time_zone || 'GMT+4:30'})</span>
+                  }) : t('events.detail.timeTbd')} ({event?.time_zone || 'GMT+4:30'})</span>
                 </div>
               </div>
             </div>
@@ -317,7 +319,7 @@ const EventDetailPage = () => {
               <div className="lg:col-span-2 space-y-8">
                 {/* Description */}
                 <div className="bg-white rounded-lg p-6 border border-gray-200">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Event</h2>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('events.detail.aboutTitle')}</h2>
                   <div className="prose prose-gray max-w-none">
                     <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                       {event.description}
@@ -327,7 +329,7 @@ const EventDetailPage = () => {
 
                 {/* Location */}
                 <div className="bg-white rounded-lg p-6 border border-gray-200">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Location</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">{t('events.detail.locationTitle')}</h3>
                   <div className="flex items-center gap-3 text-gray-700">
                     {event.location.includes('Online') ? (
                       <FiVideo className="text-xl text-blue-600" />
@@ -344,7 +346,7 @@ const EventDetailPage = () => {
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:text-blue-700 underline"
                       >
-                        Join Meeting →
+                        {t('events.detail.joinMeeting')}
                       </a>
                     </div>
                   )}
@@ -353,7 +355,7 @@ const EventDetailPage = () => {
                 {/* Requirements */}
                 {event.requirements && (
                   <div className="bg-white rounded-lg p-6 border border-gray-200">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">Requirements</h3>
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">{t('events.detail.requirementsTitle')}</h3>
                     <div className="prose prose-gray max-w-none">
                       <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
                         {event.requirements}
@@ -370,22 +372,22 @@ const EventDetailPage = () => {
                   <div className="space-y-4">
                     {/* Registration Status */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-600">Registration Status</span>
+                      <span className="text-sm font-medium text-gray-600">{t('events.detail.registrationStatus')}</span>
                       <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                        isRegistrationDeadlinePassed 
+                        isRegistrationDeadlinePassed
                           ? 'bg-red-100 text-red-800'
                           : 'bg-green-100 text-green-800'
                       }`}>
-                        {isRegistrationDeadlinePassed 
-                          ? 'Registration Closed' 
-                          : 'Registration Open'
+                        {isRegistrationDeadlinePassed
+                          ? t('events.detail.registrationClosed')
+                          : t('events.detail.registrationOpen')
                         }
                       </span>
                     </div>
 
                     {/* Attendees */}
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-600">Attendees</span>
+                      <span className="text-sm font-medium text-gray-600">{t('events.detail.attendees')}</span>
                       <span className="text-sm font-bold text-gray-900">
                         {event.current_attendees}
                         {event.max_attendees > 0 && ` / ${event.max_attendees}`}
@@ -395,7 +397,7 @@ const EventDetailPage = () => {
                     {/* Registration Fee */}
                     {event.registration_fee > 0 && (
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-600">Registration Fee</span>
+                        <span className="text-sm font-medium text-gray-600">{t('events.detail.registrationFee')}</span>
                         <span className="text-sm font-bold text-gray-900">
                           ${event.registration_fee}
                         </span>
@@ -405,7 +407,7 @@ const EventDetailPage = () => {
                     {/* Registration Deadline */}
                     {event.registration_deadline && (
                       <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-600">Registration Deadline</span>
+                        <span className="text-sm font-medium text-gray-600">{t('events.detail.registrationDeadline')}</span>
                         <span className="text-sm font-bold text-gray-900">
                           {new Date(event.registration_deadline).toLocaleDateString('en-GB', {
                             day: '2-digit',
@@ -425,14 +427,14 @@ const EventDetailPage = () => {
                               ? 'bg-green-100 text-green-800'
                               : 'bg-blue-100 text-blue-800'
                           }`}>
-                            {userRegistration.status === 'confirmed' ? 'Confirmed' : 'Registered'}
+                            {userRegistration.status === 'confirmed' ? t('events.detail.confirmed') : t('events.detail.registered')}
                           </div>
                           <button
                             onClick={() => setShowCardModal(true)}
                             className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-[#002759] text-white font-medium rounded-lg hover:bg-[#003580] transition-colors"
                           >
                             <FiDownload size={16} />
-                            {userRegistration.card_downloaded ? 'View Card' : 'Download Card'}
+                            {userRegistration.card_downloaded ? t('events.detail.viewCard') : t('events.detail.downloadCard')}
                           </button>
                           {!userRegistration.card_downloaded && userRegistration.status === 'registered' && !isEventExpired && (
                             <button
@@ -440,13 +442,13 @@ const EventDetailPage = () => {
                               disabled={cancelling}
                               className="w-full px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
-                              {cancelling ? 'Cancelling...' : 'Cancel Registration'}
+                              {cancelling ? t('events.detail.cancelling') : t('events.detail.cancelRegistration')}
                             </button>
                           )}
                           {userRegistration.card_downloaded && (
                             <p className="text-xs text-amber-600 text-center flex items-center justify-center gap-1">
                               <FiAlertCircle size={12} />
-                              Card downloaded — cancellation disabled
+                              {t('events.detail.cardDownloadedNote')}
                             </p>
                           )}
                         </div>
@@ -459,16 +461,16 @@ const EventDetailPage = () => {
                               disabled={registering}
                               className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                             >
-                              {registering ? 'Registering...' : 'Register Now'}
+                              {registering ? t('events.detail.registering') : t('events.detail.registerNow')}
                             </button>
                           ) : (
                             /* Show appropriate message when registration deadline has passed */
                             <div className="text-center">
                               <div className="px-4 py-2 bg-red-100 text-red-600 rounded-lg">
-                                Registration deadline has passed
+                                {t('events.detail.deadlinePassedBox')}
                               </div>
                               <p className="text-xs text-gray-500 text-center mt-2">
-                                Deadline passed. Contact the KPU team <a href="/contact" style={{color: '#2563eb', textDecoration: 'underline'}}>if you want to participate</a>.
+                                {t('events.detail.deadlinePassedNotePrefix')}<a href="/contact" style={{color: '#2563eb', textDecoration: 'underline'}}>{t('events.detail.deadlinePassedNoteLink')}</a>{t('events.detail.deadlinePassedNoteSuffix')}
                               </p>
                             </div>
                           )}
@@ -477,13 +479,13 @@ const EventDetailPage = () => {
                       
                       {!user && isRegistrationOpen && (
                         <p className="text-xs text-gray-500 text-center mt-2">
-                          Please login to register for this event
+                          {t('events.detail.loginToRegister')}
                         </p>
                       )}
                       
                       {isRegistrationDeadlinePassed && (
                         <p className="text-xs text-gray-500 text-center mt-2">
-                          The registration deadline for this event has passed.
+                          {t('events.detail.deadlinePassedNote')}
                         </p>
                       )}
                     </div>
@@ -492,19 +494,19 @@ const EventDetailPage = () => {
 
                 {/* Event Organizer */}
                 <div className="bg-white rounded-lg p-6 border border-gray-200">
-                  <h3 className="text-lg font-bold text-gray-900 mb-4">Event Organizer</h3>
+                  <h3 className="text-lg font-bold text-gray-900 mb-4">{t('events.detail.organizerTitle')}</h3>
                   <div className="space-y-3">
                     <div>
-                      <span className="text-sm text-gray-600">Name</span>
+                      <span className="text-sm text-gray-600">{t('events.detail.organizerName')}</span>
                       <p className="font-medium text-gray-900">{event.organizer_name}</p>
                     </div>
                     <div>
-                      <span className="text-sm text-gray-600">Email</span>
+                      <span className="text-sm text-gray-600">{t('events.detail.organizerEmail')}</span>
                       <p className="font-medium text-gray-900">{event.organizer_email}</p>
                     </div>
                     {event.organizer_phone && (
                       <div>
-                        <span className="text-sm text-gray-600">Phone</span>
+                        <span className="text-sm text-gray-600">{t('events.detail.organizerPhone')}</span>
                         <p className="font-medium text-gray-900">{event.organizer_phone}</p>
                       </div>
                     )}
