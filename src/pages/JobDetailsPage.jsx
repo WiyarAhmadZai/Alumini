@@ -6,6 +6,7 @@ import {
   FiUser, FiCheck, FiTarget, FiAward, FiList, FiAlertCircle, FiArrowRight
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
 import jobService from '../services/jobService';
 import ApplyModal from '../components/job/ApplyModal';
@@ -18,6 +19,7 @@ const BRAND_BG = '#eef1fd';
 const BRAND_BORDER = '#c5ccf7';
 
 const JobDetailsPage = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const { isAuthenticated } = useAuth();
   const [job, setJob] = useState(null);
@@ -38,11 +40,11 @@ const JobDetailsPage = () => {
       if (response.status === 'success' && response.data) {
         setJob(response.data);
       } else {
-        setError('Job not found');
+        setError(t('jobs.details.notFoundError'));
       }
     } catch (err) {
       console.error('Error fetching job:', err);
-      setError('Failed to load job details');
+      setError(t('jobs.details.loadError'));
     } finally {
       setLoading(false);
     }
@@ -60,13 +62,13 @@ const JobDetailsPage = () => {
   const handleApplyClick = () => {
     if (!isAuthenticated()) {
       Swal.fire({
-        title: 'Login Required',
-        text: 'Please login to apply for this job.',
+        title: t('jobs.details.loginRequiredTitle'),
+        text: t('jobs.details.loginRequiredText'),
         icon: 'warning',
         confirmButtonColor: BRAND,
-        confirmButtonText: 'Login',
+        confirmButtonText: t('jobs.details.loginConfirm'),
         showCancelButton: true,
-        cancelButtonText: 'Cancel'
+        cancelButtonText: t('jobs.details.loginCancel')
       }).then((result) => {
         if (result.isConfirmed) window.location.href = '/login';
       });
@@ -79,10 +81,10 @@ const JobDetailsPage = () => {
     setHasApplied(true);
     Swal.fire({
       icon: 'success',
-      title: 'Application Submitted!',
-      text: 'Your job application has been submitted successfully.',
+      title: t('jobs.details.successTitle'),
+      text: t('jobs.details.successText'),
       confirmButtonColor: BRAND,
-      confirmButtonText: 'Great!',
+      confirmButtonText: t('jobs.details.successConfirm'),
       timer: 3000,
       timerProgressBar: true
     });
@@ -131,27 +133,27 @@ const JobDetailsPage = () => {
           <div className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 100%), url("/depositphotos_205029014-stock-photo-asian-man-civil-engineer-woman.jpg")' }} />
           <div className="relative z-10 h-full flex items-center justify-center px-4">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Job Not Found</h1>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{t('jobs.details.notFoundHero')}</h1>
           </div>
         </section>
         <div className="max-w-md mx-auto px-4 py-16 text-center">
           <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4" style={{ background: BRAND_BG }}>
             <FiAlertCircle className="text-2xl" style={{ color: BRAND }} />
           </div>
-          <h2 className="text-lg font-bold text-gray-900 mb-2">Job Not Available</h2>
-          <p className="text-sm text-gray-500 mb-6">{error || "The job you're looking for doesn't exist or has been removed."}</p>
+          <h2 className="text-lg font-bold text-gray-900 mb-2">{t('jobs.details.notAvailableTitle')}</h2>
+          <p className="text-sm text-gray-500 mb-6">{error || t('jobs.details.notAvailableText')}</p>
           <div className="flex gap-2 justify-center flex-wrap">
             <Link to="/jobs"
               className="inline-flex items-center gap-2 px-5 py-2.5 text-white text-sm font-semibold rounded-lg transition-colors"
               style={{ background: BRAND_DARK }}
               onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
               onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
-              <FiArrowLeft /> Back to Jobs
+              <FiArrowLeft /> {t('jobs.details.backToJobs')}
             </Link>
             <Link to="/applications"
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-lg transition-colors border"
               style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-              My Applications
+              {t('jobs.details.myApplications')}
             </Link>
           </div>
         </div>
@@ -197,7 +199,7 @@ const JobDetailsPage = () => {
         <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 mb-3">
             <FiBriefcase className="text-[10px]" />
-            Job Opportunity
+            {t('jobs.details.opportunityBadge')}
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white leading-tight tracking-tight max-w-3xl line-clamp-2">
             {job.title}
@@ -211,7 +213,7 @@ const JobDetailsPage = () => {
         {/* Back link */}
         <Link to="/jobs"
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-white hover:underline mb-3">
-          <FiArrowLeft className="text-xs" /> Back to Jobs
+          <FiArrowLeft className="text-xs" /> {t('jobs.details.backToJobs')}
         </Link>
 
         {/* Header card — overlaps hero */}
@@ -228,7 +230,7 @@ const JobDetailsPage = () => {
                 {job.posted_by_alumnus && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
                     style={{ background: BRAND_BG, color: BRAND, border: `1px solid ${BRAND_BORDER}` }}>
-                    <FiCheck className="text-[10px]" /> Alumnus
+                    <FiCheck className="text-[10px]" /> {t('jobs.details.alumnus')}
                   </span>
                 )}
               </div>
@@ -245,7 +247,7 @@ const JobDetailsPage = () => {
                 {(job.posted_at || job.created_at) && (
                   <span className="flex items-center gap-1">
                     <FiCalendar className="w-3.5 h-3.5 text-gray-400" />
-                    Posted {new Date(job.posted_at || job.created_at).toLocaleDateString()}
+                    {t('jobs.details.postedOn', { date: new Date(job.posted_at || job.created_at).toLocaleDateString() })}
                   </span>
                 )}
                 {job.posted_time_ago && (
@@ -259,7 +261,7 @@ const JobDetailsPage = () => {
               {hasApplied ? (
                 <button disabled
                   className="px-5 py-2.5 bg-gray-100 text-gray-500 text-sm font-bold rounded-lg cursor-not-allowed flex items-center justify-center gap-1.5">
-                  <FiCheck /> Applied
+                  <FiCheck /> {t('jobs.details.applied')}
                 </button>
               ) : (
                 <button onClick={handleApplyClick}
@@ -267,7 +269,7 @@ const JobDetailsPage = () => {
                   style={{ background: BRAND_DARK }}
                   onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
                   onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
-                  Apply Now <FiArrowRight />
+                  {t('jobs.details.applyNow')} <FiArrowRight />
                 </button>
               )}
             </div>
@@ -279,14 +281,14 @@ const JobDetailsPage = () => {
           {/* Main content — 2-col grid for sections */}
           <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 self-start">
             <div className={(!job.requirements && !job.benefits) ? 'sm:col-span-2' : ''}>
-              <Section icon={FiList} title="Job Description">
-                {job.description || 'No description provided.'}
+              <Section icon={FiList} title={t('jobs.details.jobDescription')}>
+                {job.description || t('jobs.details.noDescription')}
               </Section>
             </div>
 
             {job.requirements && (
               <div>
-                <Section icon={FiTarget} title="Requirements">
+                <Section icon={FiTarget} title={t('jobs.details.requirements')}>
                   {job.requirements}
                 </Section>
               </div>
@@ -294,7 +296,7 @@ const JobDetailsPage = () => {
 
             {job.benefits && (
               <div className={!job.requirements ? '' : ''}>
-                <Section icon={FiAward} title="Benefits">
+                <Section icon={FiAward} title={t('jobs.details.benefits')}>
                   {job.benefits}
                 </Section>
               </div>
@@ -307,32 +309,32 @@ const JobDetailsPage = () => {
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
                 <FiBriefcase className="text-sm" style={{ color: BRAND }} />
-                <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">Job Information</h3>
+                <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">{t('jobs.details.jobInformation')}</h3>
               </div>
               <div className="p-5 space-y-3">
                 {job.experience_level && (
-                  <InfoRow label="Experience Level" value={job.experience_level} />
+                  <InfoRow label={t('jobs.details.infoExperienceLevel')} value={job.experience_level} />
                 )}
                 {job.industry && (
-                  <InfoRow label="Industry" value={job.industry} />
+                  <InfoRow label={t('jobs.details.infoIndustry')} value={job.industry} />
                 )}
                 {job.type && (
-                  <InfoRow label="Job Type" value={job.type} />
+                  <InfoRow label={t('jobs.details.infoJobType')} value={job.type} />
                 )}
                 {job.location && (
-                  <InfoRow label="Location" value={job.location} />
+                  <InfoRow label={t('jobs.details.infoLocation')} value={job.location} />
                 )}
                 {job.salary && (
-                  <InfoRow label="Salary" value={job.salary} />
+                  <InfoRow label={t('jobs.details.infoSalary')} value={job.salary} />
                 )}
                 {job.application_deadline && (
-                  <InfoRow label="Apply by"
+                  <InfoRow label={t('jobs.details.infoApplyBy')}
                     value={new Date(job.application_deadline).toLocaleDateString()} />
                 )}
                 {job.posted_by_alumnus && (
                   <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2 text-xs font-semibold" style={{ color: BRAND }}>
                     <FiUser className="w-3.5 h-3.5" />
-                    Posted by KPU Alumnus
+                    {t('jobs.details.postedByAlumnus')}
                   </div>
                 )}
               </div>
@@ -342,13 +344,13 @@ const JobDetailsPage = () => {
             <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
               <div className="px-5 py-3 border-b border-gray-100 flex items-center gap-2">
                 <FiArrowRight className="text-sm" style={{ color: BRAND }} />
-                <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">Actions</h3>
+                <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-gray-700">{t('jobs.details.actions')}</h3>
               </div>
               <div className="p-4 space-y-2">
                 {hasApplied ? (
                   <button disabled
                     className="w-full px-4 py-2.5 bg-gray-100 text-gray-500 text-xs font-bold rounded-lg cursor-not-allowed flex items-center justify-center gap-1.5">
-                    <FiCheck /> Already Applied
+                    <FiCheck /> {t('jobs.details.alreadyApplied')}
                   </button>
                 ) : (
                   <button onClick={handleApplyClick}
@@ -356,17 +358,17 @@ const JobDetailsPage = () => {
                     style={{ background: BRAND_DARK }}
                     onMouseEnter={e => e.currentTarget.style.background = BRAND_DARKER}
                     onMouseLeave={e => e.currentTarget.style.background = BRAND_DARK}>
-                    Apply for This Job <FiArrowRight className="text-xs" />
+                    {t('jobs.details.applyForThisJob')} <FiArrowRight className="text-xs" />
                   </button>
                 )}
                 <Link to="/jobs"
                   className="block w-full px-4 py-2.5 text-xs font-bold rounded-lg text-center transition-colors border"
                   style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-                  Browse Similar Jobs
+                  {t('jobs.details.browseSimilar')}
                 </Link>
                 <Link to="/applications"
                   className="block w-full px-4 py-2.5 text-xs font-bold text-gray-600 rounded-lg text-center transition-colors border border-gray-200 hover:bg-gray-50">
-                  My Applications
+                  {t('jobs.details.myApplications')}
                 </Link>
               </div>
             </div>
@@ -382,13 +384,13 @@ const JobDetailsPage = () => {
           {hasApplied ? (
             <button disabled
               className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-500 text-xs font-bold rounded-lg cursor-not-allowed flex items-center justify-center gap-1.5">
-              <FiCheck /> Already Applied
+              <FiCheck /> {t('jobs.details.alreadyApplied')}
             </button>
           ) : (
             <button onClick={handleApplyClick}
               className="flex-1 px-4 py-2.5 text-white text-xs font-bold rounded-lg flex items-center justify-center gap-1.5"
               style={{ background: BRAND_DARK }}>
-              Apply Now <FiArrowRight />
+              {t('jobs.details.applyNow')} <FiArrowRight />
             </button>
           )}
         </div>
