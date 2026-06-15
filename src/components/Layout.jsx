@@ -17,7 +17,13 @@ import {
   FiLinkedin,
   FiFacebook,
   FiUser,
-  FiBell
+  FiBell,
+  FiGrid,
+  FiBriefcase,
+  FiCalendar,
+  FiMessageSquare,
+  FiLogOut,
+  FiChevronDown
 } from 'react-icons/fi';
 
 const timeAgo = (dateStr) => {
@@ -412,21 +418,54 @@ const Layout = ({ children }) => {
                   </button>
 
                   {isUserMenuOpen && (
-                    <div className="absolute right-0 mt-3 w-40 rounded-xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden">
-                      <Link
-                        to="/profile"
-                        onClick={() => setIsUserMenuOpen(false)}
-                        className="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-gray-50"
-                      >
-                        {t('common.profile')}
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50"
-                      >
-                        {t('common.logout')}
-                      </button>
+                    <div className="absolute end-0 mt-3 w-64 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden z-[100] animate-fade-in">
+                      {/* User header */}
+                      <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#002759] to-[#194ce6] text-white">
+                        <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-white/40 flex-shrink-0 bg-white/10">
+                          <img
+                            src={user?.profile_image
+                              ? (user.profile_image.startsWith('http')
+                                  ? user.profile_image
+                                  : `http://localhost:8000/storage/${user.profile_image}`)
+                              : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=64`}
+                            alt={user?.name || 'User'}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=64`;
+                            }}
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] text-blue-100 uppercase tracking-wide">{t('userMenu.signedInAs')}</p>
+                          <p className="text-sm font-bold truncate">{user?.name || 'Alumni'}</p>
+                          {user?.email && <p className="text-[11px] text-blue-100 truncate">{user.email}</p>}
+                        </div>
+                      </div>
+
+                      {/* Menu items */}
+                      <div className="py-1">
+                        <Link to="/dashboard" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiGrid className="text-[#194ce6]" /> {t('userMenu.dashboard')}
+                        </Link>
+                        <Link to="/profile" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiUser className="text-[#194ce6]" /> {t('userMenu.myProfile')}
+                        </Link>
+                        <Link to="/applications" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiBriefcase className="text-[#194ce6]" /> {t('userMenu.myApplications')}
+                        </Link>
+                        <Link to="/events/registered" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiCalendar className="text-[#194ce6]" /> {t('userMenu.myEvents')}
+                        </Link>
+                        <Link to="/messages" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiMessageSquare className="text-[#194ce6]" /> {t('userMenu.myMessages')}
+                        </Link>
+                      </div>
+
+                      <div className="border-t border-gray-100">
+                        <button type="button" onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors">
+                          <FiLogOut /> {t('userMenu.logout')}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -608,7 +647,19 @@ const Layout = ({ children }) => {
                     >
                       {t('common.login')}
                     </Link>
-                    <Link 
+                    {isAuthenticated && (
+                      <Link
+                        to="/dashboard"
+                        onClick={handleMenuClick}
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors mb-1 ${
+                          location.pathname === '/dashboard' ? 'bg-white/20' : 'hover:bg-[#0a519b]'
+                        }`}
+                      >
+                        <FiGrid className="text-lg opacity-90" />
+                        {t('userMenu.dashboard')}
+                      </Link>
+                    )}
+                    <Link
                       to="/profile"
                       onClick={handleMenuClick}
                       className="flex items-center gap-3 px-4 py-3 hover:bg-[#0a519b] rounded-lg transition-colors"
