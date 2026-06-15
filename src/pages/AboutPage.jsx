@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import {
@@ -33,37 +34,38 @@ const SectionHeader = ({ label, title, subtitle }) => (
   </div>
 );
 
-// ─── Data ───────────────────────────────────────────────────────
-const values = [
-  { icon: <FiHeart />, title: 'Integrity', desc: 'Honest, ethical conduct in every interaction.' },
-  { icon: <FiTrendingUp />, title: 'Excellence', desc: 'The highest standards in education & leadership.' },
-  { icon: <FiUsers />, title: 'Community', desc: 'Lifelong bonds between graduates and our university.' },
-  { icon: <FiZap />, title: 'Innovation', desc: 'Driving progress through technology and creativity.' },
-];
-
-const timeline = [
-  { year: '1951', title: 'KPU Founded', desc: 'Kabul Polytechnic University opens its doors.' },
-  { year: '2010', title: 'Alumni Association', desc: 'Graduates founded the alumni community.' },
-  { year: '2018', title: 'Global Network', desc: 'Chapters in Europe, North America, and Asia.' },
-  { year: '2024', title: 'Digital Platform', desc: 'Modern platform connecting 5,000+ alumni.' },
-];
-
-const boardMembers = [
-  { name: 'Eng. Mohammad Hassan', role: 'President', dept: 'Civil · 1995', img: '/1teacher.jpg' },
-  { name: 'Dr. Sarah Ahmadzai', role: 'Vice President', dept: 'Electrical · 2000', img: '/teacher.jpg' },
-  { name: 'Ahmad Wali Karimi', role: 'Secretary', dept: 'Mechanical · 2008', img: '/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg' },
-  { name: 'Fatima Noori', role: 'Treasurer', dept: 'Computer · 2012', img: '/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg' },
-];
-
-const contactItems = [
-  { icon: <FiMail />, title: 'Email', detail: 'it.director@kpu.edu.af' },
-  { icon: <FiPhone />, title: 'Phone', detail: '+93 20 252 6364' },
-  { icon: <FiMapPin />, title: 'Address', detail: 'KPU Campus, Kabul, Afghanistan' },
-  { icon: <FiBookOpen />, title: 'Transcripts', detail: 'transcript@kpu.edu.af' },
-];
-
 // ─── Main Page ──────────────────────────────────────────────────
 const AboutPage = () => {
+  const { t } = useTranslation();
+
+  const values = [
+    { icon: <FiHeart />, title: t('about.values.integrityTitle'), desc: t('about.values.integrityDesc') },
+    { icon: <FiTrendingUp />, title: t('about.values.excellenceTitle'), desc: t('about.values.excellenceDesc') },
+    { icon: <FiUsers />, title: t('about.values.communityTitle'), desc: t('about.values.communityDesc') },
+    { icon: <FiZap />, title: t('about.values.innovationTitle'), desc: t('about.values.innovationDesc') },
+  ];
+
+  const timeline = [
+    { year: '1951', title: t('about.timeline.foundedTitle'), desc: t('about.timeline.foundedDesc') },
+    { year: '2010', title: t('about.timeline.associationTitle'), desc: t('about.timeline.associationDesc') },
+    { year: '2018', title: t('about.timeline.globalTitle'), desc: t('about.timeline.globalDesc') },
+    { year: '2024', title: t('about.timeline.platformTitle'), desc: t('about.timeline.platformDesc') },
+  ];
+
+  const boardMembers = [
+    { name: 'Eng. Mohammad Hassan', role: t('about.board.presidentRole'), dept: 'Civil · 1995', img: '/1teacher.jpg' },
+    { name: 'Dr. Sarah Ahmadzai', role: t('about.board.vicePresidentRole'), dept: 'Electrical · 2000', img: '/teacher.jpg' },
+    { name: 'Ahmad Wali Karimi', role: t('about.board.secretaryRole'), dept: 'Mechanical · 2008', img: '/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg' },
+    { name: 'Fatima Noori', role: t('about.board.treasurerRole'), dept: 'Computer · 2012', img: '/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg' },
+  ];
+
+  const contactItems = [
+    { icon: <FiMail />, title: t('about.contact.emailTitle'), detail: 'it.director@kpu.edu.af' },
+    { icon: <FiPhone />, title: t('about.contact.phoneTitle'), detail: '+93 20 252 6364' },
+    { icon: <FiMapPin />, title: t('about.contact.addressTitle'), detail: t('about.contact.addressDetail') },
+    { icon: <FiBookOpen />, title: t('about.contact.transcriptsTitle'), detail: 'transcript@kpu.edu.af' },
+  ];
+
   return (
     <Layout>
 
@@ -73,13 +75,13 @@ const AboutPage = () => {
         <div className="h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-6 text-white/90">
             <FiAward className="text-white/70" />
-            Kabul Polytechnic University
+            {t('about.hero.badge')}
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-5 max-w-4xl">
-            About KPU Alumni Association
+            {t('about.hero.title')}
           </h1>
           <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">
-            Building lifelong connections and fostering professional growth for graduates worldwide.
+            {t('about.hero.subtitle')}
           </p>
         </div>
       </section>
@@ -88,16 +90,16 @@ const AboutPage = () => {
       <section className="py-14 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <SectionHeader
-            label="Who We Are"
-            title="Built on Purpose"
-            subtitle="The principles that guide every connection and opportunity in our community."
+            label={t('about.whoWeAre.label')}
+            title={t('about.whoWeAre.title')}
+            subtitle={t('about.whoWeAre.subtitle')}
           />
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { icon: <FiTarget />, title: 'Our Mission', body: 'Nurture a vibrant, lifelong network of KPU graduates through professional development, knowledge sharing, and collaboration.' },
-              { icon: <FiGlobe />, title: 'Our Vision', body: 'Become the most trusted alumni community in the region — a bridge between heritage and innovation.' },
-              { icon: <FiStar />, title: 'Our Promise', body: 'Celebrate achievements, mentor the next generation, and contribute to the development of our nation.' },
+              { icon: <FiTarget />, title: t('about.whoWeAre.missionTitle'), body: t('about.whoWeAre.missionBody') },
+              { icon: <FiGlobe />, title: t('about.whoWeAre.visionTitle'), body: t('about.whoWeAre.visionBody') },
+              { icon: <FiStar />, title: t('about.whoWeAre.promiseTitle'), body: t('about.whoWeAre.promiseBody') },
             ].map((c, i) => (
               <div key={i} className="bg-white rounded-xl border border-gray-100 p-5 hover:border-gray-200 hover:shadow-sm transition-all">
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3 text-base"
@@ -116,9 +118,9 @@ const AboutPage = () => {
       <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gray-50/70">
         <div className="max-w-6xl mx-auto">
           <SectionHeader
-            label="Our Values"
-            title="The Pillars We Stand On"
-            subtitle="Four core principles that guide everything we do."
+            label={t('about.values.label')}
+            title={t('about.values.title')}
+            subtitle={t('about.values.subtitle')}
           />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -140,9 +142,9 @@ const AboutPage = () => {
       <section className="py-14 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-4xl mx-auto">
           <SectionHeader
-            label="Our Journey"
-            title="Milestones"
-            subtitle="From a single campus in Kabul to a global network."
+            label={t('about.timeline.label')}
+            title={t('about.timeline.title')}
+            subtitle={t('about.timeline.subtitle')}
           />
 
           <div className="relative">
@@ -178,9 +180,9 @@ const AboutPage = () => {
       <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gray-50/70">
         <div className="max-w-4xl mx-auto">
           <SectionHeader
-            label="Leadership"
-            title="Chancellor's Message"
-            subtitle="Words from our esteemed Chancellor."
+            label={t('about.chancellor.label')}
+            title={t('about.chancellor.title')}
+            subtitle={t('about.chancellor.subtitle')}
           />
 
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 sm:p-5">
@@ -189,7 +191,7 @@ const AboutPage = () => {
               <div className="relative flex-shrink-0">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2"
                   style={{ borderColor: BRAND_BORDER }}>
-                  <img src="/chanceler.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
+                  <img src="/chanceler.jpg" alt={t('about.chancellor.name')} className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center shadow"
                   style={{ background: BRAND }}>
@@ -200,13 +202,12 @@ const AboutPage = () => {
               {/* Text */}
               <div className="flex-1 min-w-0">
                 <blockquote className="text-gray-600 text-xs sm:text-sm leading-relaxed italic font-light mb-3">
-                  "The KPU Alumni Association represents the pride of our institution. Our graduates continue to make
-                  significant contributions to Afghanistan's development — a bridge between past achievements and future aspirations."
+                  "{t('about.chancellor.quote')}"
                 </blockquote>
                 <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-gray-100">
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-gray-900 truncate">Dr. Ahmad Zia Massoud</p>
-                    <p className="text-[10px] text-gray-500">Chancellor, KPU</p>
+                    <p className="text-xs font-bold text-gray-900 truncate">{t('about.chancellor.name')}</p>
+                    <p className="text-[10px] text-gray-500">{t('about.chancellor.role')}</p>
                   </div>
                   <div className="flex gap-1 flex-shrink-0">
                     <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
@@ -229,9 +230,9 @@ const AboutPage = () => {
       <section className="py-14 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <SectionHeader
-            label="Executive Board"
-            title="Meet Our Leadership"
-            subtitle="Distinguished graduates dedicated to our community."
+            label={t('about.board.label')}
+            title={t('about.board.title')}
+            subtitle={t('about.board.subtitle')}
           />
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -261,10 +262,10 @@ const AboutPage = () => {
           {/* Compact stats row */}
           <div className="mt-8 rounded-xl border border-gray-100 grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-100 bg-white">
             {[
-              { value: '15+', label: 'Years Combined' },
-              { value: '8', label: 'Disciplines' },
-              { value: '100+', label: 'Projects Led' },
-              { value: '50+', label: 'Awards' },
+              { value: '15+', label: t('about.board.statYears') },
+              { value: '8', label: t('about.board.statDisciplines') },
+              { value: '100+', label: t('about.board.statProjects') },
+              { value: '50+', label: t('about.board.statAwards') },
             ].map((s, i) => (
               <div key={i} className="px-3 py-4 text-center">
                 <div className="text-xl font-extrabold mb-0.5" style={{ color: BRAND_DARK }}>{s.value}</div>
@@ -279,9 +280,9 @@ const AboutPage = () => {
       <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gray-50/70">
         <div className="max-w-6xl mx-auto">
           <SectionHeader
-            label="Connect"
-            title="Get in Touch"
-            subtitle="Our team is here to help with membership, events, and opportunities."
+            label={t('about.contact.label')}
+            title={t('about.contact.title')}
+            subtitle={t('about.contact.subtitle')}
           />
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
@@ -300,18 +301,18 @@ const AboutPage = () => {
           {/* Single combined CTA */}
           <div className="rounded-2xl overflow-hidden p-8 text-center" style={{ background: BRAND_DARK }}>
             <h3 className="text-xl sm:text-2xl font-extrabold text-white mb-2 tracking-tight">
-              Ready to reconnect?
+              {t('about.contact.ctaTitle')}
             </h3>
             <p className="text-sm text-white/70 mb-5 max-w-md mx-auto">
-              Join thousands of KPU graduates shaping Afghanistan's future.
+              {t('about.contact.ctaSubtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-2 justify-center">
               <Link to="/register" className="px-5 py-2.5 bg-white font-semibold text-xs rounded-lg hover:bg-gray-50 transition inline-flex items-center justify-center gap-1.5"
                 style={{ color: BRAND_DARK }}>
-                Create Profile <FiArrowRight className="text-xs" />
+                {t('about.contact.ctaCreate')} <FiArrowRight className="text-xs" />
               </Link>
               <Link to="/contact" className="px-5 py-2.5 bg-white/10 border border-white/20 text-white font-semibold text-xs rounded-lg hover:bg-white/15 transition inline-flex items-center justify-center gap-1.5">
-                Contact Us
+                {t('about.contact.ctaContact')}
               </Link>
             </div>
           </div>
