@@ -1,58 +1,80 @@
+import { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { FiGlobe, FiChevronDown, FiCheck } from "react-icons/fi";
 import { SUPPORTED_LANGUAGES } from "../localization/i18n";
 
 /**
- * Language switcher for Pashto / Dari / English.
- * Brand navy (#002759) for the active pill — matches the KPU concept.
+ * Professional single-button language dropdown (Pashto / Dari / English).
+ * Brand navy (#002759) for the active item — matches the KPU concept.
  */
-const LanguageSwitcher = ({ className = "", variant = "pills" }) => {
+const LanguageSwitcher = ({ className = "" }) => {
   const { i18n } = useTranslation();
-  const current = i18n.language;
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  const current =
+    SUPPORTED_LANGUAGES.find((l) => l.code === i18n.language) ||
+    SUPPORTED_LANGUAGES[0];
+
+  useEffect(() => {
+    const onClick = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, []);
 
   const changeLanguage = (code) => {
-    if (code === current) return;
-    i18n.changeLanguage(code); // i18n.js listener handles dir + persistence
+    setOpen(false);
+    if (code !== i18n.language) i18n.changeLanguage(code); // i18n.js handles dir + persistence
   };
 
-  if (variant === "select") {
-    return (
-      <div className={`relative inline-block ${className}`}>
-        <select
-          value={current}
-          onChange={(e) => changeLanguage(e.target.value)}
-          className="appearance-none bg-white/10 border border-white/30 rounded-lg px-3 py-1.5 pe-7 text-sm font-medium text-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/50"
-          aria-label="Select language"
-        >
-          {SUPPORTED_LANGUAGES.map((lang) => (
-            <option key={lang.code} value={lang.code} className="text-gray-800">
-              {lang.fullLabel}
-            </option>
-          ))}
-        </select>
-        <span className="pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-white/70 text-xs">
-          ▾
-        </span>
-      </div>
-    );
-  }
-
   return (
-    <div className={`flex items-center gap-1 ${className}`}>
-      {SUPPORTED_LANGUAGES.map((lang) => (
-        <button
-          key={lang.code}
-          onClick={() => changeLanguage(lang.code)}
-          className={`px-2.5 py-1 text-xs sm:text-sm rounded-full font-semibold transition-all duration-200 ${
-            current === lang.code
-              ? "bg-white text-[#002759] shadow"
-              : "bg-white/10 text-white/90 hover:bg-white/20"
+    <div className={`relative ${className}`} ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="flex items-center gap-1.5 h-8 sm:h-9 px-2.5 sm:px-3 rounded-lg bg-white/10 text-white border border-white/25 hover:bg-white/20 transition-all duration-200 text-xs sm:text-sm font-semibold"
+      >
+        <FiGlobe className="text-sm sm:text-base" />
+        <span>{current.label}</span>
+        <FiChevronDown
+          className={`text-xs transition-transform duration-200 ${
+            open ? "rotate-180" : ""
           }`}
-          aria-label={lang.fullLabel}
-          aria-pressed={current === lang.code}
-        >
-          {lang.label}
-        </button>
-      ))}
+        />
+      </button>
+
+      {open && (
+        <div className="absolute end-0 mt-2 w-44 rounded-xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden z-[100] animate-fade-in">
+          <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wide text-gray-400 border-b border-gray-100">
+            <FiGlobe className="inline -mt-0.5 me-1" />
+            Language
+          </div>
+          {SUPPORTED_LANGUAGES.map((lang) => {
+            const active = i18n.language === lang.code;
+            return (
+              <button
+                key={lang.code}
+                onClick={() => changeLanguage(lang.code)}
+                dir={lang.dir}
+                className={`w-full flex items-center justify-between gap-2 px-4 py-2.5 text-sm transition-colors ${
+                  active
+                    ? "bg-[#002759]/5 text-[#002759] font-bold"
+                    : "text-gray-700 hover:bg-gray-50"
+                }`}
+                aria-selected={active}
+                role="option"
+              >
+                <span>{lang.fullLabel}</span>
+                {active && <FiCheck className="text-[#194ce6]" />}
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 };
