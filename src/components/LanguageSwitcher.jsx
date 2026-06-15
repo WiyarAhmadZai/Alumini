@@ -48,7 +48,7 @@ const LanguageSwitcher = ({ className = "" }) => {
       </button>
 
       {open && (
-        <div className="absolute end-0 mt-2 w-44 rounded-xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden z-[100] animate-fade-in">
+        <div className="absolute top-full end-0 mt-2 w-44 max-w-[calc(100vw-1.5rem)] rounded-xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden z-[100] animate-fade-in origin-top">
           <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wide text-gray-400 border-b border-gray-100">
             <FiGlobe className="inline -mt-0.5 me-1" />
             Language
