@@ -385,7 +385,7 @@ const Layout = ({ children }) => {
               )}
 
               {isAuthenticated && (
-                <div className="relative hidden sm:flex" ref={userMenuRef}>
+                <div className="relative hidden sm:block" ref={userMenuRef}>
                   <button
                     type="button"
                     onClick={() => setIsUserMenuOpen((v) => !v)}
@@ -418,7 +418,7 @@ const Layout = ({ children }) => {
                   </button>
 
                   {isUserMenuOpen && (
-                    <div className="absolute end-0 mt-3 w-64 rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden z-[100] animate-fade-in">
+                    <div className="absolute top-full end-0 mt-3 w-64 max-w-[calc(100vw-1.5rem)] rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden z-[100] animate-fade-in origin-top">
                       {/* User header */}
                       <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#002759] to-[#194ce6] text-white">
                         <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-white/40 flex-shrink-0 bg-white/10">
