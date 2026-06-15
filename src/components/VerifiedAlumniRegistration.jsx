@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import alumniService from '../services/alumniService';
@@ -16,7 +17,9 @@ const BRAND_BG = '#eef1fd';
 const BRAND_BORDER = '#c5ccf7';
 
 // ─── Section card with eyebrow header ───
-const SectionCard = ({ icon: Icon, step, title, subtitle, children, complete }) => (
+const SectionCard = ({ icon: Icon, step, title, subtitle, children, complete }) => {
+  const { t } = useTranslation();
+  return (
   <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
     <div className="px-6 py-4 flex items-center gap-3 border-b border-gray-100"
       style={{ background: complete ? '#f0fdf4' : '#fafbff' }}>
@@ -33,13 +36,14 @@ const SectionCard = ({ icon: Icon, step, title, subtitle, children, complete }) 
       </div>
       {complete && (
         <span className="text-[10px] font-bold uppercase tracking-[0.15em] px-2.5 py-1 rounded-full text-green-700 bg-green-100 border border-green-200">
-          Verified
+          {t('auth.register.verified')}
         </span>
       )}
     </div>
     <div className="p-6">{children}</div>
   </div>
-);
+  );
+};
 
 // ─── Step badge for hero progress strip ───
 const StepBadge = ({ n, label, active, done }) => (
@@ -61,6 +65,7 @@ const StepBadge = ({ n, label, active, done }) => (
 );
 
 const VerifiedAlumniRegistration = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     university_id: '',
@@ -128,7 +133,7 @@ const VerifiedAlumniRegistration = () => {
   
   const searchStudent = async () => {
     if (!formData.university_id.trim()) {
-      setSearchError('University ID is required');
+      setSearchError(t('auth.errors.universityIdRequired'));
       return;
     }
     
@@ -139,7 +144,7 @@ const VerifiedAlumniRegistration = () => {
       const response = await alumniService.searchStudent(formData.university_id);
       setStudentData(response.data);
     } catch (error) {
-      setSearchError(error.response?.data?.message || 'Student not found. Please check your University ID.');
+      setSearchError(error.response?.data?.message || t('auth.errors.studentNotFound'));
       setStudentData(null);
     } finally {
       setSearchLoading(false);
@@ -148,7 +153,7 @@ const VerifiedAlumniRegistration = () => {
   
   const verifyTazkira = async () => {
     if (!tazkiraNumber.trim()) {
-      setVerificationError('Tazkira number is required');
+      setVerificationError(t('auth.errors.tazkiraRequired'));
       return;
     }
     
@@ -164,18 +169,18 @@ const VerifiedAlumniRegistration = () => {
         await submitRegistration();
       }
     } catch (error) {
-      let errorMessage = 'Tazkira verification failed. Please check your tazkira number.';
-      
+      let errorMessage = t('auth.errors.tazkiraFailed');
+
       if (error.response?.data?.error_type) {
         switch (error.response.data.error_type) {
           case 'university_id_not_found':
-            errorMessage = 'University ID not found in our records. Please check your University ID first.';
+            errorMessage = t('auth.errors.universityIdNotFound');
             break;
           case 'tazkira_not_found':
-            errorMessage = 'Tazkira number not found in our records. Please check your tazkira number.';
+            errorMessage = t('auth.errors.tazkiraNotFound');
             break;
           case 'mismatch':
-            errorMessage = 'University ID and Tazkira number do not match the same student in our records.';
+            errorMessage = t('auth.errors.mismatch');
             break;
           default:
             errorMessage = error.response?.data?.message || errorMessage;
@@ -225,7 +230,7 @@ const VerifiedAlumniRegistration = () => {
       if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);
       } else {
-        setSubmitError(error.response?.data?.message || 'Registration failed. Please try again.');
+        setSubmitError(error.response?.data?.message || t('auth.errors.registrationFailed'));
       }
     } finally {
       setLoading(false);
@@ -236,7 +241,7 @@ const VerifiedAlumniRegistration = () => {
     e.preventDefault();
     
     if (!studentData) {
-      setSearchError('Please search for your student profile first');
+      setSearchError(t('auth.errors.searchProfileFirst'));
       return;
     }
     
@@ -254,10 +259,10 @@ const VerifiedAlumniRegistration = () => {
     if (/[@$!%*?&]/.test(password)) strength++;
     
     const levels = [
-      { text: 'Weak', color: '#dc3545' },
-      { text: 'Fair', color: '#ffc107' },
-      { text: 'Good', color: '#20c997' },
-      { text: 'Strong', color: '#28a745' }
+      { text: t('auth.register.strengthWeak'), color: '#dc3545' },
+      { text: t('auth.register.strengthFair'), color: '#ffc107' },
+      { text: t('auth.register.strengthGood'), color: '#20c997' },
+      { text: t('auth.register.strengthStrong'), color: '#28a745' }
     ];
     
     return {
@@ -288,13 +293,13 @@ const VerifiedAlumniRegistration = () => {
               className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] mb-4"
               style={{ background: 'rgba(255,255,255,0.10)', color: '#fff', border: '1px solid rgba(255,255,255,0.20)' }}
             >
-              <FiShield size={11} /> Verified Registration
+              <FiShield size={11} /> {t('auth.register.heroBadge')}
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3 max-w-3xl">
-              Create Your KPU Alumni Account
+              {t('auth.register.heroTitle')}
             </h1>
             <p className="text-sm sm:text-base text-white/75 max-w-2xl mx-auto leading-relaxed font-light">
-              Verified through official MIS records — secure, exclusive, and trusted.
+              {t('auth.register.heroSubtitle')}
             </p>
           </div>
         </section>
@@ -303,11 +308,11 @@ const VerifiedAlumniRegistration = () => {
         <div className="max-w-3xl mx-auto px-4 lg:px-8 -mt-12 relative z-20">
           <div className="bg-white rounded-2xl border border-gray-200 shadow-xl p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2 sm:gap-4">
-              <StepBadge n="1" label="Find Profile" active={!step1Done} done={step1Done} />
+              <StepBadge n="1" label={t('auth.register.stepFindProfile')} active={!step1Done} done={step1Done} />
               <div className="flex-1 h-px bg-gray-200" />
-              <StepBadge n="2" label="Account" active={step1Done && !step2Done} done={step2Done} />
+              <StepBadge n="2" label={t('auth.register.stepAccount')} active={step1Done && !step2Done} done={step2Done} />
               <div className="flex-1 h-px bg-gray-200" />
-              <StepBadge n="3" label="Verify" active={step2Done} done={false} />
+              <StepBadge n="3" label={t('auth.register.stepVerify')} active={step2Done} done={false} />
             </div>
           </div>
         </div>
@@ -318,8 +323,8 @@ const VerifiedAlumniRegistration = () => {
             <div className="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 flex items-start gap-3">
               <FiCheckCircle className="text-green-600 mt-0.5 flex-shrink-0" size={18} />
               <div>
-                <h3 className="text-sm font-bold text-green-800">Registration successful!</h3>
-                <p className="text-xs text-green-700 mt-0.5">Welcome to the verified alumni network. Redirecting to your profile…</p>
+                <h3 className="text-sm font-bold text-green-800">{t('auth.register.successTitle')}</h3>
+                <p className="text-xs text-green-700 mt-0.5">{t('auth.register.successBody')}</p>
               </div>
             </div>
           )}
@@ -329,7 +334,7 @@ const VerifiedAlumniRegistration = () => {
             <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 flex items-start gap-3">
               <FiAlertCircle className="text-red-600 mt-0.5 flex-shrink-0" size={18} />
               <div className="flex-1">
-                <h3 className="text-sm font-bold text-red-800">Registration failed</h3>
+                <h3 className="text-sm font-bold text-red-800">{t('auth.register.failTitle')}</h3>
                 <p className="text-xs text-red-700 mt-0.5">{submitError}</p>
               </div>
               <button type="button" onClick={() => setSubmitError('')} className="text-red-400 hover:text-red-700">
@@ -342,19 +347,19 @@ const VerifiedAlumniRegistration = () => {
             {/* ─── Step 1: Find Profile ─── */}
             <SectionCard
               icon={FiSearch} step="1" complete={step1Done}
-              title="Find your student profile"
-              subtitle="Enter your University ID to verify against our MIS records."
+              title={t('auth.register.step1Title')}
+              subtitle={t('auth.register.step1Subtitle')}
             >
               <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1">
                   <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600 mb-2">
-                    University ID <span style={{ color: '#dc2626' }}>*</span>
+                    {t('auth.register.universityIdLabel')} <span style={{ color: '#dc2626' }}>*</span>
                   </label>
                   <div className="relative">
                     <FiKey className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
                     <input
                       type="text" name="university_id" value={formData.university_id} onChange={handleChange}
-                      placeholder="e.g. KPU-2018-1234"
+                      placeholder={t('auth.register.universityIdPlaceholder')}
                       className={`w-full pl-10 pr-3 py-3 border rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 transition ${
                         errors.university_id ? 'border-red-400' : 'border-gray-200'
                       }`}
@@ -373,9 +378,9 @@ const VerifiedAlumniRegistration = () => {
                     onMouseLeave={(e) => !searchLoading && (e.currentTarget.style.backgroundColor = BRAND)}
                   >
                     {searchLoading ? (
-                      <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Searching…</>
+                      <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> {t('auth.register.searching')}</>
                     ) : (
-                      <><FiSearch size={14} /> Search Profile</>
+                      <><FiSearch size={14} /> {t('auth.register.searchProfile')}</>
                     )}
                   </button>
                 </div>
@@ -393,16 +398,16 @@ const VerifiedAlumniRegistration = () => {
                 <div className="mt-5 p-5 rounded-xl border" style={{ background: '#f0fdf4', borderColor: '#bbf7d0' }}>
                   <div className="flex items-center gap-2 mb-3">
                     <FiCheckCircle className="text-green-600" size={16} />
-                    <h4 className="text-sm font-bold text-green-800">Profile found in MIS records</h4>
+                    <h4 className="text-sm font-bold text-green-800">{t('auth.register.profileFound')}</h4>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     {[
-                      ['Full Name', `${studentData.first_name || ''} ${studentData.father_name || ''} ${studentData.grandfather_name || ''}`.trim()],
-                      ['University ID', studentData.student_id],
-                      ['Faculty', studentData.department?.faculty?.name || 'N/A'],
-                      ['Department', studentData.department?.name || 'N/A'],
-                      ['Graduation Year', studentData.graduation_year || 'N/A'],
-                      ['Phone Number', studentData.phone_number || 'N/A'],
+                      [t('auth.register.fieldFullName'), `${studentData.first_name || ''} ${studentData.father_name || ''} ${studentData.grandfather_name || ''}`.trim()],
+                      [t('auth.register.fieldUniversityId'), studentData.student_id],
+                      [t('auth.register.fieldFaculty'), studentData.department?.faculty?.name || t('auth.register.notAvailable')],
+                      [t('auth.register.fieldDepartment'), studentData.department?.name || t('auth.register.notAvailable')],
+                      [t('auth.register.fieldGraduationYear'), studentData.graduation_year || t('auth.register.notAvailable')],
+                      [t('auth.register.fieldPhoneNumber'), studentData.phone_number || t('auth.register.notAvailable')],
                     ].map(([label, val], i) => (
                       <div key={i}>
                         <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-500 mb-0.5">{label}</p>
@@ -418,20 +423,20 @@ const VerifiedAlumniRegistration = () => {
             {studentData && (
               <SectionCard
                 icon={FiLock} step="2" complete={step2Done}
-                title="Account information"
-                subtitle="Choose the credentials you'll use to sign in."
+                title={t('auth.register.step2Title')}
+                subtitle={t('auth.register.step2Subtitle')}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Email */}
                   <div className="md:col-span-2">
                     <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600 mb-2">
-                      Email Address <span style={{ color: '#dc2626' }}>*</span>
+                      {t('auth.register.emailLabel')} <span style={{ color: '#dc2626' }}>*</span>
                     </label>
                     <div className="relative">
                       <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
                       <input
                         type="email" name="email" value={formData.email} onChange={handleChange}
-                        placeholder="you@example.com"
+                        placeholder={t('auth.register.emailPlaceholder')}
                         className={`w-full pl-10 pr-3 py-3 border rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 transition ${
                           errors.email ? 'border-red-400' : 'border-gray-200'
                         }`}
@@ -444,13 +449,13 @@ const VerifiedAlumniRegistration = () => {
                   {/* Password */}
                   <div>
                     <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600 mb-2">
-                      Password <span style={{ color: '#dc2626' }}>*</span>
+                      {t('auth.register.passwordLabel')} <span style={{ color: '#dc2626' }}>*</span>
                     </label>
                     <div className="relative">
                       <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
                       <input
                         type="password" name="password" value={formData.password} onChange={handleChange}
-                        placeholder="Choose a strong password"
+                        placeholder={t('auth.register.passwordPlaceholder')}
                         className={`w-full pl-10 pr-3 py-3 border rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 transition ${
                           errors.password ? 'border-red-400' : 'border-gray-200'
                         }`}
@@ -461,7 +466,7 @@ const VerifiedAlumniRegistration = () => {
                     {formData.password && (
                       <div className="mt-2">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-500">Strength</span>
+                          <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-500">{t('auth.register.strength')}</span>
                           <span className="text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: passwordStrength.color }}>
                             {passwordStrength.text}
                           </span>
@@ -477,13 +482,13 @@ const VerifiedAlumniRegistration = () => {
                   {/* Confirm */}
                   <div>
                     <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600 mb-2">
-                      Confirm Password <span style={{ color: '#dc2626' }}>*</span>
+                      {t('auth.register.confirmPasswordLabel')} <span style={{ color: '#dc2626' }}>*</span>
                     </label>
                     <div className="relative">
                       <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
                       <input
                         type="password" name="password_confirmation" value={formData.password_confirmation} onChange={handleChange}
-                        placeholder="Re-enter your password"
+                        placeholder={t('auth.register.confirmPasswordPlaceholder')}
                         className={`w-full pl-10 pr-3 py-3 border rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 transition ${
                           errors.password_confirmation ? 'border-red-400' : 'border-gray-200'
                         }`}
@@ -498,7 +503,7 @@ const VerifiedAlumniRegistration = () => {
                   style={{ background: BRAND_BG, border: `1px solid ${BRAND_BORDER}` }}>
                   <FiShield className="flex-shrink-0 mt-0.5" style={{ color: BRAND }} size={14} />
                   <p className="text-[11px] leading-relaxed" style={{ color: BRAND }}>
-                    <strong>Password requirements:</strong> at least 8 characters, one capital letter, one number, and one special character (@$!%*?&).
+                    <strong>{t('auth.register.passwordRequirementsLabel')}</strong> {t('auth.register.passwordRequirements')}
                   </p>
                 </div>
               </SectionCard>
@@ -508,33 +513,33 @@ const VerifiedAlumniRegistration = () => {
             {studentData && (
               <SectionCard
                 icon={FiBriefcase} step="3" complete={false}
-                title="Professional information"
-                subtitle="Optional — help fellow alumni get to know you."
+                title={t('auth.register.step3Title')}
+                subtitle={t('auth.register.step3Subtitle')}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <Field icon={FiBriefcase} label="Current Job Title" name="current_job_title"
-                    value={formData.current_job_title} onChange={handleChange} placeholder="e.g. Senior Software Engineer" />
-                  <Field icon={FiBriefcase} label="Current Company" name="current_company"
-                    value={formData.current_company} onChange={handleChange} placeholder="e.g. Google" />
-                  <Field icon={FiMapPin} label="Location" name="location"
-                    value={formData.location} onChange={handleChange} placeholder="e.g. Kabul, Afghanistan" />
-                  <Field icon={FiLinkedin} label="LinkedIn Profile" name="linkedin_profile" type="url"
-                    value={formData.linkedin_profile} onChange={handleChange} placeholder="https://linkedin.com/in/…"
+                  <Field icon={FiBriefcase} label={t('auth.register.jobTitleLabel')} name="current_job_title"
+                    value={formData.current_job_title} onChange={handleChange} placeholder={t('auth.register.jobTitlePlaceholder')} />
+                  <Field icon={FiBriefcase} label={t('auth.register.companyLabel')} name="current_company"
+                    value={formData.current_company} onChange={handleChange} placeholder={t('auth.register.companyPlaceholder')} />
+                  <Field icon={FiMapPin} label={t('auth.register.locationLabel')} name="location"
+                    value={formData.location} onChange={handleChange} placeholder={t('auth.register.locationPlaceholder')} />
+                  <Field icon={FiLinkedin} label={t('auth.register.linkedinLabel')} name="linkedin_profile" type="url"
+                    value={formData.linkedin_profile} onChange={handleChange} placeholder={t('auth.register.linkedinPlaceholder')}
                     error={errors.linkedin_profile} />
 
                   {/* File inputs */}
-                  <FileField icon={FiImage} label="Profile Image" name="profile_image" onChange={handleFileChange} />
-                  <FileField icon={FiImage} label="Cover Image" name="cover_image" onChange={handleFileChange} />
+                  <FileField icon={FiImage} label={t('auth.register.profileImageLabel')} name="profile_image" onChange={handleFileChange} />
+                  <FileField icon={FiImage} label={t('auth.register.coverImageLabel')} name="cover_image" onChange={handleFileChange} />
                 </div>
 
                 <div className="mt-4">
                   <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600 mb-2">
-                    <FiEdit3 className="inline mr-1" size={12} /> Bio
+                    <FiEdit3 className="inline mr-1" size={12} /> {t('auth.register.bioLabel')}
                   </label>
                   <textarea
                     name="bio" value={formData.bio} onChange={handleChange}
                     rows={4} maxLength="1000"
-                    placeholder="Tell fellow alumni about your journey, interests, and what you're working on…"
+                    placeholder={t('auth.register.bioPlaceholder')}
                     className="w-full px-3 py-3 border border-gray-200 rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 transition resize-none"
                     style={{ '--tw-ring-color': BRAND_BORDER }}
                   />
@@ -547,8 +552,8 @@ const VerifiedAlumniRegistration = () => {
             <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <p className="text-xs text-gray-500 leading-relaxed">
                 {studentData
-                  ? <>You'll be asked to verify your identity with a tazkira number after clicking <strong>Complete Registration</strong>.</>
-                  : <>Search your University ID above to start the verification flow.</>}
+                  ? <>{t('auth.register.submitHintReady')} <strong>{t('auth.register.submitHintReadyButton')}</strong>.</>
+                  : <>{t('auth.register.submitHintStart')}</>}
               </p>
               <button
                 type="submit" disabled={loading || !studentData}
@@ -558,19 +563,19 @@ const VerifiedAlumniRegistration = () => {
                 onMouseLeave={(e) => !loading && studentData && (e.currentTarget.style.backgroundColor = BRAND)}
               >
                 {loading ? (
-                  <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Registering…</>
+                  <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> {t('auth.register.registering')}</>
                 ) : (
-                  <>Complete Registration <FiArrowRight size={15} /></>
+                  <>{t('auth.register.completeRegistration')} <FiArrowRight size={15} /></>
                 )}
               </button>
             </div>
 
             {/* Bottom link to login */}
             <p className="text-center text-xs text-gray-500 pt-2">
-              Already have an account?{' '}
+              {t('auth.register.alreadyHaveAccount')}{' '}
               <button type="button" onClick={() => navigate('/login')}
                 className="font-bold hover:underline" style={{ color: BRAND_ACCENT }}>
-                Sign in instead
+                {t('auth.register.signInInstead')}
               </button>
             </p>
           </form>
@@ -589,8 +594,8 @@ const VerifiedAlumniRegistration = () => {
                 <FiShield className="text-white" size={18} />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.18em] text-white/70 font-bold">Final Step</p>
-                <h3 className="text-base font-bold text-white truncate">Verify your identity</h3>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-white/70 font-bold">{t('auth.tazkira.finalStep')}</p>
+                <h3 className="text-base font-bold text-white truncate">{t('auth.tazkira.title')}</h3>
               </div>
               <button onClick={() => { setShowTazkiraModal(false); setTazkiraNumber(''); setVerificationError(''); }}
                 className="text-white/80 hover:text-white p-1 flex-shrink-0">
@@ -600,18 +605,18 @@ const VerifiedAlumniRegistration = () => {
 
             <div className="p-6">
               <p className="text-sm text-gray-600 mb-5 leading-relaxed">
-                Please enter your <strong>tazkira number</strong> to confirm you are the student we found in the MIS records. This is a one-time verification.
+                {t('auth.tazkira.introBefore')} <strong>{t('auth.tazkira.introBold')}</strong> {t('auth.tazkira.introAfter')}
               </p>
 
               <div className="mb-5">
                 <label className="block text-[11px] font-bold uppercase tracking-[0.12em] text-gray-600 mb-2">
-                  Tazkira Number <span style={{ color: '#dc2626' }}>*</span>
+                  {t('auth.tazkira.label')} <span style={{ color: '#dc2626' }}>*</span>
                 </label>
                 <div className="relative">
                   <FiKey className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={15} />
                   <input
                     type="text" value={tazkiraNumber} onChange={handleTazkiraChange}
-                    placeholder="Enter your tazkira number"
+                    placeholder={t('auth.tazkira.placeholder')}
                     className={`w-full pl-10 pr-3 py-3 border rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 transition ${
                       verificationError ? 'border-red-400' : 'border-gray-200'
                     }`}
@@ -631,7 +636,7 @@ const VerifiedAlumniRegistration = () => {
                   onClick={() => { setShowTazkiraModal(false); setTazkiraNumber(''); setVerificationError(''); }}
                   className="px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition"
                 >
-                  Cancel
+                  {t('auth.tazkira.cancel')}
                 </button>
                 <button
                   onClick={verifyTazkira} disabled={verificationLoading || !tazkiraNumber.trim()}
@@ -641,9 +646,9 @@ const VerifiedAlumniRegistration = () => {
                   onMouseLeave={(e) => !verificationLoading && (e.currentTarget.style.backgroundColor = BRAND)}
                 >
                   {verificationLoading ? (
-                    <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Verifying…</>
+                    <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> {t('auth.tazkira.verifying')}</>
                   ) : (
-                    <><FiCheckCircle size={14} /> Verify &amp; Register</>
+                    <><FiCheckCircle size={14} /> {t('auth.tazkira.verifyAndRegister')}</>
                   )}
                 </button>
               </div>
