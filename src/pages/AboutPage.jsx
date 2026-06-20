@@ -2,6 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
+import authService from '../services/authService';
+import { useSettings } from '../contexts/SettingsContext';
 import {
   FiMail, FiPhone, FiMapPin, FiLinkedin, FiAward, FiUsers, FiTarget, FiGlobe,
   FiArrowRight, FiBookOpen, FiTrendingUp, FiHeart, FiStar, FiZap
@@ -37,6 +39,14 @@ const SectionHeader = ({ label, title, subtitle }) => (
 // ─── Main Page ──────────────────────────────────────────────────
 const AboutPage = () => {
   const { t } = useTranslation();
+  const { chancellor, board, pick } = useSettings();
+  const isLoggedIn = authService.isAuthenticated();
+
+  // Chancellor — dynamic from admin settings, with i18n fallback.
+  const chName = pick(chancellor?.name) || t('about.chancellor.name');
+  const chRole = pick(chancellor?.role) || t('about.chancellor.role');
+  const chQuote = pick(chancellor?.message) || t('about.chancellor.quote');
+  const chPhoto = chancellor?.photo || '/chanceler.jpg';
 
   const values = [
     { icon: <FiHeart />, title: t('about.values.integrityTitle'), desc: t('about.values.integrityDesc') },
@@ -52,12 +62,20 @@ const AboutPage = () => {
     { year: '2024', title: t('about.timeline.platformTitle'), desc: t('about.timeline.platformDesc') },
   ];
 
-  const boardMembers = [
-    { name: 'Eng. Mohammad Hassan', role: t('about.board.presidentRole'), dept: 'Civil · 1995', img: '/1teacher.jpg' },
-    { name: 'Dr. Sarah Ahmadzai', role: t('about.board.vicePresidentRole'), dept: 'Electrical · 2000', img: '/teacher.jpg' },
-    { name: 'Ahmad Wali Karimi', role: t('about.board.secretaryRole'), dept: 'Mechanical · 2008', img: '/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg' },
-    { name: 'Fatima Noori', role: t('about.board.treasurerRole'), dept: 'Computer · 2012', img: '/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg' },
-  ];
+  // Executive board — dynamic from admin settings, with hardcoded fallback.
+  const boardMembers = (board && board.length)
+    ? board.map((m) => ({
+        name: pick(m.name) || '',
+        role: pick(m.role) || '',
+        dept: [m.faculty, m.graduation_year].filter(Boolean).join(' · '),
+        img: m.photo || '/teacher.jpg',
+      }))
+    : [
+        { name: 'Eng. Mohammad Hassan', role: t('about.board.presidentRole'), dept: 'Civil · 1995', img: '/1teacher.jpg' },
+        { name: 'Dr. Sarah Ahmadzai', role: t('about.board.vicePresidentRole'), dept: 'Electrical · 2000', img: '/teacher.jpg' },
+        { name: 'Ahmad Wali Karimi', role: t('about.board.secretaryRole'), dept: 'Mechanical · 2008', img: '/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg' },
+        { name: 'Fatima Noori', role: t('about.board.treasurerRole'), dept: 'Computer · 2012', img: '/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg' },
+      ];
 
   const contactItems = [
     { icon: <FiMail />, title: t('about.contact.emailTitle'), detail: 'it.director@kpu.edu.af' },
@@ -191,7 +209,7 @@ const AboutPage = () => {
               <div className="relative flex-shrink-0">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2"
                   style={{ borderColor: BRAND_BORDER }}>
-                  <img src="/chanceler.jpg" alt={t('about.chancellor.name')} className="w-full h-full object-cover" />
+                  <img src={chPhoto} alt={chName} className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center shadow"
                   style={{ background: BRAND }}>
@@ -202,12 +220,12 @@ const AboutPage = () => {
               {/* Text */}
               <div className="flex-1 min-w-0">
                 <blockquote className="text-gray-600 text-xs sm:text-sm leading-relaxed italic font-light mb-3">
-                  "{t('about.chancellor.quote')}"
+                  "{chQuote}"
                 </blockquote>
                 <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-gray-100">
                   <div className="min-w-0">
-                    <p className="text-xs font-bold text-gray-900 truncate">{t('about.chancellor.name')}</p>
-                    <p className="text-[10px] text-gray-500">{t('about.chancellor.role')}</p>
+                    <p className="text-xs font-bold text-gray-900 truncate">{chName}</p>
+                    <p className="text-[10px] text-gray-500">{chRole}</p>
                   </div>
                   <div className="flex gap-1 flex-shrink-0">
                     <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
@@ -298,24 +316,26 @@ const AboutPage = () => {
             ))}
           </div>
 
-          {/* Single combined CTA */}
-          <div className="rounded-2xl overflow-hidden p-8 text-center" style={{ background: BRAND_DARK }}>
-            <h3 className="text-xl sm:text-2xl font-extrabold text-white mb-2 tracking-tight">
-              {t('about.contact.ctaTitle')}
-            </h3>
-            <p className="text-sm text-white/70 mb-5 max-w-md mx-auto">
-              {t('about.contact.ctaSubtitle')}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2 justify-center">
-              <Link to="/register" className="px-5 py-2.5 bg-white font-semibold text-xs rounded-lg hover:bg-gray-50 transition inline-flex items-center justify-center gap-1.5"
-                style={{ color: BRAND_DARK }}>
-                {t('about.contact.ctaCreate')} <FiArrowRight className="text-xs" />
-              </Link>
-              <Link to="/contact" className="px-5 py-2.5 bg-white/10 border border-white/20 text-white font-semibold text-xs rounded-lg hover:bg-white/15 transition inline-flex items-center justify-center gap-1.5">
-                {t('about.contact.ctaContact')}
-              </Link>
+          {/* Single combined CTA — hidden for logged-in alumni */}
+          {!isLoggedIn && (
+            <div className="rounded-2xl overflow-hidden p-8 text-center" style={{ background: BRAND_DARK }}>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-white mb-2 tracking-tight">
+                {t('about.contact.ctaTitle')}
+              </h3>
+              <p className="text-sm text-white/70 mb-5 max-w-md mx-auto">
+                {t('about.contact.ctaSubtitle')}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <Link to="/register" className="px-5 py-2.5 bg-white font-semibold text-xs rounded-lg hover:bg-gray-50 transition inline-flex items-center justify-center gap-1.5"
+                  style={{ color: BRAND_DARK }}>
+                  {t('about.contact.ctaCreate')} <FiArrowRight className="text-xs" />
+                </Link>
+                <Link to="/contact" className="px-5 py-2.5 bg-white/10 border border-white/20 text-white font-semibold text-xs rounded-lg hover:bg-white/15 transition inline-flex items-center justify-center gap-1.5">
+                  {t('about.contact.ctaContact')}
+                </Link>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
 
