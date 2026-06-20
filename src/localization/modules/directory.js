@@ -3,6 +3,7 @@ const directory = {
   en: {
     directory: {
       loadError: "Failed to load alumni directory.",
+      reload: "Retry",
       alumniNetwork: "Alumni Network",
       title: "Alumni Directory",
       subtitle: "Discover and connect with distinguished graduates shaping the world.",
@@ -34,6 +35,7 @@ const directory = {
   da: {
     directory: {
       loadError: "بارگذاری فهرست فارغ‌التحصیلان ناکام شد.",
+      reload: "تلاش دوباره",
       alumniNetwork: "شبکه فارغ‌التحصیلان",
       title: "فهرست فارغ‌التحصیلان",
       subtitle: "فارغ‌التحصیلان برجسته‌ای را که جهان را شکل می‌دهند، بشناسید و با آنان ارتباط برقرار کنید.",
