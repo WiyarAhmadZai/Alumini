@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
@@ -27,19 +27,28 @@ const DirectoryPage = () => {
   const [faculties, setFaculties] = useState([]);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
 
+  const fetchAlumni = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await alumniService.getAll({ status: 'verified' });
+      // Be resilient to different response shapes:
+      // { data: { alumni: [...] } } | { alumni: [...] } | { data: [...] } | [...]
+      const alumniData =
+        response?.data?.alumni ||
+        response?.alumni ||
+        (Array.isArray(response?.data) ? response.data : null) ||
+        (Array.isArray(response) ? response : []);
+      setAlumni(Array.isArray(alumniData) ? alumniData : []);
+    } catch (e) {
+      console.error('Directory: failed to load alumni —', e?.message || e);
+      setError(e?.message || t('directory.loadError'));
+    } finally {
+      setLoading(false);
+    }
+  }, [t]);
+
   useEffect(() => {
-    const fetchAlumni = async () => {
-      try {
-        setLoading(true);
-        const response = await alumniService.getAll({ status: 'verified' });
-        const alumniData = response?.data?.alumni || response?.alumni || [];
-        setAlumni(Array.isArray(alumniData) ? alumniData : []);
-      } catch {
-        setError(t('directory.loadError'));
-      } finally {
-        setLoading(false);
-      }
-    };
     const fetchGraduationYears = async () => {
       try {
         const response = await alumniService.getGraduationYears();
@@ -68,7 +77,7 @@ const DirectoryPage = () => {
     fetchAlumni();
     fetchGraduationYears();
     fetchFaculties();
-  }, []);
+  }, [fetchAlumni]);
 
   const filteredAlumni = Array.isArray(alumni) ? alumni.filter(a => {
     const s = searchTerm.toLowerCase();
@@ -189,6 +198,13 @@ const DirectoryPage = () => {
             </div>
             <h3 className="text-base font-semibold text-gray-900 mb-1">{t('directory.somethingWrong')}</h3>
             <p className="text-gray-500 text-sm">{error}</p>
+            <button
+              onClick={fetchAlumni}
+              className="mt-4 px-5 py-2 text-white text-sm font-semibold rounded-lg"
+              style={{ background: BRAND_DARK }}
+            >
+              {t('directory.reload')}
+            </button>
           </div>
         </div>
       </Layout>
