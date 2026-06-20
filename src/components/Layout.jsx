@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import authService from '../services/authService';
 import notificationService from '../services/notificationService';
 import { AuthContext } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
 import LanguageSwitcher from './LanguageSwitcher';
 import {
   FiArrowRight,
@@ -45,7 +46,11 @@ const timeAgo = (dateStr) => {
 
 const Layout = ({ children }) => {
   const { t } = useTranslation();
+  const { settings, pick } = useSettings();
   const { user } = useContext(AuthContext);
+  const brandName = pick(settings.brand_name) || t('common.brand');
+  const brandTagline = pick(settings.tagline) || t('common.tagline');
+  const brandLogo = settings.logo || '/logo_kpu.png';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -192,17 +197,17 @@ const Layout = ({ children }) => {
                 <Link to="/" className="flex items-center space-x-2">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <img
-                      src="/logo_kpu.png"
+                      src={brandLogo}
                       alt="KPU University"
                       className="w-6 h-6 sm:w-8 sm:h-8 object-contain"
                     />
                   </div>
                   <div className="text-left min-w-0">
                     <div className="font-bold text-white text-sm sm:text-base truncate">
-                      {t('common.brand')}
+                      {brandName}
                     </div>
                     <div className="text-xs text-white/80 truncate">
-                      {t('common.tagline')}
+                      {brandTagline}
                     </div>
                   </div>
                 </Link>
@@ -530,17 +535,17 @@ const Layout = ({ children }) => {
                     <div className="flex items-center space-x-2">
                       <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
                         <img
-                          src="/logo_kpu.png"
+                          src={brandLogo}
                           alt="KPU University"
                           className="w-8 h-8 object-contain"
                         />
                       </div>
                       <div className="text-left min-w-0">
                         <div className="font-bold text-white text-sm truncate">
-                          {t('common.brand')}
+                          {brandName}
                         </div>
                         <div className="text-xs text-white/80 truncate">
-                          {t('common.tagline')}
+                          {brandTagline}
                         </div>
                       </div>
                     </div>
@@ -784,22 +789,22 @@ const Layout = ({ children }) => {
             <div className="flex items-center space-x-2 mb-4 sm:mb-6">
               <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <img
-                  src="/logo_kpu.png"
+                  src={brandLogo}
                   alt="KPU University"
                   className="w-8 h-8 object-contain"
                 />
               </div>
               <div className="text-left min-w-0">
                 <div className="font-bold text-white text-sm sm:text-base truncate">
-                  {t('common.brand')}
+                  {brandName}
                 </div>
                 <div className="text-xs text-blue-100 truncate">
-                  {t('common.tagline')}
+                  {brandTagline}
                 </div>
               </div>
             </div>
             <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
-              {t('footer.about')}
+              {pick(settings.footer_about) || t('footer.about')}
             </p>
           </div>
 
@@ -826,13 +831,13 @@ const Layout = ({ children }) => {
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
             <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">{t('footer.followUs')}</h4>
             <div className="flex gap-3 sm:gap-4">
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+              <a href={settings.linkedin_url || '#'} target="_blank" rel="noopener noreferrer" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
                 <FiLinkedin className="text-sm sm:text-xl text-white" />
               </a>
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+              <a href={settings.contact_email ? `mailto:${settings.contact_email}` : '#'} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
                 <FiMail className="text-sm sm:text-xl text-white" />
               </a>
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+              <a href={settings.facebook_url || '#'} target="_blank" rel="noopener noreferrer" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
                 <FiFacebook className="text-sm sm:text-xl text-white" />
               </a>
             </div>
