@@ -7,6 +7,7 @@ import {
   FiPlus, FiArrowRight, FiGrid, FiList, FiMapPin
 } from 'react-icons/fi';
 import alumniService from '../services/alumniService';
+import authService from '../services/authService';
 
 // ─── Brand palette ──────────────────────────────────────────────
 const BRAND = '#194ce6';
@@ -18,6 +19,7 @@ const BRAND_BORDER = '#c5ccf7';
 const DirectoryPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const isLoggedIn = authService.isAuthenticated();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFilters, setSelectedFilters] = useState({ faculty: '', graduationYear: '' });
   const [loading, setLoading] = useState(true);
@@ -390,16 +392,18 @@ const DirectoryPage = () => {
               </div>
             ))}
 
-            {/* Join card */}
-            <div className="flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors group"
-              style={{ minHeight: 200 }} onClick={() => navigate('/register')}>
-              <div className="text-center">
-                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-1.5">
-                  <FiPlus className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+            {/* Join card — hidden for logged-in alumni */}
+            {!isLoggedIn && (
+              <div className="flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors group"
+                style={{ minHeight: 200 }} onClick={() => navigate('/register')}>
+                <div className="text-center">
+                  <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm mx-auto mb-1.5">
+                    <FiPlus className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                  </div>
+                  <span className="text-gray-400 text-[10px] font-semibold group-hover:text-gray-600 transition-colors">{t('directory.joinDirectory')}</span>
                 </div>
-                <span className="text-gray-400 text-[10px] font-semibold group-hover:text-gray-600 transition-colors">{t('directory.joinDirectory')}</span>
               </div>
-            </div>
+            )}
           </div>
         ) : (
           // List view
