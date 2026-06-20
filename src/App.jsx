@@ -26,11 +26,13 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import VerifiedAlumniRegistration from './components/VerifiedAlumniRegistration';
 import { AuthProvider } from './contexts/AuthContext';
+import { SettingsProvider } from './contexts/SettingsContext';
 
 function App() {
   return (
     <div className="App">
       <AuthProvider>
+        <SettingsProvider>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/directory" element={<DirectoryPage />} />
@@ -63,6 +65,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
         </Routes>
+        </SettingsProvider>
       </AuthProvider>
     </div>
   );
