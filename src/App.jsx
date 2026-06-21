@@ -27,6 +27,7 @@ import ContactPage from './pages/ContactPage';
 import VerifiedAlumniRegistration from './components/VerifiedAlumniRegistration';
 import { AuthProvider } from './contexts/AuthContext';
 import { SettingsProvider } from './contexts/SettingsContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -36,16 +37,17 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/directory" element={<DirectoryPage />} />
-          <Route path="/jobs" element={<JobBoard />} />
-          <Route path="/job/:id" element={<JobDetailsPage />} />
-          <Route path="/mentorship" element={<MentorshipPage />} />
-          <Route path="/mentorship/:id" element={<MentorDetailPage />} />
-          <Route path="/mentorship/my/mentees" element={<MentorMenteesPage />} />
-          <Route path="/mentorship/my/requests" element={<MentorRequestsPage />} />
-          <Route path="/mentorship/my/applications" element={<MentorApplicationsPage />} />
-          <Route path="/events" element={<EventsPage />} />
-          <Route path="/events/registered" element={<RegisteredEventsPage />} />
-          <Route path="/events/:id" element={<EventDetailPage />} />
+          {/* Career, Mentorship & Events require login */}
+          <Route path="/jobs" element={<ProtectedRoute><JobBoard /></ProtectedRoute>} />
+          <Route path="/job/:id" element={<ProtectedRoute><JobDetailsPage /></ProtectedRoute>} />
+          <Route path="/mentorship" element={<ProtectedRoute><MentorshipPage /></ProtectedRoute>} />
+          <Route path="/mentorship/:id" element={<ProtectedRoute><MentorDetailPage /></ProtectedRoute>} />
+          <Route path="/mentorship/my/mentees" element={<ProtectedRoute><MentorMenteesPage /></ProtectedRoute>} />
+          <Route path="/mentorship/my/requests" element={<ProtectedRoute><MentorRequestsPage /></ProtectedRoute>} />
+          <Route path="/mentorship/my/applications" element={<ProtectedRoute><MentorApplicationsPage /></ProtectedRoute>} />
+          <Route path="/events" element={<ProtectedRoute><EventsPage /></ProtectedRoute>} />
+          <Route path="/events/registered" element={<ProtectedRoute><RegisteredEventsPage /></ProtectedRoute>} />
+          <Route path="/events/:id" element={<ProtectedRoute><EventDetailPage /></ProtectedRoute>} />
           <Route path="/verify-card/:eventId/:userId" element={<VerifyCardPage />} />
           <Route path="/legal" element={<GivingPage />} />
           <Route path="/donors" element={<CompletedDonorsPage />} />
