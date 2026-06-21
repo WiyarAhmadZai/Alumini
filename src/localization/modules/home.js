@@ -80,6 +80,13 @@ const home = {
         "Join over 15,000 alumni worldwide and stay updated with the latest university developments and opportunities.",
       signUpNow: "Sign Up Now",
       contactUs: "Contact Us",
+      memberBadge: "You're Part of the Network",
+      welcomeBackTitle: "Keep",
+      welcomeBackHighlight: "Growing Together",
+      welcomeBackSubtitle:
+        "Your journey continues here — connect with fellow graduates, find opportunities, and inspire the next generation of KPU.",
+      exploreMentorship: "Explore Mentorship",
+      browseEvents: "Browse Events",
     },
   },
   da: {
@@ -161,6 +168,13 @@ const home = {
         "به بیش از ۱۵٬۰۰۰ فارغ‌التحصیل در سراسر جهان بپیوندید و از تازه‌ترین تحولات و فرصت‌های پوهنتون آگاه بمانید.",
       signUpNow: "همین حالا ثبت‌نام کنید",
       contactUs: "با ما در تماس شوید",
+      memberBadge: "شما بخشی از این شبکه هستید",
+      welcomeBackTitle: "با هم",
+      welcomeBackHighlight: "به رشد ادامه دهیم",
+      welcomeBackSubtitle:
+        "سفر شما همین‌جا ادامه دارد — با دیگر فارغان ارتباط برقرار کنید، فرصت‌ها را بیابید و نسل بعدی KPU را الهام بخشید.",
+      exploreMentorship: "کاوش در رهنمایی",
+      browseEvents: "مرور رویدادها",
     },
   },
   ps: {
@@ -242,6 +256,13 @@ const home = {
         "په ټوله نړۍ کې له ۱۵٬۰۰۰ څخه ډېرو فارغانو سره یوځای شئ او د پوهنتون له وروستیو پرمختګونو او فرصتونو څخه خبر پاتې شئ.",
       signUpNow: "همدا اوس نوم لیکنه وکړئ",
       contactUs: "زموږ سره اړیکه ونیسئ",
+      memberBadge: "تاسو د دې شبکې برخه یاست",
+      welcomeBackTitle: "راځئ یوځای",
+      welcomeBackHighlight: "وده وکړو",
+      welcomeBackSubtitle:
+        "ستاسو سفر همدلته دوام لري — له نورو فارغانو سره اړیکه ونیسئ، فرصتونه ومومئ او د KPU راتلونکي نسل ته الهام ورکړئ.",
+      exploreMentorship: "د لارښوونې لټون",
+      browseEvents: "پیښې وګورئ",
     },
   },
 };
