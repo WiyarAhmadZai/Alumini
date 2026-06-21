@@ -253,11 +253,11 @@ const Layout = ({ children }) => {
                     location.pathname === '/contact' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <Link 
-                  to="/jobs" 
+                <Link
+                  to="/jobs"
                   className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/jobs' 
-                      ? 'text-white bg-white/20' 
+                    location.pathname === '/jobs'
+                      ? 'text-white bg-white/20'
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -266,11 +266,11 @@ const Layout = ({ children }) => {
                     location.pathname === '/jobs' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <Link 
-                  to="/mentorship" 
+                <Link
+                  to="/mentorship"
                   className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/mentorship' 
-                      ? 'text-white bg-white/20' 
+                    location.pathname === '/mentorship'
+                      ? 'text-white bg-white/20'
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -279,11 +279,11 @@ const Layout = ({ children }) => {
                     location.pathname === '/mentorship' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <Link 
-                  to="/events" 
+                <Link
+                  to="/events"
                   className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/events' 
-                      ? 'text-white bg-white/20' 
+                    location.pathname === '/events'
+                      ? 'text-white bg-white/20'
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
@@ -292,8 +292,8 @@ const Layout = ({ children }) => {
                     location.pathname === '/events' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <Link 
-                  to="/legal" 
+                <Link
+                  to="/legal"
                   className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines'
                       ? 'text-white bg-white/20' 
@@ -593,40 +593,40 @@ const Layout = ({ children }) => {
                       >
                         {t('nav.contact')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/jobs"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/jobs' 
-                            ? 'bg-white/20 text-white' 
+                          location.pathname === '/jobs'
+                            ? 'bg-white/20 text-white'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
                         {t('nav.career')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/mentorship"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/mentorship' 
-                            ? 'bg-white/20 text-white' 
+                          location.pathname === '/mentorship'
+                            ? 'bg-white/20 text-white'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
                         {t('nav.mentorship')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/events"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/events' 
-                            ? 'bg-white/20 text-white' 
+                          location.pathname === '/events'
+                            ? 'bg-white/20 text-white'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
                         {t('nav.events')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/legal"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
@@ -732,36 +732,36 @@ const Layout = ({ children }) => {
                         <span className="text-lg opacity-70">📧</span>
                         {t('nav.contactUs')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/jobs"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/jobs' 
-                            ? 'bg-white/20' 
+                          location.pathname === '/jobs'
+                            ? 'bg-white/20'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
                         <span className="text-lg opacity-70">💼</span>
                         {t('nav.careerOpportunities')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/mentorship"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/mentorship' 
-                            ? 'bg-white/20' 
+                          location.pathname === '/mentorship'
+                            ? 'bg-white/20'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
                         <span className="text-lg opacity-70">🤝</span>
                         {t('nav.mentorshipHub')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/events"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/events' 
-                            ? 'bg-white/20' 
+                          location.pathname === '/events'
+                            ? 'bg-white/20'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
