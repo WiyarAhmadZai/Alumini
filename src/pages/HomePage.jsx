@@ -11,9 +11,11 @@ import {
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import eventService from '../services/eventService';
+import authService from '../services/authService';
 
 const HomePage = () => {
   const { t } = useTranslation();
+  const isLoggedIn = authService.isAuthenticated();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -590,40 +592,67 @@ const HomePage = () => {
           
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
             <div className="text-center mb-10 sm:mb-12">
-              {/* Modern badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm border border-cyan-400/30 rounded-full mb-6">
-                <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
-                <span className="text-cyan-300 text-sm font-semibold">{t('home.joinOurGlobalNetwork')}</span>
-              </div>
-              
-              {/* Main heading */}
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
-                {t('home.readyTo')}
-                <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"> {t('home.reconnect')}</span>{t('home.questionMark')}
-              </h2>
+              {!isLoggedIn ? (
+                <>
+                  {/* Modern badge */}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm border border-cyan-400/30 rounded-full mb-6">
+                    <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                    <span className="text-cyan-300 text-sm font-semibold">{t('home.joinOurGlobalNetwork')}</span>
+                  </div>
 
-              {/* Subtitle */}
-              <p className="text-white/70 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-10">
-                {t('home.ctaSubtitle')}
-              </p>
-              
-              {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
-                <button className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-base sm:text-lg font-bold rounded-xl shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                  <span className="relative z-10 flex items-center gap-3">
-                    <FiUser className="text-xl" />
-                    {t('home.signUpNow')}
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
-                </button>
-                
-                <button className="group relative px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white text-base sm:text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-                  <span className="flex items-center gap-3">
-                    <FiMail className="text-xl" />
-                    {t('home.contactUs')}
-                  </span>
-                </button>
-              </div>
+                  {/* Main heading */}
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
+                    {t('home.readyTo')}
+                    <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"> {t('home.reconnect')}</span>{t('home.questionMark')}
+                  </h2>
+
+                  {/* Subtitle */}
+                  <p className="text-white/70 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-10">
+                    {t('home.ctaSubtitle')}
+                  </p>
+
+                  {/* Action buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+                    <Link to="/register" className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-base sm:text-lg font-bold rounded-xl shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                      <span className="relative z-10 flex items-center gap-3">
+                        <FiUser className="text-xl" />
+                        {t('home.signUpNow')}
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
+                    </Link>
+
+                    <Link to="/contact" className="group relative px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white text-base sm:text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                      <span className="flex items-center gap-3">
+                        <FiMail className="text-xl" />
+                        {t('home.contactUs')}
+                      </span>
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Logged-in alumni: motivational message instead of the sign-up CTA */}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm border border-cyan-400/30 rounded-full mb-6">
+                    <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                    <span className="text-cyan-300 text-sm font-semibold">{t('home.memberBadge')}</span>
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
+                    {t('home.welcomeBackTitle')}
+                    <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"> {t('home.welcomeBackHighlight')}</span>
+                  </h2>
+                  <p className="text-white/70 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-10">
+                    {t('home.welcomeBackSubtitle')}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+                    <Link to="/mentorship" className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-base sm:text-lg font-bold rounded-xl shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1 transition-all duration-300">
+                      <span className="flex items-center gap-3"><FiUser className="text-xl" />{t('home.exploreMentorship')}</span>
+                    </Link>
+                    <Link to="/events" className="group relative px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white text-base sm:text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                      <span className="flex items-center gap-3"><FiCalendar className="text-xl" />{t('home.browseEvents')}</span>
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>
