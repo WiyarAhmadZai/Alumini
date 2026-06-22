@@ -142,7 +142,14 @@ const VerifiedAlumniRegistration = () => {
     
     try {
       const response = await alumniService.searchStudent(formData.university_id);
-      setStudentData(response.data);
+      const student = response.data;
+      // Gate: only graduated students may register as alumni.
+      if (student && !student.is_graduated) {
+        setStudentData(null);
+        setSearchError(t('auth.errors.notGraduated'));
+        return;
+      }
+      setStudentData(student);
     } catch (error) {
       setSearchError(error.response?.data?.message || t('auth.errors.studentNotFound'));
       setStudentData(null);
@@ -402,7 +409,9 @@ const VerifiedAlumniRegistration = () => {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
                     {[
-                      [t('auth.register.fieldFullName'), `${studentData.first_name || ''} ${studentData.father_name || ''} ${studentData.grandfather_name || ''}`.trim()],
+                      [t('auth.register.fieldName'), `${studentData.first_name || ''} ${studentData.last_name || ''}`.trim() || t('auth.register.notAvailable')],
+                      [t('auth.register.fieldFatherName'), studentData.father_name || t('auth.register.notAvailable')],
+                      [t('auth.register.fieldGrandfatherName'), studentData.grandfather_name || t('auth.register.notAvailable')],
                       [t('auth.register.fieldUniversityId'), studentData.student_id],
                       [t('auth.register.fieldFaculty'), studentData.department?.faculty?.name || t('auth.register.notAvailable')],
                       [t('auth.register.fieldDepartment'), studentData.department?.name || t('auth.register.notAvailable')],
