@@ -190,7 +190,7 @@ const Layout = ({ children }) => {
       }`}>
         <div className="w-full px-4 sm:px-6 lg:px-12 py-3">
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
+            <div className="flex items-center gap-2 sm:gap-4 lg:gap-3 xl:gap-6 min-w-0">
               <div className={`flex items-center gap-2 sm:gap-4 transition-all duration-300 ${
                 isScrolled ? 'text-white' : 'text-white'
               }`}>
@@ -206,17 +206,17 @@ const Layout = ({ children }) => {
                     <div className="font-bold text-white text-sm sm:text-base truncate">
                       {brandName}
                     </div>
-                    <div className="text-xs text-white/80 truncate">
+                    <div className="hidden xl:block text-xs text-white/80 truncate">
                       {brandTagline}
                     </div>
                   </div>
                 </Link>
               </div>
               
-              <nav className="hidden lg:flex items-center gap-4 sm:gap-6">
+              <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5">
                 <Link 
                   to="/directory" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/directory' 
                       ? 'text-white bg-white/20' 
                       : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -229,7 +229,7 @@ const Layout = ({ children }) => {
                 </Link>
                 <Link 
                   to="/about" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/about' 
                       ? 'text-white bg-white/20' 
                       : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -242,7 +242,7 @@ const Layout = ({ children }) => {
                 </Link>
                 <Link 
                   to="/contact" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/contact' 
                       ? 'text-white bg-white/20' 
                       : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -255,7 +255,7 @@ const Layout = ({ children }) => {
                 </Link>
                 <Link
                   to="/jobs"
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/jobs'
                       ? 'text-white bg-white/20'
                       : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -268,7 +268,7 @@ const Layout = ({ children }) => {
                 </Link>
                 <Link
                   to="/mentorship"
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/mentorship'
                       ? 'text-white bg-white/20'
                       : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -281,7 +281,7 @@ const Layout = ({ children }) => {
                 </Link>
                 <Link
                   to="/events"
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/events'
                       ? 'text-white bg-white/20'
                       : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -292,9 +292,24 @@ const Layout = ({ children }) => {
                     location.pathname === '/events' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
+                {isAuthenticated && (
+                  <Link
+                    to="/media-center"
+                    className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
+                      location.pathname.startsWith('/media')
+                        ? 'text-white bg-white/20'
+                        : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t('nav.media')}
+                    <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
+                      location.pathname.startsWith('/media') ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`}></span>
+                  </Link>
+                )}
                 <Link
                   to="/legal"
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines'
                       ? 'text-white bg-white/20' 
                       : 'text-white/90 hover:text-white hover:bg-white/10'
@@ -626,6 +641,19 @@ const Layout = ({ children }) => {
                       >
                         {t('nav.events')}
                       </Link>
+                      {isAuthenticated && (
+                        <Link
+                          to="/media-center"
+                          onClick={handleMenuClick}
+                          className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                            location.pathname.startsWith('/media')
+                              ? 'bg-white/20 text-white'
+                              : 'hover:bg-[#0a519b]'
+                          }`}
+                        >
+                          {t('nav.media')}
+                        </Link>
+                      )}
                       <Link
                         to="/legal"
                         onClick={handleMenuClick}
