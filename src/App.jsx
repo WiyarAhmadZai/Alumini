@@ -12,6 +12,8 @@ import MentorRequestsPage from './pages/MentorRequestsPage';
 import EventsPage from './pages/EventsPage';
 import EventDetailPage from './pages/EventDetailPage';
 import RegisteredEventsPage from './pages/RegisteredEventsPage';
+import MediaCenterPage from './pages/MediaCenterPage';
+import MediaDetailPage from './pages/MediaDetailPage';
 import VerifyCardPage from './pages/VerifyCardPage';
 import GivingPage from './pages/LegalPage';
 import CompletedDonorsPage from './pages/CompletedDonorsPage';
@@ -48,6 +50,9 @@ function App() {
           <Route path="/events" element={<ProtectedRoute><EventsPage /></ProtectedRoute>} />
           <Route path="/events/registered" element={<ProtectedRoute><RegisteredEventsPage /></ProtectedRoute>} />
           <Route path="/events/:id" element={<ProtectedRoute><EventDetailPage /></ProtectedRoute>} />
+          {/* Media Center — authenticated alumni only */}
+          <Route path="/media-center" element={<ProtectedRoute><MediaCenterPage /></ProtectedRoute>} />
+          <Route path="/media/:id" element={<ProtectedRoute><MediaDetailPage /></ProtectedRoute>} />
           <Route path="/verify-card/:eventId/:userId" element={<VerifyCardPage />} />
           <Route path="/legal" element={<GivingPage />} />
           <Route path="/donors" element={<CompletedDonorsPage />} />
