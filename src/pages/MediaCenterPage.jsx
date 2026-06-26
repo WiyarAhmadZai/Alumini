@@ -7,6 +7,7 @@ import {
   FiImage, FiVideo, FiFileText, FiMusic, FiArchive, FiFile, FiStar, FiCalendar, FiUser,
 } from 'react-icons/fi';
 import mediaService from '../services/mediaService';
+import { mediaPath } from '../utils/mediaUrl';
 
 const BRAND = '#194ce6';
 const PER_PAGE = 12;
@@ -140,7 +141,7 @@ const MediaCenterPage = () => {
   );
 
   const GridCard = ({ item }) => (
-    <button onClick={() => navigate(`/media/${item.fileId || item.id}`)}
+    <button onClick={() => navigate(mediaPath(item))}
       className="group text-left bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition">
       <Thumb item={item} h="h-44" />
       <div className="p-4">
@@ -152,7 +153,7 @@ const MediaCenterPage = () => {
   );
 
   const ListRow = ({ item }) => (
-    <button onClick={() => navigate(`/media/${item.fileId || item.id}`)}
+    <button onClick={() => navigate(mediaPath(item))}
       className="group flex w-full text-left bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition">
       <div className="w-40 shrink-0"><Thumb item={item} h="h-full min-h-28" /></div>
       <div className="p-4 flex-1">
@@ -165,7 +166,7 @@ const MediaCenterPage = () => {
   );
 
   const BigCard = ({ item }) => (
-    <button onClick={() => navigate(`/media/${item.fileId || item.id}`)}
+    <button onClick={() => navigate(mediaPath(item))}
       className="group text-left bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-xl transition">
       <Thumb item={item} h="h-56" />
       <div className="p-5">
