@@ -1,5 +1,19 @@
 import api from '../config/axios';
 
+/** Pull the original filename out of a Content-Disposition response header. */
+const filenameFromDisposition = (headers) => {
+  try {
+    const cd = headers?.['content-disposition'] || headers?.['Content-Disposition'];
+    if (!cd) return null;
+    const star = cd.match(/filename\*=(?:UTF-8'')?([^;]+)/i);
+    if (star?.[1]) return decodeURIComponent(star[1].replace(/^"|"$/g, ''));
+    const plain = cd.match(/filename="?([^";]+)"?/i);
+    return plain?.[1] || null;
+  } catch {
+    return null;
+  }
+};
+
 /**
  * Alumni Media Center service.
  * Talks to the protected `api/alumini/media/*` endpoints. Only media shared
@@ -36,15 +50,19 @@ const mediaService = {
     }
   },
 
-  /** Download the file as a blob (increments download counter) and save it. */
+  /** Download the file as a blob (increments download counter) and save it
+   *  using the exact name it was uploaded with. */
   download: async (fileId, fileName = 'download') => {
     const response = await api.get(`/alumini/media/${fileId}/download`, {
       responseType: 'blob',
     });
+    // Prefer the server's original filename (Content-Disposition), fall back to
+    // the passed name (which is also the original_name from the API).
+    const name = filenameFromDisposition(response.headers) || fileName;
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', fileName);
+    link.setAttribute('download', name);
     document.body.appendChild(link);
     link.click();
     link.remove();
