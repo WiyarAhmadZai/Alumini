@@ -5,6 +5,7 @@ import authService from '../services/authService';
 import notificationService from '../services/notificationService';
 import { AuthContext } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
+import { resolveHeroImage } from './ui/HeroBackground';
 import LanguageSwitcher from './LanguageSwitcher';
 import {
   FiArrowRight,
@@ -50,7 +51,7 @@ const Layout = ({ children }) => {
   const { user } = useContext(AuthContext);
   const brandName = pick(settings.brand_name) || t('common.brand');
   const brandTagline = pick(settings.tagline) || t('common.tagline');
-  const brandLogo = settings.logo || '/logo_kpu.png';
+  const brandLogo = resolveHeroImage(settings.logo) || '/logo_kpu.png';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -132,8 +133,18 @@ const Layout = ({ children }) => {
 
   useEffect(() => {
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
-    return () => clearInterval(interval);
+    // Only poll while the tab is actually visible — a hidden/idle tab shouldn't
+    // keep hitting the API in the background. Resume + refresh when it returns.
+    let interval = null;
+    const start = () => { if (!interval) interval = setInterval(fetchUnreadCount, 30000); };
+    const stop = () => { if (interval) { clearInterval(interval); interval = null; } };
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') { fetchUnreadCount(); start(); }
+      else stop();
+    };
+    if (document.visibilityState === 'visible') start();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => { stop(); document.removeEventListener('visibilitychange', onVisibility); };
   }, [fetchUnreadCount, isAuthenticated]);
 
   const handleOpenNotifications = async () => {
