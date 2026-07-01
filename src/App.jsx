@@ -29,6 +29,7 @@ import ContactPage from './pages/ContactPage';
 import VerifiedAlumniRegistration from './components/VerifiedAlumniRegistration';
 import { AuthProvider } from './contexts/AuthContext';
 import { SettingsProvider } from './contexts/SettingsContext';
+import { HeroProvider } from './contexts/HeroContext';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
     <div className="App">
       <AuthProvider>
         <SettingsProvider>
+        <HeroProvider>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/directory" element={<DirectoryPage />} />
@@ -72,6 +74,7 @@ function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
         </Routes>
+        </HeroProvider>
         </SettingsProvider>
       </AuthProvider>
     </div>
