@@ -62,6 +62,20 @@ const MediaDetailPage = () => {
     return () => { alive = false; };
   }, [fileId]);
 
+  // Self-heal: if the tab was left idle/backgrounded (and the browser suspended
+  // it or in-flight state was lost), silently re-fetch when it becomes visible
+  // again so the user never has to hit refresh manually.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      mediaService.getMediaById(fileId)
+        .then((res) => { if (res?.data) setItem(res.data); })
+        .catch(() => { /* keep whatever is already on screen */ });
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [fileId]);
+
   // All images that belong to this media item: cover, main (if image), thumbnail, image attachments.
   const images = useMemo(() => {
     if (!item) return [];
