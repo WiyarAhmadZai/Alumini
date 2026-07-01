@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiArrowLeft, FiHeart, FiSearch, FiX, FiChevronLeft, FiChevronRight, FiAward, FiUser, FiTarget } from 'react-icons/fi';
 import fundraisingService from '../services/fundraisingService';
+import { useHero } from '../contexts/HeroContext';
+import HeroBackground from '../components/ui/HeroBackground';
 
 const BRAND = '#002759';
 const BRAND_LIGHT = '#0a519b';
@@ -18,6 +20,7 @@ const resolveImg = (img) => {
 
 const CompletedDonorsPage = () => {
   const { t } = useTranslation();
+  const hero = useHero('donors');
   const navigate = useNavigate();
   const [donors, setDonors] = useState([]);
   const [pagination, setPagination] = useState({ current_page: 1, last_page: 1, total: 0, per_page: 20 });
@@ -63,20 +66,16 @@ const CompletedDonorsPage = () => {
     <Layout>
       {/* Hero */}
       <section className="relative w-full h-64 sm:h-72 overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7)), url("https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1600&q=80")',
-          }}
-        />
+        <HeroBackground page="donors"
+          fallbackImage="https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1600&q=80"
+          overlay="linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.7))" />
         <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pt-16">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider mb-4 border border-white/20">
-            <FiHeart size={11} /> {t('donors.hero.badge')}
+            <FiHeart size={11} /> {hero.badge || t('donors.hero.badge')}
           </div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-2">{t('donors.hero.title')}</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-2">{hero.title || t('donors.hero.title')}</h1>
           <p className="text-sm sm:text-base text-white/80 max-w-xl">
-            {t('donors.hero.subtitle')}
+            {hero.subtitle || t('donors.hero.subtitle')}
           </p>
         </div>
       </section>
