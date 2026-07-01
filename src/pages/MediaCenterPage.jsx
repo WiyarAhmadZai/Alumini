@@ -95,6 +95,15 @@ const MediaCenterPage = () => {
 
   useEffect(() => { fetchMedia(page); }, [page, fetchMedia]);
 
+  // Self-heal: re-load the first page when the tab becomes visible again after
+  // being idle/backgrounded, so an emptied or stale grid restores itself without
+  // the user having to refresh the page manually.
+  useEffect(() => {
+    const onVisible = () => { if (document.visibilityState === 'visible') fetchMedia(1); };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [fetchMedia]);
+
   const clearFilters = () => {
     setFilters({ media_type: 'all', categories: [], department: 'all', featured: false, date_from: '', date_to: '' });
     setSearch('');
