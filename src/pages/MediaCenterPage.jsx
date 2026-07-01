@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import {
-  FiSearch, FiFilter, FiX, FiGrid, FiList, FiColumns, FiEye, FiDownload,
+  FiSearch, FiGrid, FiList, FiColumns, FiEye, FiDownload,
   FiImage, FiVideo, FiFileText, FiMusic, FiArchive, FiFile, FiStar, FiCalendar, FiUser,
 } from 'react-icons/fi';
 import mediaService from '../services/mediaService';
@@ -43,10 +43,10 @@ const MediaCenterPage = () => {
 
   const [search, setSearch] = useState('');
   const [debounced, setDebounced] = useState('');
-  const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState({ category: 'all', media_type: 'all', department: 'all', featured: false });
+  const [filters, setFilters] = useState({ media_type: 'all', categories: [], department: 'all', featured: false, date_from: '', date_to: '' });
   const [sort, setSort] = useState('newest');
   const [view, setView] = useState('grid'); // grid | list | card
+  const [cols, setCols] = useState(5);       // cards per row in grid view (user-adjustable)
   const [options, setOptions] = useState({ categories: [], mediaTypes: [], departments: [] });
 
   const isFirstLoad = useRef(true);
@@ -73,10 +73,12 @@ const MediaCenterPage = () => {
     try {
       const params = { page: targetPage, per_page: PER_PAGE, sort };
       if (debounced) params.search = debounced;
-      if (filters.category !== 'all') params.category = filters.category;
+      if (filters.categories.length) params.category = filters.categories.join(',');
       if (filters.media_type !== 'all') params.media_type = filters.media_type;
       if (filters.department !== 'all') params.department = filters.department;
       if (filters.featured) params.featured = true;
+      if (filters.date_from) params.date_from = filters.date_from;
+      if (filters.date_to) params.date_to = filters.date_to;
 
       const res = await mediaService.getMedia(params);
       const data = res.data || {};
@@ -94,16 +96,24 @@ const MediaCenterPage = () => {
   useEffect(() => { fetchMedia(page); }, [page, fetchMedia]);
 
   const clearFilters = () => {
-    setFilters({ category: 'all', media_type: 'all', department: 'all', featured: false });
+    setFilters({ media_type: 'all', categories: [], department: 'all', featured: false, date_from: '', date_to: '' });
     setSearch('');
     setSort('newest');
   };
 
+  const toggleCategory = (c) =>
+    setFilters((f) => ({
+      ...f,
+      categories: f.categories.includes(c) ? f.categories.filter((x) => x !== c) : [...f.categories, c],
+    }));
+
   const activeFilterCount =
-    (filters.category !== 'all' ? 1 : 0) +
+    filters.categories.length +
     (filters.media_type !== 'all' ? 1 : 0) +
     (filters.department !== 'all' ? 1 : 0) +
-    (filters.featured ? 1 : 0);
+    (filters.featured ? 1 : 0) +
+    (filters.date_from ? 1 : 0) +
+    (filters.date_to ? 1 : 0);
 
   const hasMore = pagination && pagination.current_page < pagination.last_page;
 
@@ -116,12 +126,12 @@ const MediaCenterPage = () => {
           ? <img src={src} alt={item.title} loading="lazy" className="h-full w-full object-cover" />
           : <span className="text-[#194ce6]/60">{typeIcon(item, 'w-12 h-12')}</span>}
         {item.featured && (
-          <span className="absolute top-2 left-2 inline-flex items-center gap-1 rounded-md bg-amber-400/95 px-2 py-0.5 text-[11px] font-semibold text-white">
+          <span className="absolute top-2 ltr:left-2 rtl:right-2 inline-flex items-center gap-1 rounded-md bg-amber-400/95 px-2 py-0.5 text-[11px] font-semibold text-white">
             <FiStar className="w-3 h-3" /> {t('media.featured')}
           </span>
         )}
         {item.category && (
-          <span className="absolute top-2 right-2 rounded-md bg-black/55 px-2 py-0.5 text-[11px] font-medium text-white">
+          <span className="absolute top-2 ltr:right-2 rtl:left-2 rounded-md bg-black/55 px-2 py-0.5 text-[11px] font-medium text-white">
             {item.category}
           </span>
         )}
@@ -142,12 +152,17 @@ const MediaCenterPage = () => {
 
   const GridCard = ({ item }) => (
     <button onClick={() => navigate(mediaPath(item))}
-      className="group text-left bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition">
-      <Thumb item={item} h="h-44" />
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 line-clamp-1 group-hover:text-[#194ce6]">{item.title}</h3>
-        <p className="mt-1 text-sm text-gray-500 line-clamp-2">{item.shortSummary || item.description}</p>
-        <Meta item={item} />
+      className="group text-left bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 hover:border-[#194ce6]/40 transition">
+      <Thumb item={item} h="h-28 sm:h-32" />
+      <div className="p-2.5">
+        <h3 className="text-sm font-semibold text-gray-900 line-clamp-1 group-hover:text-[#194ce6]">{item.title}</h3>
+        <div className="mt-1.5 flex items-center gap-3 text-[11px] text-gray-400">
+          <span className="inline-flex items-center gap-1"><FiEye className="w-3 h-3" /> {item.viewCount ?? 0}</span>
+          <span className="inline-flex items-center gap-1"><FiDownload className="w-3 h-3" /> {item.downloadCount ?? 0}</span>
+          {(item.publishDate || item.uploadedAt) && (
+            <span className="ltr:ml-auto rtl:mr-auto inline-flex items-center gap-1 truncate"><FiCalendar className="w-3 h-3" /> {fmtDate(item.publishDate || item.uploadedAt)}</span>
+          )}
+        </div>
       </div>
     </button>
   );
@@ -186,81 +201,105 @@ const MediaCenterPage = () => {
 
   const Skeleton = () => (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <div className="h-44 w-full animate-pulse bg-gray-200" />
-      <div className="p-4 space-y-2">
-        <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
-        <div className="h-3 w-full animate-pulse rounded bg-gray-100" />
-        <div className="h-3 w-2/3 animate-pulse rounded bg-gray-100" />
+      <div className="h-28 sm:h-32 w-full animate-pulse bg-gray-200" />
+      <div className="p-2.5 space-y-2">
+        <div className="h-3.5 w-3/4 animate-pulse rounded bg-gray-200" />
+        <div className="h-3 w-1/2 animate-pulse rounded bg-gray-100" />
       </div>
     </div>
   );
 
+  // Static class maps so Tailwind can see every column count at build time.
+  const gridColMap = {
+    3: 'grid-cols-2 sm:grid-cols-3',
+    4: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',
+    5: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
+    6: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6',
+  };
   const gridCols = view === 'card'
-    ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
+    ? 'grid-cols-1 md:grid-cols-2'
     : view === 'list'
       ? 'grid-cols-1'
-      : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+      : (gridColMap[cols] || gridColMap[5]);
+
+  const SectionLabel = ({ children }) => (
+    <p className="mb-2.5 text-xs font-semibold uppercase tracking-wide text-gray-400">{children}</p>
+  );
+
+  const mediaTypeOptions = [
+    { key: 'all', label: t('media.allMedia') },
+    { key: 'Image', label: t('media.images') },
+    { key: 'Video', label: t('media.videos') },
+    { key: 'Document', label: t('media.documents') },
+  ];
 
   return (
     <Layout>
-      {/* short hero with image (dark overlay also gives the fixed navbar a readable backdrop) */}
-      <section className="relative overflow-hidden pt-28 pb-20">
+      {/* compact hero: KPU campus image with a dark overlay */}
+      <section className="relative overflow-hidden pt-24 pb-10">
         <img
-          src="/depositphotos_258235060-stock-photo-books-notebooks-academic-cap-laptop.jpg"
+          src="/kpu.jpg"
           alt=""
           aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover object-center"
           onError={(e) => { e.currentTarget.style.display = 'none'; }}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#002759]/95 via-[#0a3a86]/90 to-[#194ce6]/80" />
-        <div className="pointer-events-none absolute inset-0 opacity-[0.12]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)', backgroundSize: '22px 22px' }} />
+        {/* dark (black) overlay above the image */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/70 to-black/60" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1.5 text-sm font-medium text-white ring-1 ring-white/25 backdrop-blur">
-            <FiImage className="w-4 h-4" /> {t('nav.media')}
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3.5 py-1 text-xs font-medium text-white ring-1 ring-white/20 backdrop-blur">
+            <FiImage className="w-3.5 h-3.5" /> {t('nav.media')}
           </span>
-          <h1 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white drop-shadow-sm">{t('media.title')}</h1>
-          <p className="mx-auto mt-3 max-w-2xl text-sm sm:text-base text-blue-100">{t('media.subtitle')}</p>
+          <h1 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-white drop-shadow">{t('media.title')}</h1>
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-gray-200">{t('media.subtitle')}</p>
         </div>
       </section>
 
       <section className="pb-16 min-h-screen bg-[#f7f9ff]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8">
-          {/* search + controls */}
-          <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-5 mb-6 shadow-sm relative">
+          {/* top bar: search + sort + view + density */}
+          <div className="bg-white/90 backdrop-blur rounded-2xl border border-gray-200 p-3 sm:p-4 mb-6 shadow-sm">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
               {/* search */}
               <div className="relative flex-1">
-                <FiSearch className="absolute top-1/2 -translate-y-1/2 ltr:left-3.5 rtl:right-3.5 text-gray-400 w-4 h-4" />
+                <FiSearch className="pointer-events-none absolute top-1/2 -translate-y-1/2 ltr:left-4 rtl:right-4 text-gray-400 w-4 h-4" />
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder={t('media.searchPlaceholder')}
-                  className="h-11 w-full rounded-xl border border-gray-300 bg-gray-50 ltr:pl-11 ltr:pr-4 rtl:pr-11 rtl:pl-4 text-sm text-gray-800 outline-none transition focus:border-[#194ce6] focus:bg-white focus:ring-2 focus:ring-[#194ce6]/20"
+                  className="h-11 w-full rounded-full border border-gray-200 bg-gray-50 ltr:pl-11 ltr:pr-4 rtl:pr-11 rtl:pl-4 text-sm text-gray-800 outline-none transition focus:border-[#194ce6] focus:bg-white focus:ring-2 focus:ring-[#194ce6]/20"
                 />
               </div>
-              {/* controls */}
-              <div className="flex items-center gap-2">
+
+              <div className="flex flex-wrap items-center gap-2">
+                {/* sort */}
                 <select value={sort} onChange={(e) => setSort(e.target.value)}
-                  className="h-11 rounded-xl border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#194ce6] focus:ring-2 focus:ring-[#194ce6]/20">
+                  className="h-11 cursor-pointer rounded-full border border-gray-200 bg-white px-4 text-sm font-medium text-gray-700 outline-none transition focus:border-[#194ce6] focus:ring-2 focus:ring-[#194ce6]/20">
                   <option value="newest">{t('media.sortNewest')}</option>
                   <option value="oldest">{t('media.sortOldest')}</option>
                   <option value="most_viewed">{t('media.sortMostViewed')}</option>
                   <option value="most_downloaded">{t('media.sortMostDownloaded')}</option>
                 </select>
-                <button onClick={() => setShowFilters((s) => !s)}
-                  className={`relative inline-flex h-11 items-center gap-2 rounded-xl border px-4 text-sm font-medium transition ${
-                    showFilters || activeFilterCount > 0
-                      ? 'border-[#194ce6] bg-[#eef1fd] text-[#194ce6]'
-                      : 'border-gray-300 text-gray-700 hover:bg-gray-50'
-                  }`}>
-                  <FiFilter className="w-4 h-4" /> {t('media.filters')}
-                  {activeFilterCount > 0 && <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#194ce6] px-1 text-[11px] font-bold text-white">{activeFilterCount}</span>}
-                </button>
-                {/* segmented view toggle */}
-                <div className="hidden sm:flex h-11 items-center gap-1 rounded-xl border border-gray-300 bg-gray-50 p-1">
+
+                {/* per-row density (grid view only) */}
+                {view === 'grid' && (
+                  <div className="hidden md:flex h-11 items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-1.5" title={t('media.perRow', 'Cards per row')}>
+                    {[3, 4, 5, 6].map((n) => (
+                      <button key={n} onClick={() => setCols(n)}
+                        className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold transition ${
+                          cols === n ? 'bg-[#194ce6] text-white shadow-sm' : 'text-gray-500 hover:bg-white hover:text-gray-700'
+                        }`}>
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* view mode */}
+                <div className="flex h-11 items-center gap-1 rounded-full border border-gray-200 bg-gray-50 p-1">
                   {[['grid', FiGrid], ['list', FiList], ['card', FiColumns]].map(([v, Icon]) => (
                     <button key={v} onClick={() => setView(v)} title={v}
-                      className={`flex h-9 w-9 items-center justify-center rounded-lg transition ${
+                      className={`flex h-9 w-9 items-center justify-center rounded-full transition ${
                         view === v ? 'bg-[#194ce6] text-white shadow-sm' : 'text-gray-500 hover:bg-white hover:text-gray-700'
                       }`}>
                       <Icon className="w-4 h-4" />
@@ -269,115 +308,146 @@ const MediaCenterPage = () => {
                 </div>
               </div>
             </div>
-
-            {/* advanced filters */}
-            {showFilters && (
-              <div className="mt-4 grid grid-cols-1 gap-3 border-t border-gray-100 pt-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-500">{t('media.detail.category')}</label>
-                  <select value={filters.category} onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
-                    className="h-11 w-full rounded-xl border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#194ce6] focus:ring-2 focus:ring-[#194ce6]/20">
-                    <option value="all">{t('media.allCategories')}</option>
-                    {options.categories.map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-500">{t('media.detail.type')}</label>
-                  <select value={filters.media_type} onChange={(e) => setFilters((f) => ({ ...f, media_type: e.target.value }))}
-                    className="h-11 w-full rounded-xl border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#194ce6] focus:ring-2 focus:ring-[#194ce6]/20">
-                    <option value="all">{t('media.allTypes')}</option>
-                    {options.mediaTypes.map((m) => <option key={m} value={m}>{m}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-500">{t('media.detail.department')}</label>
-                  <select value={filters.department} onChange={(e) => setFilters((f) => ({ ...f, department: e.target.value }))}
-                    className="h-11 w-full rounded-xl border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#194ce6] focus:ring-2 focus:ring-[#194ce6]/20">
-                    <option value="all">{t('media.allDepartments')}</option>
-                    {options.departments.map((d) => <option key={d} value={d}>{d}</option>)}
-                  </select>
-                </div>
-                <div className="flex items-end">
-                  <button type="button" onClick={() => setFilters((f) => ({ ...f, featured: !f.featured }))}
-                    className={`inline-flex h-11 w-full items-center justify-center gap-2 rounded-xl border text-sm font-medium transition ${
-                      filters.featured ? 'border-[#194ce6] bg-[#eef1fd] text-[#194ce6]' : 'border-gray-300 text-gray-600 hover:bg-gray-50'
-                    }`}>
-                    <FiStar className={`w-4 h-4 ${filters.featured ? 'fill-amber-400 text-amber-400' : ''}`} /> {t('media.featuredOnly')}
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* active filter chips */}
-            {activeFilterCount > 0 && (
-              <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-gray-100 pt-3">
-                {filters.category !== 'all' && (
-                  <button onClick={() => setFilters((f) => ({ ...f, category: 'all' }))} className="inline-flex items-center gap-1 rounded-full bg-[#eef1fd] px-3 py-1 text-xs font-medium text-[#194ce6] hover:bg-[#dce3fb]">
-                    {filters.category} <FiX className="w-3 h-3" />
-                  </button>
-                )}
-                {filters.media_type !== 'all' && (
-                  <button onClick={() => setFilters((f) => ({ ...f, media_type: 'all' }))} className="inline-flex items-center gap-1 rounded-full bg-[#eef1fd] px-3 py-1 text-xs font-medium text-[#194ce6] hover:bg-[#dce3fb]">
-                    {filters.media_type} <FiX className="w-3 h-3" />
-                  </button>
-                )}
-                {filters.department !== 'all' && (
-                  <button onClick={() => setFilters((f) => ({ ...f, department: 'all' }))} className="inline-flex items-center gap-1 rounded-full bg-[#eef1fd] px-3 py-1 text-xs font-medium text-[#194ce6] hover:bg-[#dce3fb]">
-                    {filters.department} <FiX className="w-3 h-3" />
-                  </button>
-                )}
-                {filters.featured && (
-                  <button onClick={() => setFilters((f) => ({ ...f, featured: false }))} className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-600 hover:bg-amber-100">
-                    <FiStar className="w-3 h-3 fill-amber-400" /> {t('media.featuredOnly')} <FiX className="w-3 h-3" />
-                  </button>
-                )}
-                <button onClick={clearFilters} className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-[#194ce6]">
-                  <FiX className="w-3 h-3" /> {t('media.clearFilters')}
-                </button>
-              </div>
-            )}
           </div>
 
-          {/* results count */}
-          {!loading && pagination && (
-            <p className="mb-4 text-sm text-gray-500">{t('media.results', { count: pagination.total })}</p>
-          )}
+          {/* two-column: filters sidebar + results */}
+          <div className="flex flex-col gap-6 lg:flex-row">
+            {/* Sidebar (left in LTR / right in RTL) */}
+            <aside className="w-full shrink-0 lg:w-64">
+              <div className="lg:sticky lg:top-24 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="text-base font-bold text-gray-900">{t('media.filters')}</h3>
+                  {activeFilterCount > 0 && (
+                    <button onClick={clearFilters} className="text-xs font-semibold text-[#194ce6] hover:underline">
+                      {t('media.clearAll')}
+                    </button>
+                  )}
+                </div>
 
-          {/* grid */}
-          {error ? (
-            <div className="text-center py-16">
-              <p className="text-gray-500">{t('media.errorLoading')}</p>
-              <button onClick={() => fetchMedia(1)} className="mt-3 px-4 py-2 rounded-lg bg-[#194ce6] text-white text-sm">↻</button>
-            </div>
-          ) : loading && items.length === 0 ? (
-            <div className={`grid ${gridCols} gap-5`}>{[...Array(8)].map((_, i) => <Skeleton key={i} />)}</div>
-          ) : items.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#eef1fd] text-[#194ce6]"><FiImage className="w-7 h-7" /></div>
-              <h3 className="text-lg font-semibold text-gray-800">{t('media.noResultsTitle')}</h3>
-              <p className="text-gray-500">{t('media.noResultsDesc')}</p>
-            </div>
-          ) : (
-            <>
-              <div className={`grid ${gridCols} gap-5`}>
-                {items.map((item) => {
-                  const key = item.fileId || item.id;
-                  if (view === 'list') return <ListRow key={key} item={item} />;
-                  if (view === 'card') return <BigCard key={key} item={item} />;
-                  return <GridCard key={key} item={item} />;
-                })}
+                {/* MEDIA TYPE — segmented pills */}
+                <div className="mb-5">
+                  <SectionLabel>{t('media.mediaType')}</SectionLabel>
+                  <div className="grid grid-cols-2 gap-2">
+                    {mediaTypeOptions.map((opt) => {
+                      const on = filters.media_type === opt.key;
+                      return (
+                        <button key={opt.key} type="button"
+                          onClick={() => setFilters((f) => ({ ...f, media_type: opt.key }))}
+                          className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
+                            on ? 'border-[#194ce6] bg-[#194ce6] text-white shadow-sm' : 'border-gray-200 bg-white text-gray-600 hover:border-[#194ce6]/40 hover:bg-gray-50'
+                          }`}>
+                          {opt.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* CATEGORIES — toggle chips */}
+                {options.categories.length > 0 && (
+                  <div className="mb-5">
+                    <SectionLabel>{t('media.categories')}</SectionLabel>
+                    <div className="flex max-h-56 flex-wrap gap-2 overflow-y-auto ltr:pr-1 rtl:pl-1">
+                      {options.categories.map((c) => {
+                        const on = filters.categories.includes(c);
+                        return (
+                          <button key={c} type="button" onClick={() => toggleCategory(c)}
+                            className={`max-w-full truncate rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                              on ? 'border-[#194ce6] bg-[#eef1fd] text-[#194ce6]' : 'border-gray-200 bg-white text-gray-600 hover:border-[#194ce6]/40 hover:bg-gray-50'
+                            }`}>
+                            {c}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* DATE RANGE */}
+                <div className="mb-5">
+                  <SectionLabel>{t('media.dateRange')}</SectionLabel>
+                  <label className="mb-1 block text-xs text-gray-500">{t('media.from')}</label>
+                  <input type="date" value={filters.date_from}
+                    onChange={(e) => setFilters((f) => ({ ...f, date_from: e.target.value }))}
+                    className="mb-3 h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#194ce6] focus:ring-2 focus:ring-[#194ce6]/20" />
+                  <label className="mb-1 block text-xs text-gray-500">{t('media.to')}</label>
+                  <input type="date" value={filters.date_to}
+                    onChange={(e) => setFilters((f) => ({ ...f, date_to: e.target.value }))}
+                    className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#194ce6] focus:ring-2 focus:ring-[#194ce6]/20" />
+                </div>
+
+                {/* DEPARTMENT */}
+                {options.departments.length > 0 && (
+                  <div className="mb-5">
+                    <SectionLabel>{t('media.detail.department')}</SectionLabel>
+                    <select value={filters.department} onChange={(e) => setFilters((f) => ({ ...f, department: e.target.value }))}
+                      className="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#194ce6] focus:ring-2 focus:ring-[#194ce6]/20">
+                      <option value="all">{t('media.allDepartments')}</option>
+                      {options.departments.map((d) => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                  </div>
+                )}
+
+                {/* FEATURED */}
+                <button type="button" onClick={() => setFilters((f) => ({ ...f, featured: !f.featured }))}
+                  className={`inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border text-sm font-medium transition ${
+                    filters.featured ? 'border-[#194ce6] bg-[#eef1fd] text-[#194ce6]' : 'border-gray-300 text-gray-600 hover:bg-gray-50'
+                  }`}>
+                  <FiStar className={`h-4 w-4 ${filters.featured ? 'fill-amber-400 text-amber-400' : ''}`} /> {t('media.featuredOnly')}
+                </button>
+              </div>
+            </aside>
+
+            {/* Results */}
+            <div className="min-w-0 flex-1">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h2 className="text-lg font-bold text-gray-900">
+                  {pagination ? t('media.results', { count: pagination.total }) : ' '}
+                </h2>
+                {activeFilterCount > 0 && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#eef1fd] px-3 py-1 text-xs font-semibold text-[#194ce6]">
+                    {t('media.currentSelection')}
+                    <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#194ce6] px-1 text-[11px] text-white">{activeFilterCount}</span>
+                  </span>
+                )}
               </div>
 
-              {hasMore && (
-                <div className="mt-8 flex justify-center">
-                  <button onClick={() => setPage((p) => p + 1)} disabled={loading}
-                    className="px-6 py-2.5 rounded-lg bg-[#194ce6] text-white text-sm font-medium hover:bg-[#0f2d8a] disabled:opacity-60">
-                    {loading ? '…' : t('media.loadMore')}
-                  </button>
+              {error ? (
+                <div className="py-16 text-center">
+                  <p className="text-gray-500">{t('media.errorLoading')}</p>
+                  <button onClick={() => fetchMedia(1)} className="mt-3 rounded-lg bg-[#194ce6] px-4 py-2 text-sm text-white">↻</button>
                 </div>
+              ) : loading && items.length === 0 ? (
+                <div className={`grid ${gridCols} gap-4`}>{[...Array(10)].map((_, i) => <Skeleton key={i} />)}</div>
+              ) : items.length === 0 ? (
+                <div className="py-20 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#eef1fd] text-[#194ce6]"><FiImage className="w-7 h-7" /></div>
+                  <h3 className="text-lg font-semibold text-gray-800">{t('media.noResultsTitle')}</h3>
+                  <p className="text-gray-500">{t('media.noResultsDesc')}</p>
+                </div>
+              ) : (
+                <>
+                  <div className={`grid ${gridCols} gap-4`}>
+                    {items.map((item) => {
+                      const key = item.fileId || item.id;
+                      if (view === 'list') return <ListRow key={key} item={item} />;
+                      if (view === 'card') return <BigCard key={key} item={item} />;
+                      return <GridCard key={key} item={item} />;
+                    })}
+                  </div>
+
+                  {hasMore && (
+                    <div className="mt-8 flex justify-center">
+                      <button onClick={() => setPage((p) => p + 1)} disabled={loading}
+                        className="rounded-lg bg-[#194ce6] px-6 py-2.5 text-sm font-medium text-white hover:bg-[#0f2d8a] disabled:opacity-60">
+                        {loading ? '…' : t('media.loadMore')}
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
-            </>
-          )}
+            </div>
+          </div>
         </div>
       </section>
     </Layout>
