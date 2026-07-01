@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiMail, FiPhone, FiMapPin, FiSend, FiMessageSquare, FiNavigation, FiCalendar, FiBriefcase, FiUser, FiUsers, FiBookOpen, FiAward } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
+import { useHero } from '../contexts/HeroContext';
+import HeroBackground from '../components/ui/HeroBackground';
 import Swal from 'sweetalert2';
 import messageService from '../services/messageService';
 
@@ -15,6 +17,7 @@ const BRAND_BORDER = '#c5ccf7';
 
 const ContactPage = () => {
   const { t } = useTranslation();
+  const hero = useHero('contact');
   const { user, isAuthenticated } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
@@ -101,19 +104,19 @@ const ContactPage = () => {
     <Layout>
       {/* ═══ HERO — branded design language ═════════════════════ */}
       <section className="relative w-full overflow-hidden" style={{ minHeight: 380 }}>
-        <div className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 100%), url("/kpu5.jpg")' }} />
+        <HeroBackground page="contact" fallbackImage="/kpu5.jpg"
+          overlay="linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 100%)" />
 
         <div className="relative z-10 flex flex-col items-center justify-center py-16 px-4 sm:px-6 text-center text-white" style={{ minHeight: 380 }}>
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 mb-3">
             <FiMessageSquare className="text-[10px]" />
-            {t('contact.hero.badge')}
+            {hero.badge || t('contact.hero.badge')}
           </div>
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3 max-w-3xl">
-            {t('contact.hero.title')}
+            {hero.title || t('contact.hero.title')}
           </h1>
           <p className="text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed font-light">
-            {t('contact.hero.subtitle')}
+            {hero.subtitle || t('contact.hero.subtitle')}
           </p>
 
           {/* Inline quick info row — branded style consistent with other pages */}
