@@ -28,7 +28,7 @@ export const SettingsProvider = ({ children }) => {
       // Apply the admin-configured default language ONLY if the user hasn't
       // already chosen one (stored choice always wins).
       const stored = localStorage.getItem('alumni-language');
-      const def = data.settings?.default_language;
+      const def = data.settings?.alumni_default_language || data.settings?.default_language;
       if (!stored && def && ['en', 'ps', 'da'].includes(def) && i18n.language !== def) {
         i18n.changeLanguage(def);
       }
