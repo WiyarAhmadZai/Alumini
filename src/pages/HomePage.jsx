@@ -12,9 +12,12 @@ import {
 import Layout from '../components/Layout';
 import eventService from '../services/eventService';
 import authService from '../services/authService';
+import { useHero } from '../contexts/HeroContext';
+import { resolveHeroImage } from '../components/ui/HeroBackground';
 
 const HomePage = () => {
   const { t } = useTranslation();
+  const hero = useHero('home');
   const isLoggedIn = authService.isAuthenticated();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -57,7 +60,8 @@ const HomePage = () => {
     }
   ];
 
-  const heroSlides = [
+  // Static fallback slides — used until an admin configures the "home" hero.
+  const staticHeroSlides = [
     {
       id: 1,
       title: t('home.heroSlide1Title'),
@@ -78,14 +82,29 @@ const HomePage = () => {
     }
   ];
 
-  // Auto-slide functionality for hero
+  // Admin-managed hero for the home page. Each configured image becomes a slide,
+  // sharing the admin's title/subtitle (falling back to the first static slide's).
+  const heroSlides = hero.images.length
+    ? hero.images.map((img, i) => ({
+        id: `dyn-${i}`,
+        title: hero.title || staticHeroSlides[0].title,
+        subtitle: hero.subtitle || staticHeroSlides[0].subtitle,
+        image: resolveHeroImage(img),
+      }))
+    : staticHeroSlides;
+  const activeSlide = heroSlides[currentSlide] || heroSlides[0];
+
+  // Auto-slide functionality for hero. Re-arms when the number of slides
+  // changes (e.g. admin adds/removes images) so the index never goes stale.
   useEffect(() => {
+    if (heroSlides.length <= 1) return undefined;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000); // Change slide every 5 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [heroSlides.length]);
 
   // Auto-slide functionality for testimonials
   useEffect(() => {
@@ -197,10 +216,10 @@ const HomePage = () => {
           <div className="relative z-10 h-full flex items-center justify-center px-3 sm:px-4 md:px-6">
             <div className="text-center text-white max-w-5xl">
               <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-black leading-tight tracking-[-0.033em] mb-3 sm:mb-4 md:mb-6 animate-slide-up">
-                {heroSlides[currentSlide].title}
+                {activeSlide?.title}
               </h1>
               <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-normal leading-relaxed mb-4 sm:mb-6 md:mb-8 animate-slide-up" style={{animationDelay: '0.2s'}}>
-                {heroSlides[currentSlide].subtitle}
+                {activeSlide?.subtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4 justify-center animate-slide-up" style={{animationDelay: '0.4s'}}>
                 <Link to="/login" className="group relative px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg sm:shadow-xl hover:shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden inline-block text-center">
