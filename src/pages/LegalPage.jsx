@@ -6,6 +6,8 @@ import { FiHeart, FiTrendingUp, FiX, FiDollarSign, FiUser, FiMail, FiPhone, FiAw
 import Swal from 'sweetalert2';
 import fundraisingService from '../services/fundraisingService';
 import authService from '../services/authService';
+import { useHero } from '../contexts/HeroContext';
+import HeroBackground from '../components/ui/HeroBackground';
 
 // ─── Brand palette ─────────────────────────────────────────────
 const BRAND = '#002759';        // primary dark navy
@@ -308,6 +310,7 @@ const DonationModal = ({ open, project, initialAmount, onClose, onSuccess }) => 
 // ─────────── Main Page ───────────
 const GivingPage = () => {
   const { t } = useTranslation();
+  const hero = useHero('legal');
   const [projects, setProjects] = useState([]);
   const [topDonors, setTopDonors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -373,20 +376,16 @@ const GivingPage = () => {
       <div className="min-h-screen bg-gray-50">
         {/* Hero */}
         <section className="relative w-full h-[440px] sm:h-[500px] overflow-hidden">
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{
-              backgroundImage:
-                'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 100%), url("https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1920&q=80")',
-            }}
-          />
+          <HeroBackground page="legal"
+            fallbackImage="https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=1920&q=80"
+            overlay="linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.85) 100%)" />
           <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pb-20">
-            <Eyebrow dark><FiHeart size={11} /> {t('legal.hero.badge')}</Eyebrow>
+            <Eyebrow dark><FiHeart size={11} /> {hero.badge || t('legal.hero.badge')}</Eyebrow>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight mb-4 max-w-3xl">
-              {t('legal.hero.title')}
+              {hero.title || t('legal.hero.title')}
             </h1>
             <p className="text-base sm:text-lg text-white/75 max-w-2xl mb-7 leading-relaxed font-light">
-              {t('legal.hero.subtitle')}
+              {hero.subtitle || t('legal.hero.subtitle')}
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <button
