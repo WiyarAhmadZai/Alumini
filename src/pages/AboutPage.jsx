@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import authService from '../services/authService';
 import { useSettings } from '../contexts/SettingsContext';
+import { useHero } from '../contexts/HeroContext';
+import HeroBackground from '../components/ui/HeroBackground';
 import {
   FiMail, FiPhone, FiMapPin, FiLinkedin, FiAward, FiUsers, FiTarget, FiGlobe,
   FiArrowRight, FiBookOpen, FiTrendingUp, FiHeart, FiStar, FiZap
@@ -39,6 +41,7 @@ const SectionHeader = ({ label, title, subtitle }) => (
 // ─── Main Page ──────────────────────────────────────────────────
 const AboutPage = () => {
   const { t } = useTranslation();
+  const hero = useHero('about');
   const { chancellor, board, pick } = useSettings();
   const isLoggedIn = authService.isAuthenticated();
 
@@ -87,19 +90,20 @@ const AboutPage = () => {
   return (
     <Layout>
 
-      {/* ═══ HERO (original, simple) ══════════════════════════ */}
-      <section className="relative h-[400px] md:h-[500px] bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.82) 100%), url("/kpu1.jpg")' }}>
-        <div className="h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
+      {/* ═══ HERO (dynamic banner / slider) ══════════════════════════ */}
+      <section className="relative h-[400px] md:h-[500px] overflow-hidden">
+        <HeroBackground page="about" fallbackImage="/kpu1.jpg"
+          overlay="linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.82) 100%)" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-6 text-white/90">
             <FiAward className="text-white/70" />
-            {t('about.hero.badge')}
+            {hero.badge || t('about.hero.badge')}
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-5 max-w-4xl">
-            {t('about.hero.title')}
+            {hero.title || t('about.hero.title')}
           </h1>
           <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">
-            {t('about.hero.subtitle')}
+            {hero.subtitle || t('about.hero.subtitle')}
           </p>
         </div>
       </section>
