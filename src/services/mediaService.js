@@ -1,4 +1,5 @@
 import api from '../config/axios';
+import JSZip from 'jszip';
 
 /** Pull the original filename out of a Content-Disposition response header. */
 const filenameFromDisposition = (headers) => {
@@ -68,6 +69,60 @@ const mediaService = {
     link.remove();
     window.URL.revokeObjectURL(url);
     return true;
+  },
+
+  /**
+   * Bundle every file that belongs to a media item (main file, cover, images,
+   * attachments) into a single ZIP and download it with one click.
+   * `files` is an array of { url, name }. Unreachable files are skipped.
+   * Returns the number of files actually added to the archive.
+   */
+  downloadAllAsZip: async (files = [], zipName = 'media') => {
+    const clean = (s) => String(s || '').replace(/[\\/:*?"<>|]+/g, '_').trim();
+    const zip = new JSZip();
+    const used = new Set();
+
+    // Ensure every entry has a unique, filesystem-safe name.
+    const uniqueName = (name, i) => {
+      let base = clean(name) || `file-${i + 1}`;
+      let candidate = base;
+      let k = 1;
+      while (used.has(candidate)) {
+        const dot = base.lastIndexOf('.');
+        candidate = dot > 0 ? `${base.slice(0, dot)}-${k}${base.slice(dot)}` : `${base}-${k}`;
+        k++;
+      }
+      used.add(candidate);
+      return candidate;
+    };
+
+    let added = 0;
+    await Promise.all(
+      files.map(async (f, i) => {
+        try {
+          const res = await fetch(f.url, { credentials: 'include' });
+          if (!res.ok) return;
+          const blob = await res.blob();
+          zip.file(uniqueName(f.name, i), blob);
+          added++;
+        } catch {
+          /* skip files that can't be fetched */
+        }
+      }),
+    );
+
+    if (added === 0) throw new Error('No files could be downloaded');
+
+    const content = await zip.generateAsync({ type: 'blob' });
+    const url = window.URL.createObjectURL(content);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${clean(zipName) || 'media'}.zip`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    return added;
   },
 };
 
