@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiBriefcase, FiCalendar, FiTrash2, FiArrowLeft, FiExternalLink, FiMapPin, FiClock, FiDollarSign, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import Swal from 'sweetalert2';
+import { useTranslation } from 'react-i18next';
 import jobService from '../services/jobService';
 import ApplyModal from '../components/job/ApplyModal';
 
 const ApplicationsPage = () => {
+  const { t } = useTranslation();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState(null);
@@ -38,14 +40,14 @@ const ApplicationsPage = () => {
   const handleRemoveApplication = async (applicationId, jobTitle) => {
     try {
       const result = await Swal.fire({
-        title: 'Remove Application?',
-        html: `Are you sure you want to remove your application for <strong>${jobTitle}</strong>?`,
+        title: t('jobs.applications.confirmRemoveTitle'),
+        html: t('jobs.applications.confirmRemoveHtml', { title: jobTitle }),
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc2626',
         cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Yes, remove it',
-        cancelButtonText: 'Cancel'
+        confirmButtonText: t('jobs.applications.confirmRemoveYes'),
+        cancelButtonText: t('jobs.applications.confirmRemoveCancel')
       });
 
       if (result.isConfirmed) {
@@ -54,8 +56,8 @@ const ApplicationsPage = () => {
         
         Swal.fire({
           icon: 'success',
-          title: 'Application Removed',
-          text: 'Your job application has been removed successfully.',
+          title: t('jobs.applications.removedTitle'),
+          text: t('jobs.applications.removedText'),
           timer: 2000,
           timerProgressBar: true,
           position: 'center',
@@ -63,10 +65,11 @@ const ApplicationsPage = () => {
         });
       }
     } catch (error) {
+      console.error('Remove application error:', error?.response?.data || error);
       Swal.fire({
         icon: 'error',
-        title: 'Error',
-        text: 'Failed to remove application. Please try again.',
+        title: t('jobs.applications.errorTitle'),
+        text: error?.response?.data?.message || t('jobs.applications.removeError'),
         confirmButtonColor: '#dc2626'
       });
     }
@@ -185,10 +188,10 @@ const ApplicationsPage = () => {
         <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
           <div className="text-center text-white max-w-4xl">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-4">
-              My Job Applications
+              {t('jobs.applications.heroTitle')}
             </h1>
             <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto">
-              Track and manage all your job applications in one place
+              {t('jobs.applications.heroSubtitle')}
             </p>
           </div>
         </div>
@@ -203,7 +206,7 @@ const ApplicationsPage = () => {
             className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
           >
             <FiArrowLeft className="text-lg" />
-            Back to Profile
+            {t('jobs.applications.backToProfile')}
           </Link>
         </div>
 
@@ -221,13 +224,13 @@ const ApplicationsPage = () => {
         ) : applications.length === 0 ? (
           <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
             <FiBriefcase className="text-5xl text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No Job Applications Yet</h3>
-            <p className="text-gray-600 mb-6">You haven't applied to any jobs yet. Start browsing and apply to your dream jobs!</p>
-            <Link 
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('jobs.applications.emptyTitle')}</h3>
+            <p className="text-gray-600 mb-6">{t('jobs.applications.emptyText')}</p>
+            <Link
               to="/jobs"
               className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
             >
-              Browse Jobs
+              {t('jobs.applications.browseJobs')}
               <FiBriefcase className="text-lg" />
             </Link>
           </div>
@@ -247,11 +250,11 @@ const ApplicationsPage = () => {
                           to={`/job/${application.job?.id}`}
                           className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
                         >
-                          {application.job?.title || 'Job Title'}
+                          {application.job?.title || t('jobs.applications.defaultJobTitle')}
                         </Link>
                       </h3>
                       <p className="text-blue-600 font-semibold text-sm truncate">
-                        {application.job?.company || 'Company'}
+                        {application.job?.company || t('jobs.applications.defaultCompany')}
                       </p>
                     </div>
                   </div>
@@ -293,7 +296,7 @@ const ApplicationsPage = () => {
                         ? 'bg-green-100 text-green-700'
                         : 'bg-gray-100 text-gray-700'
                     }`}>
-                      {application.status || 'pending'}
+                      {application.status || t('jobs.applications.statusPending')}
                     </span>
                   </div>
 
@@ -312,12 +315,12 @@ const ApplicationsPage = () => {
                       to={`/job/${application.job?.id}`}
                       className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium"
                     >
-                      See More
+                      {t('jobs.applications.seeMore')}
                     </Link>
                     <button
                       onClick={() => handleRemoveApplication(application.id, application.job?.title)}
                       className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Remove application"
+                      title={t('jobs.applications.removeTitle')}
                     >
                       <FiTrash2 size={12} />
                     </button>
@@ -334,10 +337,10 @@ const ApplicationsPage = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <p className="text-sm text-gray-600">
-                  Showing <span className="font-bold text-gray-900 text-lg">{pagination.total}</span> applications
+                  {t('jobs.applications.showingTotal', { total: pagination.total })}
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-black font-medium">Show:</span>
+                  <span className="text-sm text-black font-medium">{t('jobs.applications.show')}</span>
                   <select 
                     value={recordsPerPage}
                     onChange={(e) => handleRecordsPerPageChange(Number(e.target.value))}
@@ -347,7 +350,7 @@ const ApplicationsPage = () => {
                     <option value={10}>10</option>
                     <option value={20}>20</option>
                     <option value={50}>50</option>
-                    <option value={999999}>All</option>
+                    <option value={999999}>{t('jobs.applications.all')}</option>
                   </select>
                 </div>
               </div>

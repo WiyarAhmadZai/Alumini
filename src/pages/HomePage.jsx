@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
+import { useTranslation } from 'react-i18next';
+import {
   FiArrowRight, 
   FiMapPin, 
   FiVideo, 
@@ -10,8 +11,14 @@ import {
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import eventService from '../services/eventService';
+import authService from '../services/authService';
+import { useHero } from '../contexts/HeroContext';
+import { resolveHeroImage } from '../components/ui/HeroBackground';
 
 const HomePage = () => {
+  const { t } = useTranslation();
+  const hero = useHero('home');
+  const isLoggedIn = authService.isAuthenticated();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -21,67 +28,83 @@ const HomePage = () => {
   const testimonials = [
     {
       id: 1,
-      name: "Eng. Ahmad Wali",
-      faculty: "Faculty of Civil Engineering, Class of 2012",
-      position: "Senior Structural Engineer, Global Bridges Co.",
+      name: t('home.testimonial1Name'),
+      faculty: t('home.testimonial1Faculty'),
+      position: t('home.testimonial1Position'),
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBaWputQgrtqvH19cpmyP3uCvvRmQa3yZJ4fhdPG6u6uH1r6tax7vI96sWnFw9EMI0dSs6bc61_YdpgFuNeDszhcVigGvIVfjANjMt3AlTzSSr7E5m3mb9pNzz4-YZdl44IKjcYUA0Mvxl0Shnm8GbxU8ZdtZYNo9X1gp4syOsx8EZjGvYWgiELwXtgKqZFxKqS0x6zjem1YxkW0yyMTxZ7Nl0iEkeqbb5IQul9v1EPclzONwYppFPstjSfgJF7bXNeJRkm4oB1O2ZQ",
-      quote: "KPU gave me the solid foundation I needed to excel in the global engineering landscape. The network I built here continues to support my professional journey as a Project Lead in Germany."
+      quote: t('home.testimonial1Quote')
     },
     {
       id: 2,
-      name: "Dr. Sarah Ahmad",
-      faculty: "Faculty of Computer Science, Class of 2015",
-      position: "AI Research Director, Tech Innovations Lab",
+      name: t('home.testimonial2Name'),
+      faculty: t('home.testimonial2Faculty'),
+      position: t('home.testimonial2Position'),
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6",
-      quote: "The rigorous curriculum and excellent faculty at KPU prepared me for the challenges of the tech industry. Today, I lead a team of researchers developing cutting-edge AI solutions."
+      quote: t('home.testimonial2Quote')
     },
     {
       id: 3,
-      name: "Arch. Maria Hassan",
-      faculty: "Faculty of Architecture, Class of 2010",
-      position: "Principal Architect, Urban Design Studio",
+      name: t('home.testimonial3Name'),
+      faculty: t('home.testimonial3Faculty'),
+      position: t('home.testimonial3Position'),
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDVohtH1gLp5WAJrlgReHjFK4bcxbaKExtmpDy1ddOFn43bBT3qxvxGyxeWK8rgUxc2WSB-oTdim3H3s_Wbux3NuIZpRy_nRWKG8WudjGPZSUyThUcvs3JH_vT483tyT74PZ49c6ks7QwWUJyRYkiz9kPgKtBcRNPt5J2oTEEQwn3MecGPMc39f7d__iXaRM87cMUs9kZQDq8XIppsbkxUr5mrUDLFHfwiLAawH4zgMRMerxMwtmcQGiblMLofVGU9ViCf5O95tPuAr",
-      quote: "KPU's architecture program provided me with both technical skills and creative vision. I'm now designing sustainable buildings that shape our urban landscape."
+      quote: t('home.testimonial3Quote')
     },
     {
       id: 4,
-      name: "Eng. Mohammad Omar",
-      faculty: "Faculty of Electrical Engineering, Class of 2013",
-      position: "Power Systems Manager, National Energy Corp",
+      name: t('home.testimonial4Name'),
+      faculty: t('home.testimonial4Faculty'),
+      position: t('home.testimonial4Position'),
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAqdS05N6dUOezB_fXLMqTRjdAAp6B3kOeB6cWFmDUtCh6j8IDrV6MDyV3yKgI7hLgUYZtqG5cv_RDjVj7WtEoAyaZHA4mndXhA0WnIyFFI6TwptPI2Ti4zi6Zf3ixLjcqWeoA-XVucLQriYGZwlIhqkE8gwl-x3gmjz-YByccyZDHW7IkUlKaU4LCxGX2gJdyUkeQI7BwVZ78_nbdY7OehekRwxmpFhXqKrplRTGPt9r7yGOv2pIJRApgUpP4aGy8iK3K6J693CixZ",
-      quote: "The practical training and industry connections at KPU helped me secure my dream job. I'm now contributing to national energy infrastructure projects."
+      quote: t('home.testimonial4Quote')
     }
   ];
 
-  const heroSlides = [
+  // Static fallback slides — used until an admin configures the "home" hero.
+  const staticHeroSlides = [
     {
       id: 1,
-      title: "Connecting KPU Graduates Across the Globe",
-      subtitle: "Join the official Kabul Polytechnic University Alumni Network to mentor current students, find career opportunities, and stay connected with your alma mater.",
+      title: t('home.heroSlide1Title'),
+      subtitle: t('home.heroSlide1Subtitle'),
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAqdS05N6dUOezB_fXLMqTRjdAAp6B3kOeB6cWFmDUtCh6j8IDrV6MDyV3yKgI7hLgUYZtqG5cv_RDjVj7WtEoAyaZHA4mndXhA0WnIyFFI6TwptPI2Ti4zi6Zf3ixLjcqWeoA-XVucLQriYGZwlIhqkE8gwl-x3gmjz-YByccyZDHW7IkUlKaU4LCxGX2gJdyUkeQI7BwVZ78_nbdY7OehekRwxmpFhXqKrplRTGPt9r7yGOv2pIJRApgUpP4aGy8iK3K6J693CixZ"
     },
     {
       id: 2,
-      title: "Building Tomorrow's Leaders Today",
-      subtitle: "Connect with fellow alumni and create lasting professional relationships that span across industries and borders.",
+      title: t('home.heroSlide2Title'),
+      subtitle: t('home.heroSlide2Subtitle'),
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6"
     },
     {
       id: 3,
-      title: "Excellence in Engineering Education",
-      subtitle: "Celebrating decades of academic achievement and professional success from Kabul Polytechnic University graduates.",
+      title: t('home.heroSlide3Title'),
+      subtitle: t('home.heroSlide3Subtitle'),
       image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDVohtH1gLp5WAJrlgReHjFK4bcxbaKExtmpDy1ddOFn43bBT3qxvxGyxeWK8rgUxc2WSB-oTdim3H3s_Wbux3NuIZpRy_nRWKG8WudjGPZSUyThUcvs3JH_vT483tyT74PZ49c6ks7QwWUJyRYkiz9kPgKtBcRNPt5J2oTEEQwn3MecGPMc39f7d__iXaRM87cMUs9kZQDq8XIppsbkxUr5mrUDLFHfwiLAawH4zgMRMerxMwtmcQGiblMLofVGU9ViCf5O95tPuAr"
     }
   ];
 
-  // Auto-slide functionality for hero
+  // Admin-managed hero for the home page. Each configured image becomes a slide,
+  // sharing the admin's title/subtitle (falling back to the first static slide's).
+  const heroSlides = hero.images.length
+    ? hero.images.map((img, i) => ({
+        id: `dyn-${i}`,
+        title: hero.title || staticHeroSlides[0].title,
+        subtitle: hero.subtitle || staticHeroSlides[0].subtitle,
+        image: resolveHeroImage(img),
+      }))
+    : staticHeroSlides;
+  const activeSlide = heroSlides[currentSlide] || heroSlides[0];
+
+  // Auto-slide functionality for hero. Re-arms when the number of slides
+  // changes (e.g. admin adds/removes images) so the index never goes stale.
   useEffect(() => {
+    if (heroSlides.length <= 1) return undefined;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
     }, 5000); // Change slide every 5 seconds
 
     return () => clearInterval(interval); // Cleanup on unmount
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [heroSlides.length]);
 
   // Auto-slide functionality for testimonials
   useEffect(() => {
@@ -98,39 +121,44 @@ const HomePage = () => {
     return () => clearInterval(interval); // Cleanup on unmount
   }, [testimonials.length]);
 
-  // Fetch upcoming events
+  // Fetch upcoming events — only events whose start_date is strictly in the future,
+  // sorted nearest-first, with the closest event highlighted at the top.
   useEffect(() => {
     const fetchUpcomingEvents = async () => {
       try {
-        const response = await eventService.getEvents({ per_page: 6 });
+        // Ask the backend for upcoming events only (start_date > now), nearest first.
+        // Without status=upcoming the list is sorted by start_date asc and returns the
+        // OLDEST (past) events first, pushing genuine upcoming events out of the page.
+        const response = await eventService.getEvents({
+          per_page: 20,
+          status: 'upcoming',
+          sort_by: 'start_date',
+          sort_order: 'asc',
+        });
         const allEvents = response.data.data;
         const now = new Date();
-        
-        // Filter for upcoming events with open registration
-        const activeEvents = allEvents.filter(event => {
-          const eventEndDate = new Date(event.end_date);
-          
-          // Hide events that have already completed
-          if (eventEndDate <= now) {
-            return false;
-          }
-          
-          // Hide events with expired registration deadlines
+
+        const futureEvents = allEvents.filter(event => {
+          const startDate = new Date(event.start_date);
+          if (!(startDate > now)) return false; // must be strictly in the future
+
           if (event.registration_deadline) {
             const deadlineDate = new Date(event.registration_deadline);
-            if (deadlineDate <= now) {
-              return false;
-            }
+            if (deadlineDate <= now) return false; // registration already closed
           }
-          
-          return true; // Only show events with open registration
+          return true;
         });
-        
-        // Sort by start date (nearest first) and take top 2
-        const nearestEvents = activeEvents
-          .sort((a, b) => new Date(a.start_date) - new Date(b.start_date))
+
+        // Featured events bubble to the top, then sort by nearest start_date.
+        const nearestEvents = futureEvents
+          .sort((a, b) => {
+            const af = a.is_featured ? 1 : 0;
+            const bf = b.is_featured ? 1 : 0;
+            if (af !== bf) return bf - af;
+            return new Date(a.start_date) - new Date(b.start_date);
+          })
           .slice(0, 2);
-        
+
         setUpcomingEvents(nearestEvents);
       } catch (error) {
         // Silently handle error
@@ -188,18 +216,18 @@ const HomePage = () => {
           <div className="relative z-10 h-full flex items-center justify-center px-3 sm:px-4 md:px-6">
             <div className="text-center text-white max-w-5xl">
               <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl font-black leading-tight tracking-[-0.033em] mb-3 sm:mb-4 md:mb-6 animate-slide-up">
-                {heroSlides[currentSlide].title}
+                {activeSlide?.title}
               </h1>
               <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-normal leading-relaxed mb-4 sm:mb-6 md:mb-8 animate-slide-up" style={{animationDelay: '0.2s'}}>
-                {heroSlides[currentSlide].subtitle}
+                {activeSlide?.subtitle}
               </p>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4 justify-center animate-slide-up" style={{animationDelay: '0.4s'}}>
                 <Link to="/login" className="group relative px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-[#002759] to-[#0a519b] text-white text-xs sm:text-sm md:text-base font-semibold rounded-lg sm:rounded-xl shadow-lg sm:shadow-xl hover:shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden inline-block text-center">
-                  <span className="relative z-10">Join the Network</span>
+                  <span className="relative z-10">{t('home.joinTheNetwork')}</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-[#0a519b] to-[#003d7a] transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
                 </Link>
                 <button className="group relative px-4 py-2 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-white/10 backdrop-blur-md text-white border border-white/40 text-xs sm:text-sm md:text-base font-semibold rounded-lg sm:rounded-xl hover:bg-white/20 hover:border-white/60 hover:shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                  <span className="relative z-10">Learn More</span>
+                  <span className="relative z-10">{t('home.learnMore')}</span>
                   <div className="absolute inset-0 bg-white/20 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
                 </button>
               </div>
@@ -225,14 +253,14 @@ const HomePage = () => {
       <section className="w-full max-w-[1200px] mx-auto px-2 sm:px-4 md:px-8 lg:px-10 py-8 sm:py-12 md:py-16 bg-gradient-to-br from-gray-50 to-white">
         <div className="flex flex-col lg:flex-row items-center justify-between mb-6 sm:mb-8 lg:mb-12 gap-4">
           <div>
-            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#002759] mb-1 sm:mb-2">Stay Updated</h2>
-            <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900">Latest Events</h3>
+            <h2 className="text-xs sm:text-sm font-bold uppercase tracking-widest text-[#002759] mb-1 sm:mb-2">{t('home.stayUpdated')}</h2>
+            <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold leading-tight tracking-[-0.015em] text-gray-900">{t('home.latestEvents')}</h3>
           </div>
           <Link
             to="/events"
             className="group flex items-center gap-1 sm:gap-2 text-[#002759] font-semibold hover:text-[#194ce6] transition-all duration-300"
           >
-            View All
+            {t('common.viewAll')}
             <FiArrowRight className="text-xs sm:text-sm transform group-hover:translate-x-1 transition-transform duration-300" />
           </Link>
         </div>
@@ -258,7 +286,7 @@ const HomePage = () => {
               const formattedDate = eventDate.toLocaleDateString('en-US', {
                 month: 'short', day: 'numeric', year: 'numeric'
               });
-              const category = event.type || event.event_type || 'Event';
+              const category = event.type || event.event_type || t('home.eventCategoryDefault');
               const image = event.image || event.cover_image || event.thumbnail;
 
               return (
@@ -311,7 +339,7 @@ const HomePage = () => {
                         className="inline-flex items-center gap-1 sm:gap-2 font-medium text-xs sm:text-sm transition-colors duration-300"
                         style={{ color: '#194ce6' }}
                       >
-                        Read More
+                        {t('common.readMore')}
                         <FiArrowRight className="text-xs transform group-hover:translate-x-1 transition-transform duration-300" />
                       </Link>
                       <div className="flex gap-0.5 sm:gap-1">
@@ -340,17 +368,34 @@ const HomePage = () => {
           <div className="w-full max-w-[1200px] px-4 sm:px-6 md:px-10 relative z-10">
             <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
               <div className="lg:w-1/3">
-                <h2 className="text-sm font-bold uppercase tracking-widest text-white mb-2">Save the Date</h2>
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight mb-4 text-white">Upcoming Events</h3>
-                <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">Never miss an opportunity to reconnect with your former classmates and expand your network.</p>
+                <h2 className="text-sm font-bold uppercase tracking-widest text-white mb-2">{t('home.saveTheDate')}</h2>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight mb-4 text-white">{t('home.upcomingEvents')}</h3>
+                <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">{t('home.upcomingEventsSubtitle')}</p>
                 <Link 
                   to="/events"
                   className="h-16 px-6 py-3 border-2 border-white text-white font-bold rounded-lg hover:bg-white hover:text-[#002759] transition-all duration-500 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  View Calendar
+                  {t('home.viewCalendar')}
                 </Link>
               </div>
               <div className="lg:w-2/3 flex flex-col gap-3 sm:gap-4">
+                {upcomingEvents.length === 0 && (
+                  <div className="flex flex-col items-center justify-center text-center p-8 sm:p-10 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 rounded-full flex items-center justify-center mb-4">
+                      <FiCalendar className="text-blue-300 text-2xl sm:text-3xl" />
+                    </div>
+                    <h4 className="text-white text-lg sm:text-xl font-bold mb-2">{t('home.noUpcomingEvents')}</h4>
+                    <p className="text-gray-300 text-xs sm:text-sm max-w-md">
+                      {t('home.noUpcomingEventsDesc')}
+                    </p>
+                    <Link
+                      to="/events"
+                      className="mt-5 inline-flex items-center gap-2 px-5 py-2 border border-white/40 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-white/15 transition-colors"
+                    >
+                      <FiCalendar /> {t('home.browseCalendar')}
+                    </Link>
+                  </div>
+                )}
                 {upcomingEvents.map((event, index) => {
                   const eventDate = new Date(event.start_date);
                   const day = eventDate.getDate();
@@ -382,10 +427,10 @@ const HomePage = () => {
                           {isOnline ? <FiVideo /> : <FiMapPin />} {event.location} • {time}
                         </p>
                         <p className="text-gray-400 text-xs mt-1">
-                          {days > 0 && `${days}d `}
-                          {hours > 0 && `${hours}h `}
-                          {minutes > 0 && `${minutes}m `}
-                          {seconds >= 0 && `${seconds}s`} left
+                          {days > 0 && `${days}${t('home.unitDay')} `}
+                          {hours > 0 && `${hours}${t('home.unitHour')} `}
+                          {minutes > 0 && `${minutes}${t('home.unitMinute')} `}
+                          {seconds >= 0 && `${seconds}${t('home.unitSecond')}`} {t('home.left')}
                         </p>
                       </div>
                       <Link 
@@ -414,13 +459,13 @@ const HomePage = () => {
             {/* Section Header */}
             <div className="text-center mb-8 sm:mb-12">
               <span className="inline-block text-xs sm:text-sm font-bold uppercase tracking-widest text-[#002759] mb-2 sm:mb-3 px-3 py-1.5 bg-[#002759]/10 rounded-full">
-                Our Pride
+                {t('home.ourPride')}
               </span>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-3 bg-gradient-to-r from-[#002759] to-[#0a519b] bg-clip-text text-transparent">
-                Success Stories
+                {t('home.successStories')}
               </h2>
               <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto">
-                Discover the inspiring journeys of our alumni who are making a difference worldwide
+                {t('home.successStoriesSubtitle')}
               </p>
             </div>
             
@@ -484,10 +529,10 @@ const HomePage = () => {
                             {/* Achievement badges */}
                             <div className="flex flex-wrap gap-2 mt-4 sm:mt-6 justify-center lg:justify-start">
                               <span className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-[#002759]/10 to-[#0a519b]/10 text-[#002759] text-xs font-semibold rounded-full border border-[#002759]/20">
-                                Alumni Success
+                                {t('home.badgeAlumniSuccess')}
                               </span>
                               <span className="px-2 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-[#0a519b]/10 to-[#003d7a]/10 text-[#0a519b] text-xs font-semibold rounded-full border border-[#0a519b]/20">
-                                Global Impact
+                                {t('home.badgeGlobalImpact')}
                               </span>
                             </div>
                           </div>
@@ -566,40 +611,67 @@ const HomePage = () => {
           
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10">
             <div className="text-center mb-10 sm:mb-12">
-              {/* Modern badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm border border-cyan-400/30 rounded-full mb-6">
-                <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
-                <span className="text-cyan-300 text-sm font-semibold">Join Our Global Network</span>
-              </div>
-              
-              {/* Main heading */}
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
-                Ready to 
-                <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"> Reconnect</span>?
-              </h2>
-              
-              {/* Subtitle */}
-              <p className="text-white/70 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-10">
-                Join over 15,000 alumni worldwide and stay updated with the latest university developments and opportunities.
-              </p>
-              
-              {/* Action buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
-                <button className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-base sm:text-lg font-bold rounded-xl shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                  <span className="relative z-10 flex items-center gap-3">
-                    <FiUser className="text-xl" />
-                    Sign Up Now
-                  </span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
-                </button>
-                
-                <button className="group relative px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white text-base sm:text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
-                  <span className="flex items-center gap-3">
-                    <FiMail className="text-xl" />
-                    Contact Us
-                  </span>
-                </button>
-              </div>
+              {!isLoggedIn ? (
+                <>
+                  {/* Modern badge */}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm border border-cyan-400/30 rounded-full mb-6">
+                    <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                    <span className="text-cyan-300 text-sm font-semibold">{t('home.joinOurGlobalNetwork')}</span>
+                  </div>
+
+                  {/* Main heading */}
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
+                    {t('home.readyTo')}
+                    <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"> {t('home.reconnect')}</span>{t('home.questionMark')}
+                  </h2>
+
+                  {/* Subtitle */}
+                  <p className="text-white/70 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-10">
+                    {t('home.ctaSubtitle')}
+                  </p>
+
+                  {/* Action buttons */}
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+                    <Link to="/register" className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-base sm:text-lg font-bold rounded-xl shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                      <span className="relative z-10 flex items-center gap-3">
+                        <FiUser className="text-xl" />
+                        {t('home.signUpNow')}
+                      </span>
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-cyan-600 transform translate-y-full transition-transform duration-300 group-hover:translate-y-0"></div>
+                    </Link>
+
+                    <Link to="/contact" className="group relative px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white text-base sm:text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                      <span className="flex items-center gap-3">
+                        <FiMail className="text-xl" />
+                        {t('home.contactUs')}
+                      </span>
+                    </Link>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Logged-in alumni: motivational message instead of the sign-up CTA */}
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 backdrop-blur-sm border border-cyan-400/30 rounded-full mb-6">
+                    <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></span>
+                    <span className="text-cyan-300 text-sm font-semibold">{t('home.memberBadge')}</span>
+                  </div>
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-6">
+                    {t('home.welcomeBackTitle')}
+                    <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent"> {t('home.welcomeBackHighlight')}</span>
+                  </h2>
+                  <p className="text-white/70 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-10">
+                    {t('home.welcomeBackSubtitle')}
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
+                    <Link to="/mentorship" className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-base sm:text-lg font-bold rounded-xl shadow-2xl hover:shadow-cyan-500/25 transform hover:-translate-y-1 transition-all duration-300">
+                      <span className="flex items-center gap-3"><FiUser className="text-xl" />{t('home.exploreMentorship')}</span>
+                    </Link>
+                    <Link to="/events" className="group relative px-8 py-4 bg-white/10 backdrop-blur-md border-2 border-white/20 text-white text-base sm:text-lg font-bold rounded-xl hover:bg-white/20 hover:border-white/40 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300">
+                      <span className="flex items-center gap-3"><FiCalendar className="text-xl" />{t('home.browseEvents')}</span>
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>

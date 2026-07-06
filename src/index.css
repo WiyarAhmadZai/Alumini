@@ -1,8 +1,33 @@
 @import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap');
+/* High-quality Persian / Dari / Pashto typeface */
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&display=swap');
 
 body {
   font-family: 'Lexend', sans-serif;
+}
+
+/* Use a proper Arabic-script font for Pashto & Dari (RTL).
+   Inheritance is forced through .font-display (which otherwise pins Lexend)
+   and through form controls, which don't inherit font-family by default. */
+html[dir="rtl"] body,
+html[lang="ps"] body,
+html[lang="da"] body,
+html[dir="rtl"] .font-display,
+html[lang="ps"] .font-display,
+html[lang="da"] .font-display,
+html[dir="rtl"] button,
+html[dir="rtl"] input,
+html[dir="rtl"] select,
+html[dir="rtl"] textarea,
+html[dir="rtl"] [class*="font-"] {
+  font-family: 'Vazirmatn', 'Noto Naskh Arabic', 'Segoe UI', Tahoma, sans-serif;
+}
+
+/* Slightly more comfortable rhythm for Arabic-script text */
+html[dir="rtl"] body {
+  line-height: 1.85;
 }
 
 .line-clamp-2 {

@@ -1,19 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FiMenu, FiX, FiHome, FiUsers, FiBookOpen, FiCalendar, FiSettings, FiBarChart2, FiLogOut, FiChevronDown } from 'react-icons/fi';
 
 const AdminDashboard = () => {
+  const { t } = useTranslation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const sidebarRef = useRef(null);
   const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 1024);
 
   const menuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: FiHome },
-    { id: 'users', label: 'Users', icon: FiUsers },
-    { id: 'courses', label: 'Courses', icon: FiBookOpen },
-    { id: 'events', label: 'Events', icon: FiCalendar },
-    { id: 'analytics', label: 'Analytics', icon: FiBarChart2 },
-    { id: 'settings', label: 'Settings', icon: FiSettings },
+    { id: 'dashboard', label: t('admin.menu.dashboard'), icon: FiHome },
+    { id: 'users', label: t('admin.menu.users'), icon: FiUsers },
+    { id: 'courses', label: t('admin.menu.courses'), icon: FiBookOpen },
+    { id: 'events', label: t('admin.menu.events'), icon: FiCalendar },
+    { id: 'analytics', label: t('admin.menu.analytics'), icon: FiBarChart2 },
+    { id: 'settings', label: t('admin.menu.settings'), icon: FiSettings },
   ];
 
   // Handle screen size changes
@@ -70,7 +72,7 @@ const AdminDashboard = () => {
             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
               <FiBarChart2 className="text-white text-xl" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Admin</span>
+            <span className="text-xl font-bold text-gray-900">{t('admin.brand')}</span>
           </div>
         </div>
 
@@ -102,7 +104,7 @@ const AdminDashboard = () => {
               <FiUsers className="text-gray-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Admin User</p>
+              <p className="text-sm font-medium text-gray-900">{t('admin.userName')}</p>
               <p className="text-xs text-gray-500">admin@alumni.com</p>
             </div>
             <FiChevronDown className="text-gray-400" />
@@ -127,7 +129,7 @@ const AdminDashboard = () => {
             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
               <FiBarChart2 className="text-white text-xl" />
             </div>
-            <span className="text-xl font-bold text-gray-900">Admin</span>
+            <span className="text-xl font-bold text-gray-900">{t('admin.brand')}</span>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -165,7 +167,7 @@ const AdminDashboard = () => {
               <FiUsers className="text-gray-600" />
             </div>
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900">Admin User</p>
+              <p className="text-sm font-medium text-gray-900">{t('admin.userName')}</p>
               <p className="text-xs text-gray-500">admin@alumni.com</p>
             </div>
             <FiChevronDown className="text-gray-400" />
@@ -189,8 +191,8 @@ const AdminDashboard = () => {
                 <FiMenu className="text-gray-600 text-xl" />
               </button>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                <p className="text-sm text-gray-500">Welcome back, Admin</p>
+                <h1 className="text-2xl font-bold text-gray-900">{t('admin.menu.dashboard')}</h1>
+                <p className="text-sm text-gray-500">{t('admin.welcome')}</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -216,7 +218,7 @@ const AdminDashboard = () => {
                 <span className="text-sm text-green-600 font-medium">+12%</span>
               </div>
               <h3 className="text-2xl font-bold text-gray-900">1,234</h3>
-              <p className="text-sm text-gray-500">Total Users</p>
+              <p className="text-sm text-gray-500">{t('admin.stats.totalUsers')}</p>
             </div>
 
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -227,7 +229,7 @@ const AdminDashboard = () => {
                 <span className="text-sm text-green-600 font-medium">+8%</span>
               </div>
               <h3 className="text-2xl font-bold text-gray-900">45</h3>
-              <p className="text-sm text-gray-500">Active Courses</p>
+              <p className="text-sm text-gray-500">{t('admin.stats.activeCourses')}</p>
             </div>
 
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -238,7 +240,7 @@ const AdminDashboard = () => {
                 <span className="text-sm text-green-600 font-medium">+15%</span>
               </div>
               <h3 className="text-2xl font-bold text-gray-900">89</h3>
-              <p className="text-sm text-gray-500">Upcoming Events</p>
+              <p className="text-sm text-gray-500">{t('admin.stats.upcomingEvents')}</p>
             </div>
 
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
@@ -249,23 +251,23 @@ const AdminDashboard = () => {
                 <span className="text-sm text-red-600 font-medium">-3%</span>
               </div>
               <h3 className="text-2xl font-bold text-gray-900">67%</h3>
-              <p className="text-sm text-gray-500">Engagement Rate</p>
+              <p className="text-sm text-gray-500">{t('admin.stats.engagementRate')}</p>
             </div>
           </div>
 
           {/* Charts Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">User Growth</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('admin.charts.userGrowth')}</h3>
               <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-                <p className="text-gray-500">Chart placeholder</p>
+                <p className="text-gray-500">{t('admin.charts.placeholder')}</p>
               </div>
             </div>
 
             <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Course Statistics</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('admin.charts.courseStatistics')}</h3>
               <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center">
-                <p className="text-gray-500">Chart placeholder</p>
+                <p className="text-gray-500">{t('admin.charts.placeholder')}</p>
               </div>
             </div>
           </div>

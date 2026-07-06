@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiMail, FiCalendar, FiTrash2, FiArrowLeft, FiMessageSquare, FiChevronLeft, FiChevronRight, FiSearch, FiFilter, FiEye, FiX, FiExternalLink } from 'react-icons/fi';
@@ -6,6 +7,7 @@ import Swal from 'sweetalert2';
 import messageService from '../services/messageService';
 
 const MessagesPage = () => {
+  const { t } = useTranslation();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState(null);
@@ -88,14 +90,14 @@ const MessagesPage = () => {
   const handleDeleteMessage = async (messageId, subject) => {
     try {
       const result = await Swal.fire({
-        title: 'Delete Message?',
-        html: `Are you sure you want to delete your message "<strong>${subject}</strong>"?`,
+        title: t('messages.deleteConfirmTitle'),
+        html: t('messages.deleteConfirmHtml', { subject }),
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc2626',
         cancelButtonColor: '#6b7280',
-        confirmButtonText: 'Yes, delete it',
-        cancelButtonText: 'Cancel'
+        confirmButtonText: t('messages.deleteConfirmButton'),
+        cancelButtonText: t('common.cancel')
       });
 
       if (result.isConfirmed) {
@@ -104,8 +106,8 @@ const MessagesPage = () => {
         
         Swal.fire({
           icon: 'success',
-          title: 'Message Deleted',
-          text: 'Your message has been deleted successfully.',
+          title: t('messages.deletedTitle'),
+          text: t('messages.deletedText'),
           timer: 2000,
           timerProgressBar: true,
           position: 'center',
@@ -115,8 +117,8 @@ const MessagesPage = () => {
     } catch (error) {
       Swal.fire({
         icon: 'error',
-        title: 'Error',
-        text: 'Failed to delete message. Please try again.',
+        title: t('messages.errorTitle'),
+        text: t('messages.deleteErrorText'),
         confirmButtonColor: '#dc2626'
       });
     }
@@ -133,45 +135,46 @@ const MessagesPage = () => {
 
   const getStatusText = (status) => {
     switch(status) {
-      case 'pending': return 'Pending';
-      case 'received': return 'Received';
-      case 'responded': return 'Responded';
-      default: return 'Unknown';
+      case 'pending': return t('messages.statusPending');
+      case 'received': return t('messages.statusReceived');
+      case 'responded': return t('messages.statusResponded');
+      default: return t('messages.statusUnknown');
     }
   };
 
   const getStatusEmptyMessage = (status, hasSearchTerm) => {
     if (hasSearchTerm) {
+      const scope = statusFilter === 'all' ? t('messages.searchScopeAll') : t('messages.searchScopeStatus', { status: statusFilter });
       return {
-        title: 'No Messages Found',
-        message: `No messages found related to your search "${statusFilter === 'all' ? 'all messages' : statusFilter + ' messages'}". Try different keywords or filters.`,
+        title: t('messages.emptySearchTitle'),
+        message: t('messages.emptySearchMessage', { scope }),
         icon: '🔍'
       };
     }
-    
+
     switch(status) {
       case 'pending':
         return {
-          title: 'No Pending Messages',
-          message: 'You don\'t have any pending messages. All your messages have been received or responded to.',
+          title: t('messages.emptyPendingTitle'),
+          message: t('messages.emptyPendingMessage'),
           icon: '📝'
         };
       case 'received':
         return {
-          title: 'No Received Messages',
-          message: 'You don\'t have any received messages. Your messages are either pending or have been responded to.',
+          title: t('messages.emptyReceivedTitle'),
+          message: t('messages.emptyReceivedMessage'),
           icon: '📥'
         };
       case 'responded':
         return {
-          title: 'No Responded Messages',
-          message: 'You don\'t have any responded messages yet. The university hasn\'t responded to any of your messages.',
+          title: t('messages.emptyRespondedTitle'),
+          message: t('messages.emptyRespondedMessage'),
           icon: '📤'
         };
       default:
         return {
-          title: 'No Messages Yet',
-          message: 'You haven\'t sent any messages yet. Send us a message and we\'ll respond to you soon!',
+          title: t('messages.emptyDefaultTitle'),
+          message: t('messages.emptyDefaultMessage'),
           icon: '📧'
         };
     }
@@ -289,10 +292,10 @@ const MessagesPage = () => {
         <div className="relative z-10 h-full flex items-center justify-center px-4 sm:px-6">
           <div className="text-center text-white max-w-4xl">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-4">
-              My Messages
+              {t('messages.heroTitle')}
             </h1>
             <p className="text-lg sm:text-xl text-white/90 max-w-2xl mx-auto">
-              Track your messages and university responses
+              {t('messages.heroSubtitle')}
             </p>
           </div>
         </div>
@@ -307,7 +310,7 @@ const MessagesPage = () => {
             className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
           >
             <FiArrowLeft className="text-lg" />
-            Back to Profile
+            {t('messages.backToProfile')}
           </Link>
         </div>
 
@@ -322,7 +325,7 @@ const MessagesPage = () => {
                 </div>
                 <input 
                   className="w-full border-none bg-transparent focus:ring-0 focus:outline-none text-gray-900 placeholder:text-gray-500 px-4 text-sm font-medium"
-                  placeholder="Search messages..."
+                  placeholder={t('messages.searchPlaceholder')}
                   value={debouncedSearchTerm}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   disabled={messagesLoading}
@@ -342,10 +345,10 @@ const MessagesPage = () => {
                   className="w-full border-none bg-transparent focus:ring-0 focus:outline-none text-gray-900 px-4 text-sm font-medium"
                   disabled={messagesLoading}
                 >
-                  <option value="all">All Status</option>
-                  <option value="pending">Pending</option>
-                  <option value="received">Received</option>
-                  <option value="responded">Responded</option>
+                  <option value="all">{t('messages.filterAllStatus')}</option>
+                  <option value="pending">{t('messages.statusPending')}</option>
+                  <option value="received">{t('messages.statusReceived')}</option>
+                  <option value="responded">{t('messages.statusResponded')}</option>
                 </select>
               </div>
             </div>
@@ -369,7 +372,7 @@ const MessagesPage = () => {
                 className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
                 <FiMessageSquare className="text-lg" />
-                Send a Message
+                {t('messages.sendAMessage')}
               </Link>
             )}
           </div>
@@ -414,7 +417,7 @@ const MessagesPage = () => {
                         }}
                         className="text-xs text-blue-600 hover:text-blue-800 hover:underline font-medium"
                       >
-                        See More
+                        {t('common.seeMore')}
                       </button>
                     )}
                   </div>
@@ -422,7 +425,7 @@ const MessagesPage = () => {
                   {/* Response section */}
                   {message.response ? (
                     <div className="mb-3 p-2 bg-green-50 rounded-lg border border-green-200">
-                      <p className="text-xs text-green-800 font-medium mb-1">University Response:</p>
+                      <p className="text-xs text-green-800 font-medium mb-1">{t('messages.universityResponseLabel')}</p>
                       <p className="text-xs text-green-700 line-clamp-2">
                         {message.response.substring(0, 80)}...
                       </p>
@@ -434,17 +437,17 @@ const MessagesPage = () => {
                           }}
                           className="text-xs text-green-600 hover:text-green-800 hover:underline font-medium"
                         >
-                          See More
+                          {t('common.seeMore')}
                         </button>
                       )}
                     </div>
                   ) : (
                     <div className="mb-3 p-2 bg-gray-50 rounded-lg border border-gray-200">
-                      <p className="text-xs text-gray-500 font-medium mb-1">University Response:</p>
+                      <p className="text-xs text-gray-500 font-medium mb-1">{t('messages.universityResponseLabel')}</p>
                       <p className="text-xs text-gray-400 italic">
-                        {message.status === 'received' 
-                          ? 'We received your message and we will respond you as soon as possible.'
-                          : 'Response will appear here once the university responds to your message.'
+                        {message.status === 'received'
+                          ? t('messages.responseReceivedPlaceholder')
+                          : t('messages.responsePendingPlaceholder')
                         }
                       </p>
                     </div>
@@ -459,14 +462,14 @@ const MessagesPage = () => {
                         onClick={(e) => e.stopPropagation()}
                       >
                         <FiExternalLink className="text-sm" />
-                        View Complete
+                        {t('messages.viewComplete')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/contact"
                         className="text-xs text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        Send New Message
+                        {t('messages.sendNewMessage')}
                       </Link>
                     </div>
                     <button
@@ -475,7 +478,7 @@ const MessagesPage = () => {
                         handleDeleteMessage(message.id, message.subject);
                       }}
                       className="p-1.5 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Delete message"
+                      title={t('messages.deleteMessageTitle')}
                     >
                       <FiTrash2 size={12} />
                     </button>
@@ -492,10 +495,10 @@ const MessagesPage = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <p className="text-sm text-gray-600">
-                  Showing <span className="font-bold text-gray-900 text-lg">{pagination.total}</span> messages
+                  {t('messages.showingPrefix')} <span className="font-bold text-gray-900 text-lg">{pagination.total}</span> {t('messages.showingSuffix')}
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-black font-medium">Show:</span>
+                  <span className="text-sm text-black font-medium">{t('messages.showLabel')}</span>
                   <select 
                     value={recordsPerPage}
                     onChange={(e) => handleRecordsPerPageChange(Number(e.target.value))}
@@ -505,7 +508,7 @@ const MessagesPage = () => {
                     <option value={10}>10</option>
                     <option value={20}>20</option>
                     <option value={50}>50</option>
-                    <option value={999999}>All</option>
+                    <option value={999999}>{t('messages.recordsAll')}</option>
                   </select>
                 </div>
               </div>
@@ -549,7 +552,7 @@ const MessagesPage = () => {
             <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="p-6 border-b border-gray-200">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-xl font-bold text-gray-900">Message Details</h3>
+                  <h3 className="text-xl font-bold text-gray-900">{t('messages.modalDetailsTitle')}</h3>
                   <button
                     onClick={closeMessageDetail}
                     className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg p-2 transition-colors"
@@ -561,39 +564,39 @@ const MessagesPage = () => {
 
               <div className="p-6">
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Subject</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">{t('messages.subjectLabel')}</h4>
                   <p className="text-gray-700">{selectedMessage.subject}</p>
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Message</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">{t('messages.messageLabel')}</h4>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <p className="text-gray-700 whitespace-pre-wrap">{selectedMessage.message}</p>
                   </div>
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Status</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">{t('messages.statusLabel')}</h4>
                   <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${getStatusColor(selectedMessage.status)}`}>
                     {getStatusText(selectedMessage.status)}
                   </span>
                 </div>
 
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Date</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">{t('messages.dateLabel')}</h4>
                   <p className="text-gray-700">
-                    {new Date(selectedMessage.created_at).toLocaleDateString()} at {new Date(selectedMessage.created_at).toLocaleTimeString()}
+                    {new Date(selectedMessage.created_at).toLocaleDateString()} {t('messages.dateTimeSeparator')} {new Date(selectedMessage.created_at).toLocaleTimeString()}
                   </p>
                 </div>
 
                 {selectedMessage.response && (
                   <div className="mb-6 p-4 bg-green-50 rounded-lg border border-green-200">
-                    <h4 className="text-lg font-semibold text-green-800 mb-2">University Response</h4>
+                    <h4 className="text-lg font-semibold text-green-800 mb-2">{t('messages.universityResponseHeading')}</h4>
                     <div className="bg-white rounded-lg p-4">
                       <p className="text-gray-700 whitespace-pre-wrap">{selectedMessage.response}</p>
                     </div>
                     <div className="text-xs text-green-600 mt-2">
-                      Responded on: {selectedMessage.responded_at ? new Date(selectedMessage.responded_at).toLocaleDateString() : 'Not yet responded'}
+                      {t('messages.respondedOnLabel')} {selectedMessage.responded_at ? new Date(selectedMessage.responded_at).toLocaleDateString() : t('messages.notYetResponded')}
                     </div>
                   </div>
                 )}
@@ -603,7 +606,7 @@ const MessagesPage = () => {
                     onClick={closeMessageDetail}
                     className="flex-1 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium"
                   >
-                    Close
+                    {t('common.close')}
                   </button>
                   <Link
                     to={`/message/${selectedMessage.id}`}
@@ -611,14 +614,14 @@ const MessagesPage = () => {
                     className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
                   >
                     <FiExternalLink className="text-sm" />
-                    View Complete
+                    {t('messages.viewComplete')}
                   </Link>
                   <Link
                     to="/contact"
                     onClick={closeMessageDetail}
                     className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
                   >
-                    Send New Message
+                    {t('messages.sendNewMessage')}
                   </Link>
                 </div>
               </div>

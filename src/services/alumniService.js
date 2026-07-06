@@ -307,9 +307,13 @@ const alumniService = {
    * Get all verified alumni
    * @returns {Promise} API response
    */
-  getAll: async () => {
+  getAll: async (params = {}) => {
     try {
-      const response = await api.get('/alumini');
+      // Default to 1000 per page to get all alumni (effectively no pagination)
+      const queryParams = { per_page: 1000, ...params };
+      const queryString = new URLSearchParams(queryParams).toString();
+      const url = queryString ? `/alumini?${queryString}` : '/alumini';
+      const response = await api.get(url);
       return response.data;
     } catch (error) {
       throw error;
@@ -366,6 +370,19 @@ const alumniService = {
   getGraduationYears: async () => {
     try {
       const response = await api.get('/alumini/graduation-years');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Get all faculties from database
+   * @returns {Promise} API response
+   */
+  getFaculties: async () => {
+    try {
+      const response = await api.get('/faculties/dropdown');
       return response.data;
     } catch (error) {
       throw error;

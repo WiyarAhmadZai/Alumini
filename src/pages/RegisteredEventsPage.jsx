@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiCalendar, FiClock, FiMapPin, FiVideo, FiChevronLeft, FiChevronRight, FiUsers, FiDollarSign } from 'react-icons/fi';
@@ -7,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Swal from 'sweetalert2';
 
 const RegisteredEventsPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
   
@@ -50,7 +52,7 @@ const RegisteredEventsPage = () => {
       });
     } catch (error) {
       console.error('Failed to fetch registered events:', error);
-      Swal.fire('Error', 'Failed to load your registered events', 'error');
+      Swal.fire(t('events.registered.errorTitle'), t('events.registered.loadFailed'), 'error');
       setRegisteredEvents([]);
     } finally {
       setLoading(false);
@@ -65,14 +67,14 @@ const RegisteredEventsPage = () => {
     e.stopPropagation();
     
     const result = await Swal.fire({
-      title: 'Cancel Registration?',
-      text: 'Are you sure you want to cancel your registration for this event?',
+      title: t('events.registered.cancelRegTitle'),
+      text: t('events.registered.cancelRegText'),
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#ef4444',
       cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Yes, Cancel',
-      cancelButtonText: 'Keep Registration',
+      confirmButtonText: t('events.registered.cancelRegConfirm'),
+      cancelButtonText: t('events.registered.cancelRegKeep'),
     });
 
     if (result.isConfirmed) {
@@ -80,15 +82,15 @@ const RegisteredEventsPage = () => {
         await eventService.cancelRegistration(eventId);
         Swal.fire({
           icon: 'success',
-          title: 'Registration Cancelled',
-          text: 'Your registration has been cancelled successfully.',
+          title: t('events.registered.cancelledTitle'),
+          text: t('events.registered.cancelledText'),
           confirmButtonColor: '#2563eb',
           timer: 2000,
           timerProgressBar: true,
         });
         fetchRegisteredEvents(pagination.current_page);
       } catch (error) {
-        Swal.fire('Error', 'Failed to cancel registration', 'error');
+        Swal.fire(t('events.registered.errorTitle'), t('events.registered.cancelFailed'), 'error');
       }
     }
   };
@@ -127,13 +129,13 @@ const RegisteredEventsPage = () => {
       <Layout>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Login Required</h2>
-            <p className="text-gray-600 mb-6">Please login to view your registered events.</p>
-            <Link 
-              to="/login" 
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">{t('events.registered.loginRequiredTitle')}</h2>
+            <p className="text-gray-600 mb-6">{t('events.registered.loginRequiredText')}</p>
+            <Link
+              to="/login"
               className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Login
+              {t('events.registered.login')}
             </Link>
           </div>
         </div>
@@ -149,7 +151,7 @@ const RegisteredEventsPage = () => {
           <div className="absolute inset-0 z-0">
             <img
               src="/kpu2.jpg"
-              alt="Registered Events"
+              alt={t('events.registered.heroAlt')}
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/70"></div>
@@ -157,10 +159,10 @@ const RegisteredEventsPage = () => {
           <div className="relative z-10 max-w-7xl mx-auto px-4 lg:px-8 py-16">
             <div className="text-center text-white">
               <h1 className="text-4xl lg:text-5xl font-bold mb-4">
-                My Registered Events
+                {t('events.registered.heroTitle')}
               </h1>
               <p className="text-xl text-white/90 max-w-2xl mx-auto">
-                Manage and track all your event registrations in one place
+                {t('events.registered.heroSubtitle')}
               </p>
             </div>
           </div>
@@ -177,13 +179,13 @@ const RegisteredEventsPage = () => {
               <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">
                 <FiCalendar className="text-gray-400 text-3xl" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No Registered Events</h3>
-              <p className="text-gray-600 mb-6">You haven't registered for any events yet.</p>
-              <Link 
-                to="/events" 
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">{t('events.registered.emptyTitle')}</h3>
+              <p className="text-gray-600 mb-6">{t('events.registered.emptyText')}</p>
+              <Link
+                to="/events"
                 className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors inline-block"
               >
-                Browse Events
+                {t('events.registered.browseEvents')}
               </Link>
             </div>
           ) : (
@@ -191,7 +193,7 @@ const RegisteredEventsPage = () => {
               {/* Results Header */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Your Registered Events ({pagination.total})
+                  {t('events.registered.listTitle', { n: pagination.total })}
                 </h2>
               </div>
 
@@ -202,7 +204,7 @@ const RegisteredEventsPage = () => {
                     <div className="relative h-48 flex-shrink-0 overflow-hidden">
                       {registration.alumni_event?.featured_image ? (
                         <img 
-                          alt={registration.alumni_event?.title || 'Event'} 
+                          alt={registration.alumni_event?.title || t('events.registered.defaultEventAlt')}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
                           src={registration.alumni_event.featured_image}
                         />
@@ -220,7 +222,7 @@ const RegisteredEventsPage = () => {
                         </div>
                       </div>
                       <div className={`absolute top-4 right-4 ${getTypeColor(registration.alumni_event?.event_type)} text-white px-3 py-1 rounded-full text-xs font-bold`}>
-                        {registration.alumni_event?.event_type?.replace('_', ' ').toUpperCase() || 'EVENT'}
+                        {registration.alumni_event?.event_type?.replace('_', ' ').toUpperCase() || t('events.registered.eventTag')}
                       </div>
                       <div className={`absolute bottom-4 left-4 px-3 py-1 rounded-full text-xs font-bold ${getStatusColor(registration.status)}`}>
                         {registration.status?.toUpperCase()}
@@ -232,12 +234,12 @@ const RegisteredEventsPage = () => {
                         <span className="truncate">
                           {registration.alumni_event?.start_date && registration.alumni_event?.end_date ? 
                             `${new Date(registration.alumni_event.start_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} - ${new Date(registration.alumni_event.end_date).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })} (${registration.alumni_event.time_zone || 'UTC'})` 
-                            : 'Time not available'
+                            : t('events.registered.timeNotAvailable')
                           }
                         </span>
                       </div>
                       <h3 className="text-sm font-bold text-gray-900 mb-2 line-clamp-2 flex-1 leading-tight">
-                        {registration.alumni_event?.title || 'Event Title'}
+                        {registration.alumni_event?.title || t('events.registered.defaultTitle')}
                       </h3>
                       <div className="flex items-center gap-2 text-gray-600 text-xs mb-4">
                         {registration.alumni_event?.location?.includes('Online') ? (
@@ -245,10 +247,10 @@ const RegisteredEventsPage = () => {
                         ) : (
                           <FiMapPin className="text-[12px] flex-shrink-0" />
                         )}
-                        <span className="truncate">{registration.alumni_event?.location || 'Location not specified'}</span>
+                        <span className="truncate">{registration.alumni_event?.location || t('events.registered.locationNotSpecified')}</span>
                       </div>
                       <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
-                        <span>{registration.alumni_event?.current_attendees || 0} attending</span>
+                        <span>{t('events.registered.attendingCount', { n: registration.alumni_event?.current_attendees || 0 })}</span>
                         {registration.alumni_event?.registration_fee > 0 && (
                           <span className="font-semibold text-green-600">${registration.alumni_event.registration_fee}</span>
                         )}
@@ -259,16 +261,16 @@ const RegisteredEventsPage = () => {
                           className="flex-1 bg-blue-600 text-white font-semibold py-2 px-3 rounded-lg hover:bg-blue-700 transition-colors text-sm cursor-pointer"
                           disabled={!registration.alumni_event?.id}
                         >
-                          View Details
+                          {t('events.registered.viewDetails')}
                         </button>
                         {(registration.status === 'registered' || registration.status === 'confirmed') && registration.status !== 'cancelled' ? (
                           <button 
                             onClick={(e) => handleCancelRegistration(registration.alumni_event?.id, e)}
                             className="px-3 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors text-sm cursor-pointer"
-                            title="Cancel Registration"
+                            title={t('events.registered.cancelTitle')}
                             disabled={!registration.alumni_event?.id}
                           >
-                            Cancel
+                            {t('events.registered.cancel')}
                           </button>
                         ) : null}
                       </div>
@@ -281,7 +283,11 @@ const RegisteredEventsPage = () => {
               {pagination.last_page > 1 && (
                 <div className="flex items-center justify-between py-6 border-t border-gray-200">
                   <p className="text-sm text-gray-600">
-                    Showing {((pagination.current_page - 1) * pagination.per_page) + 1} to {Math.min(pagination.current_page * pagination.per_page, pagination.total)} of {pagination.total} events
+                    {t('events.registered.paginationRange', {
+                      from: ((pagination.current_page - 1) * pagination.per_page) + 1,
+                      to: Math.min(pagination.current_page * pagination.per_page, pagination.total),
+                      total: pagination.total,
+                    })}
                   </p>
                   <div className="flex items-center gap-2">
                     <button
@@ -294,7 +300,7 @@ const RegisteredEventsPage = () => {
                       }`}
                     >
                       <FiChevronLeft className="text-[16px]" />
-                      Previous
+                      {t('events.registered.previous')}
                     </button>
                     
                     <div className="flex items-center gap-1">
@@ -322,7 +328,7 @@ const RegisteredEventsPage = () => {
                           : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
                       }`}
                     >
-                      Next
+                      {t('events.registered.next')}
                       <FiChevronRight className="text-[16px]" />
                     </button>
                   </div>

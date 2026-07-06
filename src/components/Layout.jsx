@@ -1,8 +1,12 @@
 import React, { useState, useEffect, useRef, useContext, useCallback } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import authService from '../services/authService';
 import notificationService from '../services/notificationService';
 import { AuthContext } from '../contexts/AuthContext';
+import { useSettings } from '../contexts/SettingsContext';
+import { resolveHeroImage } from './ui/HeroBackground';
+import LanguageSwitcher from './LanguageSwitcher';
 import {
   FiArrowRight,
   FiMapPin,
@@ -15,11 +19,39 @@ import {
   FiLinkedin,
   FiFacebook,
   FiUser,
-  FiBell
+  FiBell,
+  FiGrid,
+  FiBriefcase,
+  FiCalendar,
+  FiMessageSquare,
+  FiLogOut,
+  FiChevronDown
 } from 'react-icons/fi';
 
+const timeAgo = (dateStr) => {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const seconds = Math.floor((now - date) / 1000);
+  if (seconds < 60) return 'Just now';
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  if (months < 12) return `${months}mo ago`;
+  const years = Math.floor(months / 12);
+  return `${years}y ago`;
+};
+
 const Layout = ({ children }) => {
+  const { t } = useTranslation();
+  const { settings, pick } = useSettings();
   const { user } = useContext(AuthContext);
+  const brandName = pick(settings.brand_name) || t('common.brand');
+  const brandTagline = pick(settings.tagline) || t('common.tagline');
+  const brandLogo = resolveHeroImage(settings.logo) || '/logo_kpu.png';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
@@ -101,8 +133,18 @@ const Layout = ({ children }) => {
 
   useEffect(() => {
     fetchUnreadCount();
-    const interval = setInterval(fetchUnreadCount, 30000);
-    return () => clearInterval(interval);
+    // Only poll while the tab is actually visible — a hidden/idle tab shouldn't
+    // keep hitting the API in the background. Resume + refresh when it returns.
+    let interval = null;
+    const start = () => { if (!interval) interval = setInterval(fetchUnreadCount, 30000); };
+    const stop = () => { if (interval) { clearInterval(interval); interval = null; } };
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') { fetchUnreadCount(); start(); }
+      else stop();
+    };
+    if (document.visibilityState === 'visible') start();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => { stop(); document.removeEventListener('visibilitychange', onVisibility); };
   }, [fetchUnreadCount, isAuthenticated]);
 
   const handleOpenNotifications = async () => {
@@ -159,117 +201,132 @@ const Layout = ({ children }) => {
       }`}>
         <div className="w-full px-4 sm:px-6 lg:px-12 py-3">
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
+            <div className="flex items-center gap-2 sm:gap-4 lg:gap-3 xl:gap-6 min-w-0">
               <div className={`flex items-center gap-2 sm:gap-4 transition-all duration-300 ${
                 isScrolled ? 'text-white' : 'text-white'
               }`}>
                 <Link to="/" className="flex items-center space-x-2">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
                     <img
-                      src="/logo_kpu.png"
+                      src={brandLogo}
                       alt="KPU University"
                       className="w-6 h-6 sm:w-8 sm:h-8 object-contain"
                     />
                   </div>
                   <div className="text-left min-w-0">
                     <div className="font-bold text-white text-sm sm:text-base truncate">
-                      KPU University
+                      {brandName}
                     </div>
-                    <div className="text-xs text-white/80 truncate">
-                      Excellence in Education
+                    <div className="hidden xl:block text-xs text-white/80 truncate">
+                      {brandTagline}
                     </div>
                   </div>
                 </Link>
               </div>
               
-              <nav className="hidden lg:flex items-center gap-4 sm:gap-6">
+              <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5">
                 <Link 
                   to="/directory" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/directory' 
                       ? 'text-white bg-white/20' 
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  Directory
+                  {t('nav.directory')}
                   <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
                     location.pathname === '/directory' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
                 <Link 
                   to="/about" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/about' 
                       ? 'text-white bg-white/20' 
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  About
+                  {t('nav.about')}
                   <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
                     location.pathname === '/about' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
                 <Link 
                   to="/contact" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/contact' 
                       ? 'text-white bg-white/20' 
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  Contact
+                  {t('nav.contact')}
                   <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
                     location.pathname === '/contact' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <Link 
-                  to="/jobs" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/jobs' 
-                      ? 'text-white bg-white/20' 
+                <Link
+                  to="/jobs"
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
+                    location.pathname === '/jobs'
+                      ? 'text-white bg-white/20'
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  Career
+                  {t('nav.career')}
                   <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
                     location.pathname === '/jobs' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <Link 
-                  to="/mentorship" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/mentorship' 
-                      ? 'text-white bg-white/20' 
+                <Link
+                  to="/mentorship"
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
+                    location.pathname === '/mentorship'
+                      ? 'text-white bg-white/20'
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  Mentorship
+                  {t('nav.mentorship')}
                   <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
                     location.pathname === '/mentorship' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <Link 
-                  to="/events" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/events' 
-                      ? 'text-white bg-white/20' 
+                <Link
+                  to="/events"
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
+                    location.pathname === '/events'
+                      ? 'text-white bg-white/20'
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  Events
+                  {t('nav.events')}
                   <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
                     location.pathname === '/events' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </Link>
-                <Link 
-                  to="/legal" 
-                  className={`text-xs sm:text-sm font-medium transition-all duration-300 px-3 py-2 rounded-lg relative group ${
+                {isAuthenticated && (
+                  <Link
+                    to="/media-center"
+                    className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
+                      location.pathname.startsWith('/media')
+                        ? 'text-white bg-white/20'
+                        : 'text-white/90 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {t('nav.media')}
+                    <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
+                      location.pathname.startsWith('/media') ? 'w-full' : 'w-0 group-hover:w-full'
+                    }`}></span>
+                  </Link>
+                )}
+                <Link
+                  to="/legal"
+                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
                     location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines'
                       ? 'text-white bg-white/20' 
                       : 'text-white/90 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  Giving & Impact
+                  {t('nav.giving')}
                   <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
                     location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines' ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
@@ -278,8 +335,9 @@ const Layout = ({ children }) => {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
+              <LanguageSwitcher className="hidden sm:flex" />
               {!isAuthenticated && (
-                <Link 
+                <Link
                   to="/login"
                   className={`min-w-[60px] sm:min-w-[84px] h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center ${
                     isScrolled 
@@ -287,7 +345,7 @@ const Layout = ({ children }) => {
                       : 'bg-white/10 backdrop-blur-md text-white border border-white/30 hover:bg-white/20 hover:border-white/50'
                   }`}
                 >
-                  Login
+                  {t('common.login')}
                 </Link>
               )}
 
@@ -307,24 +365,35 @@ const Layout = ({ children }) => {
                   {notifOpen && (
                     <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
                       <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-white">Notifications</h3>
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('notifications.title')}</h3>
                       </div>
                       <div className="max-h-80 overflow-y-auto">
                         {notifications.length === 0 ? (
-                          <div className="px-4 py-8 text-center text-sm text-gray-500">No notifications</div>
+                          <div className="px-4 py-8 text-center text-sm text-gray-500">{t('notifications.empty')}</div>
                         ) : (
                           notifications.map(n => (
                             <div
                               key={n.id}
                               onClick={() => {
                                 setNotifOpen(false);
-                                navigate('/profile');
+                                if (n.type === 'event_registration' && n.reason) {
+                                  navigate(`/events/${n.reason}`);
+                                } else if (n.type === 'event_registration') {
+                                  navigate('/events');
+                                } else if (n.type?.startsWith('mentor_request') || n.type === 'mentor_review') {
+                                  navigate('/profile');
+                                } else if (n.type === 'mentor_profile_created' && n.reason) {
+                                  navigate(`/mentorship/${n.reason}`);
+                                } else {
+                                  navigate('/profile');
+                                }
                               }}
                               className={`px-4 py-3 border-b border-gray-50 dark:border-gray-700/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${!n.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}
                             >
                               <div className="flex items-start gap-2">
                                 <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${
-                                  n.type === 'status_change' && n.title?.includes('Approved') ? 'bg-green-500'
+                                  n.type === 'event_registration' ? 'bg-blue-500'
+                                  : n.type === 'status_change' && n.title?.includes('Approved') ? 'bg-green-500'
                                   : n.type === 'status_change' && n.title?.includes('Rejected') ? 'bg-red-500'
                                   : 'bg-yellow-500'
                                 }`} />
@@ -332,9 +401,9 @@ const Layout = ({ children }) => {
                                   <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{n.title}</p>
                                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2">{n.message}</p>
                                   {n.reason && (
-                                    <p className="text-xs text-red-600 dark:text-red-400 mt-1 italic">Reason: {n.reason}</p>
+                                    <p className="text-xs text-red-600 dark:text-red-400 mt-1 italic">{t('notifications.reason')} {n.reason}</p>
                                   )}
-                                  <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleDateString()}</p>
+                                  <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
                                 </div>
                               </div>
                             </div>
@@ -347,7 +416,7 @@ const Layout = ({ children }) => {
               )}
 
               {isAuthenticated && (
-                <div className="relative hidden sm:flex" ref={userMenuRef}>
+                <div className="relative hidden sm:block" ref={userMenuRef}>
                   <button
                     type="button"
                     onClick={() => setIsUserMenuOpen((v) => !v)}
@@ -380,21 +449,54 @@ const Layout = ({ children }) => {
                   </button>
 
                   {isUserMenuOpen && (
-                    <div className="absolute right-0 mt-3 w-40 rounded-xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden">
-                      <Link
-                        to="/profile"
-                        onClick={() => setIsUserMenuOpen(false)}
-                        className="block px-4 py-3 text-sm font-medium text-gray-800 hover:bg-gray-50"
-                      >
-                        Profile
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-3 text-sm font-medium text-red-600 hover:bg-red-50"
-                      >
-                        Logout
-                      </button>
+                    <div className="absolute top-full end-0 mt-3 w-64 max-w-[calc(100vw-1.5rem)] rounded-2xl bg-white shadow-2xl ring-1 ring-black/5 overflow-hidden z-[100] animate-fade-in origin-top">
+                      {/* User header */}
+                      <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#002759] to-[#194ce6] text-white">
+                        <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-white/40 flex-shrink-0 bg-white/10">
+                          <img
+                            src={user?.profile_image
+                              ? (user.profile_image.startsWith('http')
+                                  ? user.profile_image
+                                  : `http://localhost:8000/storage/${user.profile_image}`)
+                              : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=64`}
+                            alt={user?.name || 'User'}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=64`;
+                            }}
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] text-blue-100 uppercase tracking-wide">{t('userMenu.signedInAs')}</p>
+                          <p className="text-sm font-bold truncate">{user?.name || 'Alumni'}</p>
+                          {user?.email && <p className="text-[11px] text-blue-100 truncate">{user.email}</p>}
+                        </div>
+                      </div>
+
+                      {/* Menu items */}
+                      <div className="py-1">
+                        <Link to="/dashboard" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiGrid className="text-[#194ce6]" /> {t('userMenu.dashboard')}
+                        </Link>
+                        <Link to="/profile" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiUser className="text-[#194ce6]" /> {t('userMenu.myProfile')}
+                        </Link>
+                        <Link to="/applications" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiBriefcase className="text-[#194ce6]" /> {t('userMenu.myApplications')}
+                        </Link>
+                        <Link to="/events/registered" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiCalendar className="text-[#194ce6]" /> {t('userMenu.myEvents')}
+                        </Link>
+                        <Link to="/messages" onClick={() => setIsUserMenuOpen(false)} className="flex items-center gap-3 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-[#194ce6]/5 hover:text-[#002759] transition-colors">
+                          <FiMessageSquare className="text-[#194ce6]" /> {t('userMenu.myMessages')}
+                        </Link>
+                      </div>
+
+                      <div className="border-t border-gray-100">
+                        <button type="button" onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold text-red-600 hover:bg-red-50 transition-colors">
+                          <FiLogOut /> {t('userMenu.logout')}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -459,17 +561,17 @@ const Layout = ({ children }) => {
                     <div className="flex items-center space-x-2">
                       <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
                         <img
-                          src="/logo_kpu.png"
+                          src={brandLogo}
                           alt="KPU University"
                           className="w-8 h-8 object-contain"
                         />
                       </div>
                       <div className="text-left min-w-0">
                         <div className="font-bold text-white text-sm truncate">
-                          KPU University
+                          {brandName}
                         </div>
                         <div className="text-xs text-white/80 truncate">
-                          Excellence in Education
+                          {brandTagline}
                         </div>
                       </div>
                     </div>
@@ -493,7 +595,7 @@ const Layout = ({ children }) => {
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
-                        Directory
+                        {t('nav.directory')}
                       </Link>
                       <Link 
                         to="/about"
@@ -504,7 +606,7 @@ const Layout = ({ children }) => {
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
-                        About
+                        {t('nav.about')}
                       </Link>
                       <Link 
                         to="/contact"
@@ -515,42 +617,55 @@ const Layout = ({ children }) => {
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
-                        Contact
+                        {t('nav.contact')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/jobs"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/jobs' 
-                            ? 'bg-white/20 text-white' 
+                          location.pathname === '/jobs'
+                            ? 'bg-white/20 text-white'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
-                        Career
+                        {t('nav.career')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/mentorship"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/mentorship' 
-                            ? 'bg-white/20 text-white' 
+                          location.pathname === '/mentorship'
+                            ? 'bg-white/20 text-white'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
-                        Mentorship
+                        {t('nav.mentorship')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/events"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/events' 
-                            ? 'bg-white/20 text-white' 
+                          location.pathname === '/events'
+                            ? 'bg-white/20 text-white'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
-                        Events
+                        {t('nav.events')}
                       </Link>
-                      <Link 
+                      {isAuthenticated && (
+                        <Link
+                          to="/media-center"
+                          onClick={handleMenuClick}
+                          className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
+                            location.pathname.startsWith('/media')
+                              ? 'bg-white/20 text-white'
+                              : 'hover:bg-[#0a519b]'
+                          }`}
+                        >
+                          {t('nav.media')}
+                        </Link>
+                      )}
+                      <Link
                         to="/legal"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
@@ -559,21 +674,36 @@ const Layout = ({ children }) => {
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
-                        Giving & Impact
+                        {t('nav.giving')}
                       </Link>
                     </div>
                   </nav>
                   
                   {/* Sidebar Footer */}
                   <div className="p-4 border-t border-[#003d7a]">
-                    <Link 
+                    <div className="mb-3 flex justify-center">
+                      <LanguageSwitcher />
+                    </div>
+                    <Link
                       to="/login"
                       onClick={handleMenuClick}
                       className="w-full h-12 bg-white text-[#002759] text-sm font-bold rounded-lg hover:bg-gray-100 transition-all mb-3 flex items-center justify-center"
                     >
-                      Login
+                      {t('common.login')}
                     </Link>
-                    <Link 
+                    {isAuthenticated && (
+                      <Link
+                        to="/dashboard"
+                        onClick={handleMenuClick}
+                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors mb-1 ${
+                          location.pathname === '/dashboard' ? 'bg-white/20' : 'hover:bg-[#0a519b]'
+                        }`}
+                      >
+                        <FiGrid className="text-lg opacity-90" />
+                        {t('userMenu.dashboard')}
+                      </Link>
+                    )}
+                    <Link
                       to="/profile"
                       onClick={handleMenuClick}
                       className="flex items-center gap-3 px-4 py-3 hover:bg-[#0a519b] rounded-lg transition-colors"
@@ -600,8 +730,8 @@ const Layout = ({ children }) => {
                         )}
                       </div>
                       <div>
-                        <p className="text-white font-medium">Account</p>
-                        <p className="text-blue-200 text-xs">Manage profile</p>
+                        <p className="text-white font-medium">{t('common.account')}</p>
+                        <p className="text-blue-200 text-xs">{t('common.manageProfile')}</p>
                       </div>
                     </Link>
                     <div className="mt-4 pt-4 border-t border-[#003d7a]/30">
@@ -615,7 +745,7 @@ const Layout = ({ children }) => {
                         }`}
                       >
                         <span className="text-lg opacity-70">📁</span>
-                        Alumni Directory
+                        {t('nav.alumniDirectory')}
                       </Link>
                       <Link 
                         to="/about"
@@ -627,7 +757,7 @@ const Layout = ({ children }) => {
                         }`}
                       >
                         <span className="text-lg opacity-70">ℹ️</span>
-                        About KPU
+                        {t('nav.aboutKpu')}
                       </Link>
                       <Link 
                         to="/contact"
@@ -639,43 +769,43 @@ const Layout = ({ children }) => {
                         }`}
                       >
                         <span className="text-lg opacity-70">📧</span>
-                        Contact Us
+                        {t('nav.contactUs')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/jobs"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/jobs' 
-                            ? 'bg-white/20' 
+                          location.pathname === '/jobs'
+                            ? 'bg-white/20'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
                         <span className="text-lg opacity-70">💼</span>
-                        Career Opportunities
+                        {t('nav.careerOpportunities')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/mentorship"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/mentorship' 
-                            ? 'bg-white/20' 
+                          location.pathname === '/mentorship'
+                            ? 'bg-white/20'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
                         <span className="text-lg opacity-70">🤝</span>
-                        Mentorship Hub
+                        {t('nav.mentorshipHub')}
                       </Link>
-                      <Link 
+                      <Link
                         to="/events"
                         onClick={handleMenuClick}
                         className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/events' 
-                            ? 'bg-white/20' 
+                          location.pathname === '/events'
+                            ? 'bg-white/20'
                             : 'hover:bg-[#0a519b]'
                         }`}
                       >
                         <span className="text-lg opacity-70">📅</span>
-                        Events Calendar
+                        {t('nav.eventsCalendar')}
                       </Link>
                     </div>
                   </div>
@@ -698,66 +828,66 @@ const Layout = ({ children }) => {
             <div className="flex items-center space-x-2 mb-4 sm:mb-6">
               <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <img
-                  src="/logo_kpu.png"
+                  src={brandLogo}
                   alt="KPU University"
                   className="w-8 h-8 object-contain"
                 />
               </div>
               <div className="text-left min-w-0">
                 <div className="font-bold text-white text-sm sm:text-base truncate">
-                  KPU University
+                  {brandName}
                 </div>
                 <div className="text-xs text-blue-100 truncate">
-                  Excellence in Education
+                  {brandTagline}
                 </div>
               </div>
             </div>
             <p className="text-blue-100 text-xs sm:text-sm leading-relaxed">
-              Fostering excellence, community, and lifelong learning for all Kabul Polytechnic University graduates.
+              {pick(settings.footer_about) || t('footer.about')}
             </p>
           </div>
-          
+
           <div>
-            <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">Quick Links</h4>
+            <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">{t('footer.quickLinks')}</h4>
             <ul className="flex flex-col gap-2 sm:gap-4 text-blue-100 text-xs sm:text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">Alumni Directory</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Job Board</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Mentorship Program</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Campus News</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">{t('nav.alumniDirectory')}</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">{t('footer.jobBoard')}</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">{t('footer.mentorshipProgram')}</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">{t('footer.campusNews')}</a></li>
             </ul>
           </div>
-          
+
           <div>
-            <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">University</h4>
+            <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">{t('footer.university')}</h4>
             <ul className="flex flex-col gap-2 sm:gap-4 text-blue-100 text-xs sm:text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">About KPU</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Faculties</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Research Labs</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact Office</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">{t('nav.aboutKpu')}</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">{t('footer.faculties')}</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">{t('footer.researchLabs')}</a></li>
+              <li><a href="#" className="hover:text-white transition-colors">{t('footer.contactOffice')}</a></li>
             </ul>
           </div>
-          
+
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
-            <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">Follow Us</h4>
+            <h4 className="font-bold mb-4 sm:mb-6 text-base sm:text-lg">{t('footer.followUs')}</h4>
             <div className="flex gap-3 sm:gap-4">
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+              <a href={settings.linkedin_url || '#'} target="_blank" rel="noopener noreferrer" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
                 <FiLinkedin className="text-sm sm:text-xl text-white" />
               </a>
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+              <a href={settings.contact_email ? `mailto:${settings.contact_email}` : '#'} className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
                 <FiMail className="text-sm sm:text-xl text-white" />
               </a>
-              <a href="#" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
+              <a href={settings.facebook_url || '#'} target="_blank" rel="noopener noreferrer" className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-all">
                 <FiFacebook className="text-sm sm:text-xl text-white" />
               </a>
             </div>
             <div className="mt-6 sm:mt-8 space-y-2">
               <div className="flex flex-col gap-2">
-                <a href="/privacy" className="text-blue-200 text-[9px] sm:text-[10px] hover:text-white transition-colors">Privacy Policy</a>
-                <a href="/terms" className="text-blue-200 text-[9px] sm:text-[10px] hover:text-white transition-colors">Terms of Service</a>
-                <a href="/guidelines" className="text-blue-200 text-[9px] sm:text-[10px] hover:text-white transition-colors">Event Guidelines</a>
+                <a href="/privacy" className="text-blue-200 text-[9px] sm:text-[10px] hover:text-white transition-colors">{t('footer.privacyPolicy')}</a>
+                <a href="/terms" className="text-blue-200 text-[9px] sm:text-[10px] hover:text-white transition-colors">{t('footer.termsOfService')}</a>
+                <a href="/guidelines" className="text-blue-200 text-[9px] sm:text-[10px] hover:text-white transition-colors">{t('footer.eventGuidelines')}</a>
               </div>
               <p className="text-blue-200 text-[9px] sm:text-[10px] pt-2 border-t border-white/20">
-                © 2023 Kabul Polytechnic University Alumni Association. All Rights Reserved.
+                {t('footer.rights')}
               </p>
             </div>
           </div>

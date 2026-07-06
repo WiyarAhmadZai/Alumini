@@ -1,326 +1,345 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
-import { FiMail, FiPhone, FiMapPin, FiLinkedin, FiAward, FiUsers, FiTarget, FiGlobe, FiArrowRight } from 'react-icons/fi';
+import authService from '../services/authService';
+import { useSettings } from '../contexts/SettingsContext';
+import { useHero } from '../contexts/HeroContext';
+import HeroBackground from '../components/ui/HeroBackground';
+import {
+  FiMail, FiPhone, FiMapPin, FiLinkedin, FiAward, FiUsers, FiTarget, FiGlobe,
+  FiArrowRight, FiBookOpen, FiTrendingUp, FiHeart, FiStar, FiZap
+} from 'react-icons/fi';
 
+// ─── Brand palette ──────────────────────────────────────────────
 const BRAND = '#194ce6';
-const BRAND_DARK = '#1340c4';
+const BRAND_DARK = '#0f2d8a';
 const BRAND_BG = '#eef1fd';
 const BRAND_BORDER = '#c5ccf7';
 
+// ─── Shared bits ────────────────────────────────────────────────
 const SectionLabel = ({ children }) => (
-  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest border mb-4"
+  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] border"
     style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
     {children}
   </div>
 );
 
-const SectionHeading = ({ label, title, subtitle }) => (
-  <div className="text-center mb-12">
-    <SectionLabel>{label}</SectionLabel>
-    <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-3 tracking-tight">{title}</h2>
-    {subtitle && <p className="text-gray-500 max-w-xl mx-auto text-sm sm:text-base">{subtitle}</p>}
-    <div className="w-12 h-1 mx-auto mt-5 rounded-full" style={{ background: BRAND }} />
+const SectionHeader = ({ label, title, subtitle }) => (
+  <div className="text-center mb-10 max-w-xl mx-auto">
+    <div className="flex justify-center mb-3">
+      <SectionLabel>{label}</SectionLabel>
+    </div>
+    <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
+      {title}
+    </h2>
+    {subtitle && <p className="text-gray-500 text-sm leading-relaxed">{subtitle}</p>}
+    <div className="w-10 h-0.5 mx-auto mt-4 rounded-full" style={{ background: BRAND }} />
   </div>
 );
-//drkdjkd
-const boardMembers = [
-  {
-    name: 'Eng. Mohammad Hassan',
-    role: 'President',
-    dept: 'Civil Engineering, Class of 1995',
-    img: '/1teacher.jpg',
-  },
-  {
-    name: 'Dr. Sarah Ahmadzai',
-    role: 'Vice President',
-    dept: 'Electrical Engineering, Class of 2000',
-    img: '/teacher.jpg',
-  },
-  {
-    name: 'Ahmad Wali Karimi',
-    role: 'Secretary',
-    dept: 'Mechanical Engineering, Class of 2008',
-    img: '/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg',
-  },
-  {
-    name: 'Fatima Noori',
-    role: 'Treasurer',
-    dept: 'Computer Engineering, Class of 2012',
-    img: '/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg',
-  },
-];
 
-const contactItems = [
-  {
-    icon: <FiMail />,
-    title: 'Email',
-    detail: 'it.director@kpu.edu.af',
-    cta: 'Send Message',
-  },
-  {
-    icon: <FiPhone />,
-    title: 'Phone',
-    detail: '0202526364',
-    cta: 'Call Now',
-  },
-  {
-    icon: <FiMapPin />,
-    title: 'Address',
-    detail: 'Kabul Polytechnic University\nKabul, Afghanistan',
-    cta: 'Get Directions',
-  },
-  {
-    icon: <FiMail />,
-    title: 'Transcript & Diploma Services',
-    detail: 'transcript@kpu.edu.af',
-    cta: 'Request Documents',
-  },
-];
-
+// ─── Main Page ──────────────────────────────────────────────────
 const AboutPage = () => {
+  const { t } = useTranslation();
+  const hero = useHero('about');
+  const { chancellor, board, pick } = useSettings();
+  const isLoggedIn = authService.isAuthenticated();
+
+  // Chancellor — dynamic from admin settings, with i18n fallback.
+  const chName = pick(chancellor?.name) || t('about.chancellor.name');
+  const chRole = pick(chancellor?.role) || t('about.chancellor.role');
+  const chQuote = pick(chancellor?.message) || t('about.chancellor.quote');
+  const chPhoto = chancellor?.photo || '/chanceler.jpg';
+
+  const values = [
+    { icon: <FiHeart />, title: t('about.values.integrityTitle'), desc: t('about.values.integrityDesc') },
+    { icon: <FiTrendingUp />, title: t('about.values.excellenceTitle'), desc: t('about.values.excellenceDesc') },
+    { icon: <FiUsers />, title: t('about.values.communityTitle'), desc: t('about.values.communityDesc') },
+    { icon: <FiZap />, title: t('about.values.innovationTitle'), desc: t('about.values.innovationDesc') },
+  ];
+
+  const timeline = [
+    { year: '1951', title: t('about.timeline.foundedTitle'), desc: t('about.timeline.foundedDesc') },
+    { year: '2010', title: t('about.timeline.associationTitle'), desc: t('about.timeline.associationDesc') },
+    { year: '2018', title: t('about.timeline.globalTitle'), desc: t('about.timeline.globalDesc') },
+    { year: '2024', title: t('about.timeline.platformTitle'), desc: t('about.timeline.platformDesc') },
+  ];
+
+  // Executive board — dynamic from admin settings, with hardcoded fallback.
+  const boardMembers = (board && board.length)
+    ? board.map((m) => ({
+        name: pick(m.name) || '',
+        role: pick(m.role) || '',
+        dept: [m.faculty, m.graduation_year].filter(Boolean).join(' · '),
+        img: m.photo || '/teacher.jpg',
+      }))
+    : [
+        { name: 'Eng. Mohammad Hassan', role: t('about.board.presidentRole'), dept: 'Civil · 1995', img: '/1teacher.jpg' },
+        { name: 'Dr. Sarah Ahmadzai', role: t('about.board.vicePresidentRole'), dept: 'Electrical · 2000', img: '/teacher.jpg' },
+        { name: 'Ahmad Wali Karimi', role: t('about.board.secretaryRole'), dept: 'Mechanical · 2008', img: '/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg' },
+        { name: 'Fatima Noori', role: t('about.board.treasurerRole'), dept: 'Computer · 2012', img: '/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg' },
+      ];
+
+  const contactItems = [
+    { icon: <FiMail />, title: t('about.contact.emailTitle'), detail: 'it.director@kpu.edu.af' },
+    { icon: <FiPhone />, title: t('about.contact.phoneTitle'), detail: '+93 20 252 6364' },
+    { icon: <FiMapPin />, title: t('about.contact.addressTitle'), detail: t('about.contact.addressDetail') },
+    { icon: <FiBookOpen />, title: t('about.contact.transcriptsTitle'), detail: 'transcript@kpu.edu.af' },
+  ];
+
   return (
     <Layout>
 
-      {/* ── Hero ── */}
-      <section className="relative h-[400px] md:h-[500px] bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.82) 100%), url("/kpu1.jpg")' }}>
-        <div className="h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
+      {/* ═══ HERO (dynamic banner / slider) ══════════════════════════ */}
+      <section className="relative h-[400px] md:h-[500px] overflow-hidden">
+        <HeroBackground page="about" fallbackImage="/kpu1.jpg"
+          overlay="linear-gradient(rgba(0,0,0,0.70) 0%, rgba(0,0,0,0.82) 100%)" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-4 sm:px-6">
           <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-6 text-white/90">
             <FiAward className="text-white/70" />
-            Kabul Polytechnic University
+            {hero.badge || t('about.hero.badge')}
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white leading-tight tracking-tight mb-5 max-w-4xl">
-            About KPU Alumni Association
+            {hero.title || t('about.hero.title')}
           </h1>
           <p className="text-lg sm:text-xl text-white/70 max-w-2xl mx-auto leading-relaxed font-light">
-            Building lifelong connections and fostering professional growth for graduates worldwide.
+            {hero.subtitle || t('about.hero.subtitle')}
           </p>
         </div>
       </section>
 
-      {/* ── Mission & History ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#f6f6f8]">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading label="Who We Are" title="Our Foundation" subtitle="The principles and journey that guide our alumni community" />
+      {/* ═══ MISSION / VISION / PROMISE ═════════════════════════ */}
+      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <SectionHeader
+            label={t('about.whoWeAre.label')}
+            title={t('about.whoWeAre.title')}
+            subtitle={t('about.whoWeAre.subtitle')}
+          />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Mission */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300 group">
-              <div className="h-1 w-full" style={{ background: BRAND }} />
-              <div className="p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: BRAND_BG }}>
-                    <FiTarget className="text-xl" style={{ color: BRAND }} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900">Our Mission</h3>
-                </div>
-                <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
-                  <p>To create a vibrant network of Kabul Polytechnic University alumni, fostering professional development, knowledge sharing, and collaborative opportunities that contribute to the advancement of our members and the engineering community in Afghanistan and beyond.</p>
-                  <p>We strive to maintain strong connections between graduates and the university, facilitating mentorship, career opportunities, and continuous learning while celebrating the achievements of our alumni community.</p>
-                </div>
-                <div className="mt-6 inline-flex items-center gap-1 text-sm font-semibold transition-colors" style={{ color: BRAND }}>
-                  Learn more about our mission <FiArrowRight />
-                </div>
-              </div>
-            </div>
-
-            {/* History */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300 group">
-              <div className="h-1 w-full" style={{ background: BRAND }} />
-              <div className="p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: BRAND_BG }}>
-                    <FiGlobe className="text-xl" style={{ color: BRAND }} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900">Our History</h3>
-                </div>
-                <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
-                  <p>Founded in 2010, the KPU Alumni Association began as a small initiative by dedicated graduates who recognized the need for a structured network to connect Kabul Polytechnic University alumni across various engineering disciplines and geographical locations.</p>
-                  <p>Over the past decade, we have grown from a handful of members to a thriving community of over 5,000 alumni, establishing chapters in major cities and organizing numerous events that bring our community together.</p>
-                  <p>Today, we stand as a testament to the excellence of KPU's engineering education and the remarkable achievements of our graduates.</p>
-                </div>
-                <div className="mt-6 inline-flex items-center gap-1 text-sm font-semibold transition-colors" style={{ color: BRAND }}>
-                  Explore our journey <FiArrowRight />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Chancellor Message ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading label="Leadership" title="Chancellor's Message" subtitle="Words of wisdom from our esteemed Chancellor" />
-
-          <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-8 sm:p-10 lg:p-12">
-              <div className="flex flex-col lg:flex-row gap-10 items-center lg:items-start">
-                {/* Photo */}
-                <div className="flex-shrink-0 relative">
-                  <div className="w-36 h-36 sm:w-44 sm:h-44 rounded-2xl overflow-hidden shadow-md border-4 border-white"
-                    style={{ outline: `3px solid ${BRAND_BORDER}` }}>
-                    <img src="/chanceler.jpg" alt="Dr. Ahmad Zia Massoud" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-full flex items-center justify-center shadow-md"
-                    style={{ background: BRAND }}>
-                    <FiAward className="text-white text-sm" />
-                  </div>
-                </div>
-
-                {/* Text */}
-                <div className="flex-1 text-center lg:text-left">
-                  <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-5 border"
-                    style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}>
-                    Chancellor's Vision
-                  </span>
-                  <blockquote className="text-gray-700 text-base sm:text-lg leading-relaxed mb-6 italic">
-                    "The KPU Alumni Association represents the pride of our institution. Our graduates continue to make significant contributions to Afghanistan's development, and this association serves as a bridge between our past achievements and future aspirations. I encourage all alumni to actively participate in this vibrant community."
-                  </blockquote>
-                  <div className="flex flex-col sm:flex-row items-center lg:items-start gap-4">
-                    <div>
-                      <p className="text-lg font-bold text-gray-900">Dr. Ahmad Zia Massoud</p>
-                      <p className="text-sm text-gray-500">Chancellor, Kabul Polytechnic University</p>
-                    </div>
-                    <div className="flex gap-2 sm:ml-auto">
-                      <button className="w-9 h-9 rounded-xl flex items-center justify-center border transition-colors"
-                        style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
-                        <FiMail className="text-sm" />
-                      </button>
-                      <button className="w-9 h-9 rounded-xl flex items-center justify-center border transition-colors"
-                        style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
-                        <FiLinkedin className="text-sm" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="px-8 py-3.5 flex items-center justify-between text-sm" style={{ background: BRAND }}>
-              <span className="text-white/80 font-medium">Leading Excellence in Engineering Education Since 2010</span>
-              <button className="flex items-center gap-1 text-white/80 hover:text-white transition-colors font-medium">
-                Read Full Message <FiArrowRight className="text-xs" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Leadership Team ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[#f6f6f8]">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading label="The Board" title="Leadership Team" subtitle="Dedicated leaders guiding our alumni community" />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {boardMembers.map((m) => (
-              <div key={m.name}
-                className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all duration-300 group">
-                <div className="h-1 w-full" style={{ background: BRAND }} />
-                <div className="p-6 text-center">
-                  <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden shadow-md border-4 border-white group-hover:scale-105 transition-transform"
-                    style={{ outline: `2px solid ${BRAND_BORDER}` }}>
-                    <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
-                  </div>
-                  <h3 className="text-base font-bold text-gray-900 mb-1">{m.name}</h3>
-                  <div className="w-8 h-0.5 mx-auto mb-2 rounded-full" style={{ background: BRAND }} />
-                  <p className="text-sm font-semibold mb-1" style={{ color: BRAND }}>{m.role}</p>
-                  <p className="text-xs text-gray-400 mb-4">{m.dept}</p>
-                  <div className="flex justify-center gap-2">
-                    <button className="w-8 h-8 rounded-lg flex items-center justify-center border transition-colors"
-                      style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
-                      <FiLinkedin className="text-xs" />
-                    </button>
-                    <button className="w-8 h-8 rounded-lg flex items-center justify-center border transition-colors"
-                      style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
-                      <FiMail className="text-xs" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Stats bar */}
-          <div className="mt-10 bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center divide-x divide-gray-100">
-              {[
-                { value: '15+', label: 'Years Combined Experience' },
-                { value: '4', label: 'Engineering Disciplines' },
-                { value: '100+', label: 'Projects Led' },
-                { value: '50+', label: 'Awards & Recognitions' },
-              ].map((s) => (
-                <div key={s.label} className="px-4">
-                  <div className="text-2xl font-extrabold mb-1" style={{ color: BRAND }}>{s.value}</div>
-                  <div className="text-xs text-gray-500 leading-snug">{s.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CTA Band ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden"
-        style={{ background: BRAND }}>
-        <div className="absolute inset-0 opacity-[0.06]"
-          style={{ backgroundImage: 'radial-gradient(circle, white 1.5px, transparent 1.5px)', backgroundSize: '32px 32px' }} />
-        <div className="relative z-10 max-w-4xl mx-auto text-center">
-          <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6 bg-white/15 border border-white/20">
-            <FiUsers className="text-white text-2xl" />
-          </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-5 leading-tight">
-            Ready to reconnect with your alma mater?
-          </h2>
-          <p className="text-lg text-white/75 leading-relaxed mb-10 max-w-2xl mx-auto">
-            Join thousands of KPU graduates who are already making a difference through our alumni network —
-            mentor students, find opportunities, and stay connected.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="group px-8 py-3.5 bg-white font-bold text-sm sm:text-base rounded-xl hover:bg-gray-50 transition-all shadow-lg hover:-translate-y-0.5 flex items-center justify-center gap-2"
-              style={{ color: BRAND }}>
-              Join Alumni Network
-              <FiArrowRight className="group-hover:translate-x-0.5 transition-transform" />
-            </button>
-            <button className="group px-8 py-3.5 bg-transparent border-2 border-white text-white font-bold text-sm sm:text-base rounded-xl hover:bg-white/10 transition-all flex items-center justify-center gap-2">
-              Learn More
-              <FiArrowRight className="group-hover:translate-x-0.5 transition-transform" />
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Contact ── */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading label="Reach Us" title="Get in Touch" subtitle="We'd love to hear from you" />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {contactItems.map((c) => (
-              <div key={c.title}
-                className="group bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 p-6">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 border"
-                  style={{ background: BRAND_BG, borderColor: BRAND_BORDER, color: BRAND }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { icon: <FiTarget />, title: t('about.whoWeAre.missionTitle'), body: t('about.whoWeAre.missionBody') },
+              { icon: <FiGlobe />, title: t('about.whoWeAre.visionTitle'), body: t('about.whoWeAre.visionBody') },
+              { icon: <FiStar />, title: t('about.whoWeAre.promiseTitle'), body: t('about.whoWeAre.promiseBody') },
+            ].map((c, i) => (
+              <div key={i} className="bg-white rounded-xl border border-gray-100 p-5 hover:border-gray-200 hover:shadow-sm transition-all">
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3 text-base"
+                  style={{ background: BRAND_BG, color: BRAND }}>
                   {c.icon}
                 </div>
-                <h3 className="text-sm font-bold text-gray-900 mb-1">{c.title}</h3>
-                <p className="text-xs text-gray-500 leading-relaxed mb-3 whitespace-pre-line">{c.detail}</p>
-                <button className="inline-flex items-center gap-1 text-xs font-semibold transition-colors" style={{ color: BRAND }}>
-                  {c.cta} <FiArrowRight className="text-[10px]" />
-                </button>
+                <h3 className="text-sm font-bold text-gray-900 mb-1.5">{c.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">{c.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ CORE VALUES ═══════════════════════════════════════ */}
+      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gray-50/70">
+        <div className="max-w-6xl mx-auto">
+          <SectionHeader
+            label={t('about.values.label')}
+            title={t('about.values.title')}
+            subtitle={t('about.values.subtitle')}
+          />
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {values.map((v, i) => (
+              <div key={i} className="bg-white rounded-xl p-4 border border-gray-100 hover:shadow-sm transition-all">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-3 text-sm text-white"
+                  style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, ${BRAND})` }}>
+                  {v.icon}
+                </div>
+                <h4 className="text-xs font-bold text-gray-900 mb-1">{v.title}</h4>
+                <p className="text-[11px] text-gray-500 leading-relaxed">{v.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ TIMELINE ══════════════════════════════════════════ */}
+      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <SectionHeader
+            label={t('about.timeline.label')}
+            title={t('about.timeline.title')}
+            subtitle={t('about.timeline.subtitle')}
+          />
+
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-4 md:left-1/2 md:-translate-x-px top-0 bottom-0 w-px" style={{ background: BRAND_BORDER }} />
+
+            {timeline.map((item, i) => (
+              <div key={i} className={`relative flex items-start gap-4 mb-6 last:mb-0 md:items-center ${
+                i % 2 === 0 ? 'md:flex-row-reverse md:text-right' : 'md:flex-row'
+              }`}>
+                <div className="flex-1 pl-10 md:pl-0 md:px-6">
+                  <div className="inline-block bg-white border border-gray-100 rounded-lg p-3.5 text-left md:max-w-sm shadow-sm">
+                    <div className="text-[10px] font-bold uppercase tracking-widest mb-0.5" style={{ color: BRAND }}>
+                      {item.year}
+                    </div>
+                    <h4 className="text-sm font-bold text-gray-900 mb-1">{item.title}</h4>
+                    <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+
+                {/* Dot */}
+                <div className="absolute left-4 md:left-1/2 md:-translate-x-1/2 w-3 h-3 rounded-full border-2 border-white shadow z-10"
+                  style={{ background: BRAND }} />
+
+                <div className="hidden md:block flex-1" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ CHANCELLOR'S MESSAGE ══════════════════════════════ */}
+      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gray-50/70">
+        <div className="max-w-4xl mx-auto">
+          <SectionHeader
+            label={t('about.chancellor.label')}
+            title={t('about.chancellor.title')}
+            subtitle={t('about.chancellor.subtitle')}
+          />
+
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 sm:p-5">
+            <div className="flex items-start gap-4">
+              {/* Small circular photo */}
+              <div className="relative flex-shrink-0">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2"
+                  style={{ borderColor: BRAND_BORDER }}>
+                  <img src={chPhoto} alt={chName} className="w-full h-full object-cover" />
+                </div>
+                <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full flex items-center justify-center shadow"
+                  style={{ background: BRAND }}>
+                  <FiAward className="text-white text-[9px]" />
+                </div>
+              </div>
+
+              {/* Text */}
+              <div className="flex-1 min-w-0">
+                <blockquote className="text-gray-600 text-xs sm:text-sm leading-relaxed italic font-light mb-3">
+                  "{chQuote}"
+                </blockquote>
+                <div className="flex items-center justify-between gap-3 pt-2.5 border-t border-gray-100">
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-gray-900 truncate">{chName}</p>
+                    <p className="text-[10px] text-gray-500">{chRole}</p>
+                  </div>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
+                      style={{ background: BRAND_BG, color: BRAND }}>
+                      <FiMail className="text-[10px]" />
+                    </button>
+                    <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
+                      style={{ background: BRAND_BG, color: BRAND }}>
+                      <FiLinkedin className="text-[10px]" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ LEADERSHIP BOARD ══════════════════════════════════ */}
+      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <SectionHeader
+            label={t('about.board.label')}
+            title={t('about.board.title')}
+            subtitle={t('about.board.subtitle')}
+          />
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {boardMembers.map((m) => (
+              <div key={m.name} className="bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-all p-3 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full overflow-hidden border-2 mb-2"
+                  style={{ borderColor: BRAND_BORDER }}>
+                  <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
+                </div>
+                <h3 className="text-xs font-bold text-gray-900 line-clamp-1">{m.name}</h3>
+                <p className="text-[10px] font-semibold line-clamp-1 mt-0.5" style={{ color: BRAND }}>{m.role}</p>
+                <p className="text-[9px] text-gray-400 line-clamp-1 mt-0.5">{m.dept}</p>
+                <div className="flex justify-center gap-1 mt-2">
+                  <button className="w-5 h-5 rounded flex items-center justify-center hover:opacity-80 transition"
+                    style={{ background: BRAND_BG, color: BRAND }}>
+                    <FiLinkedin className="text-[9px]" />
+                  </button>
+                  <button className="w-5 h-5 rounded flex items-center justify-center hover:opacity-80 transition"
+                    style={{ background: BRAND_BG, color: BRAND }}>
+                    <FiMail className="text-[9px]" />
+                  </button>
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="mt-10 rounded-2xl p-8 sm:p-10 text-center" style={{ background: BRAND }}>
-            <h3 className="text-xl sm:text-2xl font-bold text-white mb-2">Have Questions?</h3>
-            <p className="text-white/75 mb-7 max-w-xl mx-auto text-sm sm:text-base">
-              Our team is here to help you with any inquiries about membership, events, or opportunities.
-            </p>
-            <button className="px-7 py-3 bg-white font-bold rounded-xl text-sm hover:bg-gray-50 transition-colors shadow-md hover:-translate-y-0.5"
-              style={{ color: BRAND }}>
-              Contact Support Team
-            </button>
+          {/* Compact stats row */}
+          <div className="mt-8 rounded-xl border border-gray-100 grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-100 bg-white">
+            {[
+              { value: '15+', label: t('about.board.statYears') },
+              { value: '8', label: t('about.board.statDisciplines') },
+              { value: '100+', label: t('about.board.statProjects') },
+              { value: '50+', label: t('about.board.statAwards') },
+            ].map((s, i) => (
+              <div key={i} className="px-3 py-4 text-center">
+                <div className="text-xl font-extrabold mb-0.5" style={{ color: BRAND_DARK }}>{s.value}</div>
+                <div className="text-[10px] text-gray-500">{s.label}</div>
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* ═══ CONTACT + CTA ═════════════════════════════════════ */}
+      <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gray-50/70">
+        <div className="max-w-6xl mx-auto">
+          <SectionHeader
+            label={t('about.contact.label')}
+            title={t('about.contact.title')}
+            subtitle={t('about.contact.subtitle')}
+          />
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+            {contactItems.map((c) => (
+              <div key={c.title} className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-sm transition-all">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-2.5 text-sm"
+                  style={{ background: BRAND_BG, color: BRAND }}>
+                  {c.icon}
+                </div>
+                <h3 className="text-xs font-bold text-gray-900 mb-0.5">{c.title}</h3>
+                <p className="text-[11px] text-gray-500 leading-relaxed break-words">{c.detail}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Single combined CTA — hidden for logged-in alumni */}
+          {!isLoggedIn && (
+            <div className="rounded-2xl overflow-hidden p-8 text-center" style={{ background: BRAND_DARK }}>
+              <h3 className="text-xl sm:text-2xl font-extrabold text-white mb-2 tracking-tight">
+                {t('about.contact.ctaTitle')}
+              </h3>
+              <p className="text-sm text-white/70 mb-5 max-w-md mx-auto">
+                {t('about.contact.ctaSubtitle')}
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <Link to="/register" className="px-5 py-2.5 bg-white font-semibold text-xs rounded-lg hover:bg-gray-50 transition inline-flex items-center justify-center gap-1.5"
+                  style={{ color: BRAND_DARK }}>
+                  {t('about.contact.ctaCreate')} <FiArrowRight className="text-xs" />
+                </Link>
+                <Link to="/contact" className="px-5 py-2.5 bg-white/10 border border-white/20 text-white font-semibold text-xs rounded-lg hover:bg-white/15 transition inline-flex items-center justify-center gap-1.5">
+                  {t('about.contact.ctaContact')}
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
