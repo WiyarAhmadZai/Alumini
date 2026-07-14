@@ -53,9 +53,9 @@ const RankBadge = ({ rank }) => {
 const resolveImg = (img) => {
   if (!img) return null;
   if (img.startsWith('http')) return img;
-  if (img.startsWith('/storage/')) return `http://localhost:8001${img}`;
-  if (img.startsWith('storage/')) return `http://localhost:8001/${img}`;
-  return `http://localhost:8001/storage/${img}`;
+  if (img.startsWith('/storage/')) return `http://localhost:8000${img}`;
+  if (img.startsWith('storage/')) return `http://localhost:8000/${img}`;
+  return `http://localhost:8000/storage/${img}`;
 };
 
 // ─────────── Donation Modal ───────────
