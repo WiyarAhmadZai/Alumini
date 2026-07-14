@@ -10,6 +10,7 @@ import {
 import Swal from 'sweetalert2';
 import mentorService from '../services/mentorService';
 import authService from '../services/authService';
+import { Skeleton, SkeletonText } from '../components/ui/Skeleton';
 
 const BRAND = '#002759';
 const BRAND_LIGHT = '#0a519b';
@@ -396,8 +397,89 @@ const MentorDetailPage = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="w-10 h-10 border-2 border-gray-200 border-t-[#002759] rounded-full animate-spin" />
+        {/* HERO (static) */}
+        <section className="relative w-full h-64 sm:h-72 md:h-80 overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage:
+                'linear-gradient(rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.7) 100%), url("https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1600&q=80")',
+            }}
+          />
+          <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 pt-16">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider mb-3 border border-white/20">
+              {t('mentorship.detail.heroBadge')}
+            </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-2">{t('mentorship.detail.heroTitle')}</h1>
+            <p className="text-sm text-white/80 max-w-xl">{t('mentorship.detail.heroSubtitle')}</p>
+          </div>
+        </section>
+
+        <div className="bg-gray-50 min-h-screen">
+          {/* Back link placeholder */}
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-6">
+            <Skeleton className="h-9 w-32" />
+          </div>
+
+          {/* Profile card skeleton */}
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 pt-6">
+            <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+              <Skeleton className="h-40 sm:h-48 md:h-56 w-full" rounded="rounded-none" />
+              <div className="px-5 sm:px-6 pb-6 pt-6 sm:pt-8">
+                <div className="flex flex-col sm:flex-row items-start gap-5">
+                  <div className="flex-shrink-0 -mt-20 sm:-mt-24">
+                    <Skeleton className="w-28 h-28 sm:w-32 sm:h-32 border-4 border-white" rounded="rounded-xl" />
+                  </div>
+                  <div className="flex-1 min-w-0 space-y-2.5 sm:pb-2">
+                    <Skeleton className="h-6 w-48" />
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-40" />
+                  </div>
+                  <div className="flex gap-2 sm:pb-2">
+                    <Skeleton className="h-9 w-32" />
+                    <Skeleton className="h-9 w-28" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-5 border-t border-gray-100">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="flex flex-col items-center gap-2">
+                      <Skeleton className="h-7 w-12" />
+                      <Skeleton className="h-3 w-16" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Content skeleton */}
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-10 py-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-6">
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+                  <Skeleton className="h-5 w-40" />
+                  <SkeletonText lines={4} />
+                </div>
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+                  <Skeleton className="h-5 w-40" />
+                  <div className="flex flex-wrap gap-2">
+                    {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-7 w-20" />)}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-6">
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-4">
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-12 w-16 mx-auto" />
+                  <SkeletonText lines={3} />
+                </div>
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 space-y-3">
+                  <Skeleton className="h-4 w-28" />
+                  <SkeletonText lines={2} />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </Layout>
     );

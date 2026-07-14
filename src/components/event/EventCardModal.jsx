@@ -27,8 +27,9 @@ const translations = {
     cancel: 'لغوه',
     online: 'آنلاین', offline: 'حضوري', hybrid: 'هایبرېډ',
     scanToVerify: 'د تصدیق لپاره سکن کړئ',
+    label: 'پښتو',
   },
-  fa: {
+  da: {
     title: 'کارت اشتراک',
     university: 'پوهنتون پولی تخنیک کابل',
     eventLabel: 'رویداد',
@@ -48,12 +49,44 @@ const translations = {
     cancel: 'لغو',
     online: 'آنلاین', offline: 'حضوری', hybrid: 'هایبرید',
     scanToVerify: 'برای تأیید اسکن کنید',
+    label: 'دری',
   },
+  en: {
+    title: 'Attendance Card',
+    university: 'Kabul Polytechnic University',
+    eventLabel: 'Event',
+    dateLabel: 'Date',
+    dayLabel: 'Day',
+    timeLabel: 'Time',
+    locationLabel: 'Location',
+    nameLabel: 'Name',
+    facultyLabel: 'Faculty',
+    departmentLabel: 'Department',
+    idLabel: 'ID',
+    cardNote: 'This card is valid for attending the event',
+    download: 'Download as image',
+    warning: 'Warning',
+    warningText: 'After downloading the card, registration cannot be cancelled',
+    confirm: 'Yes, download it',
+    cancel: 'Cancel',
+    online: 'Online', offline: 'In-person', hybrid: 'Hybrid',
+    scanToVerify: 'Scan to verify',
+    label: 'EN',
+  },
+};
+
+// App language codes (en / da / ps) map directly onto card languages.
+const CARD_LANGS = ['ps', 'da', 'en'];
+const toCardLang = (appLang) => {
+  const base = (appLang || '').split('-')[0];
+  if (base === 'fa') return 'da';
+  return CARD_LANGS.includes(base) ? base : 'da';
 };
 
 const dayNames = {
   ps: ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'],
-  fa: ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'],
+  da: ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنجشنبه', 'جمعه', 'شنبه'],
+  en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
 };
 
 const resolveImage = (img) => {
@@ -113,13 +146,21 @@ const SITE_URL = window.location.hostname === 'localhost'
   : window.location.origin;
 
 const EventCardModal = ({ isOpen, onClose, event, user, registration, onCardDownloaded }) => {
-  const { t: tt } = useTranslation();
-  const [lang, setLang] = useState('fa');
+  const { t: tt, i18n } = useTranslation();
+  // Default the card language to whatever the app is currently in, so the card
+  // and its alerts appear in Pashto / Dari / English to match the user.
+  const [lang, setLang] = useState(() => toCardLang(i18n.language));
   const [downloading, setDownloading] = useState(false);
   const [profileDataUrl, setProfileDataUrl] = useState(null);
   const [logoDataUrl, setLogoDataUrl] = useState(null);
   const cardRef = useRef(null);
   const t = translations[lang];
+  const cardDir = lang === 'en' ? 'ltr' : 'rtl';
+
+  // Keep the card in sync if the user switches the app language while it's open.
+  useEffect(() => {
+    setLang(toCardLang(i18n.language));
+  }, [i18n.language]);
 
   const profileImg = resolveImage(user?.profile_image || user?.student_photo);
 
@@ -194,8 +235,9 @@ const EventCardModal = ({ isOpen, onClose, event, user, registration, onCardDown
           <h3 className="text-sm font-bold text-gray-900">{t.title}</h3>
           <div className="flex items-center gap-2">
             <div className="flex bg-gray-100 rounded-lg p-0.5">
-              <button onClick={() => setLang('ps')} className={`px-2.5 py-1 text-[10px] font-semibold rounded-md transition-colors ${lang === 'ps' ? 'bg-[#002759] text-white shadow' : 'text-gray-600'}`}>پښتو</button>
-              <button onClick={() => setLang('fa')} className={`px-2.5 py-1 text-[10px] font-semibold rounded-md transition-colors ${lang === 'fa' ? 'bg-[#002759] text-white shadow' : 'text-gray-600'}`}>دری</button>
+              {CARD_LANGS.map((l) => (
+                <button key={l} onClick={() => setLang(l)} className={`px-2.5 py-1 text-[10px] font-semibold rounded-md transition-colors ${lang === l ? 'bg-[#002759] text-white shadow' : 'text-gray-600'}`}>{translations[l].label}</button>
+              ))}
             </div>
             <button onClick={onClose} className="p-1 text-gray-400 hover:text-gray-600 rounded"><FiX size={18} /></button>
           </div>
@@ -226,7 +268,7 @@ const EventCardModal = ({ isOpen, onClose, event, user, registration, onCardDown
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 {logoDataUrl && (
-                  <img src={logoDataUrl} alt={tt('events.cardModal.logoAlt')} style={{ width: '44px', height: '44px', borderRadius: '8px', background: '#fff', padding: '4px', display: 'block' }} />
+                  <img src={logoDataUrl} alt={tt('events.cardModal.logoAlt')} style={{ width: '44px', height: '44px', objectFit: 'contain', display: 'block' }} />
                 )}
                 <div>
                   <div style={{ color: '#fff', fontSize: '16px', fontWeight: 800, lineHeight: 1.2 }}>{t.university}</div>
@@ -245,7 +287,7 @@ const EventCardModal = ({ isOpen, onClose, event, user, registration, onCardDown
             </div>
 
             {/* Body */}
-            <div style={{ padding: '20px 22px', display: 'flex', gap: '20px', alignItems: 'flex-start' }} dir="rtl">
+            <div style={{ padding: '20px 22px', display: 'flex', gap: '20px', alignItems: 'flex-start' }} dir={cardDir}>
               <div style={{ flexShrink: 0, textAlign: 'center', width: '120px' }}>
                 {profileDataUrl ? (
                   <img
@@ -277,7 +319,7 @@ const EventCardModal = ({ isOpen, onClose, event, user, registration, onCardDown
             </div>
 
             {/* Footer with QR */}
-            <div style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '14px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px' }} dir="rtl">
+            <div style={{ background: '#f8fafc', borderTop: '1px solid #e2e8f0', padding: '14px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '14px' }} dir={cardDir}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{ background: '#fff', padding: '6px', borderRadius: '10px', border: '2px solid #002759', lineHeight: 0 }}>
                   <QRCodeCanvas
@@ -319,7 +361,9 @@ const MiniBox = ({ label, value, wide }) => (
     boxSizing: 'border-box',
     ...(wide ? { gridColumn: 'span 2' } : {}),
   }}>
-    <div style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{label}</div>
+    {/* No letterSpacing: html2canvas cannot shape Arabic/Pashto script when
+        letter-spacing is applied, which disconnects the glyphs in the export. */}
+    <div style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8' }}>{label}</div>
     <div style={{ fontSize: '13px', fontWeight: 700, color: '#1e293b', marginTop: '3px', lineHeight: 1.3 }}>{value}</div>
   </div>
 );

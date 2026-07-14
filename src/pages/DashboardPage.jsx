@@ -6,6 +6,7 @@ import {
   FiSearch, FiUser, FiGrid, FiChevronRight, FiBell
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
+import { SkeletonStat, SkeletonRows } from '../components/ui/Skeleton';
 import { AuthContext } from '../contexts/AuthContext';
 import authService from '../services/authService';
 import jobService from '../services/jobService';
@@ -144,19 +145,21 @@ const DashboardPage = () => {
         {/* Stats — overlapping the hero */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12 relative z-10">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-            {stats.map((s) => (
-              <Link key={s.key} to={s.to}
-                    className="group bg-white rounded-2xl p-4 sm:p-5 shadow-lg hover:shadow-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-1">
-                <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${s.grad} flex items-center justify-center text-white shadow-md mb-3`}>
-                  <s.icon size={20} />
-                </div>
-                <div className="text-2xl sm:text-3xl font-extrabold text-[#002759]">
-                  {loading ? '—' : s.value}
-                </div>
-                <div className="text-xs sm:text-sm text-gray-500 font-medium mt-0.5">{s.label}</div>
-                {s.sub && <div className="text-[11px] text-red-500 font-semibold mt-1">{s.sub}</div>}
-              </Link>
-            ))}
+            {loading
+              ? Array.from({ length: 4 }).map((_, i) => <SkeletonStat key={i} />)
+              : stats.map((s) => (
+                <Link key={s.key} to={s.to}
+                      className="group bg-white rounded-2xl p-4 sm:p-5 shadow-lg hover:shadow-2xl border border-gray-100 transition-all duration-300 hover:-translate-y-1">
+                  <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${s.grad} flex items-center justify-center text-white shadow-md mb-3`}>
+                    <s.icon size={20} />
+                  </div>
+                  <div className="text-2xl sm:text-3xl font-extrabold text-[#002759]">
+                    {s.value}
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-500 font-medium mt-0.5">{s.label}</div>
+                  {s.sub && <div className="text-[11px] text-red-500 font-semibold mt-1">{s.sub}</div>}
+                </Link>
+              ))}
           </div>
         </div>
 
@@ -165,7 +168,9 @@ const DashboardPage = () => {
           <div className="lg:col-span-2 space-y-6">
             {/* Recent applications */}
             <SectionCard title={t('dashboard.recent.applications')} icon={FiBriefcase} to="/applications" viewAll={t('dashboard.recent.viewAll')}>
-              {applications.length === 0 ? (
+              {loading ? (
+                <SkeletonRows count={3} />
+              ) : applications.length === 0 ? (
                 <Empty text={t('dashboard.recent.emptyApplications')} />
               ) : (
                 <ul className="divide-y divide-gray-100">
@@ -187,7 +192,9 @@ const DashboardPage = () => {
 
             {/* Upcoming events */}
             <SectionCard title={t('dashboard.recent.events')} icon={FiCalendar} to="/events/registered" viewAll={t('dashboard.recent.viewAll')}>
-              {events.length === 0 ? (
+              {loading ? (
+                <SkeletonRows count={3} />
+              ) : events.length === 0 ? (
                 <Empty text={t('dashboard.recent.emptyEvents')} />
               ) : (
                 <ul className="divide-y divide-gray-100">
@@ -212,7 +219,9 @@ const DashboardPage = () => {
 
             {/* Recent messages */}
             <SectionCard title={t('dashboard.recent.messages')} icon={FiMessageSquare} to="/messages" viewAll={t('dashboard.recent.viewAll')}>
-              {messages.length === 0 ? (
+              {loading ? (
+                <SkeletonRows count={3} />
+              ) : messages.length === 0 ? (
                 <Empty text={t('dashboard.recent.emptyMessages')} />
               ) : (
                 <ul className="divide-y divide-gray-100">

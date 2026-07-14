@@ -301,6 +301,7 @@ const ProfilePage = () => {
   const [mentorRequests, setMentorRequests] = useState([]);
   const [loadingMentorRequests, setLoadingMentorRequests] = useState(false);
   const [myMentees, setMyMentees] = useState([]);
+  const [loadingMentees, setLoadingMentees] = useState(false);
   const [totalMentees, setTotalMentees] = useState(0);
   const [profileNotifications, setProfileNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
@@ -319,10 +320,11 @@ const ProfilePage = () => {
             setMentorRequests(r.data || []);
           }).catch(() => { }).finally(() => setLoadingMentorRequests(false));
           // Load preview of mentees (limit 3)
+          setLoadingMentees(true);
           mentorService.getMyMentees(3).then(r => {
             setMyMentees(r.data?.mentees || []);
             setTotalMentees(r.data?.total || 0);
-          }).catch(() => { });
+          }).catch(() => { }).finally(() => setLoadingMentees(false));
         }
       }).catch(() => { });
       // Load own mentor applications (requests sent to others)
@@ -1145,6 +1147,8 @@ const ProfilePage = () => {
             </div>
           )}
 
+          {!loading && (
+          <>
           {/* Profile Header Card */}
           <div className="rounded-2xl border border-gray-200 shadow-sm overflow-hidden mb-6 bg-white mt-6">
             {/* Cover Image */}
@@ -1567,7 +1571,19 @@ const ProfilePage = () => {
                       </Link>
                     </div>
                     <div className="space-y-3">
-                      {messages.length === 0 ? (
+                      {loadingMessages ? (
+                        <div className="space-y-3">
+                          {Array.from({ length: 3 }, (_, index) => (
+                            <div key={index} className="animate-pulse flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                              <div className="w-8 h-8 rounded-lg bg-gray-200 flex-shrink-0" />
+                              <div className="flex-1 space-y-2">
+                                <div className="h-3.5 bg-gray-200 rounded w-3/4" />
+                                <div className="h-3 bg-gray-200 rounded w-1/2" />
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : messages.length === 0 ? (
                         <div className="text-center py-6">
                           <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                             <FiMail className="text-gray-400 text-xl" />
@@ -1748,7 +1764,19 @@ const ProfilePage = () => {
                         </span>
                       )}
                     </div>
-                    {myMentees.length === 0 ? (
+                    {loadingMentees ? (
+                      <div className="space-y-3">
+                        {Array.from({ length: 3 }, (_, i) => (
+                          <div key={i} className="animate-pulse flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0" />
+                            <div className="flex-1 space-y-2">
+                              <div className="h-3.5 bg-gray-200 rounded w-3/4" />
+                              <div className="h-3 bg-gray-200 rounded w-1/2" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : myMentees.length === 0 ? (
                       <div className="text-center py-6">
                         <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                           <FiUsers className="text-gray-400 text-xl" />
@@ -2326,6 +2354,8 @@ const ProfilePage = () => {
               </div>
             )}
           </div>
+          </>
+          )}
         </div>
       </div>
 

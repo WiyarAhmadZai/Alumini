@@ -10,6 +10,7 @@ import {
   FiCalendar
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
+import { SkeletonCard } from '../components/ui/Skeleton';
 import eventService from '../services/eventService';
 import authService from '../services/authService';
 import { useHero } from '../contexts/HeroContext';
@@ -23,6 +24,10 @@ const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [latestEvents, setLatestEvents] = useState([]);
+  // Loading flags let us show skeletons while the DB fetch is in flight and only
+  // fall back to the empty-state once we know the list is genuinely empty.
+  const [loadingUpcoming, setLoadingUpcoming] = useState(true);
+  const [loadingLatest, setLoadingLatest] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const testimonials = [
@@ -162,6 +167,8 @@ const HomePage = () => {
         setUpcomingEvents(nearestEvents);
       } catch (error) {
         // Silently handle error
+      } finally {
+        setLoadingUpcoming(false);
       }
     };
 
@@ -181,6 +188,8 @@ const HomePage = () => {
         setLatestEvents(sorted);
       } catch {
         // silently ignore
+      } finally {
+        setLoadingLatest(false);
       }
     };
     fetchLatestEvents();
@@ -265,20 +274,15 @@ const HomePage = () => {
           </Link>
         </div>
 
-        {latestEvents.length === 0 ? (
-          /* Skeleton while loading */
+        {loadingLatest ? (
+          /* Skeleton while the DB fetch is in flight */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm animate-pulse">
-                <div className="h-48 bg-gray-200" />
-                <div className="p-5 space-y-3">
-                  <div className="h-4 bg-gray-200 rounded w-3/4" />
-                  <div className="h-3 bg-gray-100 rounded" />
-                  <div className="h-3 bg-gray-100 rounded w-4/5" />
-                </div>
-              </div>
+              <SkeletonCard key={i} imageHeight="h-48" />
             ))}
           </div>
+        ) : latestEvents.length === 0 ? (
+          <div className="text-center py-10 text-gray-400 text-sm">{t('home.noUpcomingEvents')}</div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 px-4 sm:px-6 md:px-0">
             {latestEvents.map((event) => {
@@ -380,7 +384,20 @@ const HomePage = () => {
                 </Link>
               </div>
               <div className="lg:w-2/3 flex flex-col gap-3 sm:gap-4">
-                {upcomingEvents.length === 0 && (
+                {loadingUpcoming && (
+                  /* Dark-surface skeleton rows while the fetch is in flight */
+                  [...Array(2)].map((_, i) => (
+                    <div key={i} className="flex gap-3 sm:gap-6 items-center p-3 sm:p-4 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
+                      <div className="animate-pulse bg-white/20 min-w-[60px] sm:min-w-[70px] h-[60px] sm:h-[70px] rounded-lg" />
+                      <div className="flex-1 space-y-2">
+                        <div className="animate-pulse bg-white/20 h-4 rounded w-1/2" />
+                        <div className="animate-pulse bg-white/10 h-3 rounded w-3/4" />
+                        <div className="animate-pulse bg-white/10 h-3 rounded w-1/3" />
+                      </div>
+                    </div>
+                  ))
+                )}
+                {!loadingUpcoming && upcomingEvents.length === 0 && (
                   <div className="flex flex-col items-center justify-center text-center p-8 sm:p-10 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
                     <div className="w-16 h-16 sm:w-20 sm:h-20 bg-white/10 rounded-full flex items-center justify-center mb-4">
                       <FiCalendar className="text-blue-300 text-2xl sm:text-3xl" />

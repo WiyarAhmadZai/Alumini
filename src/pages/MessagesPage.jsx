@@ -355,7 +355,44 @@ const MessagesPage = () => {
           </div>
         </div>
 
-        {messages.length === 0 && !messagesLoading ? (
+        {messagesLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {Array.from({ length: 8 }, (_, index) => (
+              <div key={index} className="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+                <div className="h-full flex flex-col">
+                  {/* Header Skeleton */}
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-gray-200 animate-pulse"></div>
+                    <div className="flex-1">
+                      <div className="h-4 bg-gray-200 rounded w-full mb-2 animate-pulse"></div>
+                      <div className="h-3 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                    </div>
+                  </div>
+                  {/* Status/date Skeleton */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
+                    <div className="h-5 bg-gray-200 rounded-full w-16 animate-pulse"></div>
+                  </div>
+                  {/* Message Skeleton */}
+                  <div className="mb-3 flex-1">
+                    <div className="h-3 bg-gray-200 rounded w-full mb-1 animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded w-4/5 animate-pulse"></div>
+                  </div>
+                  {/* Response Skeleton */}
+                  <div className="mb-3 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="h-3 bg-gray-200 rounded w-24 mb-1 animate-pulse"></div>
+                    <div className="h-3 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                  </div>
+                  {/* Actions Skeleton */}
+                  <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                    <div className="h-3 bg-gray-200 rounded w-24 animate-pulse"></div>
+                    <div className="w-6 h-6 bg-gray-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : messages.length === 0 ? (
           <div className="bg-white rounded-2xl border border-gray-200 p-8 text-center">
             <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
               {getStatusEmptyMessage(statusFilter, !!debouncedSearchTerm).icon}

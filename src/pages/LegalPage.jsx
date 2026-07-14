@@ -8,6 +8,7 @@ import fundraisingService from '../services/fundraisingService';
 import authService from '../services/authService';
 import { useHero } from '../contexts/HeroContext';
 import HeroBackground from '../components/ui/HeroBackground';
+import { Skeleton, SkeletonAvatar } from '../components/ui/Skeleton';
 
 // ─── Brand palette ─────────────────────────────────────────────
 const BRAND = '#002759';        // primary dark navy
@@ -411,25 +412,25 @@ const GivingPage = () => {
             <div className="text-center px-3 py-2 sm:py-1 border-r border-gray-100 last:border-r-0">
               <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">{t('legal.metrics.totalRaised')}</div>
               <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
-                ${Number(totalRaised).toLocaleString()}
+                {loading ? <Skeleton className="h-7 w-24 mx-auto" /> : <>${Number(totalRaised).toLocaleString()}</>}
               </div>
             </div>
             <div className="text-center px-3 py-2 sm:py-1 md:border-r border-gray-100">
               <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">{t('legal.metrics.generousDonors')}</div>
               <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
-                {Number(topDonorsTotal || 0).toLocaleString()}
+                {loading ? <Skeleton className="h-7 w-16 mx-auto" /> : Number(topDonorsTotal || 0).toLocaleString()}
               </div>
             </div>
             <div className="text-center px-3 py-2 sm:py-1 border-r border-gray-100">
               <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">{t('legal.metrics.activeProjects')}</div>
               <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
-                {activeProjectsCount}
+                {loading ? <Skeleton className="h-7 w-10 mx-auto" /> : activeProjectsCount}
               </div>
             </div>
             <div className="text-center px-3 py-2 sm:py-1">
               <div className="text-[10px] font-bold uppercase tracking-[0.15em] text-gray-500 mb-1">{t('legal.metrics.overallProgress')}</div>
               <div className="text-xl sm:text-2xl font-extrabold" style={{ color: BRAND }}>
-                {Math.round(overallPct)}%
+                {loading ? <Skeleton className="h-7 w-14 mx-auto" /> : `${Math.round(overallPct)}%`}
               </div>
             </div>
           </div>
@@ -634,7 +635,30 @@ const GivingPage = () => {
             </div>
 
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-              {topDonors.length === 0 ? (
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="p-5 bg-white rounded-xl border border-gray-200">
+                      <div className="flex items-start gap-4">
+                        <SkeletonAvatar size={56} />
+                        <div className="flex-1 min-w-0 space-y-2">
+                          <Skeleton className="h-4 w-1/2" />
+                          <Skeleton className="h-3 w-1/3" />
+                          <Skeleton className="h-3 w-2/3" />
+                        </div>
+                        <div className="text-right flex-shrink-0 space-y-1.5">
+                          <Skeleton className="h-5 w-16" />
+                          <Skeleton className="h-3 w-10 ml-auto" />
+                        </div>
+                      </div>
+                      <div className="mt-3 pt-3 border-t border-gray-200 grid grid-cols-2 gap-2">
+                        <Skeleton className="h-7 w-full" rounded="rounded-md" />
+                        <Skeleton className="h-7 w-full" rounded="rounded-md" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : topDonors.length === 0 ? (
                 <div className="text-center py-10">
                   <FiHeart size={40} className="mx-auto text-gray-300 mb-3" />
                   <p className="text-gray-500 font-semibold">{t('legal.wall.emptyTitle')}</p>

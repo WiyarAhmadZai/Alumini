@@ -32,6 +32,7 @@ import { SettingsProvider } from './contexts/SettingsContext';
 import { HeroProvider } from './contexts/HeroContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import HeroEditBridge from './components/HeroEditBridge';
+import ContentOverrides from './components/ContentOverrides';
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
       <AuthProvider>
         <SettingsProvider>
         <HeroProvider>
+        <ContentOverrides />
         <HeroEditBridge />
         <Routes>
           <Route path="/" element={<HomePage />} />

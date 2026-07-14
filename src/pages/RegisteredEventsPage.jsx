@@ -6,6 +6,7 @@ import { FiCalendar, FiClock, FiMapPin, FiVideo, FiChevronLeft, FiChevronRight, 
 import eventService from '../services/eventService';
 import { useAuth } from '../contexts/AuthContext';
 import Swal from 'sweetalert2';
+import { SkeletonGrid } from '../components/ui/Skeleton';
 
 const RegisteredEventsPage = () => {
   const { t } = useTranslation();
@@ -171,9 +172,12 @@ const RegisteredEventsPage = () => {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 lg:px-8 py-12">
           {loading ? (
-            <div className="flex justify-center items-center py-20">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
+            <SkeletonGrid
+              count={6}
+              cols="grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+              gap="gap-6"
+              imageHeight="h-48"
+            />
           ) : registeredEvents.length === 0 ? (
             <div className="text-center py-20">
               <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-6">

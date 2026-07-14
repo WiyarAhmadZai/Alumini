@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { FiCheckCircle, FiXCircle, FiCalendar, FiMapPin, FiClock, FiUser } from 'react-icons/fi';
 import eventService from '../services/eventService';
+import { Skeleton } from '../components/ui/Skeleton';
 
 const resolveImage = (img) => {
   if (!img) return null;
@@ -56,8 +57,54 @@ const VerifyCardPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center p-4">
+        <div className="max-w-md w-full">
+          {/* Logo */}
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-3">
+              <img src="/logo_kpu.png" alt="KPU" className="w-12 h-12 rounded-xl bg-white p-1 shadow" />
+              <div className="text-right">
+                <h1 className="text-lg font-bold text-[#002759]">پوهنتون پولی تخنیک کابل</h1>
+                <p className="text-xs text-gray-500">{t('events.verify.cardVerification')}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+            {/* Status banner */}
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200 flex flex-col items-center">
+              <Skeleton className="w-10 h-10 mb-2" rounded="rounded-full" />
+              <Skeleton className="h-5 w-40 mb-1.5" />
+              <Skeleton className="h-3 w-52" />
+            </div>
+            {/* Event info */}
+            <div className="p-6 space-y-4">
+              <Skeleton className="w-full h-32" rounded="rounded-xl" />
+              <div className="space-y-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-4 w-20" rounded="rounded-full" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-full col-span-2" />
+              </div>
+              <div className="border-t border-gray-200 pt-4">
+                <div className="bg-gray-50 rounded-xl p-3 flex items-center gap-3">
+                  <Skeleton className="w-12 h-12" rounded="rounded-lg" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-4 w-1/2" />
+                    <Skeleton className="h-3 w-1/3" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Footer */}
+            <div className="bg-gray-50 border-t border-gray-200 px-6 py-3 flex justify-center">
+              <Skeleton className="h-3 w-40" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
