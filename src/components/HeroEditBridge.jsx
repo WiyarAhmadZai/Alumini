@@ -53,17 +53,25 @@ export default function HeroEditBridge() {
       catch { return ''; }
     };
 
-    // ── Reverse index: displayed text → i18n key (current language) ──
-    let valueToKey = {};
+    // ── Reverse index: displayed text → i18n key(s) (current language) ──
+    // A given text can map to MORE THAN ONE key (e.g. "Stay Updated" exists as
+    // both home.stayUpdated and events.list.stayUpdatedTitle). Keep every match
+    // so the click handler can pick the one that belongs to the current page —
+    // otherwise clicking it always edits whichever key was indexed first and the
+    // page the user is actually on never changes.
+    let valueToKeys = {};
     const buildIndex = () => {
-      valueToKey = {};
+      valueToKeys = {};
       const bundle = i18n.getResourceBundle(i18n.language, 'translation') || {};
       const walk = (obj, prefix) => {
         Object.entries(obj).forEach(([k, v]) => {
           const key = prefix ? `${prefix}.${k}` : k;
           if (typeof v === 'string') {
             const n = norm(v);
-            if (n && !(n in valueToKey)) valueToKey[n] = key;
+            if (n) {
+              if (!valueToKeys[n]) valueToKeys[n] = [];
+              valueToKeys[n].push(key);
+            }
           } else if (v && typeof v === 'object') {
             walk(v, key);
           }
@@ -74,11 +82,16 @@ export default function HeroEditBridge() {
     buildIndex();
     i18n.on('languageChanged', buildIndex);
 
-    const keyForElement = (el, stop) => {
+    // Resolve the clicked element's text to a key, preferring a key that belongs
+    // to the current page (prefix `${page}.`) so duplicate text across pages
+    // edits the right one.
+    const keyForElement = (el, stop, page) => {
       let node = el;
       for (let i = 0; i < 4 && node && node !== stop; i += 1, node = node.parentElement) {
-        const key = valueToKey[norm(node.textContent)];
-        if (key) return key;
+        const keys = valueToKeys[norm(node.textContent)];
+        if (keys && keys.length) {
+          return keys.find((k) => k === page || k.startsWith(`${page}.`)) || keys[0];
+        }
       }
       return null;
     };
@@ -123,7 +136,7 @@ export default function HeroEditBridge() {
       }
 
       // 2) Any other translated text → content editor.
-      const key = keyForElement(e.target, document.body);
+      const key = keyForElement(e.target, document.body, page);
       if (!key) {
         window.parent.postMessage({ type: 'kpu-content-notfound' }, '*');
         return; // let the click behave normally (it's not editable text)

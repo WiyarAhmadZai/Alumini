@@ -1,25 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Swal from 'sweetalert2';
 import {
-  FiArrowRight, 
-  FiMapPin, 
-  FiVideo, 
+  FiArrowRight,
+  FiMapPin,
+  FiVideo,
   FiUser,
   FiMail,
-  FiCalendar
+  FiCalendar,
+  FiEdit3
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import { SkeletonCard } from '../components/ui/Skeleton';
 import eventService from '../services/eventService';
 import authService from '../services/authService';
+import successStoryService from '../services/successStoryService';
 import { useHero } from '../contexts/HeroContext';
 import { resolveHeroImage } from '../components/ui/HeroBackground';
 
 const HomePage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // Pashto/Dari render right-to-left, so the slider must translate the other way.
+  const isRTL = ['fa', 'da', 'ps', 'ar'].some((l) => (i18n.language || '').toLowerCase().startsWith(l));
   const hero = useHero('home');
   const isLoggedIn = authService.isAuthenticated();
+  const navigate = useNavigate();
+  // Admin-approved & featured alumni stories (fall back to the built-in ones).
+  const [featuredStories, setFeaturedStories] = useState([]);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
@@ -30,7 +38,7 @@ const HomePage = () => {
   const [loadingLatest, setLoadingLatest] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const testimonials = [
+  const fallbackTestimonials = [
     {
       id: 1,
       name: t('home.testimonial1Name'),
@@ -64,6 +72,65 @@ const HomePage = () => {
       quote: t('home.testimonial4Quote')
     }
   ];
+
+  // Prefer real, admin-featured alumni stories; otherwise show the built-in ones.
+  const testimonials = featuredStories.length
+    ? featuredStories.map((s) => ({
+        id: s.id,
+        name: s.name || '',
+        faculty: [s.faculty, s.graduation_year].filter(Boolean).join(' · '),
+        position: [s.position, s.company].filter(Boolean).join(', '),
+        quote: s.quote,
+        image: s.image ? resolveHeroImage(s.image) : fallbackTestimonials[0].image,
+      }))
+    : fallbackTestimonials;
+
+  // Open a modal for the logged-in alumnus to submit their success story.
+  const shareStory = async () => {
+    if (!isLoggedIn) {
+      const res = await Swal.fire({
+        icon: 'info',
+        title: t('home.loginToShare', 'Sign in to share your story'),
+        showCancelButton: true,
+        confirmButtonText: t('home.signIn', 'Sign in'),
+        cancelButtonText: t('common.cancel', 'Cancel'),
+      });
+      if (res.isConfirmed) navigate('/login');
+      return;
+    }
+    const { value, isConfirmed } = await Swal.fire({
+      title: t('home.shareYourStory', 'Share your success story'),
+      input: 'textarea',
+      inputLabel: t('home.yourStory', 'Your story'),
+      inputPlaceholder: t('home.storyPlaceholder', 'Tell us how KPU shaped your journey…'),
+      inputAttributes: { maxlength: '2000', 'aria-label': 'Your story' },
+      showCancelButton: true,
+      confirmButtonText: t('home.submitStory', 'Submit for review'),
+      cancelButtonText: t('common.cancel', 'Cancel'),
+      inputValidator: (v) => (!v || v.trim().length < 20 ? t('home.storyTooShort', 'Please write at least 20 characters.') : undefined),
+    });
+    if (!isConfirmed || !value) return;
+    try {
+      await successStoryService.submit(value.trim());
+      Swal.fire({
+        icon: 'success',
+        title: t('home.storySubmitted', 'Thank you!'),
+        text: t('home.storyPending', 'Your story was submitted and will appear here once an admin approves it.'),
+      });
+    } catch (e) {
+      Swal.fire({
+        icon: 'error',
+        title: t('common.error', 'Something went wrong'),
+        text: e?.response?.data?.message || t('home.storyFailed', 'Could not submit your story. Please try again.'),
+      });
+    }
+  };
+
+  useEffect(() => {
+    let active = true;
+    successStoryService.getFeatured().then((list) => { if (active) setFeaturedStories(list); });
+    return () => { active = false; };
+  }, []);
 
   // Static fallback slides — used until an admin configures the "home" hero.
   const staticHeroSlides = [
@@ -485,6 +552,15 @@ const HomePage = () => {
               <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto">
                 {t('home.successStoriesSubtitle')}
               </p>
+              <button
+                type="button"
+                onClick={shareStory}
+                data-no-edit
+                className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#002759] to-[#0a519b] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+              >
+                <FiEdit3 />
+                {t('home.shareYourStory', 'Share your success story')}
+              </button>
             </div>
             
             {/* Modern Slider */}
@@ -494,7 +570,7 @@ const HomePage = () => {
                 <div 
                   className="flex transition-transform duration-700 ease-out"
                   style={{
-                    transform: `translateX(-${currentTestimonial * 100}%)`,
+                    transform: `translateX(${isRTL ? '' : '-'}${currentTestimonial * 100}%)`,
                     transition: currentTestimonial === 0 ? 'none' : 'transform 700ms ease-out'
                   }}
                 >
@@ -525,7 +601,7 @@ const HomePage = () => {
                           </div>
                           
                           {/* Right - Content */}
-                          <div className="order-1 lg:order-2 text-center lg:text-left">
+                          <div className="order-1 lg:order-2 text-center lg:text-start">
                             <p className="text-gray-700 text-sm sm:text-base leading-relaxed mb-4 sm:mb-6">
                               {testimonial.quote}
                             </p>
@@ -565,7 +641,10 @@ const HomePage = () => {
               <button 
                 className="absolute top-1/2 -left-3 sm:-left-4 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-white shadow-xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
                 onClick={() => {
-                  if (currentTestimonial === 0) {
+                  // Left arrow: goes back in LTR, forward in RTL (next card is on the left).
+                  if (isRTL) {
+                    setCurrentTestimonial(prev => prev + 1);
+                  } else if (currentTestimonial === 0) {
                     setCurrentTestimonial(testimonials.length - 1);
                   } else {
                     setCurrentTestimonial(prev => prev - 1);
@@ -579,7 +658,12 @@ const HomePage = () => {
               <button 
                 className="absolute top-1/2 -right-3 sm:-right-4 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 lg:w-14 lg:h-14 rounded-full bg-white shadow-xl flex items-center justify-center text-[#002759] hover:bg-gradient-to-r hover:from-[#002759] hover:to-[#0a519b] hover:text-white transition-all duration-300 z-20 group border border-gray-100"
                 onClick={() => {
-                  setCurrentTestimonial(prev => prev + 1);
+                  // Right arrow: goes forward in LTR, back in RTL.
+                  if (isRTL) {
+                    setCurrentTestimonial(prev => (prev === 0 ? testimonials.length - 1 : prev - 1));
+                  } else {
+                    setCurrentTestimonial(prev => prev + 1);
+                  }
                 }}
               >
                 <svg className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

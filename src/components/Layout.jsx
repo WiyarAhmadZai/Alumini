@@ -206,11 +206,11 @@ const Layout = ({ children }) => {
                 isScrolled ? 'text-white' : 'text-white'
               }`}>
                 <Link to="/" className="flex items-center space-x-2">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
                     <img
                       src={brandLogo}
                       alt="KPU University"
-                      className="w-6 h-6 sm:w-8 sm:h-8 object-contain"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="text-left min-w-0">
@@ -559,11 +559,11 @@ const Layout = ({ children }) => {
                   {/* Sidebar Header */}
                   <div className="flex items-center justify-between p-4 border-b border-[#003d7a]">
                     <div className="flex items-center space-x-2">
-                      <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
                         <img
                           src={brandLogo}
                           alt="KPU University"
-                          className="w-8 h-8 object-contain"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="text-left min-w-0">
@@ -826,11 +826,11 @@ const Layout = ({ children }) => {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center space-x-2 mb-4 sm:mb-6">
-              <div className="w-10 h-10 bg-neutral-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
                 <img
                   src={brandLogo}
                   alt="KPU University"
-                  className="w-8 h-8 object-contain"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div className="text-left min-w-0">
