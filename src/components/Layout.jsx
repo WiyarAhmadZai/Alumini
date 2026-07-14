@@ -33,21 +33,42 @@ import {
   FiHeart
 } from 'react-icons/fi';
 
-// Build a usable avatar URL from a stored profile_image (relative /storage path
-// works from any host via the Vite proxy), falling back to a generated avatar.
-const avatarUrl = (user, size = 40) => {
-  const img = user?.profile_image;
-  if (img) {
-    if (/^https?:\/\//.test(img)) {
-      const m = img.match(/\/storage\/.*/);
-      return m ? m[0] : img;
-    }
-    return img.startsWith('/storage') ? img : `/storage/${img}`;
+// Resolve the user's photo to a same-origin /storage path (works from any host
+// via the Vite proxy). Accepts whichever field the API populated. Returns null
+// when there's no image so the caller can show an initials fallback.
+const resolveAvatar = (user) => {
+  const img = user?.profile_image_url || user?.profile_image || user?.student_photo;
+  if (!img) return null;
+  if (/^https?:\/\//.test(img)) {
+    const m = img.match(/\/storage\/.*/);
+    return m ? m[0] : img;
   }
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=002759&color=ffffff&size=${size}`;
+  return img.startsWith('/storage') ? img : `/storage/${img}`;
 };
-const fallbackAvatar = (user, size = 40) =>
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=002759&color=ffffff&size=${size}`;
+
+// Avatar that shows the profile photo when available and gracefully falls back
+// to the user's initial in a branded circle — no external service, so it works
+// offline / on an isolated LAN (where ui-avatars.com would fail to load).
+const UserAvatar = ({ user, className = '' }) => {
+  const [failed, setFailed] = useState(false);
+  const src = failed ? null : resolveAvatar(user);
+  if (!src) {
+    const initial = (user?.name || 'U').trim().charAt(0).toUpperCase() || 'U';
+    return (
+      <div className={`flex items-center justify-center bg-gradient-to-br from-[#194ce6] to-[#002759] text-white font-bold select-none ${className}`}>
+        {initial}
+      </div>
+    );
+  }
+  return (
+    <img
+      src={src}
+      alt={user?.name || 'User'}
+      className={`object-cover ${className}`}
+      onError={() => setFailed(true)}
+    />
+  );
+};
 
 const timeAgo = (dateStr) => {
   const now = new Date();
@@ -312,9 +333,9 @@ const Layout = ({ children }) => {
                     )}
                   </button>
                   {notifOpen && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-50">
+                    <div className="absolute top-full end-0 mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-[100] animate-fade-in origin-top">
                       <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-white">{t('notifications.title')}</h3>
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white text-start">{t('notifications.title')}</h3>
                       </div>
                       <div className="max-h-80 overflow-y-auto">
                         {notifications.length === 0 ? (
@@ -375,12 +396,7 @@ const Layout = ({ children }) => {
                     aria-haspopup="menu"
                     aria-expanded={isUserMenuOpen}
                   >
-                    <img
-                      src={avatarUrl(user, 40)}
-                      alt="User Profile"
-                      className="w-full h-full object-cover rounded-lg sm:rounded-xl"
-                      onError={(e) => { e.target.src = fallbackAvatar(user, 40); }}
-                    />
+                    <UserAvatar user={user} className="w-full h-full rounded-lg sm:rounded-xl text-sm" />
                   </button>
 
                   {isUserMenuOpen && (
@@ -388,12 +404,7 @@ const Layout = ({ children }) => {
                       {/* User header */}
                       <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#002759] to-[#194ce6] text-white">
                         <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-white/40 flex-shrink-0 bg-white/10">
-                          <img
-                            src={avatarUrl(user, 64)}
-                            alt={user?.name || 'User'}
-                            className="w-full h-full object-cover"
-                            onError={(e) => { e.target.src = fallbackAvatar(user, 64); }}
-                          />
+                          <UserAvatar user={user} className="w-full h-full text-lg" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-[10px] text-blue-100 uppercase tracking-wide">{t('userMenu.signedInAs')}</p>
@@ -484,12 +495,7 @@ const Layout = ({ children }) => {
                     className="flex items-center gap-3 mx-4 mt-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors flex-shrink-0"
                   >
                     <div className="w-11 h-11 rounded-xl overflow-hidden border border-white/20 flex-shrink-0">
-                      <img
-                        src={avatarUrl(user, 44)}
-                        alt={user?.name || 'User'}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.target.src = fallbackAvatar(user, 44); }}
-                      />
+                      <UserAvatar user={user} className="w-full h-full text-lg" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-white font-semibold text-sm truncate">{user?.name || t('common.account')}</p>

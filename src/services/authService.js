@@ -58,7 +58,12 @@ const authService = {
   getCurrentUser: async () => {
     try {
       const response = await api.get('/alumini/me');
-      return response.data.data;
+      const fresh = response.data.data;
+      // Keep the cached copy in sync so a later offline/failed /me (and any
+      // component reading localStorage) sees up-to-date fields like the newly
+      // uploaded profile_image, instead of a stale login-time snapshot.
+      if (fresh) localStorage.setItem('alumni_user', JSON.stringify(fresh));
+      return fresh;
     } catch (error) {
       // If API call fails, try to get from localStorage as fallback
       const user = localStorage.getItem('alumni_user');
