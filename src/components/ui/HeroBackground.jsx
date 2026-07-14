@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
-import api from '../../config/axios';
 import { useHero } from '../../contexts/HeroContext';
 
-// Backend uploads are served from the API host under /storage; local assets
-// (e.g. /kpu1.jpg) live in this site's public folder and are used as-is.
-const ORIGIN = (api.defaults.baseURL || '').replace(/\/api\/?$/, '');
+// Backend uploads are served under /storage. We return a RELATIVE /storage
+// path so the browser fetches it from the current origin and Vite's dev proxy
+// (see vite.config.js) forwards it to the backend. Using a relative path keeps
+// images working no matter which host the app is opened from (localhost, LAN
+// IP like 172.16.x.x, etc.) — a hardcoded http://localhost:8000 would break for
+// any visitor not sitting on the backend machine. Local assets (e.g. /kpu1.jpg)
+// live in this site's public folder and are used as-is.
 export const resolveHeroImage = (src) => {
   if (!src) return '';
-  if (/^https?:\/\//.test(src)) return src;
-  if (src.startsWith('/storage')) return `${ORIGIN}${src}`;
+  if (/^https?:\/\//.test(src)) {
+    // Normalize an absolute backend URL down to its /storage path.
+    const m = src.match(/\/storage\/.*/);
+    return m ? m[0] : src;
+  }
+  if (src.startsWith('/storage')) return src;
+  if (src.startsWith('storage/')) return `/${src}`;
   return src;
 };
 
