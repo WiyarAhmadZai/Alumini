@@ -14,7 +14,7 @@ import mentorService from '../services/mentorService';
 import messageService from '../services/messageService';
 import notificationService from '../services/notificationService';
 
-const API_ORIGIN = 'http://localhost:8001';
+const API_ORIGIN = 'http://localhost:8000';
 
 const DashboardPage = () => {
   const { t, i18n } = useTranslation();
