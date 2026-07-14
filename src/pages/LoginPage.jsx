@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
 import { useSettings } from '../contexts/SettingsContext';
 import { resolveHeroImage } from '../components/ui/HeroBackground';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   FiMail, FiLock, FiEye, FiEyeOff, FiCheckCircle, FiArrowRight,
   FiAward, FiUsers, FiBriefcase, FiCalendar, FiLogIn, FiAlertCircle, FiX
@@ -23,11 +23,16 @@ const LoginPage = () => {
   const brandLogo = resolveHeroImage(settings.logo) || '/logo_kpu.png';
   const brandName = pick(settings.brand_name) || t('auth.brand.network');
   const navigate = useNavigate();
+  const location = useLocation();
+  // Came here straight from a successful registration → prefill the email and
+  // show a confirmation banner prompting the user to sign in.
+  const justRegistered = !!location.state?.registered;
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [registeredNotice, setRegisteredNotice] = useState(justRegistered);
   const [rememberMe, setRememberMe] = useState(false);
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({ email: location.state?.email || '', password: '' });
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -140,6 +145,16 @@ const LoginPage = () => {
                   </div>
 
                   <div className="px-7 pb-7">
+                    {registeredNotice && (
+                      <div className="flex items-start gap-3 p-3.5 mb-5 rounded-lg bg-green-50 border border-green-200">
+                        <FiCheckCircle className="flex-shrink-0 mt-0.5 text-green-600" />
+                        <p className="text-xs text-green-700 flex-1">{t('auth.login.registeredNotice')}</p>
+                        <button type="button" onClick={() => setRegisteredNotice(false)}
+                          className="text-green-400 hover:text-green-700 flex-shrink-0">
+                          <FiX size={14} />
+                        </button>
+                      </div>
+                    )}
                     {error && (
                       <div className="flex items-start gap-3 p-3.5 mb-5 rounded-lg bg-red-50 border border-red-200">
                         <FiAlertCircle className="flex-shrink-0 mt-0.5 text-red-600" />
