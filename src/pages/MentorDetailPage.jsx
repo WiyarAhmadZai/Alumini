@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime } from '../utils/date';
 import Layout from '../components/Layout';
 import {
   FiArrowLeft, FiMail, FiBriefcase, FiAward, FiUsers, FiStar,
@@ -812,7 +813,7 @@ const MentorDetailPage = () => {
                                     ))}
                                   </div>
                                 </div>
-                                <p className="text-[11px] text-gray-400">{new Date(r.created_at).toLocaleDateString()}</p>
+                                <p className="text-[11px] text-gray-400">{formatDateTime(r.created_at)}</p>
                               </div>
                               {r.review && <p className="text-sm text-gray-700 mt-2 leading-relaxed whitespace-pre-line">{r.review}</p>}
                             </div>

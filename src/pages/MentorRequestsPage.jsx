@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime } from '../utils/date';
 import Layout from '../components/Layout';
 import { FiArrowLeft, FiInbox, FiCheckCircle, FiXCircle, FiClock, FiMail, FiPhone, FiSearch, FiUser } from 'react-icons/fi';
 import Swal from 'sweetalert2';
@@ -227,7 +228,7 @@ const MentorRequestsPage = () => {
                         )}
 
                         <div className="flex flex-wrap items-center gap-2 mt-3">
-                          <span className="text-[11px] text-gray-400">{new Date(req.created_at).toLocaleDateString()}</span>
+                          <span className="text-[11px] text-gray-400">{formatDateTime(req.created_at)}</span>
                           {req.email && (
                             <a href={`mailto:${req.email}`} className="flex items-center gap-1 px-2 py-1 bg-blue-50 text-blue-700 text-[10px] font-semibold rounded hover:bg-blue-100">
                               <FiMail size={10} /> {t('mentorship.contact.email')}

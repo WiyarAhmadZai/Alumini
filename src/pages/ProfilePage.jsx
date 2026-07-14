@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime } from '../utils/date';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink, FiBell, FiDownload, FiCheckCircle, FiXCircle, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -1515,7 +1516,7 @@ const ProfilePage = () => {
                                 <div className="flex items-center gap-3 mt-1">
                                   <span className="text-xs text-gray-500 flex items-center gap-1">
                                     <FiCalendar className="text-xs" />
-                                    {new Date(application.created_at).toLocaleDateString()}
+                                    {formatDateTime(application.created_at)}
                                   </span>
                                   <span className={`text-xs px-2 py-0.5 rounded-full ${application.status === 'pending'
                                       ? 'bg-yellow-100 text-yellow-700'
@@ -1627,7 +1628,7 @@ const ProfilePage = () => {
                                 </p>
                                 <div className="flex items-center gap-2 text-xs text-gray-500">
                                   <FiCalendar className="text-gray-400" />
-                                  {new Date(message.created_at).toLocaleDateString()}
+                                  {formatDateTime(message.created_at)}
                                 </div>
                               </div>
                             </div>
@@ -1888,7 +1889,7 @@ const ProfilePage = () => {
                                   {t(`profile.requests.status.${req.status}`)}
                                 </span>
                                 <span className="text-[10px] text-gray-400">
-                                  {new Date(req.created_at).toLocaleDateString()}
+                                  {formatDateTime(req.created_at)}
                                 </span>
                               </div>
                               {/* Accept/Reject buttons for pending requests */}
@@ -2043,7 +2044,7 @@ const ProfilePage = () => {
                                   {t(`profile.applications.status.${app.status}`)}
                                 </span>
                                 <span className="text-[10px] text-gray-400">
-                                  {new Date(app.created_at).toLocaleDateString()}
+                                  {formatDateTime(app.created_at)}
                                 </span>
                               </div>
                             </div>

@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime } from '../utils/date';
 import Swal from 'sweetalert2';
 import jobService from '../services/jobService';
 import ApplyModal from '../components/job/ApplyModal';
@@ -247,7 +248,7 @@ const JobDetailsPage = () => {
                 {(job.posted_at || job.created_at) && (
                   <span className="flex items-center gap-1">
                     <FiCalendar className="w-3.5 h-3.5 text-gray-400" />
-                    {t('jobs.details.postedOn', { date: new Date(job.posted_at || job.created_at).toLocaleDateString() })}
+                    {t('jobs.details.postedOn', { date: formatDateTime(job.posted_at || job.created_at) })}
                   </span>
                 )}
                 {job.posted_time_ago && (

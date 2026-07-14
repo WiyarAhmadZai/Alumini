@@ -4,6 +4,7 @@ import Layout from '../components/Layout';
 import { FiBriefcase, FiCalendar, FiTrash2, FiArrowLeft, FiExternalLink, FiMapPin, FiClock, FiDollarSign, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import Swal from 'sweetalert2';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime } from '../utils/date';
 import jobService from '../services/jobService';
 import ApplyModal from '../components/job/ApplyModal';
 
@@ -285,7 +286,7 @@ const ApplicationsPage = () => {
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-xs text-gray-500 flex items-center gap-1">
                       <FiCalendar className="text-gray-400" />
-                      {new Date(application.created_at).toLocaleDateString()}
+                      {formatDateTime(application.created_at)}
                     </span>
                     <span className={`text-xs px-2 py-1 rounded-full ${
                       application.status === 'pending' 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatDateTime } from '../utils/date';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiMail, FiCalendar, FiTrash2, FiArrowLeft, FiMessageSquare, FiChevronLeft, FiChevronRight, FiSearch, FiFilter, FiEye, FiX, FiExternalLink } from 'react-icons/fi';
@@ -434,7 +435,7 @@ const MessagesPage = () => {
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-xs text-gray-500 flex items-center gap-1">
                       <FiCalendar className="text-gray-400" />
-                      {new Date(message.created_at).toLocaleDateString()}
+                      {formatDateTime(message.created_at)}
                     </span>
                     <span className={`text-xs px-2 py-1 rounded-full ${getStatusColor(message.status)}`}>
                       {getStatusText(message.status)}
@@ -622,7 +623,7 @@ const MessagesPage = () => {
                 <div className="mb-6">
                   <h4 className="text-lg font-semibold text-gray-900 mb-2">{t('messages.dateLabel')}</h4>
                   <p className="text-gray-700">
-                    {new Date(selectedMessage.created_at).toLocaleDateString()} {t('messages.dateTimeSeparator')} {new Date(selectedMessage.created_at).toLocaleTimeString()}
+                    {formatDateTime(selectedMessage.created_at)}
                   </p>
                 </div>
 
