@@ -31,6 +31,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { SettingsProvider } from './contexts/SettingsContext';
 import { HeroProvider } from './contexts/HeroContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import HeroEditBridge from './components/HeroEditBridge';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
       <AuthProvider>
         <SettingsProvider>
         <HeroProvider>
+        <HeroEditBridge />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/directory" element={<DirectoryPage />} />
