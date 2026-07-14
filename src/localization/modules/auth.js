@@ -26,6 +26,7 @@ const auth = {
         newToAlumni: "New to KPU Alumni?",
         createVerified: "Create a verified account",
         verifiedNote: "Verified through MIS records · Secure & confidential",
+        registeredNotice: "Registration successful! Please sign in with your email and password to access your account.",
       },
       benefits: {
         resources: "Access exclusive alumni resources",
@@ -50,6 +51,7 @@ const auth = {
           "University ID and Tazkira number do not match the same student in our records.",
         registrationFailed: "Registration failed. Please try again.",
         searchProfileFirst: "Please search for your student profile first",
+        serverUnavailable: "Cannot reach the server. Please make sure the backend is running and try again.",
       },
       register: {
         heroBadge: "Verified Registration",
@@ -62,7 +64,7 @@ const auth = {
         verified: "Verified",
         successTitle: "Registration successful!",
         successBody:
-          "Welcome to the verified alumni network. Redirecting to your profile…",
+          "Welcome to the verified alumni network. Redirecting you to sign in…",
         failTitle: "Registration failed",
         step1Title: "Find your student profile",
         step1Subtitle:
@@ -165,6 +167,7 @@ const auth = {
         newToAlumni: "تازه به فارغان KPU پیوسته‌اید؟",
         createVerified: "ایجاد حساب تأیید‌شده",
         verifiedNote: "تأیید‌شده از طریق سوابق MIS · امن و محرمانه",
+        registeredNotice: "ثبت‌نام موفقانه انجام شد! لطفاً با ایمیل و رمز عبور خود وارد شوید تا به حساب‌تان دسترسی پیدا کنید.",
       },
       benefits: {
         resources: "دسترسی به منابع اختصاصی فارغان",
@@ -189,6 +192,7 @@ const auth = {
           "آی‌دی پوهنتون و شماره تذکره با یک محصل واحد در سوابق ما مطابقت ندارند.",
         registrationFailed: "ثبت‌نام ناکام شد. لطفاً دوباره تلاش کنید.",
         searchProfileFirst: "لطفاً ابتدا پروفایل محصلی خود را جستجو کنید",
+        serverUnavailable: "ارتباط با سرور برقرار نشد. لطفاً از فعال بودن سرور بک‌اند مطمئن شوید و دوباره تلاش کنید.",
       },
       register: {
         heroBadge: "ثبت‌نام تأیید‌شده",
@@ -201,7 +205,7 @@ const auth = {
         verified: "تأیید‌شده",
         successTitle: "ثبت‌نام موفقانه انجام شد!",
         successBody:
-          "به شبکه فارغان تأیید‌شده خوش آمدید. در حال انتقال به پروفایل شما…",
+          "به شبکه فارغان تأیید‌شده خوش آمدید. در حال انتقال به صفحه ورود…",
         failTitle: "ثبت‌نام ناکام شد",
         step1Title: "پروفایل محصلی خود را بیابید",
         step1Subtitle:
@@ -304,6 +308,7 @@ const auth = {
         newToAlumni: "د KPU فارغانو ته نوي یاست؟",
         createVerified: "تایید شوی حساب جوړ کړئ",
         verifiedNote: "د MIS ریکارډونو له لارې تایید شوی · خوندي او محرم",
+        registeredNotice: "ثبت‌نام په بریالیتوب سره ترسره شو! مهرباني وکړئ د خپل بریښنالیک او پټنوم په مرسته ننوځئ ترڅو خپل حساب ته لاسرسی ومومئ.",
       },
       benefits: {
         resources: "د فارغانو ځانګړو سرچینو ته لاسرسی",
@@ -328,6 +333,7 @@ const auth = {
           "د پوهنتون آی‌ډي او د تذکرې شمېره زموږ په ریکارډونو کې له یوه واحد زده‌کوونکي سره سمون نه خوري.",
         registrationFailed: "ثبت‌نام ناکام شو. مهرباني وکړئ بیا هڅه وکړئ.",
         searchProfileFirst: "مهرباني وکړئ لومړی خپل د زده‌کوونکي پروفایل ولټوئ",
+        serverUnavailable: "له سرور سره اړیکه ونه نیول شوه. مهرباني وکړئ ډاډ ترلاسه کړئ چې د بیک‌اِنډ سرور فعال دی او بیا هڅه وکړئ.",
       },
       register: {
         heroBadge: "تایید شوی ثبت‌نام",
@@ -340,7 +346,7 @@ const auth = {
         verified: "تایید شوی",
         successTitle: "ثبت‌نام بریالی شو!",
         successBody:
-          "د تایید شوي فارغانو شبکې ته ښه راغلاست. ستاسو پروفایل ته انتقالېږي…",
+          "د تایید شوي فارغانو شبکې ته ښه راغلاست. د ننوتلو پاڼې ته انتقالېږئ…",
         failTitle: "ثبت‌نام ناکام شو",
         step1Title: "خپل د زده‌کوونکي پروفایل ومومئ",
         step1Subtitle:
