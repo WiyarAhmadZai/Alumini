@@ -8,12 +8,18 @@ import { useAuth } from '../contexts/AuthContext';
 import Swal from 'sweetalert2';
 import EventCardModal from '../components/event/EventCardModal';
 
+// Return a RELATIVE /storage path so the image loads from the current origin
+// via Vite's dev proxy (see vite.config.js) — works from any host, unlike a
+// hardcoded http://localhost:8000 which only resolves on the backend machine.
 const resolveImage = (img) => {
   if (!img) return null;
-  if (img.startsWith('http')) return img;
-  if (img.startsWith('/storage/')) return `http://localhost:8001${img}`;
-  if (img.startsWith('storage/')) return `http://localhost:8001/${img}`;
-  return `http://localhost:8001/storage/${img}`;
+  if (/^https?:\/\//.test(img)) {
+    const m = img.match(/\/storage\/.*/);
+    return m ? m[0] : img;
+  }
+  if (img.startsWith('/storage/')) return img;
+  if (img.startsWith('storage/')) return `/${img}`;
+  return `/storage/${img}`;
 };
 
 const EventDetailPage = () => {
