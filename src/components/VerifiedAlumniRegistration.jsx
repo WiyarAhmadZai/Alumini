@@ -154,7 +154,14 @@ const VerifiedAlumniRegistration = () => {
       }
       setStudentData(student);
     } catch (error) {
-      setSearchError(error.response?.data?.message || t('auth.errors.studentNotFound'));
+      if (!error.response) {
+        // No HTTP response at all = backend unreachable (server down / wrong
+        // API URL / CORS). This is NOT a "student not found" case — surfacing
+        // the generic not-found message here would hide a real connectivity bug.
+        setSearchError(t('auth.errors.serverUnavailable'));
+      } else {
+        setSearchError(error.response?.data?.message || t('auth.errors.studentNotFound'));
+      }
       setStudentData(null);
     } finally {
       setSearchLoading(false);
@@ -231,10 +238,12 @@ const VerifiedAlumniRegistration = () => {
     try {
       await alumniService.registerVerifiedAlumni(submissionData);
       setSuccess(true);
-      
-      // Redirect to profile page after successful registration
+
+      // Registration does NOT log the user in (no token is issued), so send them
+      // to the login page. Pass the email + a flag so login can prefill the field
+      // and show a "registration successful, please sign in" confirmation.
       setTimeout(() => {
-        navigate('/profile');
+        navigate('/login', { state: { registered: true, email: formData.email } });
       }, 2000);
     } catch (error) {
       if (error.response?.data?.errors) {
