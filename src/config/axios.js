@@ -1,8 +1,14 @@
 import axios from 'axios';
 
-// Create axios instance with default configuration
+// Create axios instance with default configuration.
+// Use a RELATIVE base URL so requests go to the current origin and Vite's dev
+// proxy (see vite.config.js: /api + /storage) forwards them to the backend.
+// A hardcoded http://localhost:8000 only works when the browser sits on the
+// backend machine — it breaks for anyone opening the app via the LAN IP
+// (e.g. http://172.16.7.19:5173), which is why /me failed there and the app
+// fell back to a stale cached user with no profile image.
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: '/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
