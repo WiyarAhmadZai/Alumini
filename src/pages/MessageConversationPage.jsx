@@ -66,6 +66,8 @@ const MessageConversationPage = () => {
         } else {
           setReplies(foundMessage.replies || []);
         }
+        
+        setReplies(thread);
       } else {
         throw new Error('Message not found');
       }
@@ -112,6 +114,12 @@ const MessageConversationPage = () => {
         timer: 2000,
         timerProgressBar: true
       });
+
+      setNewReply('');
+      setReplyingTo(null);
+      
+      // Refresh to show the new message thread or navigate back
+      navigate('/messages');
 
     } catch (error) {
       Swal.fire({
