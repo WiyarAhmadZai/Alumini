@@ -430,8 +430,8 @@ const Layout = ({ children }) => {
                     {user?.profile_image ? (
                       <img 
                         src={user.profile_image.startsWith('http') 
-                          ? user.profile_image.replace('http://localhost:8000', 'http://localhost:8000')
-                          : `http://localhost:8000/storage/${user.profile_image}`
+                          ? user.profile_image.replace('http://localhost:8001', 'http://localhost:8001')
+                          : `http://localhost:8001/storage/${user.profile_image}`
                         } 
                         alt="User Profile" 
                         className="w-full h-full object-cover rounded-lg sm:rounded-xl"
@@ -457,7 +457,7 @@ const Layout = ({ children }) => {
                             src={user?.profile_image
                               ? (user.profile_image.startsWith('http')
                                   ? user.profile_image
-                                  : `http://localhost:8000/storage/${user.profile_image}`)
+                                  : `http://localhost:8001/storage/${user.profile_image}`)
                               : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=64`}
                             alt={user?.name || 'User'}
                             className="w-full h-full object-cover"
@@ -712,8 +712,8 @@ const Layout = ({ children }) => {
                         {user?.profile_image ? (
                           <img 
                             src={user.profile_image.startsWith('http') 
-                              ? user.profile_image.replace('http://localhost:8000', 'http://localhost:8000')
-                              : `http://localhost:8000/storage/${user.profile_image}`
+                              ? user.profile_image.replace('http://localhost:8001', 'http://localhost:8001')
+                              : `http://localhost:8001/storage/${user.profile_image}`
                             } 
                             alt="User Profile" 
                             className="w-full h-full object-cover"

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Layout from '../components/Layout';
+import { useSettings } from '../contexts/SettingsContext';
+import { resolveHeroImage } from '../components/ui/HeroBackground';
 import { useNavigate } from 'react-router-dom';
 import {
   FiMail, FiLock, FiEye, FiEyeOff, FiCheckCircle, FiArrowRight,
@@ -17,6 +19,9 @@ const BRAND_BORDER = '#c5ccf7';
 
 const LoginPage = () => {
   const { t } = useTranslation();
+  const { settings, pick } = useSettings();
+  const brandLogo = resolveHeroImage(settings.logo) || '/logo_kpu.png';
+  const brandName = pick(settings.brand_name) || t('auth.brand.network');
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -61,10 +66,11 @@ const LoginPage = () => {
     <Layout>
       <div className="min-h-screen bg-gray-50">
         {/* Hero section with form overlay */}
-        <section className="relative min-h-[680px] overflow-hidden">
+        <section className="relative min-h-[680px] overflow-hidden" style={{ background: BRAND }}>
           {/* Background image + dark overlay */}
           <div className="absolute inset-0">
-            <img src="/kpu2.jpg" alt={t('auth.brand.university')} className="w-full h-full object-cover" />
+            <img src="/kpu2.jpg" alt={t('auth.brand.university')} className="w-full h-full object-cover"
+              onError={(e) => (e.currentTarget.style.display = 'none')} />
             <div className="absolute inset-0"
               style={{ background: 'linear-gradient(rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.85) 100%)' }} />
           </div>
@@ -76,10 +82,11 @@ const LoginPage = () => {
                 {/* Logo lockup */}
                 <div className="inline-flex items-center gap-3 mb-7">
                   <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center flex-shrink-0 shadow-lg">
-                    <img src="/logo_kpu.png" alt="KPU" className="w-9 h-9 object-contain" />
+                    <img src={brandLogo} alt={brandName} className="w-9 h-9 object-contain"
+                      onError={(e) => (e.currentTarget.src = '/logo_kpu.png')} />
                   </div>
                   <div className="min-w-0">
-                    <div className="font-extrabold text-base tracking-tight">{t('auth.brand.network')}</div>
+                    <div className="font-extrabold text-base tracking-tight">{brandName}</div>
                     <div className="text-xs text-white/60">{t('auth.brand.university')}</div>
                   </div>
                 </div>
@@ -103,7 +110,7 @@ const LoginPage = () => {
 
                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl">
                   {benefits.map((b, i) => (
-                    <li key={i} className="flex items-center gap-3 p-3 rounded-lg"
+                    <li key={i} className="flex items-center gap-3 p-3 rounded-xl backdrop-blur-sm transition hover:-translate-y-0.5 hover:bg-white/10"
                       style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)' }}>
                       <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
                         style={{ background: 'rgba(255,255,255,0.10)' }}>
@@ -117,9 +124,11 @@ const LoginPage = () => {
 
               {/* ─── Right — login form card ─── */}
               <div className="lg:col-span-2">
-                <div className="bg-white rounded-2xl shadow-2xl overflow-hidden">
+                <div className="bg-white rounded-3xl shadow-2xl ring-1 ring-black/5 overflow-hidden">
+                  {/* Brand accent bar */}
+                  <div className="h-1.5 w-full" style={{ background: `linear-gradient(90deg, ${BRAND}, ${BRAND_ACCENT}, ${BRAND_LIGHT})` }} />
                   {/* Card header */}
-                  <div className="px-7 pt-7 pb-5">
+                  <div className="px-7 pt-6 pb-5">
                     <span
                       className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.18em] mb-3"
                       style={{ background: BRAND_BG, color: BRAND, border: `1px solid ${BRAND_BORDER}` }}
@@ -154,7 +163,7 @@ const LoginPage = () => {
                             type="email" name="email" required
                             value={formData.email} onChange={handleInputChange}
                             placeholder={t('auth.login.emailPlaceholder')}
-                            className="w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
+                            className="w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
                             style={{ '--tw-ring-color': BRAND_BORDER }}
                           />
                         </div>
@@ -171,7 +180,7 @@ const LoginPage = () => {
                             type={showPassword ? 'text' : 'password'} name="password" required
                             value={formData.password} onChange={handleInputChange}
                             placeholder={t('auth.login.passwordPlaceholder')}
-                            className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
+                            className="w-full pl-10 pr-10 py-3 border border-gray-200 rounded-xl bg-gray-50 text-sm text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:border-transparent transition"
                             style={{ '--tw-ring-color': BRAND_BORDER }}
                           />
                           <button type="button" onClick={() => setShowPassword(!showPassword)}
@@ -201,10 +210,8 @@ const LoginPage = () => {
                       {/* Submit */}
                       <button
                         type="submit" disabled={loading}
-                        className="w-full inline-flex items-center justify-center gap-2 text-white font-bold py-3 rounded-lg transition text-sm shadow-sm disabled:opacity-60 disabled:cursor-not-allowed mt-2"
-                        style={{ backgroundColor: BRAND }}
-                        onMouseEnter={(e) => !loading && (e.currentTarget.style.backgroundColor = BRAND_LIGHT)}
-                        onMouseLeave={(e) => !loading && (e.currentTarget.style.backgroundColor = BRAND)}
+                        className="group w-full inline-flex items-center justify-center gap-2 text-white font-bold py-3 rounded-xl transition text-sm shadow-lg shadow-blue-900/20 disabled:opacity-60 disabled:cursor-not-allowed mt-2 hover:brightness-110"
+                        style={{ backgroundImage: `linear-gradient(135deg, ${BRAND} 0%, ${BRAND_ACCENT} 100%)` }}
                       >
                         {loading ? (
                           <>
@@ -213,7 +220,7 @@ const LoginPage = () => {
                           </>
                         ) : (
                           <>
-                            {t('auth.login.signIn')} <FiArrowRight size={15} />
+                            {t('auth.login.signIn')} <FiArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
                           </>
                         )}
                       </button>
@@ -231,7 +238,7 @@ const LoginPage = () => {
 
                     <button
                       type="button" onClick={() => navigate('/register')}
-                      className="w-full inline-flex items-center justify-center gap-2 font-bold py-3 rounded-lg transition text-sm border"
+                      className="w-full inline-flex items-center justify-center gap-2 font-bold py-3 rounded-xl transition text-sm border"
                       style={{ background: BRAND_BG, color: BRAND, borderColor: BRAND_BORDER }}
                       onMouseEnter={(e) => { e.currentTarget.style.background = BRAND_BORDER; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = BRAND_BG; }}

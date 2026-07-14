@@ -45,20 +45,23 @@ const SectionCard = ({ icon: Icon, step, title, subtitle, children, complete }) 
   );
 };
 
-// ─── Step badge for hero progress strip ───
+// ─── Step badge for the progress strip (sits on a WHITE card) ───
 const StepBadge = ({ n, label, active, done }) => (
   <div className="flex items-center gap-2.5">
     <span
-      className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-extrabold flex-shrink-0"
+      className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-extrabold flex-shrink-0 transition"
       style={done
         ? { background: '#16a34a', color: '#fff' }
         : active
-          ? { background: '#fff', color: BRAND }
-          : { background: 'rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.7)', border: '1px solid rgba(255,255,255,0.20)' }}
+          ? { background: BRAND, color: '#fff', boxShadow: `0 0 0 4px ${BRAND_BG}` }
+          : { background: '#f1f3fb', color: '#9aa3c7', border: '1px solid #e2e6f7' }}
     >
       {done ? <FiCheck size={13} /> : n}
     </span>
-    <span className={`text-[11px] font-bold uppercase tracking-[0.12em] ${active || done ? 'text-white' : 'text-white/60'}`}>
+    <span
+      className="text-[11px] font-bold uppercase tracking-[0.12em]"
+      style={{ color: done ? '#15803d' : active ? BRAND : '#9ca3af' }}
+    >
       {label}
     </span>
   </div>
@@ -289,7 +292,7 @@ const VerifiedAlumniRegistration = () => {
     <Layout>
       <div className="min-h-screen bg-gray-50">
         {/* ─── Hero ─── */}
-        <section className="relative w-full h-72 sm:h-80 overflow-hidden">
+        <section className="relative w-full h-72 sm:h-80 overflow-hidden" style={{ background: BRAND }}>
           <div className="absolute inset-0 bg-cover bg-center"
             style={{
               backgroundImage:
@@ -316,9 +319,9 @@ const VerifiedAlumniRegistration = () => {
           <div className="bg-white rounded-2xl border border-gray-200 shadow-xl p-4 sm:p-5">
             <div className="flex items-center justify-between gap-2 sm:gap-4">
               <StepBadge n="1" label={t('auth.register.stepFindProfile')} active={!step1Done} done={step1Done} />
-              <div className="flex-1 h-px bg-gray-200" />
+              <div className="flex-1 h-0.5 rounded-full transition-colors" style={{ background: step1Done ? '#16a34a' : '#e5e7eb' }} />
               <StepBadge n="2" label={t('auth.register.stepAccount')} active={step1Done && !step2Done} done={step2Done} />
-              <div className="flex-1 h-px bg-gray-200" />
+              <div className="flex-1 h-0.5 rounded-full transition-colors" style={{ background: step2Done ? '#16a34a' : '#e5e7eb' }} />
               <StepBadge n="3" label={t('auth.register.stepVerify')} active={step2Done} done={false} />
             </div>
           </div>

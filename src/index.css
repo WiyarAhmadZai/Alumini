@@ -4,6 +4,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400..700&display=swap');
 
+/* Slightly smaller base so the whole app's rem-based sizing scales down a touch
+   (browser default is 16px). */
+html {
+  font-size: 15px;
+}
+
 body {
   font-family: 'Lexend', sans-serif;
 }

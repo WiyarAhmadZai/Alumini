@@ -1,6 +1,8 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import settingsService from '../services/settingsService';
+import { resolveHeroImage } from '../components/ui/HeroBackground';
+import { setFavicon } from '../utils/favicon';
 
 const SettingsContext = createContext(null);
 
@@ -8,7 +10,7 @@ const SettingsContext = createContext(null);
 export const useSettings = () => {
   const ctx = useContext(SettingsContext);
   // Safe default so components can call useSettings() even outside the provider.
-  return ctx || { settings: {}, chancellor: null, board: [], loaded: false, pick: (v, f = '') => (typeof v === 'object' && v ? (v.en || f) : (v ?? f)) };
+  return ctx || { settings: {}, chancellor: null, board: [], loaded: false, refresh: () => {}, pick: (v, f = '') => (typeof v === 'object' && v ? (v.en || f) : (v ?? f)) };
 };
 
 export const SettingsProvider = ({ children }) => {
@@ -17,14 +19,25 @@ export const SettingsProvider = ({ children }) => {
   const [chancellor, setChancellor] = useState(null);
   const [board, setBoard] = useState([]);
   const [loaded, setLoaded] = useState(false);
+  // Only apply the admin-configured default language on the very first load, so
+  // later background refreshes never yank the language out from under the user.
+  const firstLoad = useRef(true);
 
-  useEffect(() => {
-    let active = true;
-    settingsService.get().then((data) => {
-      if (!active || !data) return;
-      setSettings(data.settings || {});
-      setChancellor(data.chancellor || null);
-      setBoard(data.board || []);
+  // Fetch the latest site settings + leadership from the shared backend. Called
+  // on mount and again whenever the tab regains focus / on a light poll, so any
+  // field changed in the admin (logo, brand name, footer, contact, socials…)
+  // shows up on the public site automatically — no manual reload needed.
+  const refresh = useCallback(async () => {
+    const data = await settingsService.get();
+    if (!data) return;
+    setSettings(data.settings || {});
+    setChancellor(data.chancellor || null);
+    setBoard(data.board || []);
+    // Keep the browser-tab icon in sync with the configured alumni logo.
+    const logoUrl = resolveHeroImage(data.settings?.logo);
+    if (logoUrl) setFavicon(logoUrl);
+    if (firstLoad.current) {
+      firstLoad.current = false;
       // Apply the admin-configured default language ONLY if the user hasn't
       // already chosen one (stored choice always wins).
       const stored = localStorage.getItem('alumni-language');
@@ -32,8 +45,33 @@ export const SettingsProvider = ({ children }) => {
       if (!stored && def && ['en', 'ps', 'da'].includes(def) && i18n.language !== def) {
         i18n.changeLanguage(def);
       }
-    }).finally(() => { if (active) setLoaded(true); });
-    return () => { active = false; };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    const load = () => refresh().finally(() => { if (active) setLoaded(true); });
+    load();
+
+    // Re-fetch when the tab becomes visible again (e.g. the admin edits settings
+    // in another tab, then switches back here) and poll gently while visible.
+    let interval = null;
+    const start = () => { if (!interval) interval = setInterval(load, 30000); };
+    const stop = () => { if (interval) { clearInterval(interval); interval = null; } };
+    const onVisibility = () => {
+      if (document.visibilityState === 'visible') { load(); start(); }
+      else stop();
+    };
+    if (document.visibilityState === 'visible') start();
+    window.addEventListener('focus', load);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      active = false;
+      stop();
+      window.removeEventListener('focus', load);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -46,7 +84,7 @@ export const SettingsProvider = ({ children }) => {
   };
 
   return (
-    <SettingsContext.Provider value={{ settings, chancellor, board, loaded, pick }}>
+    <SettingsContext.Provider value={{ settings, chancellor, board, loaded, refresh, pick }}>
       {children}
     </SettingsContext.Provider>
   );
