@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatDateTime } from '../utils/date';
+import { formatDate } from '../utils/date';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiMail, FiCalendar, FiArrowLeft, FiSend, FiUser, FiMessageSquare, FiX, FiClock, FiCheckCircle, FiAlertCircle } from 'react-icons/fi';
@@ -207,7 +207,7 @@ const MessageConversationPage = () => {
                   {isAlumni ? t('messages.you') : senderName}
                 </p>
                 <span className="text-xs text-gray-600 ml-4">
-                  {formatDateTime(reply.created_at)}
+                  {formatDate(reply.created_at)}
                 </span>
               </div>
               <p className="text-sm whitespace-pre-wrap">{reply.content}</p>
@@ -406,7 +406,7 @@ const MessageConversationPage = () => {
                       </span>
                       <div className="flex items-center gap-2 text-gray-600 text-sm">
                         <FiClock className="text-lg" />
-                        {formatDateTime(message.created_at)}
+                        {formatDate(message.created_at)}
                       </div>
                     </div>
                   </div>
@@ -564,7 +564,7 @@ const MessageConversationPage = () => {
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <span className="text-sm text-black">{t('messages.dateColon')}</span>
                   <span className="text-sm font-semibold text-black">
-                    {formatDateTime(message.created_at)}
+                    {formatDate(message.created_at)}
                   </span>
                 </div>
               </div>

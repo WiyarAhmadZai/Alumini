@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { formatDateTime } from '../utils/date';
+import { formatDate } from '../utils/date';
 import Layout from '../components/Layout';
 import { FiArrowLeft, FiSend, FiCheckCircle, FiXCircle, FiClock, FiTrash2, FiMail } from 'react-icons/fi';
 import Swal from 'sweetalert2';
@@ -181,7 +181,7 @@ const MentorApplicationsPage = () => {
                     )}
 
                     <div className="flex items-center justify-between mt-3 flex-wrap gap-2">
-                      <span className="text-[10px] text-gray-400">{formatDateTime(app.created_at)}</span>
+                      <span className="text-[10px] text-gray-400">{formatDate(app.created_at)}</span>
                       <div className="flex gap-1.5">
                         {app.status === 'accepted' && app.mentor_whatsapp && (
                           <a

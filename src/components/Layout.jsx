@@ -25,8 +25,29 @@ import {
   FiCalendar,
   FiMessageSquare,
   FiLogOut,
-  FiChevronDown
+  FiChevronDown,
+  FiUsers,
+  FiInfo,
+  FiFolder,
+  FiImage,
+  FiHeart
 } from 'react-icons/fi';
+
+// Build a usable avatar URL from a stored profile_image (relative /storage path
+// works from any host via the Vite proxy), falling back to a generated avatar.
+const avatarUrl = (user, size = 40) => {
+  const img = user?.profile_image;
+  if (img) {
+    if (/^https?:\/\//.test(img)) {
+      const m = img.match(/\/storage\/.*/);
+      return m ? m[0] : img;
+    }
+    return img.startsWith('/storage') ? img : `/storage/${img}`;
+  }
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=002759&color=ffffff&size=${size}`;
+};
+const fallbackAvatar = (user, size = 40) =>
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=002759&color=ffffff&size=${size}`;
 
 const timeAgo = (dateStr) => {
   const now = new Date();
@@ -191,15 +212,28 @@ const Layout = ({ children }) => {
     setIsMenuOpen(false);
   };
 
+  // Single source of truth for the primary navigation (desktop + mobile).
+  const navItems = [
+    { to: '/directory', label: t('nav.directory'), icon: FiFolder, isActive: (p) => p === '/directory' },
+    { to: '/about', label: t('nav.about'), icon: FiInfo, isActive: (p) => p === '/about' },
+    { to: '/contact', label: t('nav.contact'), icon: FiMail, isActive: (p) => p === '/contact' },
+    { to: '/jobs', label: t('nav.career'), icon: FiBriefcase, isActive: (p) => p === '/jobs' },
+    { to: '/mentorship', label: t('nav.mentorship'), icon: FiUsers, isActive: (p) => p === '/mentorship' },
+    { to: '/events', label: t('nav.events'), icon: FiCalendar, isActive: (p) => p === '/events' },
+    { to: '/media-center', label: t('nav.media'), icon: FiImage, auth: true, isActive: (p) => p.startsWith('/media') },
+    { to: '/legal', label: t('nav.giving'), icon: FiHeart, isActive: (p) => ['/legal', '/privacy', '/terms', '/guidelines'].includes(p) },
+  ].filter((item) => !item.auth || isAuthenticated);
+
   return (
     <div className="min-h-screen bg-background-light dark:bg-background-dark text-[#111318] dark:text-white font-display">
-      {/* Header */}
+      {/* Header — transparent at the top (over the hero), gaining a solid
+          glass background + shadow once the user scrolls. */}
       <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-[#002759]/95 backdrop-blur-xl shadow-2xl' 
-          : 'bg-transparent !bg-transparent'
+        isScrolled
+          ? 'bg-[#002759]/95 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.25)] border-b border-white/10'
+          : 'bg-transparent'
       }`}>
-        <div className="w-full px-4 sm:px-6 lg:px-12 py-3">
+        <div className={`w-full px-4 sm:px-6 lg:px-12 transition-all duration-300 ${isScrolled ? 'py-2' : 'py-3'}`}>
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2 sm:gap-4 lg:gap-3 xl:gap-6 min-w-0">
               <div className={`flex items-center gap-2 sm:gap-4 transition-all duration-300 ${
@@ -224,113 +258,28 @@ const Layout = ({ children }) => {
                 </Link>
               </div>
               
-              <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5">
-                <Link 
-                  to="/directory" 
-                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/directory' 
-                      ? 'text-white bg-white/20' 
-                      : 'text-white/90 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  {t('nav.directory')}
-                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
-                    location.pathname === '/directory' ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}></span>
-                </Link>
-                <Link 
-                  to="/about" 
-                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/about' 
-                      ? 'text-white bg-white/20' 
-                      : 'text-white/90 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  {t('nav.about')}
-                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
-                    location.pathname === '/about' ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}></span>
-                </Link>
-                <Link 
-                  to="/contact" 
-                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/contact' 
-                      ? 'text-white bg-white/20' 
-                      : 'text-white/90 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  {t('nav.contact')}
-                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
-                    location.pathname === '/contact' ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}></span>
-                </Link>
-                <Link
-                  to="/jobs"
-                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/jobs'
-                      ? 'text-white bg-white/20'
-                      : 'text-white/90 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  {t('nav.career')}
-                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
-                    location.pathname === '/jobs' ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}></span>
-                </Link>
-                <Link
-                  to="/mentorship"
-                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/mentorship'
-                      ? 'text-white bg-white/20'
-                      : 'text-white/90 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  {t('nav.mentorship')}
-                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
-                    location.pathname === '/mentorship' ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}></span>
-                </Link>
-                <Link
-                  to="/events"
-                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/events'
-                      ? 'text-white bg-white/20'
-                      : 'text-white/90 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  {t('nav.events')}
-                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
-                    location.pathname === '/events' ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}></span>
-                </Link>
-                {isAuthenticated && (
-                  <Link
-                    to="/media-center"
-                    className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
-                      location.pathname.startsWith('/media')
-                        ? 'text-white bg-white/20'
-                        : 'text-white/90 hover:text-white hover:bg-white/10'
-                    }`}
-                  >
-                    {t('nav.media')}
-                    <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
-                      location.pathname.startsWith('/media') ? 'w-full' : 'w-0 group-hover:w-full'
-                    }`}></span>
-                  </Link>
-                )}
-                <Link
-                  to="/legal"
-                  className={`whitespace-nowrap text-[13px] xl:text-sm font-medium transition-all duration-300 px-2.5 xl:px-3 py-2 rounded-lg relative group ${
-                    location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines'
-                      ? 'text-white bg-white/20' 
-                      : 'text-white/90 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  {t('nav.giving')}
-                  <span className={`absolute bottom-0 left-1/2 h-0.5 bg-gradient-to-r from-blue-400 to-blue-600 transform -translate-x-1/2 transition-all duration-300 ${
-                    location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines' ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}></span>
-                </Link>
+              <nav className="hidden lg:flex items-center gap-1">
+                {navItems.map((item) => {
+                  const active = item.isActive(location.pathname);
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className={`relative whitespace-nowrap text-[13px] xl:text-sm font-medium px-3 xl:px-3.5 py-2 rounded-full transition-all duration-200 ${
+                        active
+                          ? 'text-white bg-white/15 shadow-inner'
+                          : 'text-white/75 hover:text-white hover:bg-white/10'
+                      }`}
+                    >
+                      {item.label}
+                      <span
+                        className={`pointer-events-none absolute -bottom-0.5 left-1/2 -translate-x-1/2 h-1 w-1 rounded-full bg-blue-300 transition-opacity duration-200 ${
+                          active ? 'opacity-100' : 'opacity-0'
+                        }`}
+                      />
+                    </Link>
+                  );
+                })}
               </nav>
             </div>
 
@@ -426,26 +375,12 @@ const Layout = ({ children }) => {
                     aria-haspopup="menu"
                     aria-expanded={isUserMenuOpen}
                   >
-                    {/* Show profile image if available, otherwise show user icon */}
-                    {user?.profile_image ? (
-                      <img 
-                        src={user.profile_image.startsWith('http') 
-                          ? user.profile_image.replace('http://localhost:8000', 'http://localhost:8000')
-                          : `http://localhost:8000/storage/${user.profile_image}`
-                        } 
-                        alt="User Profile" 
-                        className="w-full h-full object-cover rounded-lg sm:rounded-xl"
-                        onError={(e) => {
-                          e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=40`;
-                        }}
-                      />
-                    ) : (
-                      <img 
-                        src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=40`}
-                        alt="User Profile" 
-                        className="w-full h-full object-cover rounded-lg sm:rounded-xl"
-                      />
-                    )}
+                    <img
+                      src={avatarUrl(user, 40)}
+                      alt="User Profile"
+                      className="w-full h-full object-cover rounded-lg sm:rounded-xl"
+                      onError={(e) => { e.target.src = fallbackAvatar(user, 40); }}
+                    />
                   </button>
 
                   {isUserMenuOpen && (
@@ -454,16 +389,10 @@ const Layout = ({ children }) => {
                       <div className="flex items-center gap-3 p-4 bg-gradient-to-br from-[#002759] to-[#194ce6] text-white">
                         <div className="w-11 h-11 rounded-xl overflow-hidden border-2 border-white/40 flex-shrink-0 bg-white/10">
                           <img
-                            src={user?.profile_image
-                              ? (user.profile_image.startsWith('http')
-                                  ? user.profile_image
-                                  : `http://localhost:8000/storage/${user.profile_image}`)
-                              : `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=64`}
+                            src={avatarUrl(user, 64)}
                             alt={user?.name || 'User'}
                             className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=ffffff&color=002759&size=64`;
-                            }}
+                            onError={(e) => { e.target.src = fallbackAvatar(user, 64); }}
                           />
                         </div>
                         <div className="min-w-0">
@@ -517,300 +446,119 @@ const Layout = ({ children }) => {
           {isMenuOpen && (
             <>
               {/* Backdrop */}
-              <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[50] lg:hidden animate-fade-in"></div>
+              <div
+                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] lg:hidden animate-fade-in"
+                onClick={() => setIsMenuOpen(false)}
+              ></div>
               
               {/* Sidebar */}
-              <div 
+              <aside
                 ref={sidebarRef}
-                className="mobile-menu-sidebar fixed top-0 right-0 h-screen w-72 sm:w-80 bg-[#002759] shadow-2xl border-l-4 border-gray-900 z-[99999] lg:hidden transform transition-all duration-300 ease-in-out animate-slide-in-left"
-                style={{ 
-                  backgroundColor: '#002759 !important',
-                  backgroundImage: 'linear-gradient(to bottom, #002759, #002759) !important',
-                  isolation: 'isolate',
-                  position: 'fixed',
-                  top: '0',
-                  right: '0',
-                  height: '100vh !important',
-                  maxHeight: '100vh !important',
-                  background: '#002759 !important',
-                  backgroundClip: 'padding-box',
-                  WebkitBackgroundClip: 'padding-box'
-                }}
+                className="fixed top-0 right-0 h-screen w-80 max-w-[85vw] bg-[#002759] shadow-2xl z-[9999] lg:hidden flex flex-col animate-slide-in-left"
               >
-                <div className="flex flex-col h-screen bg-[#002759] relative"
-                   style={{
-                     position: 'relative',
-                     zIndex: 1,
-                     height: '100vh !important',
-                     maxHeight: '100vh !important',
-                     backgroundColor: '#002759 !important',
-                     background: '#002759 !important'
-                   }}
-                >
-                  {/* Background protection overlay */}
-                  <div 
-                    className="absolute inset-0 pointer-events-none"
-                    style={{
-                      backgroundColor: '#002759',
-                      zIndex: -1,
-                      background: '#002759'
-                    }}
-                  />
-                  {/* Sidebar Header */}
-                  <div className="flex items-center justify-between p-4 border-b border-[#003d7a]">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
-                        <img
-                          src={brandLogo}
-                          alt="KPU University"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div className="text-left min-w-0">
-                        <div className="font-bold text-white text-sm truncate">
-                          {brandName}
-                        </div>
-                        <div className="text-xs text-white/80 truncate">
-                          {brandTagline}
-                        </div>
-                      </div>
+                {/* Header */}
+                <div className="flex items-center justify-between p-4 border-b border-white/10 flex-shrink-0">
+                  <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 min-w-0">
+                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                      <img src={brandLogo} alt="KPU University" className="w-full h-full object-cover" />
                     </div>
-                    <button 
-                      className="w-10 h-10 rounded-lg flex items-center justify-center text-white hover:bg-white/10 transition-colors"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <FiX size={20} />
-                    </button>
-                  </div>
-                  
-                  {/* Navigation Menu */}
-                  <nav className="flex-1 p-4">
-                    <div className="flex flex-col gap-2">
-                      <Link 
-                        to="/directory"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/directory' 
-                            ? 'bg-white/20 text-white' 
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        {t('nav.directory')}
-                      </Link>
-                      <Link 
-                        to="/about"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/about' 
-                            ? 'bg-white/20 text-white' 
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        {t('nav.about')}
-                      </Link>
-                      <Link 
-                        to="/contact"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/contact' 
-                            ? 'bg-white/20 text-white' 
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        {t('nav.contact')}
-                      </Link>
-                      <Link
-                        to="/jobs"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/jobs'
-                            ? 'bg-white/20 text-white'
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        {t('nav.career')}
-                      </Link>
-                      <Link
-                        to="/mentorship"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/mentorship'
-                            ? 'bg-white/20 text-white'
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        {t('nav.mentorship')}
-                      </Link>
-                      <Link
-                        to="/events"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/events'
-                            ? 'bg-white/20 text-white'
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        {t('nav.events')}
-                      </Link>
-                      {isAuthenticated && (
+                    <div className="min-w-0">
+                      <div className="font-bold text-white text-sm truncate">{brandName}</div>
+                      <div className="text-xs text-white/70 truncate">{brandTagline}</div>
+                    </div>
+                  </Link>
+                  <button
+                    className="w-9 h-9 rounded-lg flex items-center justify-center text-white hover:bg-white/10 transition-colors"
+                    onClick={() => setIsMenuOpen(false)}
+                    aria-label="Close menu"
+                  >
+                    <FiX size={20} />
+                  </button>
+                </div>
+
+                {/* Signed-in user card */}
+                {isAuthenticated && (
+                  <Link
+                    to="/profile"
+                    onClick={handleMenuClick}
+                    className="flex items-center gap-3 mx-4 mt-4 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors flex-shrink-0"
+                  >
+                    <div className="w-11 h-11 rounded-xl overflow-hidden border border-white/20 flex-shrink-0">
+                      <img
+                        src={avatarUrl(user, 44)}
+                        alt={user?.name || 'User'}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { e.target.src = fallbackAvatar(user, 44); }}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-white font-semibold text-sm truncate">{user?.name || t('common.account')}</p>
+                      <p className="text-blue-200/80 text-xs truncate">{user?.email || t('common.manageProfile')}</p>
+                    </div>
+                  </Link>
+                )}
+
+                {/* Navigation */}
+                <nav className="flex-1 overflow-y-auto p-4">
+                  <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-white/40">{t('nav.menu', 'Menu')}</p>
+                  <div className="flex flex-col gap-1">
+                    {navItems.map((item) => {
+                      const active = item.isActive(location.pathname);
+                      const Icon = item.icon;
+                      return (
                         <Link
-                          to="/media-center"
+                          key={item.to}
+                          to={item.to}
                           onClick={handleMenuClick}
-                          className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                            location.pathname.startsWith('/media')
-                              ? 'bg-white/20 text-white'
-                              : 'hover:bg-[#0a519b]'
+                          className={`flex items-center gap-3 px-3 py-3 text-[15px] font-medium rounded-xl transition-colors ${
+                            active ? 'bg-white/15 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'
                           }`}
                         >
-                          {t('nav.media')}
+                          <Icon size={18} className={active ? 'text-blue-300' : 'text-white/60'} />
+                          <span className="flex-1 truncate">{item.label}</span>
+                          {active && <span className="w-1.5 h-1.5 rounded-full bg-blue-300" />}
                         </Link>
-                      )}
-                      <Link
-                        to="/legal"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/legal' || location.pathname === '/privacy' || location.pathname === '/terms' || location.pathname === '/guidelines'
-                            ? 'bg-white/20 text-white' 
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        {t('nav.giving')}
-                      </Link>
-                    </div>
-                  </nav>
-                  
-                  {/* Sidebar Footer */}
-                  <div className="p-4 border-t border-[#003d7a]">
-                    <div className="mb-3 flex justify-center">
-                      <LanguageSwitcher />
-                    </div>
-                    <Link
-                      to="/login"
-                      onClick={handleMenuClick}
-                      className="w-full h-12 bg-white text-[#002759] text-sm font-bold rounded-lg hover:bg-gray-100 transition-all mb-3 flex items-center justify-center"
-                    >
-                      {t('common.login')}
-                    </Link>
+                      );
+                    })}
                     {isAuthenticated && (
                       <Link
                         to="/dashboard"
                         onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors mb-1 ${
-                          location.pathname === '/dashboard' ? 'bg-white/20' : 'hover:bg-[#0a519b]'
+                        className={`flex items-center gap-3 px-3 py-3 text-[15px] font-medium rounded-xl transition-colors ${
+                          location.pathname === '/dashboard' ? 'bg-white/15 text-white' : 'text-white/80 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <FiGrid className="text-lg opacity-90" />
-                        {t('userMenu.dashboard')}
+                        <FiGrid size={18} className={location.pathname === '/dashboard' ? 'text-blue-300' : 'text-white/60'} />
+                        <span className="flex-1 truncate">{t('userMenu.dashboard')}</span>
                       </Link>
                     )}
-                    <Link
-                      to="/profile"
-                      onClick={handleMenuClick}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-[#0a519b] rounded-lg transition-colors"
-                    >
-                      <div className="w-10 h-10 rounded-xl border-2 border-white/40 flex items-center justify-center overflow-hidden">
-                        {user?.profile_image ? (
-                          <img 
-                            src={user.profile_image.startsWith('http') 
-                              ? user.profile_image.replace('http://localhost:8000', 'http://localhost:8000')
-                              : `http://localhost:8000/storage/${user.profile_image}`
-                            } 
-                            alt="User Profile" 
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=002759&color=ffffff&size=40`;
-                            }}
-                          />
-                        ) : (
-                          <img 
-                            src={`https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'User')}&background=002759&color=ffffff&size=40`}
-                            alt="User Profile" 
-                            className="w-full h-full object-cover"
-                          />
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-white font-medium">{t('common.account')}</p>
-                        <p className="text-blue-200 text-xs">{t('common.manageProfile')}</p>
-                      </div>
-                    </Link>
-                    <div className="mt-4 pt-4 border-t border-[#003d7a]/30">
-                      <Link 
-                        to="/directory"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/directory' 
-                            ? 'bg-white/20' 
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        <span className="text-lg opacity-70">📁</span>
-                        {t('nav.alumniDirectory')}
-                      </Link>
-                      <Link 
-                        to="/about"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/about' 
-                            ? 'bg-white/20' 
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        <span className="text-lg opacity-70">ℹ️</span>
-                        {t('nav.aboutKpu')}
-                      </Link>
-                      <Link 
-                        to="/contact"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/contact' 
-                            ? 'bg-white/20' 
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        <span className="text-lg opacity-70">📧</span>
-                        {t('nav.contactUs')}
-                      </Link>
-                      <Link
-                        to="/jobs"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/jobs'
-                            ? 'bg-white/20'
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        <span className="text-lg opacity-70">💼</span>
-                        {t('nav.careerOpportunities')}
-                      </Link>
-                      <Link
-                        to="/mentorship"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/mentorship'
-                            ? 'bg-white/20'
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        <span className="text-lg opacity-70">🤝</span>
-                        {t('nav.mentorshipHub')}
-                      </Link>
-                      <Link
-                        to="/events"
-                        onClick={handleMenuClick}
-                        className={`flex items-center gap-3 px-4 py-3 text-white font-medium rounded-lg transition-colors ${
-                          location.pathname === '/events'
-                            ? 'bg-white/20'
-                            : 'hover:bg-[#0a519b]'
-                        }`}
-                      >
-                        <span className="text-lg opacity-70">📅</span>
-                        {t('nav.eventsCalendar')}
-                      </Link>
-                    </div>
                   </div>
+                </nav>
+
+                {/* Footer */}
+                <div className="p-4 border-t border-white/10 flex-shrink-0 space-y-3">
+                  <div className="flex justify-center">
+                    <LanguageSwitcher />
+                  </div>
+                  {isAuthenticated ? (
+                    <button
+                      type="button"
+                      onClick={() => { setIsMenuOpen(false); handleLogout(); }}
+                      className="w-full h-11 flex items-center justify-center gap-2 bg-red-500/90 hover:bg-red-500 text-white text-sm font-bold rounded-xl transition-colors"
+                    >
+                      <FiLogOut size={16} /> {t('userMenu.logout')}
+                    </button>
+                  ) : (
+                    <Link
+                      to="/login"
+                      onClick={handleMenuClick}
+                      className="w-full h-11 flex items-center justify-center gap-2 bg-white text-[#002759] text-sm font-bold rounded-xl hover:bg-blue-50 transition-colors"
+                    >
+                      <FiUser size={16} /> {t('common.login')}
+                    </Link>
+                  )}
                 </div>
-              </div>
+              </aside>
             </>
           )}
         </div>

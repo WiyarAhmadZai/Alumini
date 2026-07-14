@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { formatDateTime } from '../utils/date';
+import { formatDate } from '../utils/date';
 import {
   FiBriefcase, FiCalendar, FiUsers, FiMessageSquare, FiArrowRight,
   FiSearch, FiUser, FiGrid, FiChevronRight, FiBell
@@ -182,7 +182,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-gray-800 truncate">{a.job?.title || '—'}</p>
-                        <p className="text-xs text-gray-500 truncate">{a.job?.company} · {t('dashboard.recent.appliedOn', { date: formatDateTime(a.created_at || a.applied_at) })}</p>
+                        <p className="text-xs text-gray-500 truncate">{a.job?.company} · {t('dashboard.recent.appliedOn', { date: formatDate(a.created_at || a.applied_at) })}</p>
                       </div>
                       {a.status && <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${statusColor(a.status)}`}>{statusLabel(a.status)}</span>}
                     </li>
@@ -233,7 +233,7 @@ const DashboardPage = () => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-gray-800 truncate">{m.subject || m.name || '—'}</p>
-                        <p className="text-xs text-gray-500 truncate">{t('dashboard.recent.on', { date: formatDateTime(m.created_at) })}</p>
+                        <p className="text-xs text-gray-500 truncate">{t('dashboard.recent.on', { date: formatDate(m.created_at) })}</p>
                       </div>
                     </li>
                   ))}
