@@ -287,7 +287,8 @@ const HomePage = () => {
                 month: 'short', day: 'numeric', year: 'numeric'
               });
               const category = event.type || event.event_type || t('home.eventCategoryDefault');
-              const image = event.image || event.cover_image || event.thumbnail;
+              // Events store their uploaded cover in `featured_image` (a /storage path).
+              const image = resolveHeroImage(event.featured_image || event.image || event.cover_image || event.thumbnail);
 
               return (
                 <article key={event.id} className="group cursor-pointer bg-white rounded-lg sm:rounded-xl md:rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden border border-gray-100">
