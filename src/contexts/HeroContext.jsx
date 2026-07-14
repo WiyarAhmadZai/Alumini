@@ -13,10 +13,20 @@ export const HeroProvider = ({ children }) => {
 
   useEffect(() => {
     let active = true;
-    heroService.get()
+    const load = () => heroService.get()
       .then((d) => { if (active) setHeroes(d || {}); })
       .finally(() => { if (active) setLoaded(true); });
-    return () => { active = false; };
+    load();
+    // Refresh when the tab regains focus / becomes visible so hero images and
+    // text edited in the admin appear without a hard reload.
+    const onFocus = () => { if (document.visibilityState !== 'hidden') load(); };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      active = false;
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
   }, []);
 
   return <HeroContext.Provider value={{ heroes, loaded }}>{children}</HeroContext.Provider>;
