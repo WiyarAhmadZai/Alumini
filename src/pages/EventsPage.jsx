@@ -329,12 +329,19 @@ const EventsPage = () => {
     }
   };
 
+  // Return a RELATIVE /storage path so the image loads from the current origin
+  // via Vite's dev proxy (see vite.config.js). This keeps event images working
+  // regardless of which host the app is opened from (localhost, LAN IP, etc.);
+  // a hardcoded http://localhost:8000 would break for any remote visitor.
   const resolveImage = (img) => {
     if (!img) return null;
-    if (img.startsWith('http')) return img;
-    if (img.startsWith('/storage/')) return `http://localhost:8001${img}`;
-    if (img.startsWith('storage/')) return `http://localhost:8001/${img}`;
-    return `http://localhost:8001/storage/${img}`;
+    if (/^https?:\/\//.test(img)) {
+      const m = img.match(/\/storage\/.*/);
+      return m ? m[0] : img;
+    }
+    if (img.startsWith('/storage/')) return img;
+    if (img.startsWith('storage/')) return `/${img}`;
+    return `/storage/${img}`;
   };
 
   const fetchEvents = async (page = 1) => {
