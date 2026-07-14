@@ -23,12 +23,24 @@ const HomePage = () => {
   const { t, i18n } = useTranslation();
   // Pashto/Dari render right-to-left, so the slider must translate the other way.
   const isRTL = ['fa', 'da', 'ps', 'ar'].some((l) => (i18n.language || '').toLowerCase().startsWith(l));
+  // Pick text by the current site language (English / Pashto / Dari) — used for
+  // the story alerts so they always match the language the user is viewing.
+  const L = (en, ps, da) => {
+    const l = (i18n.language || '').toLowerCase();
+    if (l.startsWith('ps')) return ps;
+    if (l.startsWith('da') || l.startsWith('fa')) return da;
+    return en;
+  };
   const hero = useHero('home');
   const isLoggedIn = authService.isAuthenticated();
   const navigate = useNavigate();
   // Admin-approved & featured alumni stories (fall back to the built-in ones).
   const [featuredStories, setFeaturedStories] = useState([]);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  // When true the slider jumps without animating — used to snap from the cloned
+  // first slide back to the real first slide, so the loop is seamless (forward),
+  // never reversing back through all the slides.
+  const [instantSlide, setInstantSlide] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [latestEvents, setLatestEvents] = useState([]);
@@ -38,90 +50,72 @@ const HomePage = () => {
   const [loadingLatest, setLoadingLatest] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const fallbackTestimonials = [
-    {
-      id: 1,
-      name: t('home.testimonial1Name'),
-      faculty: t('home.testimonial1Faculty'),
-      position: t('home.testimonial1Position'),
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBaWputQgrtqvH19cpmyP3uCvvRmQa3yZJ4fhdPG6u6uH1r6tax7vI96sWnFw9EMI0dSs6bc61_YdpgFuNeDszhcVigGvIVfjANjMt3AlTzSSr7E5m3mb9pNzz4-YZdl44IKjcYUA0Mvxl0Shnm8GbxU8ZdtZYNo9X1gp4syOsx8EZjGvYWgiELwXtgKqZFxKqS0x6zjem1YxkW0yyMTxZ7Nl0iEkeqbb5IQul9v1EPclzONwYppFPstjSfgJF7bXNeJRkm4oB1O2ZQ",
-      quote: t('home.testimonial1Quote')
-    },
-    {
-      id: 2,
-      name: t('home.testimonial2Name'),
-      faculty: t('home.testimonial2Faculty'),
-      position: t('home.testimonial2Position'),
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB62RlnCmIlm2ZKXcAjOQzLJhRKZ_U_PfIBqJuGDY0g-7qg90TmCkN2fGhQJcrqRc1yGet8Ts4wcxeYizkeRIOru31TOa_kHxIuJ7GyPxENzMTZxSl_jWiazMK5EdddDcTM6om0s8s0SksSOIqOxNJlwaGhcRFwZ2ooJkkXpHK9_YFR5GjO3VB7DnF1ISuygib9rCU1teyx3Z5Ht78LP69mA_O88P2NrWu3cN_YjR2xOO1yJn2t-M_9oRxPwOzGAXARdTKYtGjE7R_6",
-      quote: t('home.testimonial2Quote')
-    },
-    {
-      id: 3,
-      name: t('home.testimonial3Name'),
-      faculty: t('home.testimonial3Faculty'),
-      position: t('home.testimonial3Position'),
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDVohtH1gLp5WAJrlgReHjFK4bcxbaKExtmpDy1ddOFn43bBT3qxvxGyxeWK8rgUxc2WSB-oTdim3H3s_Wbux3NuIZpRy_nRWKG8WudjGPZSUyThUcvs3JH_vT483tyT74PZ49c6ks7QwWUJyRYkiz9kPgKtBcRNPt5J2oTEEQwn3MecGPMc39f7d__iXaRM87cMUs9kZQDq8XIppsbkxUr5mrUDLFHfwiLAawH4zgMRMerxMwtmcQGiblMLofVGU9ViCf5O95tPuAr",
-      quote: t('home.testimonial3Quote')
-    },
-    {
-      id: 4,
-      name: t('home.testimonial4Name'),
-      faculty: t('home.testimonial4Faculty'),
-      position: t('home.testimonial4Position'),
-      image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAqdS05N6dUOezB_fXLMqTRjdAAp6B3kOeB6cWFmDUtCh6j8IDrV6MDyV3yKgI7hLgUYZtqG5cv_RDjVj7WtEoAyaZHA4mndXhA0WnIyFFI6TwptPI2Ti4zi6Zf3ixLjcqWeoA-XVucLQriYGZwlIhqkE8gwl-x3gmjz-YByccyZDHW7IkUlKaU4LCxGX2gJdyUkeQI7BwVZ78_nbdY7OehekRwxmpFhXqKrplRTGPt9r7yGOv2pIJRApgUpP4aGy8iK3K6J693CixZ",
-      quote: t('home.testimonial4Quote')
-    }
-  ];
-
-  // Prefer real, admin-featured alumni stories; otherwise show the built-in ones.
-  const testimonials = featuredStories.length
-    ? featuredStories.map((s) => ({
-        id: s.id,
-        name: s.name || '',
-        faculty: [s.faculty, s.graduation_year].filter(Boolean).join(' · '),
-        position: [s.position, s.company].filter(Boolean).join(', '),
-        quote: s.quote,
-        image: s.image ? resolveHeroImage(s.image) : fallbackTestimonials[0].image,
-      }))
-    : fallbackTestimonials;
+  // Only real, admin-featured alumni stories from the database. No static demo
+  // cards: when there are none, the slider is hidden entirely. `image: null`
+  // means the alumnus has no profile photo → the card shows an avatar icon.
+  const testimonials = featuredStories.map((s) => ({
+    id: s.id,
+    name: s.name || '',
+    faculty: [s.faculty, s.graduation_year].filter(Boolean).join(' · '),
+    position: [s.position, s.company].filter(Boolean).join(', '),
+    quote: s.quote,
+    image: s.image ? resolveHeroImage(s.image) : null,
+  }));
 
   // Open a modal for the logged-in alumnus to submit their success story.
   const shareStory = async () => {
     if (!isLoggedIn) {
       const res = await Swal.fire({
         icon: 'info',
-        title: t('home.loginToShare', 'Sign in to share your story'),
+        title: L('Sign in to share your story', 'د خپلې کیسې د شریکولو لپاره ننوځئ', 'برای به‌اشتراک‌گذاری داستان خود وارد شوید'),
         showCancelButton: true,
-        confirmButtonText: t('home.signIn', 'Sign in'),
-        cancelButtonText: t('common.cancel', 'Cancel'),
+        confirmButtonText: L('Sign in', 'ننوتل', 'ورود'),
+        cancelButtonText: L('Cancel', 'لغوه', 'لغو'),
       });
       if (res.isConfirmed) navigate('/login');
       return;
     }
     const { value, isConfirmed } = await Swal.fire({
-      title: t('home.shareYourStory', 'Share your success story'),
+      title: L('Share your success story', 'خپله د بریالیتوب کیسه شریکه کړئ', 'داستان موفقیت خود را به‌اشتراک بگذارید'),
       input: 'textarea',
-      inputLabel: t('home.yourStory', 'Your story'),
-      inputPlaceholder: t('home.storyPlaceholder', 'Tell us how KPU shaped your journey…'),
+      inputLabel: L('Your story', 'ستاسو کیسه', 'داستان شما'),
+      inputPlaceholder: L('Tell us how KPU shaped your journey…', 'راته ووایاست چې KPU ستاسو مزل څنګه جوړ کړ…', 'به ما بگویید KPU چگونه مسیر شما را شکل داد…'),
       inputAttributes: { maxlength: '2000', 'aria-label': 'Your story' },
       showCancelButton: true,
-      confirmButtonText: t('home.submitStory', 'Submit for review'),
-      cancelButtonText: t('common.cancel', 'Cancel'),
-      inputValidator: (v) => (!v || v.trim().length < 20 ? t('home.storyTooShort', 'Please write at least 20 characters.') : undefined),
+      confirmButtonText: L('Submit for review', 'د بیاکتنې لپاره وسپارئ', 'ارسال برای بررسی'),
+      cancelButtonText: L('Cancel', 'لغوه', 'لغو'),
+      inputValidator: (v) => (!v || v.trim().length < 20
+        ? L('Please write at least 20 characters.', 'مهرباني وکړئ لږ تر لږه ۲۰ توري ولیکئ.', 'لطفاً حداقل ۲۰ کاراکتر بنویسید.')
+        : undefined),
     });
     if (!isConfirmed || !value) return;
     try {
       await successStoryService.submit(value.trim());
       Swal.fire({
         icon: 'success',
-        title: t('home.storySubmitted', 'Thank you!'),
-        text: t('home.storyPending', 'Your story was submitted and will appear here once an admin approves it.'),
+        title: L('Thank you!', 'مننه!', 'سپاسگزاریم!'),
+        text: L(
+          'Your story was submitted and will appear here once an admin approves it.',
+          'ستاسو کیسه وسپارل شوه او د اډمین له تصدیق وروسته به دلته ښکاره شي.',
+          'داستان شما ارسال شد و پس از تأیید ادمین اینجا نمایش داده می‌شود.'
+        ),
       });
     } catch (e) {
+      const rateLimited = e?.response?.status === 429 || e?.response?.data?.code === 'once_per_month';
+      const reason = e?.response?.data?.admin_message; // admin's note on the previous story
+      const base = L(
+        'You can submit only one success story per month. Please try again later.',
+        'تاسو په میاشت کې یوازې یوه د بریالیتوب کیسه سپارلی شئ. مهرباني وکړئ وروسته بیا هڅه وکړئ.',
+        'شما فقط یک داستان موفقیت در ماه می‌توانید ارسال کنید. لطفاً بعداً دوباره تلاش کنید.'
+      );
       Swal.fire({
-        icon: 'error',
-        title: t('common.error', 'Something went wrong'),
-        text: e?.response?.data?.message || t('home.storyFailed', 'Could not submit your story. Please try again.'),
+        icon: rateLimited ? 'info' : 'error',
+        title: rateLimited
+          ? L('One story per month', 'په میاشت کې یوه کیسه', 'یک داستان در ماه')
+          : L('Something went wrong', 'یوه ستونزه رامنځته شوه', 'مشکلی پیش آمد'),
+        html: rateLimited
+          ? `${base}${reason ? `<br/><br/><b>${L('Reason from admin:', 'د اډمین دلیل:', 'دلیل از ادمین:')}</b> ${reason}` : ''}`
+          : (e?.response?.data?.message || L('Could not submit your story. Please try again.', 'ستاسو کیسه ونه سپارل شوه. بیا هڅه وکړئ.', 'ارسال داستان ناموفق بود. دوباره تلاش کنید.')),
       });
     }
   };
@@ -178,20 +172,29 @@ const HomePage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [heroSlides.length]);
 
-  // Auto-slide functionality for testimonials
+  // Auto-slide: always move forward. When we pass the last real slide we land on
+  // the cloned first slide (animated), then snap back to index 0 without a
+  // transition — so it keeps flowing forward and never reverses.
   useEffect(() => {
+    if (testimonials.length <= 1) return undefined;
     const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => {
-        if (prev >= testimonials.length) {
-          // When reaching the cloned first card, instantly jump to real first card
-          return 0;
-        }
-        return prev + 1;
-      });
-    }, 4000); // Change slide every 4 seconds
-
-    return () => clearInterval(interval); // Cleanup on unmount
+      setInstantSlide(false);
+      setCurrentTestimonial((prev) => prev + 1);
+    }, 4000);
+    return () => clearInterval(interval);
   }, [testimonials.length]);
+
+  // After animating onto the clone (index === length), snap to the real first
+  // slide instantly, then re-enable transitions on the next frame.
+  useEffect(() => {
+    if (currentTestimonial !== testimonials.length || testimonials.length === 0) return undefined;
+    const t = setTimeout(() => {
+      setInstantSlide(true);
+      setCurrentTestimonial(0);
+      requestAnimationFrame(() => requestAnimationFrame(() => setInstantSlide(false)));
+    }, 700); // match the transition duration
+    return () => clearTimeout(t);
+  }, [currentTestimonial, testimonials.length]);
 
   // Fetch upcoming events — only events whose start_date is strictly in the future,
   // sorted nearest-first, with the closest event highlighted at the top.
@@ -559,11 +562,12 @@ const HomePage = () => {
                 className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#002759] to-[#0a519b] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
               >
                 <FiEdit3 />
-                {t('home.shareYourStory', 'Share your success story')}
+                {L('Share your success story', 'خپله د بریالیتوب کیسه شریکه کړئ', 'داستان موفقیت خود را به‌اشتراک بگذارید')}
               </button>
             </div>
             
-            {/* Modern Slider */}
+            {/* Real, admin-featured stories only — hidden entirely when there are none */}
+            {testimonials.length > 0 ? (
             <div className="relative max-w-6xl mx-auto">
               <div className="relative overflow-hidden rounded-3xl shadow-2xl bg-white border border-gray-100">
                 {/* Slider Container */}
@@ -571,7 +575,7 @@ const HomePage = () => {
                   className="flex transition-transform duration-700 ease-out"
                   style={{
                     transform: `translateX(${isRTL ? '' : '-'}${currentTestimonial * 100}%)`,
-                    transition: currentTestimonial === 0 ? 'none' : 'transform 700ms ease-out'
+                    transition: instantSlide ? 'none' : 'transform 700ms ease-out'
                   }}
                 >
                   {[...testimonials, testimonials[0]].map((testimonial, index) => (
@@ -583,13 +587,19 @@ const HomePage = () => {
                             <div className="relative mx-auto w-40 h-40 sm:w-48 sm:h-48 lg:w-56 lg:h-56">
                               {/* Glow effect */}
                               <div className="absolute inset-0 bg-gradient-to-br from-[#002759]/15 to-[#0a519b]/15 rounded-full blur-2xl transform scale-110"></div>
-                              {/* Image container */}
+                              {/* Image container — avatar icon when the alumnus has no profile photo */}
                               <div className="relative w-full h-full rounded-full overflow-hidden border-3 sm:border-4 border-white shadow-xl">
-                                <img 
-                                  src={testimonial.image} 
-                                  alt={testimonial.name}
-                                  className="w-full h-full object-cover"
-                                />
+                                {testimonial.image ? (
+                                  <img
+                                    src={testimonial.image}
+                                    alt={testimonial.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#002759] to-[#0a519b] text-white/90">
+                                    <FiUser className="w-1/2 h-1/2" />
+                                  </div>
+                                )}
                               </div>
                               {/* Floating badge */}
                               <div className="absolute -bottom-2 -right-2 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-[#002759] to-[#0a519b] rounded-full flex items-center justify-center shadow-lg border-3 border-white">
@@ -686,6 +696,11 @@ const HomePage = () => {
                 ))}
               </div>
             </div>
+            ) : (
+              <div className="max-w-2xl mx-auto text-center py-10 text-gray-400 text-sm">
+                {L('No success stories yet — be the first to share yours!', 'تر اوسه هیڅ کیسه نشته — لومړی اوسئ چې خپله شریکه کړئ!', 'هنوز داستانی نیست — اولین نفری باشید که داستان خود را به‌اشتراک می‌گذارد!')}
+              </div>
+            )}
           </div>
         </section>
 
