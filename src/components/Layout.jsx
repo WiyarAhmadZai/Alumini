@@ -368,8 +368,10 @@ const Layout = ({ children }) => {
                                   : 'bg-yellow-500'
                                 }`} />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{n.title}</p>
-                                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2">{n.message}</p>
+                                  {/* dir="auto" makes each notification read in its own language:
+                                      RTL for Pashto/Dari content, LTR for English. Body is justified. */}
+                                  <p dir="auto" className="text-sm font-semibold text-gray-900 dark:text-white truncate">{n.title}</p>
+                                  <p dir="auto" className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2 text-justify">{n.message}</p>
                                   {n.reason && (
                                     <p className="text-xs text-red-600 dark:text-red-400 mt-1 italic">{t('notifications.reason')} {n.reason}</p>
                                   )}
