@@ -13,16 +13,19 @@ export default defineConfig({
       overlay: false
     },
     proxy: {
-      // Backend (php artisan serve) runs on 8000 — must match the axios baseURL
-      // in src/config/axios.js. Keep all three in sync (proxy target, axios
-      // baseURL, and any absolute storage URLs) or /api requests fail.
+      // Backend (php artisan serve) runs on 8000 and listens on IPv4 127.0.0.1.
+      // Target 127.0.0.1 EXPLICITLY — never the name "localhost": Node would have
+      // to resolve it, and with extra adapters up (VPN / mobile hotspot) that
+      // resolves to ::1 or a DNS-hijacked address instead of 127.0.0.1, so every
+      // proxied request dies with ECONNREFUSED while online but works offline.
+      // Using the literal IP skips DNS entirely and behaves the same either way.
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false
       },
       '/storage': {
-        target: 'http://localhost:8000',
+        target: 'http://127.0.0.1:8000',
         changeOrigin: true,
         secure: false
       }
