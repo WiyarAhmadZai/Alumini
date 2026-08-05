@@ -74,7 +74,6 @@ const ProfilePage = () => {
   const [modalError, setModalError] = useState('');
   const [shareLinkCopied, setShareLinkCopied] = useState(false);
   const [contactForm, setContactForm] = useState({
-    phone: '',
     location: ''
   });
 
@@ -104,8 +103,6 @@ const ProfilePage = () => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
   const [basicForm, setBasicForm] = useState({
-    name: '',
-    phone: '',
     current_job_title: '',
     current_company: '',
     location: '',
@@ -577,8 +574,6 @@ const ProfilePage = () => {
   const openBasicModal = () => {
     setModalError('');
     setBasicForm({
-      name: profile?.name || '',
-      phone: profile?.phone || '',
       current_job_title: profile?.current_job_title || '',
       current_company: profile?.current_company || '',
       location: profile?.location || '',
@@ -649,7 +644,6 @@ const ProfilePage = () => {
   const openContactModal = () => {
     setModalError('');
     setContactForm({
-      phone: profile?.phone || '',
       location: profile?.location || ''
     });
     setActiveModal('contact');
@@ -1426,16 +1420,6 @@ const ProfilePage = () => {
                         <FiPhone className="text-sm" />
                       </div>
                       <span className="text-gray-700 text-xs font-medium">{profile?.phone || t('profile.contact.notAdded')}</span>
-                      {profile?.phone && isOwner && (
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteContact('phone')}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-auto"
-                          title={t('profile.contact.deletePhone')}
-                        >
-                          <FiTrash2 className="text-red-500 hover:text-red-700" size={12} />
-                        </button>
-                      )}
                     </div>
                     <div className="group relative flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                       <div className="w-9 h-9 flex items-center justify-center rounded-lg flex-shrink-0"
@@ -2378,13 +2362,8 @@ const ProfilePage = () => {
       >
         {modalError && <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{modalError}</div>}
         <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">{t('profile.fields.name')}</label>
-            <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900" value={basicForm.name} onChange={(e) => setBasicForm({ ...basicForm, name: e.target.value })} />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-800 mb-1">{t('profile.fields.phone')}</label>
-            <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900" value={basicForm.phone} onChange={(e) => setBasicForm({ ...basicForm, phone: e.target.value })} />
+          <div className="rounded-lg bg-blue-50 border border-blue-100 px-3 py-2 text-xs text-blue-700">
+            {t('profile.fields.namePhoneManagedByAdmin')}
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-1">{t('profile.fields.currentJobTitle')}</label>
@@ -2711,15 +2690,8 @@ const ProfilePage = () => {
       >
         {modalError && <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{modalError}</div>}
         <div className="grid grid-cols-1 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">{t('profile.fields.phoneNumber')}</label>
-            <input
-              type="tel"
-              value={contactForm.phone}
-              onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              placeholder={t('profile.fields.enterPhone')}
-            />
+          <div className="rounded-lg bg-blue-50 border border-blue-100 px-3 py-2 text-xs text-blue-700">
+            {t('profile.fields.namePhoneManagedByAdmin')}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">{t('profile.fields.location')}</label>
