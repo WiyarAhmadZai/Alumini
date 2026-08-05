@@ -146,10 +146,17 @@ const VerifiedAlumniRegistration = () => {
     try {
       const response = await alumniService.searchStudent(formData.university_id);
       const student = response.data;
-      // Gate: only graduated students may register as alumni.
+      // Gate: only graduated students may register as alumni. When the student
+      // is still enrolled, tell them exactly which semester they're on so it's
+      // clear they must finish and graduate before registering.
       if (student && !student.is_graduated) {
         setStudentData(null);
-        setSearchError(t('auth.errors.notGraduated'));
+        const semester = student.current_semester_no;
+        setSearchError(
+          semester
+            ? t('auth.errors.notGraduatedSemester', { semester })
+            : t('auth.errors.notGraduated')
+        );
         return;
       }
       setStudentData(student);

@@ -40,6 +40,7 @@ const auth = {
         universityIdRequired: "University ID is required",
         studentNotFound: "Student not found. Please check your University ID.",
         notGraduated: "You cannot register yet — you are still an enrolled student and have not graduated. Registration is only available after you graduate.",
+        notGraduatedSemester: "You are still in semester {{semester}}. After you graduate, you can register your profile as an alumni student.",
         tazkiraRequired: "Tazkira number is required",
         tazkiraFailed:
           "Tazkira verification failed. Please check your tazkira number.",
@@ -181,6 +182,7 @@ const auth = {
         universityIdRequired: "آی‌دی پوهنتون الزامی است",
         studentNotFound: "محصل یافت نشد. لطفاً آی‌دی پوهنتون خود را بررسی کنید.",
         notGraduated: "شما هنوز نمی‌توانید ثبت‌نام کنید — شما هنوز محصل فعال هستید و فارغ نشده‌اید. ثبت‌نام تنها پس از فراغت ممکن است.",
+        notGraduatedSemester: "شما هنوز در سمستر {{semester}} هستید. پس از فراغت می‌توانید پروفایل خود را به‌عنوان محصل فارغ‌التحصیل ثبت کنید.",
         tazkiraRequired: "شماره تذکره الزامی است",
         tazkiraFailed:
           "تأیید تذکره ناکام شد. لطفاً شماره تذکره خود را بررسی کنید.",
@@ -322,6 +324,7 @@ const auth = {
         universityIdRequired: "د پوهنتون آی‌ډي اړین دی",
         studentNotFound: "زده‌کوونکی ونه موندل شو. مهرباني وکړئ خپل د پوهنتون آی‌ډي وګورئ.",
         notGraduated: "تاسو لا تر اوسه نشئ کولی نوم‌لیکنه وکړئ — تاسو لا هم فعال محصل یاست او فارغ شوي نه یاست. نوم‌لیکنه یوازې تر فراغت وروسته ممکنه ده.",
+        notGraduatedSemester: "تاسو لا هم په {{semester}} سمستر کې یاست. تر فراغت وروسته کولی شئ خپل پروفایل د فارغ محصل په توګه ثبت کړئ.",
         tazkiraRequired: "د تذکرې شمېره اړینه ده",
         tazkiraFailed:
           "د تذکرې تایید ناکام شو. مهرباني وکړئ خپل د تذکرې شمېره وګورئ.",

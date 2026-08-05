@@ -9,6 +9,11 @@ export default defineConfig({
   },
   server: {
     host: true,
+    // Alumini is fixed to 5174 (MIS-Front uses 5173) so running both at once
+    // never collides and each app always lives at a predictable URL. strictPort
+    // makes Vite fail loudly instead of silently hopping to another port.
+    port: 5174,
+    strictPort: true,
     hmr: {
       overlay: false
     },
