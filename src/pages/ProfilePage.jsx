@@ -104,6 +104,7 @@ const ProfilePage = () => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
   const [basicForm, setBasicForm] = useState({
+    name: '',
     phone: '',
     current_job_title: '',
     current_company: '',
@@ -576,6 +577,7 @@ const ProfilePage = () => {
   const openBasicModal = () => {
     setModalError('');
     setBasicForm({
+      name: profile?.name || '',
       phone: profile?.phone || '',
       current_job_title: profile?.current_job_title || '',
       current_company: profile?.current_company || '',
@@ -2376,6 +2378,10 @@ const ProfilePage = () => {
       >
         {modalError && <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{modalError}</div>}
         <div className="grid grid-cols-1 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-800 mb-1">{t('profile.fields.name')}</label>
+            <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900" value={basicForm.name} onChange={(e) => setBasicForm({ ...basicForm, name: e.target.value })} />
+          </div>
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-1">{t('profile.fields.phone')}</label>
             <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900" value={basicForm.phone} onChange={(e) => setBasicForm({ ...basicForm, phone: e.target.value })} />

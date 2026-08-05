@@ -199,6 +199,7 @@ const profile = {
         becomeMentor: "Become a Mentor",
       },
       fields: {
+        name: "Full Name",
         phone: "Phone",
         currentJobTitle: "Current Job Title",
         currentCompany: "Current Company",
@@ -525,6 +526,7 @@ const profile = {
         becomeMentor: "رهنما شوید",
       },
       fields: {
+        name: "نام کامل",
         phone: "تلفن",
         currentJobTitle: "عنوان وظیفه فعلی",
         currentCompany: "شرکت فعلی",
@@ -851,6 +853,7 @@ const profile = {
         becomeMentor: "لارښود شئ",
       },
       fields: {
+        name: "بشپړ نوم",
         phone: "تلیفون",
         currentJobTitle: "د اوسنۍ دندې عنوان",
         currentCompany: "اوسنی شرکت",
