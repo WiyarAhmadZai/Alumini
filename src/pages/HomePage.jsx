@@ -592,15 +592,47 @@ const HomePage = () => {
               <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto">
                 {t('home.successStoriesSubtitle')}
               </p>
-              <button
-                type="button"
-                onClick={shareStory}
-                data-no-edit
-                className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#002759] to-[#0a519b] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
-              >
-                <FiEdit3 />
-                {L('Share your success story', 'خپله د بریالیتوب کیسه شریکه کړئ', 'داستان موفقیت خود را به‌اشتراک بگذارید')}
-              </button>
+              {isLoggedIn && myStory ? (
+                <div className="mt-6 max-w-xl mx-auto text-start bg-white rounded-2xl border border-gray-200 shadow-sm p-4" data-no-edit>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-sm font-bold text-[#002759] flex items-center gap-1.5">
+                      <FiStar /> {L('Your success story', 'ستاسو د بریالیتوب کیسه', 'داستان موفقیت شما')}
+                    </span>
+                    {myStory.is_featured ? (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-bold">{L('Live on site', 'په سایټ کې', 'در سایت')}</span>
+                    ) : myStory.is_approved ? (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold">{L('Approved', 'تصدیق‌شوی', 'تأییدشده')}</span>
+                    ) : (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold">{L('Under review', 'د بیاکتنې لاندې', 'در حال بررسی')}</span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-700 leading-relaxed line-clamp-3 whitespace-pre-line">{myStory.quote}</p>
+                  {myStory.admin_message && (
+                    <div className="mt-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
+                      <span className="font-semibold">{L('Message from admin:', 'د اډمین پیغام:', 'پیام از ادمین:')} </span>{myStory.admin_message}
+                    </div>
+                  )}
+                  <div className="mt-3 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={editStory}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold text-white bg-gradient-to-r from-[#002759] to-[#0a519b] hover:shadow-md transition-all"
+                    >
+                      <FiEdit3 /> {L('Edit your story', 'خپله کیسه سمول', 'ویرایش داستان')}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={shareStory}
+                  data-no-edit
+                  className="mt-5 inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-gradient-to-r from-[#002759] to-[#0a519b] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+                >
+                  <FiEdit3 />
+                  {L('Share your success story', 'خپله د بریالیتوب کیسه شریکه کړئ', 'داستان موفقیت خود را به‌اشتراک بگذارید')}
+                </button>
+              )}
             </div>
             
             {/* Real, admin-featured stories only — hidden entirely when there are none */}
