@@ -9,7 +9,8 @@ import {
   FiUser,
   FiMail,
   FiCalendar,
-  FiEdit3
+  FiEdit3,
+  FiStar
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import { SkeletonCard } from '../components/ui/Skeleton';
