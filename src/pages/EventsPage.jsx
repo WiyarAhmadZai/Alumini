@@ -356,7 +356,9 @@ const EventsPage = () => {
         date_to: dateTo || undefined,
         sort_by: sortBy,
         sort_order: sortOrder,
-        status: 'upcoming',
+        // Default to upcoming events, but when the user picks a date range let
+        // the range decide — otherwise a past range would always return nothing.
+        status: (dateFrom || dateTo) ? undefined : 'upcoming',
       };
 
       // Remove undefined values from params

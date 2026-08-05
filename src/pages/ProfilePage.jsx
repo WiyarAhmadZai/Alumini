@@ -8,6 +8,7 @@ import Cropper from 'react-easy-crop';
 import Swal from 'sweetalert2';
 import alumniService from '../services/alumniService';
 import authService from '../services/authService';
+import { useAuth } from '../contexts/AuthContext';
 import jobService from '../services/jobService';
 import messageService from '../services/messageService';
 import eventService from '../services/eventService';
@@ -15,6 +16,7 @@ import EventCardModal from '../components/event/EventCardModal';
 import Modal from '../components/ui/Modal';
 import mentorService from '../services/mentorService';
 import notificationService from '../services/notificationService';
+import successStoryService from '../services/successStoryService';
 
 const timeAgo = (dateStr, t) => {
   const now = new Date();
@@ -37,6 +39,7 @@ const ProfilePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
+  const { updateUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -52,7 +55,19 @@ const ProfilePage = () => {
   const [loadingEvents, setLoadingEvents] = useState(false);
 
   const [activeModal, setActiveModal] = useState(null); // basic | experience | education | skill | achievement | share | contact | mentor
-  const [activeTab, setActiveTab] = useState('overview'); // overview | jobs | messages | events | mentees | requests | applications
+  const [activeTab, setActiveTab] = useState('overview'); // overview | jobs | messages | events | mentees | requests | applications | story
+
+  // My success story (with review status + admin message) — editable here.
+  const [successStory, setSuccessStory] = useState(null);
+  const [editingStory, setEditingStory] = useState(false);
+  const [storyDraft, setStoryDraft] = useState('');
+  const [savingStory, setSavingStory] = useState(false);
+
+  // Open the requested tab when arriving from a notification (?tab=story).
+  useEffect(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab');
+    if (tab) setActiveTab(tab);
+  }, []);
 
   const [myMentor, setMyMentor] = useState(null);
   const [viewedProfileMentor, setViewedProfileMentor] = useState(null);
@@ -103,6 +118,7 @@ const ProfilePage = () => {
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
   const [basicForm, setBasicForm] = useState({
+    phone: '',
     current_job_title: '',
     current_company: '',
     location: '',
@@ -337,8 +353,28 @@ const ProfilePage = () => {
         const notifs = (res.data?.data || []).filter(n => n.type === 'status_change' || n.type === 'event_registration');
         setProfileNotifications(notifs);
       }).catch(() => { }).finally(() => setLoadingNotifications(false));
+      // Load my success story (status + admin message)
+      successStoryService.getMine().then(setSuccessStory).catch(() => { });
     }
   }, [isOwner, profile]);
+
+  const saveStory = async () => {
+    if (storyDraft.trim().length < 20) {
+      Swal.fire({ icon: 'warning', title: t('profile.alerts.error', 'Error'), text: t('profile.story.tooShort', 'Please write at least 20 characters.') });
+      return;
+    }
+    setSavingStory(true);
+    try {
+      const res = await successStoryService.updateMine(storyDraft.trim());
+      setSuccessStory(res.data);
+      setEditingStory(false);
+      Swal.fire({ icon: 'success', title: t('profile.story.saved', 'Saved'), text: t('profile.story.savedText', 'Your story was updated and sent for review.') });
+    } catch (e) {
+      Swal.fire({ icon: 'error', title: t('profile.alerts.error', 'Error'), text: e?.response?.data?.message || t('profile.story.saveError', 'Could not save your story.') });
+    } finally {
+      setSavingStory(false);
+    }
+  };
 
   // When viewing someone else's profile, check if they're a mentor
   useEffect(() => {
@@ -356,6 +392,10 @@ const ProfilePage = () => {
     } else {
       const response = await alumniService.getMe();
       setProfile(response.data);
+      // Keep the navbar avatar in sync — it reads the user from AuthContext, so
+      // without this a freshly uploaded profile image (or edited name) wouldn't
+      // appear in the navbar until a full page reload.
+      updateUser(response.data);
     }
   };
 
@@ -574,6 +614,7 @@ const ProfilePage = () => {
   const openBasicModal = () => {
     setModalError('');
     setBasicForm({
+      phone: profile?.phone || '',
       current_job_title: profile?.current_job_title || '',
       current_company: profile?.current_company || '',
       location: profile?.location || '',
@@ -1347,6 +1388,7 @@ const ProfilePage = () => {
                     { key: 'requests', label: t('profile.tabs.requests'), icon: <FiUsers />, count: (mentorRequests || []).filter(r => r.status === 'pending').length },
                   ] : []),
                   { key: 'applications', label: t('profile.tabs.applications'), icon: <FiTrendingUp />, count: myApplications.length },
+                  { key: 'story', label: t('profile.tabs.story', 'Success Story'), icon: <FiStar /> },
                 ].map(tab => {
                   const active = activeTab === tab.key;
                   return (
@@ -2042,6 +2084,84 @@ const ProfilePage = () => {
                 </div>
               )}
 
+              {/* My Success Story — status + admin message, editable */}
+              {isOwner && (activeTab === 'overview' || activeTab === 'story') && (
+                <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <FiStar className="text-blue-600" />
+                        {t('profile.story.title', 'My Success Story')}
+                      </h3>
+                      {successStory && !editingStory && (
+                        <button
+                          type="button"
+                          onClick={() => { setStoryDraft(successStory.quote || ''); setEditingStory(true); }}
+                          className="text-blue-600 text-xs font-semibold hover:underline flex items-center gap-1"
+                        >
+                          <FiEdit /> {t('profile.story.edit', 'Edit')}
+                        </button>
+                      )}
+                    </div>
+
+                    {!successStory ? (
+                      <div className="text-center py-6">
+                        <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                          <FiStar className="text-gray-400 text-xl" />
+                        </div>
+                        <p className="text-gray-500 text-sm">{t('profile.story.empty', "You haven't shared a success story yet.")}</p>
+                        <Link to="/" className="text-blue-600 text-xs hover:underline mt-1 inline-block">
+                          {t('profile.story.share', 'Share your story on the home page')}
+                        </Link>
+                      </div>
+                    ) : editingStory ? (
+                      <div className="space-y-3">
+                        <textarea
+                          rows={5}
+                          value={storyDraft}
+                          maxLength={2000}
+                          onChange={(e) => setStoryDraft(e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-900 focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                          placeholder={t('profile.story.placeholder', 'Tell us how KPU shaped your journey…')}
+                        />
+                        <div className="flex items-center justify-between">
+                          <span className="text-[11px] text-gray-400">{storyDraft.length}/2000</span>
+                          <div className="flex gap-2">
+                            <button type="button" onClick={() => setEditingStory(false)}
+                              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-gray-100 text-gray-600 hover:bg-gray-200">
+                              {t('profile.story.cancel', 'Cancel')}
+                            </button>
+                            <button type="button" onClick={saveStory} disabled={savingStory}
+                              className="px-4 py-1.5 rounded-lg text-xs font-semibold text-white disabled:opacity-60 flex items-center gap-1" style={{ background: '#002759' }}>
+                              <FiSend size={12} /> {savingStory ? t('profile.story.saving', 'Saving…') : t('profile.story.save', 'Save')}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {successStory.is_featured ? (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-bold">{t('profile.story.live', 'Live on site')}</span>
+                          ) : successStory.is_approved ? (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold">{t('profile.story.approved', 'Approved')}</span>
+                          ) : (
+                            <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold">{t('profile.story.pending', 'Under review')}</span>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line bg-gray-50 rounded-lg p-3 border border-gray-100">{successStory.quote}</p>
+                        {successStory.admin_message && (
+                          <div className="rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800 flex items-start gap-2">
+                            <FiMessageSquare className="mt-0.5 shrink-0" />
+                            <span><span className="font-semibold">{t('profile.story.adminNote', 'Message from admin:')} </span>{successStory.admin_message}</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
             </aside>
 
             {/* Right Column (Main Content) — hide on non-overview tabs for owner */}
@@ -2362,8 +2482,12 @@ const ProfilePage = () => {
       >
         {modalError && <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{modalError}</div>}
         <div className="grid grid-cols-1 gap-4">
+          <div>
+            <label className="block text-sm font-semibold text-gray-800 mb-1">{t('profile.fields.phone')}</label>
+            <input className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-900" value={basicForm.phone} onChange={(e) => setBasicForm({ ...basicForm, phone: e.target.value })} />
+          </div>
           <div className="rounded-lg bg-blue-50 border border-blue-100 px-3 py-2 text-xs text-blue-700">
-            {t('profile.fields.namePhoneManagedByAdmin')}
+            {t('profile.fields.nameManagedByAdmin')}
           </div>
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-1">{t('profile.fields.currentJobTitle')}</label>
@@ -2690,9 +2814,6 @@ const ProfilePage = () => {
       >
         {modalError && <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{modalError}</div>}
         <div className="grid grid-cols-1 gap-4">
-          <div className="rounded-lg bg-blue-50 border border-blue-100 px-3 py-2 text-xs text-blue-700">
-            {t('profile.fields.namePhoneManagedByAdmin')}
-          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">{t('profile.fields.location')}</label>
             <input

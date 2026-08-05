@@ -27,7 +27,22 @@ const DirectoryPage = () => {
   const [alumni, setAlumni] = useState([]);
   const [availableYears, setAvailableYears] = useState([]);
   const [faculties, setFaculties] = useState([]);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
+  // Persist the grid/list choice so it survives a refresh (only changes when
+  // the user explicitly toggles it).
+  const [viewMode, setViewMode] = useState(() => {
+    const saved = localStorage.getItem('directory_view_mode');
+    return saved === 'list' || saved === 'grid' ? saved : 'grid';
+  }); // 'grid' | 'list'
+  useEffect(() => { localStorage.setItem('directory_view_mode', viewMode); }, [viewMode]);
+
+  // Client-side pagination (all verified alumni are fetched once, then paged
+  // locally). perPage === -1 means "All".
+  const [page, setPage] = useState(1);
+  const [perPage, setPerPage] = useState(() => {
+    const saved = Number(localStorage.getItem('directory_per_page'));
+    return [12, 24, 48, 96, -1].includes(saved) ? saved : 24;
+  });
+  useEffect(() => { localStorage.setItem('directory_per_page', String(perPage)); }, [perPage]);
 
   const fetchAlumni = useCallback(async () => {
     try {
@@ -97,6 +112,27 @@ const DirectoryPage = () => {
   const handleYearChange = (y) => setSelectedFilters(p => ({ ...p, graduationYear: y }));
   const resetFilters = () => { setSearchTerm(''); setSelectedFilters({ faculty: '', graduationYear: '' }); };
   const hasActiveFilters = searchTerm || selectedFilters.faculty || selectedFilters.graduationYear;
+
+  // ─── Pagination (client-side) ───
+  const totalItems = filteredAlumni.length;
+  const isAll = perPage === -1;
+  const totalPages = isAll ? 1 : Math.max(1, Math.ceil(totalItems / perPage));
+  const currentPage = Math.min(page, totalPages);
+  const startIdx = isAll ? 0 : (currentPage - 1) * perPage;
+  const paginatedAlumni = isAll ? filteredAlumni : filteredAlumni.slice(startIdx, startIdx + perPage);
+  const goToPage = (p) => setPage(Math.min(Math.max(1, p), totalPages));
+
+  // Jump back to page 1 whenever the result set or page size changes.
+  useEffect(() => { setPage(1); }, [searchTerm, selectedFilters.faculty, selectedFilters.graduationYear, perPage]);
+
+  // Page-number window (up to 5) centred on the current page.
+  const pageNumbers = (() => {
+    const maxVisible = 5;
+    let start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, start + maxVisible - 1);
+    start = Math.max(1, end - maxVisible + 1);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  })();
 
   // ─── Hero (inline so search input doesn't remount) ───
   const renderHero = (isLoading) => (
@@ -277,8 +313,23 @@ const DirectoryPage = () => {
           <div className="flex flex-wrap items-center gap-2 mt-3 px-0.5">
             <span className="text-[11px] text-gray-400 flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-              {t('directory.showingPrefix')} <span className="font-semibold text-gray-700">{filteredAlumni.length}</span> {t('directory.of')} <span className="font-semibold text-gray-700">{alumni.length}</span> {t('directory.alumniLower')}
+              {t('directory.showingPrefix')} <span className="font-semibold text-gray-700">{totalItems === 0 ? 0 : startIdx + 1}–{startIdx + paginatedAlumni.length}</span> {t('directory.of')} <span className="font-semibold text-gray-700">{totalItems}</span> {t('directory.alumniLower')}
             </span>
+
+            {/* Records-per-page selector (Yajra-style) */}
+            <label className="flex items-center gap-1.5 text-[11px] text-gray-500">
+              {t('directory.show', 'Show')}
+              <select
+                value={perPage}
+                onChange={(e) => setPerPage(Number(e.target.value))}
+                className="px-2 py-1 bg-gray-50 border border-gray-200 rounded-md text-[11px] font-semibold text-gray-700 focus:ring-2 cursor-pointer"
+                style={{ '--tw-ring-color': BRAND_BORDER }}
+              >
+                {[12, 24, 48, 96].map(n => <option key={n} value={n}>{n}</option>)}
+                <option value={-1}>{t('directory.all', 'All')}</option>
+              </select>
+              {t('directory.perPage', 'per page')}
+            </label>
 
             {/* Active filter chips */}
             {hasActiveFilters && (
@@ -342,7 +393,7 @@ const DirectoryPage = () => {
           </div>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-            {filteredAlumni.map((alumnus) => (
+            {paginatedAlumni.map((alumnus) => (
               <div key={alumnus.id}
                 className="bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-md hover:border-gray-200 transition-all duration-200 cursor-pointer"
                 onClick={() => navigate(`/profile/${alumnus.id}`)}>
@@ -392,8 +443,8 @@ const DirectoryPage = () => {
               </div>
             ))}
 
-            {/* Join card — hidden for logged-in alumni */}
-            {!isLoggedIn && (
+            {/* Join card — hidden for logged-in alumni; only on the last page */}
+            {!isLoggedIn && currentPage === totalPages && (
               <div className="flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-gray-300 transition-colors group"
                 style={{ minHeight: 200 }} onClick={() => navigate('/register')}>
                 <div className="text-center">
@@ -408,7 +459,7 @@ const DirectoryPage = () => {
         ) : (
           // List view
           <div className="flex flex-col gap-2">
-            {filteredAlumni.map((alumnus) => (
+            {paginatedAlumni.map((alumnus) => (
               <div key={alumnus.id}
                 className="bg-white rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all duration-200 cursor-pointer p-3 flex items-center gap-3"
                 onClick={() => navigate(`/profile/${alumnus.id}`)}>
@@ -480,14 +531,50 @@ const DirectoryPage = () => {
         )}
 
         {/* Pagination */}
-        {filteredAlumni.length > 0 && (
-          <nav className="flex items-center justify-between border-t border-gray-100 pt-5 mt-8">
-            <p className="text-xs text-gray-400 hidden sm:block">
-              {t('directory.showingPrefix')} <span className="font-semibold text-gray-700">{filteredAlumni.length}</span> {t('directory.of')} <span className="font-semibold text-gray-700">{alumni.length}</span>
+        {totalItems > 0 && totalPages > 1 && (
+          <nav className="flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-gray-100 pt-5 mt-8">
+            <p className="text-xs text-gray-400">
+              {t('directory.showingPrefix')} <span className="font-semibold text-gray-700">{startIdx + 1}–{startIdx + paginatedAlumni.length}</span> {t('directory.of')} <span className="font-semibold text-gray-700">{totalItems}</span>
             </p>
-            <div className="flex-1 flex justify-between sm:justify-end gap-2">
-              <button className="px-3.5 py-1.5 border border-gray-200 text-xs font-medium rounded-lg text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-40" disabled>{t('directory.previous')}</button>
-              <button className="px-3.5 py-1.5 border border-gray-200 text-xs font-medium rounded-lg text-gray-600 bg-white hover:bg-gray-50">{t('directory.next')}</button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => goToPage(currentPage - 1)}
+                disabled={currentPage <= 1}
+                className="px-3 py-1.5 border border-gray-200 text-xs font-medium rounded-lg text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {t('directory.previous')}
+              </button>
+              {pageNumbers[0] > 1 && (
+                <>
+                  <button onClick={() => goToPage(1)} className="min-w-[32px] h-8 px-2 rounded-lg text-xs font-semibold text-gray-600 bg-white border border-gray-200 hover:bg-gray-50">1</button>
+                  {pageNumbers[0] > 2 && <span className="px-1 text-gray-400 text-xs">…</span>}
+                </>
+              )}
+              {pageNumbers.map((p) => (
+                <button
+                  key={p}
+                  onClick={() => goToPage(p)}
+                  className="min-w-[32px] h-8 px-2 rounded-lg text-xs font-semibold transition-colors border"
+                  style={p === currentPage
+                    ? { background: BRAND_DARK, color: '#fff', borderColor: BRAND_DARK }
+                    : { background: '#fff', color: '#4b5563', borderColor: '#e5e7eb' }}
+                >
+                  {p}
+                </button>
+              ))}
+              {pageNumbers[pageNumbers.length - 1] < totalPages && (
+                <>
+                  {pageNumbers[pageNumbers.length - 1] < totalPages - 1 && <span className="px-1 text-gray-400 text-xs">…</span>}
+                  <button onClick={() => goToPage(totalPages)} className="min-w-[32px] h-8 px-2 rounded-lg text-xs font-semibold text-gray-600 bg-white border border-gray-200 hover:bg-gray-50">{totalPages}</button>
+                </>
+              )}
+              <button
+                onClick={() => goToPage(currentPage + 1)}
+                disabled={currentPage >= totalPages}
+                className="px-3 py-1.5 border border-gray-200 text-xs font-medium rounded-lg text-gray-600 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {t('directory.next')}
+              </button>
             </div>
           </nav>
         )}

@@ -30,6 +30,9 @@ const directory = {
       view: "View",
       previous: "Previous",
       next: "Next",
+      show: "Show",
+      perPage: "per page",
+      all: "All",
     },
   },
   da: {
@@ -62,6 +65,9 @@ const directory = {
       view: "مشاهده",
       previous: "قبلی",
       next: "بعدی",
+      show: "نمایش",
+      perPage: "در هر صفحه",
+      all: "همه",
     },
   },
   ps: {
@@ -94,6 +100,9 @@ const directory = {
       view: "کتل",
       previous: "مخکنی",
       next: "راتلونکی",
+      show: "ښودل",
+      perPage: "په هره پاڼه",
+      all: "ټول",
     },
   },
 };

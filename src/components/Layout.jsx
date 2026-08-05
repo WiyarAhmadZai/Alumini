@@ -354,6 +354,8 @@ const Layout = ({ children }) => {
                                   navigate('/profile');
                                 } else if (n.type === 'mentor_profile_created' && n.reason) {
                                   navigate(`/mentorship/${n.reason}`);
+                                } else if (n.type === 'success_story_review') {
+                                  navigate('/profile?tab=story');
                                 } else {
                                   navigate('/profile');
                                 }

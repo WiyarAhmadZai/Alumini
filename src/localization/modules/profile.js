@@ -199,7 +199,7 @@ const profile = {
         becomeMentor: "Become a Mentor",
       },
       fields: {
-        namePhoneManagedByAdmin: "Your name and phone come from the university's official records and can only be changed by an administrator.",
+        nameManagedByAdmin: "Your name comes from the university's official records and can only be changed by an administrator.",
         phone: "Phone",
         currentJobTitle: "Current Job Title",
         currentCompany: "Current Company",
@@ -526,7 +526,7 @@ const profile = {
         becomeMentor: "رهنما شوید",
       },
       fields: {
-        namePhoneManagedByAdmin: "نام و شماره تلفن شما از سوابق رسمی پوهنتون گرفته می‌شود و تنها توسط مدیر قابل تغییر است.",
+        nameManagedByAdmin: "نام شما از سوابق رسمی پوهنتون گرفته می‌شود و تنها توسط مدیر قابل تغییر است.",
         phone: "تلفن",
         currentJobTitle: "عنوان وظیفه فعلی",
         currentCompany: "شرکت فعلی",
@@ -853,7 +853,7 @@ const profile = {
         becomeMentor: "لارښود شئ",
       },
       fields: {
-        namePhoneManagedByAdmin: "ستاسو نوم او د تلیفون شمېره د پوهنتون له رسمي ریکارډونو اخیستل کیږي او یوازې د مدیر لخوا بدلیدلی شي.",
+        nameManagedByAdmin: "ستاسو نوم د پوهنتون له رسمي ریکارډونو اخیستل کیږي او یوازې د مدیر لخوا بدلیدلی شي.",
         phone: "تلیفون",
         currentJobTitle: "د اوسنۍ دندې عنوان",
         currentCompany: "اوسنی شرکت",

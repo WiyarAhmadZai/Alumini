@@ -36,6 +36,7 @@ const HomePage = () => {
   const navigate = useNavigate();
   // Admin-approved & featured alumni stories (fall back to the built-in ones).
   const [featuredStories, setFeaturedStories] = useState([]);
+  const [myStory, setMyStory] = useState(null); // the signed-in user's own story
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   // When true the slider jumps without animating — used to snap from the cloned
   // first slide back to the real first slide, so the loop is seamless (forward),
@@ -120,11 +121,46 @@ const HomePage = () => {
     }
   };
 
+  // Edit my own story from the home page (sends it back to review).
+  const editStory = async () => {
+    const { value, isConfirmed } = await Swal.fire({
+      title: L('Edit your success story', 'خپله د بریالیتوب کیسه سمول', 'ویرایش داستان موفقیت خود'),
+      input: 'textarea',
+      inputValue: myStory?.quote || '',
+      inputLabel: L('Your story', 'ستاسو کیسه', 'داستان شما'),
+      inputAttributes: { maxlength: '2000' },
+      showCancelButton: true,
+      confirmButtonText: L('Save', 'خوندي کول', 'ذخیره'),
+      cancelButtonText: L('Cancel', 'لغوه', 'لغو'),
+      inputValidator: (v) => (!v || v.trim().length < 20
+        ? L('Please write at least 20 characters.', 'مهرباني وکړئ لږ تر لږه ۲۰ توري ولیکئ.', 'لطفاً حداقل ۲۰ کاراکتر بنویسید.')
+        : undefined),
+    });
+    if (!isConfirmed || !value) return;
+    try {
+      const res = await successStoryService.updateMine(value.trim());
+      setMyStory(res.data);
+      Swal.fire({
+        icon: 'success',
+        title: L('Saved', 'خوندي شو', 'ذخیره شد'),
+        text: L('Your story was updated and sent for review.', 'ستاسو کیسه سمه شوه او د بیاکتنې لپاره واستول شوه.', 'داستان شما به‌روزرسانی و برای بررسی ارسال شد.'),
+      });
+    } catch (e) {
+      Swal.fire({
+        icon: 'error',
+        title: L('Something went wrong', 'یوه ستونزه رامنځته شوه', 'مشکلی پیش آمد'),
+        text: e?.response?.data?.message || L('Could not save your story.', 'ستاسو کیسه خوندي نشوه.', 'ذخیره داستان ناموفق بود.'),
+      });
+    }
+  };
+
   useEffect(() => {
     let active = true;
     successStoryService.getFeatured().then((list) => { if (active) setFeaturedStories(list); });
+    // Signed-in users: load their own story so it can be shown + edited here.
+    if (isLoggedIn) successStoryService.getMine().then((s) => { if (active) setMyStory(s); });
     return () => { active = false; };
-  }, []);
+  }, [isLoggedIn]);
 
   // Static fallback slides — used until an admin configures the "home" hero.
   const staticHeroSlides = [
