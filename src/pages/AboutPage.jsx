@@ -8,7 +8,7 @@ import { useHero } from '../contexts/HeroContext';
 import HeroBackground from '../components/ui/HeroBackground';
 import {
   FiMail, FiPhone, FiMapPin, FiLinkedin, FiAward, FiUsers, FiTarget, FiGlobe,
-  FiArrowRight, FiBookOpen, FiTrendingUp, FiHeart, FiStar, FiZap
+  FiArrowRight, FiBookOpen, FiTrendingUp, FiHeart, FiStar, FiZap, FiUser, FiGithub
 } from 'react-icons/fi';
 
 // ─── Brand palette ──────────────────────────────────────────────
@@ -42,7 +42,7 @@ const SectionHeader = ({ label, title, subtitle }) => (
 const AboutPage = () => {
   const { t } = useTranslation();
   const hero = useHero('about');
-  const { chancellor, board, pick } = useSettings();
+  const { chancellor, board, pick, loaded } = useSettings();
   const isLoggedIn = authService.isAuthenticated();
 
   // Chancellor — dynamic from admin settings, with i18n fallback.
@@ -50,6 +50,9 @@ const AboutPage = () => {
   const chRole = pick(chancellor?.role) || t('about.chancellor.role');
   const chQuote = pick(chancellor?.message) || t('about.chancellor.quote');
   const chPhoto = chancellor?.photo || '/chanceler.jpg';
+  const chEmail = chancellor?.email || '';
+  const chLinkedin = chancellor?.linkedin || '';
+  const chGithub = chancellor?.github || '';
 
   const values = [
     { icon: <FiHeart />, title: t('about.values.integrityTitle'), desc: t('about.values.integrityDesc') },
@@ -65,20 +68,18 @@ const AboutPage = () => {
     { year: '2024', title: t('about.timeline.platformTitle'), desc: t('about.timeline.platformDesc') },
   ];
 
-  // Executive board — dynamic from admin settings, with hardcoded fallback.
-  const boardMembers = (board && board.length)
-    ? board.map((m) => ({
-        name: pick(m.name) || '',
-        role: pick(m.role) || '',
-        dept: [m.faculty, m.graduation_year].filter(Boolean).join(' · '),
-        img: m.photo || '/teacher.jpg',
-      }))
-    : [
-        { name: 'Eng. Mohammad Hassan', role: t('about.board.presidentRole'), dept: 'Civil · 1995', img: '/1teacher.jpg' },
-        { name: 'Dr. Sarah Ahmadzai', role: t('about.board.vicePresidentRole'), dept: 'Electrical · 2000', img: '/teacher.jpg' },
-        { name: 'Ahmad Wali Karimi', role: t('about.board.secretaryRole'), dept: 'Mechanical · 2008', img: '/depositphotos_229021826-stock-photo-focused-male-teacher-formal-wear.jpg' },
-        { name: 'Fatima Noori', role: t('about.board.treasurerRole'), dept: 'Computer · 2012', img: '/depositphotos_85627224-stock-photo-civil-engineer-on-blackboard.jpg' },
-      ];
+  // Executive board — only the real members configured by the admin (no static
+  // placeholders). While settings load, the section shows a skeleton; if none
+  // are configured, the section is hidden entirely.
+  const boardMembers = (board || []).map((m) => ({
+    name: pick(m.name) || '',
+    role: pick(m.role) || '',
+    dept: [m.faculty, m.graduation_year].filter(Boolean).join(' · '),
+    img: m.photo || '',
+    email: m.email || '',
+    linkedin: m.linkedin || '',
+    github: m.github || '',
+  }));
 
   const contactItems = [
     { icon: <FiMail />, title: t('about.contact.emailTitle'), detail: 'it.director@kpu.edu.af' },
@@ -232,14 +233,27 @@ const AboutPage = () => {
                     <p className="text-[10px] text-gray-500">{chRole}</p>
                   </div>
                   <div className="flex gap-1 flex-shrink-0">
-                    <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
-                      style={{ background: BRAND_BG, color: BRAND }}>
-                      <FiMail className="text-[10px]" />
-                    </button>
-                    <button className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition"
-                      style={{ background: BRAND_BG, color: BRAND }}>
-                      <FiLinkedin className="text-[10px]" />
-                    </button>
+                    {chEmail && (
+                      <a href={`mailto:${chEmail}`}
+                        className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition cursor-pointer"
+                        style={{ background: BRAND_BG, color: BRAND }}>
+                        <FiMail className="text-[10px]" />
+                      </a>
+                    )}
+                    {chGithub && (
+                      <a href={chGithub} target="_blank" rel="noopener noreferrer"
+                        className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition cursor-pointer"
+                        style={{ background: BRAND_BG, color: BRAND }}>
+                        <FiGithub className="text-[10px]" />
+                      </a>
+                    )}
+                    {chLinkedin && (
+                      <a href={chLinkedin} target="_blank" rel="noopener noreferrer"
+                        className="w-6 h-6 rounded flex items-center justify-center hover:opacity-80 transition cursor-pointer"
+                        style={{ background: BRAND_BG, color: BRAND }}>
+                        <FiLinkedin className="text-[10px]" />
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -248,7 +262,8 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* ═══ LEADERSHIP BOARD ══════════════════════════════════ */}
+      {/* ═══ LEADERSHIP BOARD — real data only; skeleton while loading, hidden if empty ══ */}
+      {(!loaded || boardMembers.length > 0) && (
       <section className="py-14 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <SectionHeader
@@ -257,46 +272,61 @@ const AboutPage = () => {
             subtitle={t('about.board.subtitle')}
           />
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {boardMembers.map((m) => (
-              <div key={m.name} className="bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-all p-3 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full overflow-hidden border-2 mb-2"
-                  style={{ borderColor: BRAND_BORDER }}>
-                  <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {!loaded ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-xl border border-gray-100 p-5 text-center">
+                  <div className="w-20 h-20 mx-auto rounded-full mb-3 bg-gray-200 animate-pulse" />
+                  <div className="h-4 w-28 mx-auto rounded bg-gray-200 animate-pulse" />
+                  <div className="h-3 w-20 mx-auto rounded bg-gray-200 animate-pulse mt-2" />
+                  <div className="h-2.5 w-16 mx-auto rounded bg-gray-200 animate-pulse mt-2" />
                 </div>
-                <h3 className="text-xs font-bold text-gray-900 line-clamp-1">{m.name}</h3>
-                <p className="text-[10px] font-semibold line-clamp-1 mt-0.5" style={{ color: BRAND }}>{m.role}</p>
-                <p className="text-[9px] text-gray-400 line-clamp-1 mt-0.5">{m.dept}</p>
-                <div className="flex justify-center gap-1 mt-2">
-                  <button className="w-5 h-5 rounded flex items-center justify-center hover:opacity-80 transition"
-                    style={{ background: BRAND_BG, color: BRAND }}>
-                    <FiLinkedin className="text-[9px]" />
-                  </button>
-                  <button className="w-5 h-5 rounded flex items-center justify-center hover:opacity-80 transition"
-                    style={{ background: BRAND_BG, color: BRAND }}>
-                    <FiMail className="text-[9px]" />
-                  </button>
+              ))
+            ) : (
+              boardMembers.map((m, i) => (
+                <div key={m.name || i} className="bg-white rounded-xl border border-gray-100 hover:shadow-sm transition-all p-5 text-center">
+                  <div className="w-20 h-20 mx-auto rounded-full overflow-hidden border-2 mb-3 flex items-center justify-center bg-gray-100"
+                    style={{ borderColor: BRAND_BORDER }}>
+                    {m.img ? (
+                      <img src={m.img} alt={m.name} className="w-full h-full object-cover"
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }} />
+                    ) : (
+                      <FiUser className="text-gray-400 text-2xl" />
+                    )}
+                  </div>
+                  <h3 className="text-sm font-bold text-gray-900 line-clamp-1">{m.name}</h3>
+                  <p className="text-xs font-semibold line-clamp-1 mt-1" style={{ color: BRAND }}>{m.role}</p>
+                  {m.dept && <p className="text-[11px] text-gray-400 line-clamp-1 mt-1">{m.dept}</p>}
+                  <div className="flex justify-center gap-1.5 mt-3">
+                    {m.github && (
+                      <a href={m.github} target="_blank" rel="noopener noreferrer"
+                        className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 transition cursor-pointer"
+                        style={{ background: BRAND_BG, color: BRAND }}>
+                        <FiGithub className="text-xs" />
+                      </a>
+                    )}
+                    {m.linkedin && (
+                      <a href={m.linkedin} target="_blank" rel="noopener noreferrer"
+                        className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 transition cursor-pointer"
+                        style={{ background: BRAND_BG, color: BRAND }}>
+                        <FiLinkedin className="text-xs" />
+                      </a>
+                    )}
+                    {m.email && (
+                      <a href={`mailto:${m.email}`}
+                        className="w-7 h-7 rounded-lg flex items-center justify-center hover:opacity-80 transition cursor-pointer"
+                        style={{ background: BRAND_BG, color: BRAND }}>
+                        <FiMail className="text-xs" />
+                      </a>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Compact stats row */}
-          <div className="mt-8 rounded-xl border border-gray-100 grid grid-cols-2 lg:grid-cols-4 divide-x divide-gray-100 bg-white">
-            {[
-              { value: '15+', label: t('about.board.statYears') },
-              { value: '8', label: t('about.board.statDisciplines') },
-              { value: '100+', label: t('about.board.statProjects') },
-              { value: '50+', label: t('about.board.statAwards') },
-            ].map((s, i) => (
-              <div key={i} className="px-3 py-4 text-center">
-                <div className="text-xl font-extrabold mb-0.5" style={{ color: BRAND_DARK }}>{s.value}</div>
-                <div className="text-[10px] text-gray-500">{s.label}</div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>
+      )}
 
       {/* ═══ CONTACT + CTA ═════════════════════════════════════ */}
       <section className="py-14 px-4 sm:px-6 lg:px-8 bg-gray-50/70">

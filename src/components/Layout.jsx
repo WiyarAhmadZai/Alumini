@@ -195,12 +195,39 @@ const Layout = ({ children }) => {
       try {
         const res = await notificationService.getAll();
         setNotifications(res.data?.data || []);
-        if (unreadCount > 0) {
-          await notificationService.markAllRead();
-          setUnreadCount(0);
-        }
       } catch {}
     }
+  };
+
+  // Where a notification leads when clicked (uses `reason` only as an internal id).
+  const notifTarget = (n) => {
+    if (n.type === 'event_registration' && n.reason) return `/events/${n.reason}`;
+    if (n.type === 'event_registration') return '/events';
+    if (n.type?.startsWith('mentor_request') || n.type === 'mentor_review') return '/profile';
+    if (n.type === 'mentor_profile_created' && n.reason) return `/mentorship/${n.reason}`;
+    if (n.type === 'success_story_review') return '/profile?tab=story';
+    return '/profile';
+  };
+
+  // Mark one read (locally + server) without removing it; drop the unread badge.
+  const markOneRead = async (n) => {
+    if (n.is_read) return;
+    setNotifications(prev => prev.map(x => x.id === n.id ? { ...x, is_read: true } : x));
+    setUnreadCount(c => Math.max(0, c - 1));
+    try { await notificationService.markRead(n.id); } catch {}
+  };
+
+  const markAllNotifsRead = async () => {
+    setNotifications(prev => prev.map(x => ({ ...x, is_read: true })));
+    setUnreadCount(0);
+    try { await notificationService.markAllRead(); } catch {}
+  };
+
+  // Click a notification: mark it read (stays in the list) and navigate.
+  const openNotification = (n) => {
+    setNotifOpen(false);
+    markOneRead(n);
+    navigate(notifTarget(n));
   };
 
   // Close notification dropdown on outside click
@@ -334,8 +361,14 @@ const Layout = ({ children }) => {
                   </button>
                   {notifOpen && (
                     <div className="absolute top-full end-0 mt-2 w-80 max-w-[calc(100vw-1.5rem)] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden z-[100] animate-fade-in origin-top">
-                      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+                      <div className="px-4 py-3 border-b border-gray-100 dark:border-gray-700 flex items-center justify-between gap-2">
                         <h3 className="text-sm font-bold text-gray-900 dark:text-white text-start">{t('notifications.title')}</h3>
+                        {notifications.some(n => !n.is_read) && (
+                          <button type="button" onClick={markAllNotifsRead}
+                            className="text-[11px] font-semibold text-blue-600 hover:underline whitespace-nowrap">
+                            {t('notifications.markAllRead', 'Mark all read')}
+                          </button>
+                        )}
                       </div>
                       <div className="max-h-80 overflow-y-auto">
                         {notifications.length === 0 ? (
@@ -344,22 +377,7 @@ const Layout = ({ children }) => {
                           notifications.map(n => (
                             <div
                               key={n.id}
-                              onClick={() => {
-                                setNotifOpen(false);
-                                if (n.type === 'event_registration' && n.reason) {
-                                  navigate(`/events/${n.reason}`);
-                                } else if (n.type === 'event_registration') {
-                                  navigate('/events');
-                                } else if (n.type?.startsWith('mentor_request') || n.type === 'mentor_review') {
-                                  navigate('/profile');
-                                } else if (n.type === 'mentor_profile_created' && n.reason) {
-                                  navigate(`/mentorship/${n.reason}`);
-                                } else if (n.type === 'success_story_review') {
-                                  navigate('/profile?tab=story');
-                                } else {
-                                  navigate('/profile');
-                                }
-                              }}
+                              onClick={() => openNotification(n)}
                               className={`px-4 py-3 border-b border-gray-50 dark:border-gray-700/50 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${!n.is_read ? 'bg-blue-50/50 dark:bg-blue-900/10' : ''}`}
                             >
                               <div className="flex items-start gap-2">
@@ -374,8 +392,10 @@ const Layout = ({ children }) => {
                                       RTL for Pashto/Dari content, LTR for English. Body is justified. */}
                                   <p dir="auto" className="text-sm font-semibold text-gray-900 dark:text-white truncate">{n.title}</p>
                                   <p dir="auto" className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2 text-justify">{n.message}</p>
-                                  {n.reason && (
-                                    <p className="text-xs text-red-600 dark:text-red-400 mt-1 italic">{t('notifications.reason')} {n.reason}</p>
+                                  {/* `reason` is a human reason only for status changes; for other
+                                      types it's an internal id used for navigation, so don't show it. */}
+                                  {n.type === 'status_change' && n.reason && (
+                                    <p dir="auto" className="text-xs text-red-600 dark:text-red-400 mt-1 italic">{t('notifications.reason')} {n.reason}</p>
                                   )}
                                   <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
                                 </div>
@@ -384,6 +404,13 @@ const Layout = ({ children }) => {
                           ))
                         )}
                       </div>
+                      <Link
+                        to="/notifications"
+                        onClick={() => setNotifOpen(false)}
+                        className="block px-4 py-2.5 text-center text-xs font-semibold text-blue-600 border-t border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                      >
+                        {t('notifications.viewAll', 'View all notifications')}
+                      </Link>
                     </div>
                   )}
                 </div>

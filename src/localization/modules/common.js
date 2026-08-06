@@ -45,6 +45,8 @@ const common = {
       title: "Notifications",
       empty: "No notifications",
       reason: "Reason:",
+      markAllRead: "Mark all as read",
+      viewAll: "View all notifications",
     },
     userMenu: {
       signedInAs: "Signed in as",
@@ -121,6 +123,8 @@ const common = {
       title: "اطلاعیه‌ها",
       empty: "اطلاعیه‌ای نیست",
       reason: "دلیل:",
+      markAllRead: "همه را خوانده‌شده علامت بزن",
+      viewAll: "مشاهده‌ی همه‌ی اطلاعیه‌ها",
     },
     userMenu: {
       signedInAs: "وارد شده به نام",
@@ -197,6 +201,8 @@ const common = {
       title: "خبرتیاوې",
       empty: "هیڅ خبرتیا نشته",
       reason: "دلیل:",
+      markAllRead: "ټول لوستل‌شوي وګڼئ",
+      viewAll: "ټولې خبرتیاوې وګورئ",
     },
     userMenu: {
       signedInAs: "ننوتلی په نوم",

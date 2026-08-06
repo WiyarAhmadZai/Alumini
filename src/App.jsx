@@ -21,6 +21,7 @@ import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import ApplicationsPage from './pages/ApplicationsPage';
 import MessagesPage from './pages/MessagesPage';
+import NotificationsPage from './pages/NotificationsPage';
 import MessageConversationPage from './pages/MessageConversationPage';
 import AdminDashboard from './pages/AdminDashboard';
 import DashboardPage from './pages/DashboardPage';
@@ -72,6 +73,7 @@ function App() {
           <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="/applications" element={<ApplicationsPage />} />
           <Route path="/messages" element={<MessagesPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/message/:id" element={<MessageConversationPage />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/dashboard" element={<DashboardPage />} />
