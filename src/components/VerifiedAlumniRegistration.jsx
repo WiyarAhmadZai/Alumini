@@ -247,11 +247,9 @@ const VerifiedAlumniRegistration = () => {
       setSuccess(true);
 
       // Registration does NOT log the user in (no token is issued), so send them
-      // to the login page. Pass the email + a flag so login can prefill the field
-      // and show a "registration successful, please sign in" confirmation.
-      setTimeout(() => {
-        navigate('/login', { state: { registered: true, email: formData.email } });
-      }, 2000);
+      // straight to the login page. Pass the email + a flag so login can prefill
+      // the field and show a "registration successful, please sign in" message.
+      navigate('/login', { state: { registered: true, email: formData.email } });
     } catch (error) {
       if (error.response?.data?.errors) {
         setErrors(error.response.data.errors);

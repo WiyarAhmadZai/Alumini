@@ -30,7 +30,8 @@ import {
   FiInfo,
   FiFolder,
   FiImage,
-  FiHeart
+  FiHeart,
+  FiPaperclip
 } from 'react-icons/fi';
 
 // Resolve the user's photo to a same-origin /storage path (works from any host
@@ -206,6 +207,7 @@ const Layout = ({ children }) => {
     if (n.type?.startsWith('mentor_request') || n.type === 'mentor_review') return '/profile';
     if (n.type === 'mentor_profile_created' && n.reason) return `/mentorship/${n.reason}`;
     if (n.type === 'success_story_review') return '/profile?tab=story';
+    if (n.type === 'admin_broadcast') return '/notifications';
     return '/profile';
   };
 
@@ -396,6 +398,11 @@ const Layout = ({ children }) => {
                                       types it's an internal id used for navigation, so don't show it. */}
                                   {n.type === 'status_change' && n.reason && (
                                     <p dir="auto" className="text-xs text-red-600 dark:text-red-400 mt-1 italic">{t('notifications.reason')} {n.reason}</p>
+                                  )}
+                                  {n.attachment_url && (
+                                    <span className="inline-flex items-center gap-1 mt-1 text-[10px] font-semibold text-blue-600 dark:text-blue-400">
+                                      <FiPaperclip size={10} /> {n.attachment_name || 'Attachment'}
+                                    </span>
                                   )}
                                   <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
                                 </div>

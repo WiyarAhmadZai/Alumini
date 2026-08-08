@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   FiBell, FiCheck, FiRotateCcw, FiCheckCircle, FiCalendar, FiUsers,
-  FiStar, FiXCircle, FiInbox,
+  FiStar, FiXCircle, FiInbox, FiPaperclip, FiEye, FiExternalLink, FiDownload, FiX, FiFileText,
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
 import notificationService from '../services/notificationService';
@@ -46,6 +46,7 @@ export default function NotificationsPage() {
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [preview, setPreview] = useState(null); // { url, name, type }
 
   const load = () => {
     setLoading(true);
@@ -63,6 +64,7 @@ export default function NotificationsPage() {
     if (n.type?.startsWith('mentor_request') || n.type === 'mentor_review') return '/profile';
     if (n.type === 'mentor_profile_created' && n.reason) return `/mentorship/${n.reason}`;
     if (n.type === 'success_story_review') return '/profile?tab=story';
+    if (n.type === 'admin_broadcast') return '/notifications';
     return '/profile';
   };
 
@@ -178,6 +180,50 @@ export default function NotificationsPage() {
                       {n.type === 'status_change' && n.reason && (
                         <p dir="auto" className="text-xs text-red-600 mt-1 italic">{t('notifications.reason')} {n.reason}</p>
                       )}
+
+                      {/* Attachment — preview here, open in a new tab, or download */}
+                      {n.attachment_url && (
+                        <div className="mt-2" onClick={(e) => e.stopPropagation()}>
+                          {(n.attachment_type || '').startsWith('image/') ? (
+                            <img
+                              src={n.attachment_url}
+                              alt={n.attachment_name || ''}
+                              onClick={() => setPreview({ url: n.attachment_url, name: n.attachment_name, type: n.attachment_type })}
+                              className="max-h-40 rounded-lg border border-gray-200 cursor-zoom-in object-cover"
+                            />
+                          ) : (
+                            <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 max-w-sm">
+                              <FiFileText className="text-blue-600 shrink-0" />
+                              <span className="text-xs text-gray-700 truncate flex-1">{n.attachment_name || L('Attachment', 'ضمیمه', 'ضمیمه')}</span>
+                            </div>
+                          )}
+                          <div className="flex flex-wrap items-center gap-2 mt-2">
+                            <button
+                              type="button"
+                              onClick={() => setPreview({ url: n.attachment_url, name: n.attachment_name, type: n.attachment_type })}
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100"
+                            >
+                              <FiEye size={12} /> {L('Preview', 'مخکتنه', 'پیش‌نمایش')}
+                            </button>
+                            <a
+                              href={n.attachment_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            >
+                              <FiExternalLink size={12} /> {L('Open in new tab', 'په نوي ټب کې', 'در تب جدید')}
+                            </a>
+                            <a
+                              href={n.attachment_url}
+                              download={n.attachment_name || true}
+                              className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
+                            >
+                              <FiDownload size={12} /> {L('Download', 'ډاونلوډ', 'دانلود')}
+                            </a>
+                          </div>
+                        </div>
+                      )}
+
                       <p className="text-[11px] text-gray-400 mt-1.5">{timeAgo(n.created_at, L)}</p>
                     </div>
 
@@ -196,6 +242,45 @@ export default function NotificationsPage() {
           )}
         </div>
       </div>
+
+      {/* Same-tab preview modal */}
+      {preview && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 p-4" onClick={() => setPreview(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 py-3 border-b border-gray-200">
+              <h3 className="text-sm font-bold text-gray-900 truncate flex items-center gap-2">
+                <FiPaperclip /> {preview.name || L('Attachment', 'ضمیمه', 'ضمیمه')}
+              </h3>
+              <div className="flex items-center gap-2">
+                <a href={preview.url} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200">
+                  <FiExternalLink size={13} /> {L('New tab', 'نوی ټب', 'تب جدید')}
+                </a>
+                <a href={preview.url} download={preview.name || true}
+                  className="inline-flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700">
+                  <FiDownload size={13} /> {L('Download', 'ډاونلوډ', 'دانلود')}
+                </a>
+                <button type="button" onClick={() => setPreview(null)} className="p-1.5 text-gray-400 hover:text-gray-700 rounded-lg hover:bg-gray-100">
+                  <FiX size={18} />
+                </button>
+              </div>
+            </div>
+            <div className="flex-1 min-h-0 bg-gray-100 overflow-auto flex items-center justify-center">
+              {(preview.type || '').startsWith('image/') ? (
+                <img src={preview.url} alt={preview.name || ''} className="max-w-full max-h-[75vh] object-contain" />
+              ) : (preview.type || '').includes('pdf') ? (
+                <iframe src={preview.url} title={preview.name || 'preview'} className="w-full h-[75vh] border-0" />
+              ) : (
+                <div className="text-center p-10">
+                  <FiFileText className="mx-auto text-5xl text-gray-400 mb-3" />
+                  <p className="text-sm text-gray-600">{L('Preview is not available for this file type.', 'د دې ډول فایل لپاره مخکتنه شتون نلري.', 'پیش‌نمایش برای این نوع فایل موجود نیست.')}</p>
+                  <p className="text-xs text-gray-400 mt-1">{L('Use Open in new tab or Download.', 'په نوي ټب کې پرانیزئ یا یې ډاونلوډ کړئ.', 'از «تب جدید» یا «دانلود» استفاده کنید.')}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </Layout>
   );
 }
