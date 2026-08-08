@@ -53,6 +53,7 @@ const auth = {
         registrationFailed: "Registration failed. Please try again.",
         searchProfileFirst: "Please search for your student profile first",
         serverUnavailable: "Cannot reach the server. Please make sure the backend is running and try again.",
+        alreadyRegistered: "This student already has an alumni account. Please sign in instead.",
       },
       register: {
         heroBadge: "Verified Registration",
@@ -195,6 +196,7 @@ const auth = {
         registrationFailed: "ثبت‌نام ناکام شد. لطفاً دوباره تلاش کنید.",
         searchProfileFirst: "لطفاً ابتدا پروفایل محصلی خود را جستجو کنید",
         serverUnavailable: "ارتباط با سرور برقرار نشد. لطفاً از فعال بودن سرور بک‌اند مطمئن شوید و دوباره تلاش کنید.",
+        alreadyRegistered: "این محصل قبلاً حساب آلومنی دارد. لطفاً به‌جای ثبت‌نام وارد شوید.",
       },
       register: {
         heroBadge: "ثبت‌نام تأیید‌شده",
@@ -337,6 +339,7 @@ const auth = {
         registrationFailed: "ثبت‌نام ناکام شو. مهرباني وکړئ بیا هڅه وکړئ.",
         searchProfileFirst: "مهرباني وکړئ لومړی خپل د زده‌کوونکي پروفایل ولټوئ",
         serverUnavailable: "له سرور سره اړیکه ونه نیول شوه. مهرباني وکړئ ډاډ ترلاسه کړئ چې د بیک‌اِنډ سرور فعال دی او بیا هڅه وکړئ.",
+        alreadyRegistered: "دا زده‌کوونکی دمخه د الومني حساب لري. مهرباني وکړئ د راجستر پر ځای ننوځئ.",
       },
       register: {
         heroBadge: "تایید شوی ثبت‌نام",

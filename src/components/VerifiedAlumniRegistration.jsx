@@ -145,6 +145,13 @@ const VerifiedAlumniRegistration = () => {
     
     try {
       const response = await alumniService.searchStudent(formData.university_id);
+      // Gate: this student already has an alumni account — stop the flow and
+      // point them to sign in instead of registering again.
+      if (response.already_registered) {
+        setStudentData(null);
+        setSearchError(t('auth.errors.alreadyRegistered'));
+        return;
+      }
       const student = response.data;
       // Gate: only graduated students may register as alumni. When the student
       // is still enrolled, tell them exactly which semester they're on so it's
