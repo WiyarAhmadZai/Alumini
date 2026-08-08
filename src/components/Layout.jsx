@@ -337,8 +337,8 @@ const Layout = ({ children }) => {
                 <Link
                   to="/login"
                   className={`min-w-[60px] sm:min-w-[84px] h-8 sm:h-10 px-2 sm:px-4 text-xs sm:text-sm font-semibold rounded-lg sm:rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center ${
-                    isScrolled 
-                      ? 'bg-gradient-to-r from-white to-blue-50 text-[#002759] hover:from-blue-50 hover:to-white hover:shadow-xl' 
+                    isScrolled
+                      ? 'bg-gradient-to-r from-white to-blue-50 text-[#002759] hover:from-blue-50 hover:to-white hover:shadow-xl'
                       : 'bg-white/10 backdrop-blur-md text-white border border-white/30 hover:bg-white/20 hover:border-white/50'
                   }`}
                 >
@@ -473,7 +473,7 @@ const Layout = ({ children }) => {
                 </div>
               )}
 
-              <button 
+              <button
                 className={`lg:hidden transition-all duration-300 w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transform hover:scale-105 ${
                   isScrolled ? 'text-white hover:bg-white/10' : 'text-white hover:bg-white/10'
                 }`}

@@ -65,6 +65,11 @@ const EventDetailPage = () => {
       Swal.fire(t('events.alert.loginRequiredTitle'), t('events.alert.loginRequiredText'), 'info');
       return;
     }
+    // Guard: block registration when all seats are taken.
+    if (event?.max_attendees > 0 && event?.current_attendees >= event?.max_attendees) {
+      Swal.fire(t('events.detail.eventFullBox', 'This event is full'), t('events.detail.eventFullNote', 'All available seats have been filled.'), 'warning');
+      return;
+    }
 
     const { value: specialRequirements } = await Swal.fire({
       title: t('events.detail.registerForEventTitle'),
@@ -249,7 +254,9 @@ const EventDetailPage = () => {
   const now = new Date();
   const deadlineEnd = event.registration_deadline ? new Date(new Date(event.registration_deadline).setHours(23, 59, 59, 999)) : null;
   const isRegistrationDeadlinePassed = deadlineEnd && now > deadlineEnd;
-  const isRegistrationOpen = !isRegistrationDeadlinePassed;
+  // Seats are full once current attendees reach the maximum (0 / null = unlimited).
+  const isEventFull = event.max_attendees > 0 && event.current_attendees >= event.max_attendees;
+  const isRegistrationOpen = !isRegistrationDeadlinePassed && !isEventFull;
   const isEventExpired = event.start_date ? new Date(event.start_date) < now : false;
 
   return (
@@ -469,6 +476,16 @@ const EventDetailPage = () => {
                             >
                               {registering ? t('events.detail.registering') : t('events.detail.registerNow')}
                             </button>
+                          ) : isEventFull ? (
+                            /* Seats are full — no registration allowed */
+                            <div className="text-center">
+                              <div className="px-4 py-2 bg-amber-100 text-amber-700 rounded-lg font-medium">
+                                {t('events.detail.eventFullBox', 'This event is full')}
+                              </div>
+                              <p className="text-xs text-gray-500 text-center mt-2">
+                                {t('events.detail.eventFullNote', 'All available seats have been filled.')}
+                              </p>
+                            </div>
                           ) : (
                             /* Show appropriate message when registration deadline has passed */
                             <div className="text-center">

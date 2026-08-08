@@ -115,23 +115,23 @@ const ContactPage = () => {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight mb-3 max-w-3xl">
             {hero.title || t('contact.hero.title')}
           </h1>
-          <p className="text-sm sm:text-base text-white/70 max-w-xl mx-auto leading-relaxed font-light">
+          <p className="text-base sm:text-lg text-white/70 max-w-xl mx-auto leading-relaxed font-light">
             {hero.subtitle || t('contact.hero.subtitle')}
           </p>
 
           {/* Inline quick info row — branded style consistent with other pages */}
           <div className="mt-5 hidden sm:flex items-stretch bg-white/8 border border-white/15 rounded-xl overflow-hidden">
-            <div className="px-5 py-2 flex items-center gap-2 text-[11px]">
+            <div className="px-5 py-2 flex items-center gap-2 text-xs">
               <FiPhone className="text-white/50 w-3 h-3" />
               <span className="text-white/80 font-medium">+93 20 252 6364</span>
             </div>
             <div className="w-px bg-white/15" />
-            <div className="px-5 py-2 flex items-center gap-2 text-[11px]">
+            <div className="px-5 py-2 flex items-center gap-2 text-xs">
               <FiMail className="text-white/50 w-3 h-3" />
               <span className="text-white/80 font-medium">it.director@kpu.edu.af</span>
             </div>
             <div className="w-px bg-white/15" />
-            <div className="px-5 py-2 flex items-center gap-2 text-[11px]">
+            <div className="px-5 py-2 flex items-center gap-2 text-xs">
               <FiMapPin className="text-white/50 w-3 h-3" />
               <span className="text-white/80 font-medium">{t('contact.hero.campus')}</span>
             </div>
@@ -150,7 +150,7 @@ const ContactPage = () => {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
               {t('contact.cardsSection.title')}
             </h2>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="text-gray-500 text-base leading-relaxed">
               {t('contact.cardsSection.subtitle')}
             </p>
             <div className="w-10 h-0.5 mx-auto mt-4 rounded-full" style={{ background: BRAND }} />
@@ -164,9 +164,9 @@ const ContactPage = () => {
                   style={{ background: BRAND_BG, color: BRAND }}>
                   {c.icon}
                 </div>
-                <h3 className="text-xs font-bold text-gray-900 mb-1">{c.title}</h3>
-                <p className="text-[11px] text-gray-500 leading-relaxed mb-3 break-words line-clamp-2">{c.detail}</p>
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider transition-colors"
+                <h3 className="text-sm font-bold text-gray-900 mb-1">{c.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed mb-3 break-words line-clamp-2">{c.detail}</p>
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider transition-colors"
                   style={{ color: BRAND_DARK }}>
                   {c.cta} <FiSend className="text-[9px]" />
                 </span>
@@ -187,7 +187,7 @@ const ContactPage = () => {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
               {t('contact.form.title')}
             </h2>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="text-gray-500 text-base leading-relaxed">
               {t('contact.form.subtitle')}
             </p>
             <div className="w-10 h-0.5 mx-auto mt-4 rounded-full" style={{ background: BRAND }} />
@@ -199,19 +199,19 @@ const ContactPage = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.firstName')}</label>
+                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.firstName')}</label>
                     <input
                       type="text" name="firstName" value={formData.firstName} onChange={handleInputChange}
-                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full px-3.5 py-2.5 text-base border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                       placeholder={t('contact.form.firstNamePlaceholder')}
                       disabled={!!user?.name}
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.lastName')}</label>
+                    <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.lastName')}</label>
                     <input
                       type="text" name="lastName" value={formData.lastName} onChange={handleInputChange}
-                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full px-3.5 py-2.5 text-base border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                       placeholder={t('contact.form.lastNamePlaceholder')}
                       disabled={!!user?.last_name}
                     />
@@ -219,29 +219,29 @@ const ContactPage = () => {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.email')}</label>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.email')}</label>
                   <input
                     type="email" name="email" value={formData.email} onChange={handleInputChange}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full px-3.5 py-2.5 text-base border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
                     placeholder={t('contact.form.emailPlaceholder')}
                     disabled={!!user?.email}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.subject')}</label>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.subject')}</label>
                   <input
                     type="text" name="subject" value={formData.subject} onChange={handleInputChange}
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all"
+                    className="w-full px-3.5 py-2.5 text-base border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all"
                     placeholder={t('contact.form.subjectPlaceholder')}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.message')}</label>
+                  <label className="block text-xs font-semibold text-gray-600 uppercase tracking-wider mb-1.5">{t('contact.form.message')}</label>
                   <textarea
                     name="message" value={formData.message} onChange={handleInputChange} rows="5"
-                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all resize-none"
+                    className="w-full px-3.5 py-2.5 text-base border border-gray-200 rounded-lg bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-gray-900 transition-all resize-none"
                     placeholder={t('contact.form.messagePlaceholder')}
                     required
                   ></textarea>
@@ -250,7 +250,7 @@ const ContactPage = () => {
                 <div className="flex items-center justify-between pt-2">
                   <label className="flex items-center cursor-pointer">
                     <input type="checkbox" className="w-4 h-4 rounded border-gray-300 focus:ring-2" style={{ accentColor: BRAND }} />
-                    <span className="ml-2 text-xs text-gray-600">{t('contact.form.newsletter')}</span>
+                    <span className="ml-2 text-sm text-gray-600">{t('contact.form.newsletter')}</span>
                   </label>
                   <button
                     type="submit" disabled={loading}
@@ -287,11 +287,11 @@ const ContactPage = () => {
                   title={t('contact.map.mapAlt')}
                 ></iframe>
                 <div className="p-3 border-t border-gray-100">
-                  <h4 className="text-xs font-bold text-gray-900 flex items-center gap-1.5">
-                    <FiMapPin className="text-xs" style={{ color: BRAND }} />
+                  <h4 className="text-sm font-bold text-gray-900 flex items-center gap-1.5">
+                    <FiMapPin className="text-sm" style={{ color: BRAND }} />
                     {t('contact.map.title')}
                   </h4>
-                  <p className="text-[11px] text-gray-500 mt-0.5">{t('contact.map.location')}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">{t('contact.map.location')}</p>
                 </div>
               </div>
 
@@ -300,13 +300,13 @@ const ContactPage = () => {
                 <div className="w-9 h-9 rounded-lg flex items-center justify-center mb-3 bg-white/10 border border-white/20">
                   <FiAward className="text-white text-sm" />
                 </div>
-                <h4 className="text-white text-sm font-bold mb-2">{t('contact.map.officeHours')}</h4>
-                <div className="space-y-1 text-[11px] text-white/70">
+                <h4 className="text-white text-base font-bold mb-2">{t('contact.map.officeHours')}</h4>
+                <div className="space-y-1 text-xs text-white/70">
                   <div className="flex justify-between"><span>{t('contact.map.monThu')}</span><span className="text-white/90">{t('contact.map.monThuTime')}</span></div>
                   <div className="flex justify-between"><span>{t('contact.map.friday')}</span><span className="text-white/90">{t('contact.map.fridayTime')}</span></div>
                   <div className="flex justify-between"><span>{t('contact.map.weekend')}</span><span className="text-white/90">{t('contact.map.closed')}</span></div>
                 </div>
-                <div className="mt-3 pt-3 border-t border-white/10 text-[10px] text-white/60">
+                <div className="mt-3 pt-3 border-t border-white/10 text-[11px] text-white/60">
                   {t('contact.map.responseTime')}
                 </div>
               </div>
@@ -326,7 +326,7 @@ const ContactPage = () => {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
               {t('contact.links.title')}
             </h2>
-            <p className="text-gray-500 text-sm leading-relaxed">
+            <p className="text-gray-500 text-base leading-relaxed">
               {t('contact.links.subtitle')}
             </p>
             <div className="w-10 h-0.5 mx-auto mt-4 rounded-full" style={{ background: BRAND }} />
@@ -340,8 +340,8 @@ const ContactPage = () => {
                   style={{ background: BRAND_BG, color: BRAND }}>
                   {q.icon}
                 </div>
-                <h3 className="text-xs font-bold text-gray-900 mb-0.5">{q.title}</h3>
-                <p className="text-[11px] text-gray-500 leading-relaxed">{q.desc}</p>
+                <h3 className="text-sm font-bold text-gray-900 mb-0.5">{q.title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">{q.desc}</p>
               </Link>
             ))}
           </div>

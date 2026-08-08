@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FiBell, FiCheck, FiRotateCcw, FiCheckCircle } from 'react-icons/fi';
+import {
+  FiBell, FiCheck, FiRotateCcw, FiCheckCircle, FiCalendar, FiUsers,
+  FiStar, FiXCircle, FiInbox,
+} from 'react-icons/fi';
 import Layout from '../components/Layout';
 import notificationService from '../services/notificationService';
+
+const BRAND = '#002759';
 
 // Relative "time ago" in the current language.
 const timeAgo = (dateStr, L) => {
@@ -16,6 +21,17 @@ const timeAgo = (dateStr, L) => {
   if (h < 24) return L(`${h}h ago`, `${h} ساعته مخکې`, `${h} ساعت پیش`);
   const d = Math.floor(h / 24);
   return L(`${d}d ago`, `${d} ورځې مخکې`, `${d} روز پیش`);
+};
+
+// Icon + accent color for each notification type.
+const visualFor = (n) => {
+  const t = n.type || '';
+  if (t === 'event_registration') return { Icon: FiCalendar, bg: '#eef1fd', fg: '#194ce6' };
+  if (t === 'status_change' && n.title?.includes('Approved')) return { Icon: FiCheckCircle, bg: '#dcfce7', fg: '#16a34a' };
+  if (t === 'status_change' && n.title?.includes('Rejected')) return { Icon: FiXCircle, bg: '#fee2e2', fg: '#dc2626' };
+  if (t.startsWith('mentor') || t === 'mentor_review') return { Icon: FiUsers, bg: '#f3e8ff', fg: '#9333ea' };
+  if (t.startsWith('success_story')) return { Icon: FiStar, bg: '#fef3c7', fg: '#d97706' };
+  return { Icon: FiBell, bg: '#eef1fd', fg: BRAND };
 };
 
 export default function NotificationsPage() {
@@ -60,67 +76,125 @@ export default function NotificationsPage() {
   };
   const open = (n) => { setRead(n, true); navigate(notifTarget(n)); };
 
-  const hasUnread = items.some((n) => !n.is_read);
+  const unreadCount = items.filter((n) => !n.is_read).length;
 
   return (
     <Layout>
-      <div className="max-w-3xl mx-auto px-4 py-8 min-h-[60vh]">
-        <div className="flex items-center justify-between gap-3 mb-6">
-          <h1 className="text-2xl font-bold text-[#002759] dark:text-white flex items-center gap-2">
-            <FiBell /> {L('Notifications', 'خبرتیاوې', 'اعلان‌ها')}
-          </h1>
-          {hasUnread && (
-            <button
-              type="button"
-              onClick={markAll}
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-white px-4 py-2 rounded-full bg-gradient-to-r from-[#002759] to-[#0a519b] hover:shadow-md transition-all"
-            >
-              <FiCheckCircle /> {L('Mark all as read', 'ټول لوستل‌شوي وګڼئ', 'همه را خوانده‌شده علامت بزن')}
-            </button>
+      {/* ─── Short hero (gives the navbar its dark backdrop + page title) ─── */}
+      <section className="relative w-full h-56 sm:h-64 overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              `linear-gradient(rgba(0,10,40,0.82) 0%, rgba(0,20,70,0.92) 100%), url("/kpu2.jpg")`,
+          }}
+        />
+        <div className="relative z-10 h-full flex items-center justify-center px-4 text-center">
+          <div className="text-white max-w-3xl">
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.15em] bg-white/10 border border-white/20 mb-3">
+              <FiBell size={12} /> {L('Your inbox', 'ستاسو صندوق', 'صندوق شما')}
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black leading-tight mb-2">
+              {L('Notifications', 'خبرتیاوې', 'اعلان‌ها')}
+            </h1>
+            <p className="text-sm sm:text-base text-white/75">
+              {unreadCount > 0
+                ? L(`You have ${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`,
+                    `تاسو ${unreadCount} نالوستې خبرتیا لرئ`,
+                    `شما ${unreadCount} اعلان خوانده‌نشده دارید`)
+                : L('You are all caught up', 'ټول لوستل‌شوي دي', 'همه را خوانده‌اید')}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── Content (overlaps the hero) ─── */}
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 -mt-10 relative z-20 pb-16">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 sm:p-6">
+          <div className="flex items-center justify-between gap-3 mb-5">
+            <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
+              <FiInbox style={{ color: BRAND }} />
+              {L('All notifications', 'ټولې خبرتیاوې', 'همه اعلان‌ها')}
+            </h2>
+            {unreadCount > 0 && (
+              <button
+                type="button"
+                onClick={markAll}
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-white px-4 py-2 rounded-full bg-gradient-to-r from-[#002759] to-[#0a519b] hover:shadow-md transition-all"
+              >
+                <FiCheckCircle /> {L('Mark all as read', 'ټول لوستل‌شوي وګڼئ', 'همه را خوانده‌شده')}
+              </button>
+            )}
+          </div>
+
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-start gap-4 rounded-2xl border border-gray-100 p-4">
+                  <div className="w-11 h-11 rounded-xl bg-gray-200 animate-pulse flex-shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-gray-200 rounded w-1/3 animate-pulse" />
+                    <div className="h-3 bg-gray-100 rounded w-full animate-pulse" />
+                    <div className="h-3 bg-gray-100 rounded w-2/3 animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : items.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 mx-auto rounded-full flex items-center justify-center mb-4"
+                style={{ background: '#eef1fd', color: BRAND }}>
+                <FiBell className="text-2xl" />
+              </div>
+              <p className="text-sm font-semibold text-gray-700">{L('No notifications yet.', 'تر اوسه خبرتیا نشته.', 'هنوز اعلانی نیست.')}</p>
+              <p className="text-xs text-gray-400 mt-1">
+                {L("We'll let you know when something happens.", 'کله چې څه پیښ شي، خبر به مو کړو.', 'وقتی اتفاقی بیفتد به شما اطلاع می‌دهیم.')}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-2.5">
+              {items.map((n) => {
+                const { Icon, bg, fg } = visualFor(n);
+                return (
+                  <div
+                    key={n.id}
+                    className={`group flex items-start gap-3 sm:gap-4 rounded-2xl border p-3.5 sm:p-4 transition-all hover:shadow-md ${
+                      !n.is_read
+                        ? 'bg-blue-50/40 border-blue-200'
+                        : 'bg-white border-gray-100 hover:border-gray-200'
+                    }`}
+                  >
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                      style={{ background: bg, color: fg }}>
+                      <Icon size={18} />
+                    </div>
+
+                    <div className="flex-1 min-w-0 cursor-pointer" onClick={() => open(n)}>
+                      <div className="flex items-center gap-2">
+                        <p dir="auto" className="font-bold text-sm sm:text-[15px] text-gray-900 truncate">{n.title}</p>
+                        {!n.is_read && <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
+                      </div>
+                      <p dir="auto" className="text-xs sm:text-sm text-gray-600 mt-1 leading-relaxed text-justify line-clamp-3">{n.message}</p>
+                      {n.type === 'status_change' && n.reason && (
+                        <p dir="auto" className="text-xs text-red-600 mt-1 italic">{t('notifications.reason')} {n.reason}</p>
+                      )}
+                      <p className="text-[11px] text-gray-400 mt-1.5">{timeAgo(n.created_at, L)}</p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setRead(n, !n.is_read); }}
+                      title={n.is_read ? L('Mark as unread', 'نالوستی وګڼئ', 'خوانده‌نشده کن') : L('Mark as read', 'لوستل‌شوی وګڼئ', 'خوانده‌شده کن')}
+                      className="shrink-0 p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 opacity-70 group-hover:opacity-100 transition"
+                    >
+                      {n.is_read ? <FiRotateCcw size={16} /> : <FiCheck size={16} />}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
-
-        {loading ? (
-          <div className="space-y-2">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="animate-pulse h-20 rounded-xl bg-gray-100 dark:bg-gray-800" />
-            ))}
-          </div>
-        ) : items.length === 0 ? (
-          <div className="text-center py-20 text-gray-400">
-            <FiBell className="mx-auto mb-3 text-4xl" />
-            <p className="text-sm">{L('No notifications yet.', 'تر اوسه خبرتیا نشته.', 'هنوز اعلانی نیست.')}</p>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {items.map((n) => (
-              <div
-                key={n.id}
-                className={`flex items-start gap-3 rounded-xl border p-4 transition-colors ${!n.is_read ? 'bg-blue-50/60 dark:bg-blue-900/10 border-blue-200 dark:border-blue-800' : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'}`}
-              >
-                <div className="flex-1 min-w-0 cursor-pointer" onClick={() => open(n)}>
-                  <div className="flex items-center gap-2">
-                    {!n.is_read && <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
-                    <p dir="auto" className="font-semibold text-gray-900 dark:text-white">{n.title}</p>
-                  </div>
-                  <p dir="auto" className="text-sm text-gray-600 dark:text-gray-400 mt-1 text-justify">{n.message}</p>
-                  {n.type === 'status_change' && n.reason && (
-                    <p dir="auto" className="text-xs text-red-600 dark:text-red-400 mt-1 italic">{t('notifications.reason')} {n.reason}</p>
-                  )}
-                  <p className="text-[11px] text-gray-400 mt-1">{timeAgo(n.created_at, L)}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={(e) => { e.stopPropagation(); setRead(n, !n.is_read); }}
-                  title={n.is_read ? L('Mark as unread', 'نالوستی وګڼئ', 'خوانده‌نشده کن') : L('Mark as read', 'لوستل‌شوی وګڼئ', 'خوانده‌شده کن')}
-                  className="shrink-0 p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700"
-                >
-                  {n.is_read ? <FiRotateCcw size={16} /> : <FiCheck size={16} />}
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </Layout>
   );
