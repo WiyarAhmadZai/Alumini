@@ -131,18 +131,36 @@ const MediaCenterPage = () => {
     const src = thumbOf(item);
     return (
       <div className={`relative ${h} w-full overflow-hidden bg-gradient-to-br from-[#eef1fd] to-[#dce3fb] flex items-center justify-center`}>
-        {src
-          ? <img src={src} alt={item.title} loading="lazy" className="h-full w-full object-cover" />
-          : <span className="text-[#194ce6]/60">{typeIcon(item, 'w-12 h-12')}</span>}
-        {item.featured && (
-          <span className="absolute top-2 ltr:left-2 rtl:right-2 inline-flex items-center gap-1 rounded-md bg-amber-400/95 px-2 py-0.5 text-[11px] font-semibold text-white">
-            <FiStar className="w-3 h-3" /> {t('media.featured')}
-          </span>
+        {/* Type icon sits behind the image; if the image is missing or fails to
+            load it stays visible (alt="" so a broken image never leaks the title
+            text over the thumbnail). */}
+        <span className="absolute inset-0 flex items-center justify-center text-[#194ce6]/60">
+          {typeIcon(item, 'w-10 h-10')}
+        </span>
+        {src && (
+          <img
+            src={src}
+            alt=""
+            loading="lazy"
+            className="relative h-full w-full object-cover"
+            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+          />
         )}
-        {item.category && (
-          <span className="absolute top-2 ltr:right-2 rtl:left-2 rounded-md bg-black/55 px-2 py-0.5 text-[11px] font-medium text-white">
-            {item.category}
-          </span>
+        {/* Badges share one padded top row and truncate, so a Featured + category
+            pair never overlaps on narrow (many-column) cards. */}
+        {(item.featured || item.category) && (
+          <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-1 p-2">
+            {item.featured ? (
+              <span className="inline-flex items-center gap-1 rounded-md bg-amber-400/95 px-1.5 py-0.5 text-[10px] font-semibold text-white max-w-[55%]">
+                <FiStar className="w-3 h-3 shrink-0" /> <span className="truncate">{t('media.featured')}</span>
+              </span>
+            ) : <span />}
+            {item.category && (
+              <span className="rounded-md bg-black/55 px-1.5 py-0.5 text-[10px] font-medium text-white truncate max-w-[45%]">
+                {item.category}
+              </span>
+            )}
+          </div>
         )}
       </div>
     );
