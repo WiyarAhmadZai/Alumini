@@ -120,8 +120,9 @@ const AboutPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
-              { icon: <FiTarget />, title: t('about.whoWeAre.missionTitle'), body: t('about.whoWeAre.missionBody') },
+              // Order: Vision (the destination) → Mission (how we get there) → Promise (our commitment).
               { icon: <FiGlobe />, title: t('about.whoWeAre.visionTitle'), body: t('about.whoWeAre.visionBody') },
+              { icon: <FiTarget />, title: t('about.whoWeAre.missionTitle'), body: t('about.whoWeAre.missionBody') },
               { icon: <FiStar />, title: t('about.whoWeAre.promiseTitle'), body: t('about.whoWeAre.promiseBody') },
             ].map((c, i) => (
               <div key={i} className="bg-white rounded-xl border border-gray-100 p-5 hover:border-gray-200 hover:shadow-sm transition-all">

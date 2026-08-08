@@ -37,7 +37,7 @@ export const HeroProvider = ({ children }) => {
 // eslint-disable-next-line react-refresh/only-export-components
 export const useHero = (page) => {
   const { i18n } = useTranslation();
-  const { heroes } = useHeroData();
+  const { heroes, loaded } = useHeroData();
   const lang = i18n.language;
 
   const pick = (val) => {
@@ -48,6 +48,7 @@ export const useHero = (page) => {
 
   const h = heroes[page] || {};
   return {
+    loaded,
     badge: pick(h.badge),
     title: pick(h.title),
     subtitle: pick(h.subtitle),

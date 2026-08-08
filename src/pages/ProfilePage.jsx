@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../utils/date';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { FiLink, FiMail, FiPhone, FiMapPin, FiEdit, FiShare2, FiUser, FiUsers, FiBriefcase, FiBookOpen, FiSettings, FiAward, FiTrendingUp, FiStar, FiTarget, FiTrash2, FiPlus, FiCamera, FiX, FiMessageSquare, FiSend, FiPaperclip, FiFacebook, FiTwitter, FiLinkedin, FiClock, FiCalendar, FiExternalLink, FiBell, FiDownload, FiCheckCircle, FiXCircle, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import Cropper from 'react-easy-crop';
@@ -39,6 +39,7 @@ const ProfilePage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
   const { updateUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -64,10 +65,14 @@ const ProfilePage = () => {
   const [savingStory, setSavingStory] = useState(false);
 
   // Open the requested tab when arriving from a notification (?tab=story).
+  // Depends on location.search so it also switches the tab when the query
+  // changes WITHOUT a remount — e.g. clicking a notification while already on
+  // the profile page (previously this only ran on mount, so the tab wouldn't
+  // change until a manual refresh).
   useEffect(() => {
-    const tab = new URLSearchParams(window.location.search).get('tab');
+    const tab = new URLSearchParams(location.search).get('tab');
     if (tab) setActiveTab(tab);
-  }, []);
+  }, [location.search]);
 
   const [myMentor, setMyMentor] = useState(null);
   const [viewedProfileMentor, setViewedProfileMentor] = useState(null);
