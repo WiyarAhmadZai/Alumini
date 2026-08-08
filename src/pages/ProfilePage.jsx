@@ -74,6 +74,17 @@ const ProfilePage = () => {
     if (tab) setActiveTab(tab);
   }, [location.search]);
 
+  // Opening another alumnus from inside this page (e.g. tapping a requester's
+  // photo or name in the Requests tab) only swaps the :id — React Router keeps
+  // this component mounted, so the browser holds the old scroll offset and the
+  // owner-only tab stays selected, making the click look like it did nothing.
+  // Reset both whenever the viewed profile changes, unless the URL asks for a
+  // specific tab (?tab=story deep links from notifications).
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!new URLSearchParams(window.location.search).get('tab')) setActiveTab('overview');
+  }, [id]);
+
   const [myMentor, setMyMentor] = useState(null);
   const [viewedProfileMentor, setViewedProfileMentor] = useState(null);
   const [requestingMentorship, setRequestingMentorship] = useState(false);
