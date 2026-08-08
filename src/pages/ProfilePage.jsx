@@ -1965,7 +1965,7 @@ const ProfilePage = () => {
                                         Swal.fire({ icon: 'error', title: t('profile.alerts.error'), text: err.response?.data?.message || t('profile.alerts.failed') });
                                       }
                                     }}
-                                    className="flex-1 flex items-center justify-center gap-1 px-2 py-1 bg-green-600 text-white text-[10px] font-bold rounded hover:bg-green-700 transition"
+                                    className="flex-1 max-w-[110px] flex items-center justify-center gap-1 px-2 py-1 bg-green-600 text-white text-[10px] font-bold rounded hover:bg-green-700 transition"
                                   >
                                     <FiCheckCircle size={10} /> {t('profile.requests.accept')}
                                   </button>
@@ -1981,7 +1981,7 @@ const ProfilePage = () => {
                                         Swal.fire({ icon: 'error', title: t('profile.alerts.error'), text: err.response?.data?.message || t('profile.alerts.failed') });
                                       }
                                     }}
-                                    className="flex-1 flex items-center justify-center gap-1 px-2 py-1 bg-red-600 text-white text-[10px] font-bold rounded hover:bg-red-700 transition"
+                                    className="flex-1 max-w-[110px] flex items-center justify-center gap-1 px-2 py-1 bg-red-600 text-white text-[10px] font-bold rounded hover:bg-red-700 transition"
                                   >
                                     <FiXCircle size={10} /> {t('profile.requests.reject')}
                                   </button>

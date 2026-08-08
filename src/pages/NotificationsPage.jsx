@@ -64,6 +64,7 @@ export default function NotificationsPage() {
     if (n.type?.startsWith('mentor_request') || n.type === 'mentor_review') return '/profile';
     if (n.type === 'mentor_profile_created' && n.reason) return `/mentorship/${n.reason}`;
     if (n.type === 'success_story_review') return '/profile?tab=story';
+    if (n.type === 'message_reply') return n.reason ? `/message/${n.reason}` : '/messages';
     if (n.type === 'admin_broadcast') return '/notifications';
     return '/profile';
   };
