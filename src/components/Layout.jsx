@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import authService from '../services/authService';
 import notificationService from '../services/notificationService';
+import { notificationText } from '../utils/notificationText';
 import { AuthContext } from '../contexts/AuthContext';
 import { useSettings } from '../contexts/SettingsContext';
 import { resolveHeroImage } from './ui/HeroBackground';
@@ -377,7 +378,9 @@ const Layout = ({ children }) => {
                         {notifications.length === 0 ? (
                           <div className="px-4 py-8 text-center text-sm text-gray-500">{t('notifications.empty')}</div>
                         ) : (
-                          notifications.map(n => (
+                          notifications.map(n => {
+                            const text = notificationText(n, t);
+                            return (
                             <div
                               key={n.id}
                               onClick={() => openNotification(n)}
@@ -393,8 +396,8 @@ const Layout = ({ children }) => {
                                 <div className="flex-1 min-w-0">
                                   {/* dir="auto" makes each notification read in its own language:
                                       RTL for Pashto/Dari content, LTR for English. Body is justified. */}
-                                  <p dir="auto" className="text-sm font-semibold text-gray-900 dark:text-white truncate">{n.title}</p>
-                                  <p dir="auto" className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2 text-justify">{n.message}</p>
+                                  <p dir="auto" className="text-sm font-semibold text-gray-900 dark:text-white truncate">{text.title}</p>
+                                  <p dir="auto" className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 line-clamp-2 text-justify">{text.message}</p>
                                   {/* `reason` is a human reason only for status changes; for other
                                       types it's an internal id used for navigation, so don't show it. */}
                                   {n.type === 'status_change' && n.reason && (
@@ -409,7 +412,8 @@ const Layout = ({ children }) => {
                                 </div>
                               </div>
                             </div>
-                          ))
+                            );
+                          })
                         )}
                       </div>
                       <Link

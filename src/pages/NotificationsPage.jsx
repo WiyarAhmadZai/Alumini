@@ -6,6 +6,7 @@ import {
   FiStar, FiXCircle, FiInbox, FiPaperclip, FiEye, FiExternalLink, FiDownload, FiX, FiFileText,
 } from 'react-icons/fi';
 import Layout from '../components/Layout';
+import { notificationText } from '../utils/notificationText';
 import notificationService from '../services/notificationService';
 
 const BRAND = '#002759';
@@ -158,6 +159,7 @@ export default function NotificationsPage() {
             <div className="space-y-2.5">
               {items.map((n) => {
                 const { Icon, bg, fg } = visualFor(n);
+                const text = notificationText(n, t);
                 return (
                   <div
                     key={n.id}
@@ -174,10 +176,10 @@ export default function NotificationsPage() {
 
                     <div className="flex-1 min-w-0 cursor-pointer" onClick={() => open(n)}>
                       <div className="flex items-center gap-2">
-                        <p dir="auto" className="font-bold text-sm sm:text-[15px] text-gray-900 truncate">{n.title}</p>
+                        <p dir="auto" className="font-bold text-sm sm:text-[15px] text-gray-900 truncate">{text.title}</p>
                         {!n.is_read && <span className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />}
                       </div>
-                      <p dir="auto" className="text-xs sm:text-sm text-gray-600 mt-1 leading-relaxed text-justify line-clamp-3">{n.message}</p>
+                      <p dir="auto" className="text-xs sm:text-sm text-gray-600 mt-1 leading-relaxed text-justify line-clamp-3">{text.message}</p>
                       {n.type === 'status_change' && n.reason && (
                         <p dir="auto" className="text-xs text-red-600 mt-1 italic">{t('notifications.reason')} {n.reason}</p>
                       )}
