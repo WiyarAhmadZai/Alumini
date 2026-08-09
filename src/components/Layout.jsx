@@ -292,7 +292,7 @@ const Layout = ({ children }) => {
                 isScrolled ? 'text-white' : 'text-white'
               }`}>
                 <Link to="/" className="flex items-center space-x-2">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white overflow-hidden flex items-center justify-center flex-shrink-0">
                     <img
                       src={brandLogo}
                       alt="KPU University"
@@ -513,7 +513,7 @@ const Layout = ({ children }) => {
                 {/* Header */}
                 <div className="flex items-center justify-between p-4 border-b border-white/10 flex-shrink-0">
                   <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center gap-2 min-w-0">
-                    <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-white overflow-hidden flex-shrink-0">
                       <img src={brandLogo} alt="KPU University" className="w-full h-full object-cover" />
                     </div>
                     <div className="min-w-0">
@@ -623,7 +623,7 @@ const Layout = ({ children }) => {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-8 lg:px-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
           <div className="col-span-1 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center space-x-2 mb-4 sm:mb-6">
-              <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-white overflow-hidden flex items-center justify-center flex-shrink-0">
                 <img
                   src={brandLogo}
                   alt="KPU University"
